@@ -36,7 +36,7 @@ Quote:
 <h6>Header 6</h6>
 
 <p>Some link to <a href="https://google.com">google.com</a>,
-and <a href="https://dontgohere.com">dont go here</a>
+and <a href="https://dontgohere.com">don't go here</a>
 </p>
 
 <p>A list.</p>
@@ -53,13 +53,13 @@ and <a href="https://dontgohere.com">dont go here</a>
   &nbsp; <span class=syn-call>print</span><span class=syn-string
   >"0Oo0 - some really really looooooooong text... yup it keeps going and going and going..."</span>
   <br>
-  &nbsp; <span class=syn-kw>return</span> a + 3<br>
+  &nbsp; <span class=syn-kw>return</span> a + 3&nbsp; <span class=syn-comment>// adding three</span><br>
   <span class=syn-kw>end</span><br>
 </div>
 
 <p>Short code:</p>
 <div class="code-block">
-foo()&nbsp; // comment
+  foo()&nbsp; <span class=syn-comment>// comment</span>
 </div>
 
 <h2>A Table</h2>
@@ -86,10 +86,11 @@ foo()&nbsp; // comment
 </div>
     </td>
     <td>long row 1.3
-      <span class=syn-kw>function</span> <a class=syn-name href="">example</a>(a)<br>
-&nbsp;&nbsp;return "code block"<br>
-end
-</div></td>
+      <div class=code-block><span class=syn-kw>function</span> <a class=syn-name href="">example</a>(a)<br>
+        &nbsp; <span class=syn-kw>return</span> <span class=syn-string>"code block"</span><br>
+        <span class=syn-kw>end</span>
+      </div>
+    </td>
   </tr>
   <tr>
     <td>row 2.1

@@ -7,22 +7,22 @@ html {
   overflow-wrap: break-word;
 }
 /* doc structure */
-nav { margin-top: 20px; }
+nav { margin-top: 0.5em; margin-left: 0.5em; }
 .nav {
   color: gold;
-  margin-left: 10px; padding-left: 5px; padding-right: 5px;
+  margin-left: 0.5em; padding-left: 0.1em; padding-right: 0.1em;
 }
 .nav-selected { color: #121111; background-color: gold; }
 .doc {
   margin: 1.8%; padding: 1%;
   background-color: #2b2b2b;
-  border-radius: 25px;
+  border-radius: 0.5em;
 }
 
 /* general elements */
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: 10px;
-  font-weight: normal; letter-spacing: 0.25px;
+  margin-bottom: 0.2em;
+  font-weight: normal; letter-spacing: 0.02em;
   /* offset-x | offset-y | blur-radius */
   text-shadow: 0.1em 0.1em 0.05em black;
   width: fit-content; max-width: 95%;
@@ -33,8 +33,7 @@ h3 { font-size: 1.8rem; }
 h4 { font-size: 1.6rem; }
 h5 { font-size: 1.4rem; }
 h6 { font-size: 1.2rem; }
-p { margin-top: 2px; }
-ul, ol { margin-bottom: 4px; }
+ul, ol { margin-bottom: 0.2em; }
 li     { margin-left: 1em; }
 a         {
   text-decoration: none;
@@ -50,9 +49,9 @@ a:hover   { color: dimgrey; background-color:cyan; text-shadow: none; }
 table, th, td {
     vertical-align: top; text-align: left;
     border-collapse: collapse;
-    border: 1px solid grey;
-    margin: 5px 5px;
-    padding: 3px 5px;
+    border: 0.1em solid grey;
+    margin: 0.2em 0.2em;
+    padding: 0.1em 0.2em;
 }
 table { min-width: 30%; }
 th    { color: white; background-color: darkgreen; }
@@ -67,27 +66,27 @@ th    { color: white; background-color: darkgreen; }
   font-family: "Ubuntu Mono", "DejaVu Sans Mono", Menlo, monospace;
   color: white; background-color: black;
   scrollbar-color: limegreen black;
-  margin: 3px 1% 4px 1%;
-  padding-left: 0.2em; padding-right: 0.2em;
-  border-top: 5px solid limegreen; border-left: 3px solid limegreen;
-  border-top-left-radius: 5px;
+  margin: 0.2em 1% 0.4em 1%;
+  padding: 0.2em  0.2em  0  0.2em;
+  border-top: 0.4em solid limegreen; border-left: 0.2em solid limegreen;
+  border-top-left-radius: 0.4em;
   width: fit-content; min-width: 30%; max-width: 95%;
   white-space: nowrap; overflow-x: auto;
 }
 
 /* quote blocks */
 .info {
-  background-color: darkblue;
-  border-top: 10px solid steelblue; border-left: 5px solid steelblue;
-  border-top-left-radius: 10px;
-  margin-left: 10px; padding-left: 2%; padding-right: 5%;
+  background-color: midnightblue;
+  border-top: 0.5em solid steelblue; border-left: 0.3em solid steelblue;
+  border-top-left-radius: 0.4em;
+  margin-left: 0.4em; padding-left: 2%; padding-right: 5%;
   width: fit-content; min-width: 30%;
 }
 .warn {
   background-color: darkred;
-  border-top: 10px solid orangered; border-left: 5px solid orangered;
-  border-top-left-radius: 10px;
-  margin-left: 10px; padding-left: 5%; padding-right: 2%;
+  border-top: 0.5em solid orangered; border-left: 0.3em solid orangered;
+  border-top-left-radius: 0.4em;
+  margin-left: 0.4em; padding-left: 5%; padding-right: 2%;
   width: fit-content; min-width: 30%;
 }
 
@@ -97,5 +96,5 @@ th    { color: white; background-color: darkgreen; }
 a.syn-name { color: limegreen; }
 .syn-call  { color: cyan; }
 .syn-string { color: limegreen; }
-
+span.syn-comment { color: white; background-color: #2b2b2b; }
 
