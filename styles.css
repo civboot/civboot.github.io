@@ -1,9 +1,10 @@
 /* This sylesheet is part of civboot and is public domain. */
-*  { margin: 0; }
+*  { margin: 0; padding: 0; }
 html {
-  font-family: Helvetica, sans-serif; font-size: 18px;
+  font-family: Helvetica, sans-serif;
+  font-size: 1.2em;
   color: white; background-color: #121111;
-  margin-left: 2px;
+  overflow-wrap: break-word;
 }
 /* doc structure */
 nav { margin-top: 20px; }
@@ -13,7 +14,7 @@ nav { margin-top: 20px; }
 }
 .nav-selected { color: #121111; background-color: gold; }
 .doc {
-  margin: 20px; padding: 10px;
+  margin: 1.8%; padding: 1%;
   background-color: #2b2b2b;
   border-radius: 25px;
 }
@@ -25,7 +26,6 @@ h1, h2, h3, h4, h5, h6 {
   /* offset-x | offset-y | blur-radius */
   text-shadow: 0.1em 0.1em 0.05em black;
   width: fit-content; max-width: 95%;
-  /* border-bottom: 3px solid silver; */
 }
 h1 { font-size: 2.8rem; }
 h2 { font-size: 2.2rem; }
@@ -35,11 +35,13 @@ h5 { font-size: 1.4rem; }
 h6 { font-size: 1.2rem; }
 p { margin-top: 2px; }
 ul, ol { margin-bottom: 4px; }
+li     { margin-left: 1em; }
 a         { text-decoration: none; color:royalblue; }
 a:visited { color:dodgerblue; }
 a:hover   { background-color:skyblue; }
 
 /* table */
+.table { overflow-x: auto }
 table, th, td {
     vertical-align: top; text-align: left;
     border-collapse: collapse;
@@ -47,24 +49,24 @@ table, th, td {
     margin: 5px 5px;
     padding: 3px 5px;
 }
-table { min-width: 20rem; }
+table { min-width: 30%; }
 th    { color: white; background-color: darkgreen; }
 
 /* code */
 .code {
   font-family: "Ubuntu Mono", "DejaVu Sans Mono", Menlo, monospace;
   color: white; background-color: black;
-  padding-left: 2px; padding-right: 2px;
+  padding-left: 0.1em; padding-right: 0.1em;
 }
 .code-block {
   font-family: "Ubuntu Mono", "DejaVu Sans Mono", Menlo, monospace;
   color: white; background-color: black;
   scrollbar-color: limegreen black;
   margin: 3px 1% 4px 1%;
-  padding-left: 5px; padding-right: 5px;
+  padding-left: 0.2em; padding-right: 0.2em;
   border-top: 5px solid limegreen; border-left: 3px solid limegreen;
   border-top-left-radius: 5px;
-  width: fit-content; min-width: 10rem; max-width: 95%;
+  width: fit-content; min-width: 30%; max-width: 95%;
   white-space: nowrap; overflow-x: auto;
 }
 
@@ -73,13 +75,13 @@ th    { color: white; background-color: darkgreen; }
   background-color: darkblue;
   border-top: 10px solid steelblue; border-left: 5px solid steelblue;
   border-top-left-radius: 10px;
-  margin-left: 10px; padding-left: 5px; padding-right: 10px;
+  margin-left: 10px; padding-left: 2%; padding-right: 5%;
   width: fit-content; min-width: 30%;
 }
 .warn {
   background-color: darkred;
   border-top: 10px solid orangered; border-left: 5px solid orangered;
   border-top-left-radius: 10px;
-  margin-left: 10px; padding-left: 5px; padding-right: 10px;
+  margin-left: 10px; padding-left: 5%; padding-right: 2%;
   width: fit-content; min-width: 30%;
 }
