@@ -36,9 +36,14 @@ h6 { font-size: 1.2rem; }
 p { margin-top: 2px; }
 ul, ol { margin-bottom: 4px; }
 li     { margin-left: 1em; }
-a         { text-decoration: none; color:royalblue; }
-a:visited { color:dodgerblue; }
-a:hover   { background-color:skyblue; }
+a         {
+  text-decoration: none;
+  color: cyan;
+  /* offset-x | offset-y | blur-radius */
+  text-shadow: 0.1em 0.1em 0.08em dimgray;
+}
+a:visited { color: turquoise; }
+a:hover   { color: dimgrey; background-color:cyan; text-shadow: none; }
 
 /* table */
 .table { overflow-x: auto }
@@ -85,3 +90,12 @@ th    { color: white; background-color: darkgreen; }
   margin-left: 10px; padding-left: 5%; padding-right: 2%;
   width: fit-content; min-width: 30%;
 }
+
+/*syntax highlighting*/
+.syn-kw    { color: firebrick; font-weight: bold; }
+.syn-name  { color: limegreen; font-weight: bold; }
+a.syn-name { color: limegreen; }
+.syn-call  { color: cyan; }
+.syn-string { color: limegreen; }
+
+
