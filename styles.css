@@ -1,21 +1,57 @@
-/* This sylesheet is part of civboot and is public domain. */
+
+/*
+This sylesheet is part of civboot and is public domain.
+
+Brief CSS selector tutorial.
+
+x { ... } changes the properties of selector 'x'.
+
+Selectors:
+  '*' is the universal selector, changes EVERY element.
+
+  'html, nav, h1' etc are html element selectors.
+
+  '.foo' is a class selector, i.e. <div class=foo>
+
+  a.foo only applies to <a class=foo> and can override 'a' properties.
+
+  a:hover is a builtin "pseudo class" of an action associated with 'a'
+
+  Space: i.e. '.list li, tr' selects all 'li' or 'tr' descendents of a
+    class=list element (class=table uses this).
+
+size units:
+  em is relative unit ~1 character in size.
+  %  is relative to total screen dimension.
+  rgb(red,green,blue,opacity) color 0-255, opacity [0-1.0]
+
+Main properties:
+  color: text and border color.
+  margin:  space around _outside_ of element's border.
+  padding: space around _inside_ of element's border.
+  border: set border width/etc.
+  border-radius: make border curved.
+
+Other properties are largely self-documenting or documented inline.
+*/
 *  { margin: 0; padding: 0; }
 html {
   font-family: Helvetica, sans-serif;
   font-size: 1.2em;
-  color: white; background-color: #121111;
-  overflow-wrap: break-word;
+  color: white; background-color: rgb(18,17,17,1.0);
+  overflow-wrap: break-word; /*split words if screen too small*/
 }
-/* doc structure */
 nav { margin-top: 0.5em; margin-left: 0.5em; }
 .nav {
   color: gold;
   margin-left: 0.5em; padding-left: 0.1em; padding-right: 0.1em;
 }
-.nav-selected { color: #121111; background-color: gold; }
+.nav-selected {
+  color: rgb(18,17,17,1.0); background-color: gold;
+}
 .doc {
   margin: 1.8%; padding: 1%;
-  background-color: #2b2b2b;
+  background-color: rgb(43,43,43,1.0);
   border-radius: 0.5em;
 }
 
@@ -23,10 +59,10 @@ nav { margin-top: 0.5em; margin-left: 0.5em; }
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.2em;
   font-weight: normal; letter-spacing: 0.02em;
-  /* offset-x | offset-y | blur-radius */
-  text-shadow: 0.1em 0.1em 0.05em black;
+  text-shadow: 0.1em 0.1em 0.05em black /*off-x+y blur-radius clr*/;;
   width: fit-content; max-width: 95%;
 }
+p  { line-height: 1.1;  }
 h1 { font-size: 2.8rem; }
 h2 { font-size: 2.2rem; }
 h3 { font-size: 1.8rem; }
@@ -35,26 +71,33 @@ h5 { font-size: 1.4rem; }
 h6 { font-size: 1.2rem; }
 ul, ol { margin-bottom: 0.2em; }
 li     { margin-left: 1em; }
-a         {
+a {
   text-decoration: none;
+  cursor: pointer;
   color: cyan;
-  /* offset-x | offset-y | blur-radius */
-  text-shadow: 0.1em 0.1em 0.08em dimgray;
+  text-shadow: 0.1em 0.1em 0.08em dimgrey /*off-x+y blur-radius clr*/;
+  transition: 0.3s;
 }
 a:visited { color: turquoise; }
-a:hover   { color: dimgrey; background-color:cyan; text-shadow: none; }
-
-/* table */
-.table { overflow-x: auto }
-table, th, td {
-    vertical-align: top; text-align: left;
-    border-collapse: collapse;
-    border: 0.1em solid grey;
-    margin: 0.2em 0.2em;
-    padding: 0.1em 0.2em;
+a:hover   {
+  text-shadow: none;
+  color: dimgrey; background-color:cyan;
+  border-radius: 0.3em;
 }
-table { min-width: 30%; }
-th    { color: white; background-color: darkgreen; }
+
+/* table class */
+.table { overflow-x: auto }
+.table /*descdendents of class=table:*/ table, th, td {
+   vertical-align: top; text-align: left;
+   border-collapse: collapse; /* don't double-up borders */
+   border:  0.1em solid grey;
+   margin:  0.2em 0.2em; /*top rgt*/
+   padding: 0.1em 0.2em; /*top rgt*/
+}
+.table table { min-width: 30%; }
+.table th {
+  color: white; background-color: darkgreen;
+}
 
 /* code */
 .code {
@@ -65,36 +108,38 @@ th    { color: white; background-color: darkgreen; }
 .code-block {
   font-family: "Ubuntu Mono", "DejaVu Sans Mono", Menlo, monospace;
   color: white; background-color: black;
-  scrollbar-color: limegreen black;
-  margin: 0.2em 1% 0.4em 1%;
-  padding: 0.2em  0.2em  0  0.2em;
+  margin: 0.2em 1% 0.4em 1% /*top rgt bot lft*/;
+  padding: 0.2em  0.2em  0  0.2em /*top rgt bot lft*/;
   border-top: 0.4em solid limegreen; border-left: 0.2em solid limegreen;
   border-top-left-radius: 0.4em;
-  width: fit-content; min-width: 30%; max-width: 95%;
-  white-space: nowrap; overflow-x: auto;
+  width: fit-content; min-width: 30%;
+  /* Makes a scrollbar if any line is too long. */
+  max-width: 95%; white-space: nowrap; overflow-x: auto;
+  scrollbar-color: limegreen black;
 }
 
 /* quote blocks */
 .info {
   background-color: midnightblue;
-  border-top: 0.5em solid steelblue; border-left: 0.3em solid steelblue;
-  border-top-left-radius: 0.4em;
+  border-top: 0.5em solid SteelBlue; border-left: 0.3em solid SteelBlue;
+  border-radius: 0.4em 0 0.4em 0;
   margin-left: 0.4em; padding-left: 2%; padding-right: 5%;
   width: fit-content; min-width: 30%;
+  box-shadow: rgb(18,17,17,0.3) 0.4em 0.3em /* clr rgt dwn */;
 }
 .warn {
   background-color: darkred;
-  border-top: 0.5em solid orangered; border-left: 0.3em solid orangered;
-  border-top-left-radius: 0.4em;
+  border-top: 0.5em solid OrangeRed; border-left: 0.3em solid OrangeRed;
+  border-radius: 0.4em 0 0.4em 0;
   margin-left: 0.4em; padding-left: 5%; padding-right: 2%;
   width: fit-content; min-width: 30%;
+  box-shadow: rgb(18,17,17,0.3) 0.4em 0.3em /* clr rgt dwn */;
 }
 
 /*syntax highlighting*/
-.syn-kw    { color: firebrick; font-weight: bold; }
-.syn-name  { color: limegreen; font-weight: bold; }
-a.syn-name { color: limegreen; }
-.syn-call  { color: cyan; }
+.syn-kw     { color: firebrick; font-weight: bold; }
+.syn-call   { color: cyan; }
 .syn-string { color: limegreen; }
-span.syn-comment { color: white; background-color: #2b2b2b; }
+.syn-name, a.syn-name { color: limegreen; font-weight: bold; }
+.syn-comment { color: white; background-color: rgb(43,43,43,1.0); }
 
