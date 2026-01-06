@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+write scripts for Lua, execute from shell. This is a tiny Lua module that makes
+it easy to write utilities that work from either bash or Lua.
+<p>
+Example script (see also: <a href="#pkg-script">#pkg-script</a>) <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
+local G = G or _G -- typosafe globals<br>
+<br>
+--- module documentation<br>
+local M = G.mod and mod'myCmdName' or {} -- self-documenting module<br>
+G.MAIN = G.MAIN or M<br>
+<br>
+local mty = require'metaty'<br>
+local shim = require'shim'<br>
+<br>
+--- Comamnd documentation<br>
+M.Args = mty'Args' {<br>
+&nbsp; 'name [string]: the name to say hello to', name='World',<br>
+}<br>
+<br>
+M.main = function(args)<br>
+&nbsp; args = M.Args(shim.parseStr(args))<br>
+&nbsp; print('Hello '..args.name..'!')<br>
+end<br>
+<br>
+if M == MAIN then os.exit(M.main(G.arg)) end<br>
+return M -- return as library
+</div>
+<p>
+Then in <span class=code>PKG.lua</span> add <span class=code>main = 'myCmdName.Main'</span> to enable better
+documentation formatting. Get documentation with <span class=code>doc 'myCmdName'</span>.
+<h2>Module <a id="shim" href="#shim">shim</a> (<a href=".civ/lua/shim.lua:4"><i>src</i></a>)</h2>
+shim: use a lua module in lua OR in the shell.
+<p>
+<h4>Value <a id="shim.__name" href="#shim.__name">shim.__name</a></h4>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>shim.boolean</span></td>
+    <td>[function] (<a href=".civ/lua/shim.lua:81">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="shim.bool" href="#shim.bool">shim.bool</a> (<a href=".civ/lua/shim.lua:81"><i>src</i></a>)</h3>
+Duck type: always return a boolean (except for nil).
+See BOOLS (above) for mapping.
+<h3>Function <a id="shim.bools" href="#shim.bools">shim.bools</a> (<a href=".civ/lua/shim.lua:87"><i>src</i></a>)</h3>
+<h3>Function <a id="shim.construct" href="#shim.construct">shim.construct</a><span class=code>(Args, args) -&gt; ok, err?</span> (<a href=".civ/lua/shim.lua:209"><i>src</i></a>)</h3>
+Construct a metaty-like object from args.
+<p>
+If <span class=code>Args.subcmd</span> is truthy then treats it as a table of
+subcmds. Looks for a subcmd at <span class=code>args[1]</span>, removes it and
+constructs that subcmd, returning a table with the subcmd
+key set.
+<p>
+For example:
+<span class=code>construct({foo=Foo, bar=Bar}, {'foo', 'ding', zing=true})</span>
+returns a {foo=Foo{'ding', zing=true}}.
+<h3>Function <a id="shim.expand" href="#shim.expand">shim.expand</a> (<a href=".civ/lua/shim.lua:151"><i>src</i></a>)</h3>
+expand string keys into <span class=code>--key=value</span>, ordered alphabetically.
+This is mostly useful for interfacing with non-lua shells.
+<h3>Function <a id="shim.file" href="#shim.file">shim.file</a><span class=code>(v, default, mode--[[w+]]) -&gt; file, error?</span> (<a href=".civ/lua/shim.lua:136"><i>src</i></a>)</h3>
+Duck type: get a file handle.
+If <span class=code>v or default</span> is a string then open the file in mode <span class=code>default='w+'</span>
+<h3>Function <a id="shim.getEnvBool" href="#shim.getEnvBool">shim.getEnvBool</a> (<a href=".civ/lua/shim.lua:158"><i>src</i></a>)</h3>
+<h3>Function <a id="shim.init" href="#shim.init">shim.init</a> (<a href=".civ/lua/shim.lua:216"><i>src</i></a>)</h3>
+Convienience function to perform common setup and run a command-like object.
+<h3>Function <a id="shim.list" href="#shim.list">shim.list</a> (<a href=".civ/lua/shim.lua:115"><i>src</i></a>)</h3>
+<h3>Function <a id="shim.listSplit" href="#shim.listSplit">shim.listSplit</a> (<a href=".civ/lua/shim.lua:125"><i>src</i></a>)</h3>
+Duck type: if val is a string then splits it
+if it's a list leaves alone.
+<h3>Function <a id="shim.number" href="#shim.number">shim.number</a> (<a href=".civ/lua/shim.lua:93"><i>src</i></a>)</h3>
+Duck type: always return a number
+<h3>Function <a id="shim.parse" href="#shim.parse">shim.parse</a><span class=code>(v) -&gt; args</span> (<a href=".civ/lua/shim.lua:24"><i>src</i></a>)</h3>
+Parse either a string or list and convert them to key=value table.
+v can be either a list of <span class=code>{'strings', '--option=foo'}</span>
+or <span class=code>{'strings", option='foo'}</span> or a combination of both. If v is a string then
+it is split on whitespace and parsed as a list.
+<p>
+Note: this handles repeat keys by creating and appending a list for that key.
+<h3>Function <a id="shim.parseList" href="#shim.parseList">shim.parseList</a><span class=code>(strlist) -&gt; args</span> (<a href=".civ/lua/shim.lua:62"><i>src</i></a>)</h3>
+Note: typically use parse() or parseStr() instead.
+<h3>Function <a id="shim.parseStr" href="#shim.parseStr">shim.parseStr</a><span class=code>(str) -&gt; args</span> (<a href=".civ/lua/shim.lua:47"><i>src</i></a>)</h3>
+parses the string by splitting via whitespace.
+Asserts the string contains no special chars: <span class=code>'"[]</span>
+This is for convinience, use a table if it's not enough.
+<p>
+Note: if the input is already a table it just returns it.
+<h3>Function <a id="shim.popRaw" href="#shim.popRaw">shim.popRaw</a><span class=code>(args, to) -&gt; to</span> (<a href=".civ/lua/shim.lua:170"><i>src</i></a>)</h3>
+pop raw arguments after '--'
+Removes them (including '--') from args.
+<h3>Function <a id="shim.run" href="#shim.run">shim.run</a> (<a href=".civ/lua/shim.lua:220"><i>src</i></a>)</h3>
+<h3>Function <a id="shim.runSetup" href="#shim.runSetup">shim.runSetup</a> (<a href=".civ/lua/shim.lua:178"><i>src</i></a>)</h3>
+Setup lua using <span class=code>require(LUA_SETUP).setup(args, force)</span>.
+<p>
+The default is to use ds.setup.
+<h3>Function <a id="shim.short" href="#shim.short">shim.short</a><span class=code>(args, short, long, value) -&gt; nil</span> (<a href=".civ/lua/shim.lua:68"><i>src</i></a>)</h3>
+Helper for dealing with <span class=code>-s --short</span> arguments. Mutates
+args to convert short paramaters to their long counterpart.
+<h3>Function <a id="shim.string" href="#shim.string">shim.string</a> (<a href=".civ/lua/shim.lua:106"><i>src</i></a>)</h3>
+Duck type: always return a string
+This is useful for some APIs where you want to convert
+number/true/false to strings
+Converts nil to ''
+</div></body>
+</html>

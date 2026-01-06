@@ -6,107 +6,155 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <nav>
   <ul>
-    <a href="/games/index.html" class=nav>Tutorial</a>
-    <a href="/lua/index.html"   class='nav nav-selected'>Lua</a>
+    <a href="index.html"   class="nav nav-selected">civ/</a>
+    <a href="lua/index.html" class="nav"           >lua/</a>
   </ul>
 </nav>
 
-<body>
-<div class=doc>
-<h1>Under Construction</h1>
-<div class=warn>
-  <p>Go to <a href="https://github.com/civboot/civlua">civlua</a> project for
-  the most up-to-date documentation.
+<body><div class=doc>
 
-  <p>This site is under construction. Right now I am only using it to play with
-  github pages and styling what the output of cxt will be.
+<p>
+<h1>Civstack</h1>
+<p>
+This is the documentation for the Civstack: a self-contained developer tech
+stack for learning and user-power in the public domain.
+<p>
+<h2><a id="Installation" href="#Installation">Installation</h2></a>
+Install Lua with <span class=code>apt-get install lua</span>, <span class=code>brew lua</span> or however you normally
+install software, or follow directions at <a href="https://lua.org/start.html">https://lua.org/start.html</a>.
+You will also need a C compiler.
+<p>
+<div class=info>on NetBSD you must have Lua installed via pkgsrc
+(aka <span class=code>pkgin install lua5.4</span>) as base Lua doesn't link pthread.
 </div>
-
-<h2>Header 2</h2>
-
-Quote:
-<div class=info>
-  <p>This is a quote</p>
-  <p>...by <a href="#">somebody</a>.</p>
+<p>
+Then run the following (or equivalent):
+<p>
+<div class=code-block>export LOGLEVEL=INFO<br>
+lua bootstrap.lua init &nbsp; &nbsp; &nbsp; &nbsp; # create .civconfig.lua<br>
+lua bootstrap.lua boot-test &nbsp; &nbsp;# run tests for your system<br>
+<br>
+# !-- IMPORTANT: run then do what it says for PATH vars --!<br>
+lua bootstrap.lua install civ:cmd/civ &nbsp;# install civ<br>
+source ~/.bashrc<br>
+<br>
+civ test civ:.# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# test all targets<br>
+civ install civ:#full &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# install main civ software
 </div>
-
-<h3>Header 3</h3>
-<h6>Header 6</h6>
-
-<p>Some link to <a href="https://google.com">google.com</a>,
-and <a href="https://dontgohere.com">don't go here</a>
-</p>
-
-<p>A list.</p>
-<ul>
-  <li>item 1.</li>
-  <li><p><span class="code">inline-code</span></li>
+<p>
+By default, civ software will be put in <span class=code>~/.local/civ/</span>. You can
+modify this by changing <span class=code>.civconfig</span>.
+<p>
+<h2><a id="why" href="#why">Why?</h2></a>
+Civstack is an entire "Developer Tech Stack" from scratch, written in Lua (and
+a few small C-extensions). First of all, what is a "Developer Tech Stack"?
+<p>
+Besides the compiler and build system, a software developer only truly depends
+on a few terminal-based tools for development. These are their text editor,
+shell (and/or repl), version control, a means to query documentation, and a few
+other situational tools (i.e. find/replace text). These encompase the
+"Developer Tech Stack". civlua aims to provide this tech stack in a "small"
+amount of code that is well documented and easy for a single developer to
+understand and modify within a few months.
+<p>
+Software is complex. Some of the complexity is to serve goals like performance
+and scaleability; which can be good for large-scale collaboration. However,
+the core tools of a developer such as their editor, shell, utilities and
+documentation should should be completely <i>knowable</i> and <i>hackable</i>.
+How can our tech stack be knowable when all the core tools are so bloated?
+The <span class=code>Python/</span> directory in  <a href="https://github.com/python/cpython">CPython</a> is
+124k lines (and <span class=code>Lib</span> is 790k). <a href="code.commonmark.org">CommonMark</a>, which just
+renders markdown files, is 20 thousand lines alone!
+<p>
+The <a href="https://lua.org">Lua</a> language is only 20k lines of code and this library
+(~15k lines) will soonish implement an entire tech stack that a small team of
+developers or students could use to cooperate and hack. Technology is much more
+joyful when it is at this size and complexity. That is the goal of this
+project, and that is the goal of <a href="https://civboot.org">https://civboot.org</a>, which this project is
+a part of.
+<p>
+<h2><a id="Packages" href="#Packages">Packages</h2></a>
+The following are packaged directly in this repository as subdirectories.
+<p>
+<h3>Commands</h3>
+These can all be called directly in bash with <span class=code>./civ.lua &lt;cmd&gt; ...</span>. You can view
+their command documentation with <span class=code>./civ.lua help &lt;cmd&gt;</span>. <ul>
+  <li><a href="lua/civ.html"><b>civ</b></a>: the civ build system. Modeled off of blaze, it is
+  simpler than Make but <i>much</i> more ergonomic and powerful. All of the
+  <span class=code>PKG.lua</span> files exist for the civ build system.</li>
+  <li><a href="lua/pvc.html"><b>pvc</b></a>: patch version control -- like git but in ~1k LoC.</li>
+  <li><a href="lua/ele.html"><b>Ele</b></a>: Extendable Lua Editor and Lua-first shell --
+  still in development.</li>
+  <li><a href="lua/doc.html"><b>doc</b></a>: get help on any package or lua object as cxt or rendered
+  with color on the terminal.</li>
+  <li><a href="lua/cxt.html"><b>cxt</b></a>: this document and all code documentation is written in
+  <b>cxt</b>, a powerful ultra-simple markup language which is designed to be as
+  easy as possible to parse (for computers <i>and</i> humans) while still using as
+  few characters as possible to express format for common cases. Commands: <ul>
+    <li><span class=code>cxt.html</span>: render a cxt document in html.</li>
+    <li><span class=code>cxt.term</span>: render a cxt document on the terminal</li>
+  </ul></li>
+  <li><a href="lua/ff.html"><b>ff</b></a>: find and fix utility, like a superchanged find+grep from unix
+  land.</li>
 </ul>
-
-
-<p>block code:</p>
-
-<div class="code-block">
-  <span class=syn-kw>function</span> <a class=syn-name href="">foo</a>(a)<br>
-  &nbsp; <span class=syn-call>print</span><span class=syn-string
-  >"0Oo0 - some really really looooooooong text... yup it keeps going and going and going..."</span>
-  <br>
-  &nbsp; <span class=syn-kw>return</span> a + 3&nbsp; <span class=syn-comment>// adding three</span><br>
-  <span class=syn-kw>end</span><br>
-</div>
-
-<p>Short code:</p>
-<div class="code-block">
-  foo()&nbsp; <span class=syn-comment>// comment</span>
-</div>
-
-<h2>A Table</h2>
-<p>Some text before the table.</p>
-
-<div class=table><table>
-  <tbody><tr>
-    <th>1st header column
-    </th>
-    <th>2nd header column
-    </th>
-    <th>3rd header column</th>
-  </tr>
-  <tr>
-    <td>long row 1.1
-    </td>
-    <td>long row 1.2
-    <p>
-    Even includes new line!
-    </p>
-    <div class=info>
-      <p>... and some info!</p>
-    </div>
-</div>
-    </td>
-    <td>long row 1.3
-      <div class=code-block><span class=syn-kw>function</span> <a class=syn-name href="">example</a>(a)<br>
-        &nbsp; <span class=syn-kw>return</span> <span class=syn-string>"code block"</span><br>
-        <span class=syn-kw>end</span>
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td>row 2.1
-    </td>
-    <td>row 2.2
-    </td>
-    <td>row 2.3</td>
-  </tr>
-</tbody></table></div>
-
-<p>End of table... </p>
-<div class=table><table>
-  <tr><td>very</td> <td>shrt</td></tr>
-</table></div>
-
-</div>
-</body>
+<p>
+<h3>Core Libraries</h3>
+The following are the "core libraries" and represent the "batteries included"
+of Civlua. They maintain minimalism but enable ergonomic programming, powerful
+scripting, asynchronous file access and other goodies. <ul>
+  <li><a href="lua/shim.html"><b>shim</b></a>: write scripts for Lua, execute from shell. Think
+  python's <span class=code>argparse</span> but cleaner and allows for Lua OR shell execution.</li>
+  <li><a href="lua/metaty.html"><b>metaty</b></a>: enable typosafe, self documenting records (aka
+  structs) which utilize Lua metatables.</li>
+  <li><a href="lua/fmt.html"><b>fmt</b></a>: format strings and lua nested types with an (optional)
+  style interface.</li>
+  <li><a href="lua/ds.html"><b>ds</b></a>: Data Structures and algnorithms. This module is
+  packed with tons of tiny functions, types and interfaces which enable ergonomic
+  scripting as well as creating applications such as editors and version
+  control systems in pure Lua.</li>
+  <li><a href="lua/lines.html"><b>lines</b></a>: treat files like tables of lines and apply
+  algorithms for that interface. The <span class=code>lines.File</span> and <span class=code>lines.EdFile</span> are
+  especially worth checking out.</li>
+  <li><a href="lua/civix.html"><b>civix</b></a>: unix system interface: ergonomic unix <span class=code>sh</span>,
+  time and file modification are here.</li>
+  <li><a href="lua/lap.html"><b>lap</b></a>: Lua Asynchronous Protocol, for advanced users who want
+  concurrency in pure-lua.</li>
+  <li><a href="lua/fd.html"><b>fd</b></a>: file-descriptor library for async files and other file
+  operations.</li>
+  <li><a href="lua/pegl.html"><b>pegl</b></a>: general-purpose PEG-like parser library, used
+  for <a href="#Package_cxt">cxt</a> and will help provide syntax-highlighting in ele.</li>
+  <li><a href="lua/lson.html"><b>lson</b></a>: implements de/serialization of arbitrary
+  concrete data (including tables) to/from JSON and an extension called LSON.</li>
+</ul>
+<p>
+<h3>Styling</h3>
+The following define an interface to enable color output across any device,
+including: normal terminal, Ele (the civlua text editor) and html syntax
+highlighting: <ul>
+  <li><a href="lua/asciicolor.html"><b>asciicolor</b></a>: specify color and styles using
+  ascii characters, i.e. <span class=code>"BW"</span> is bold+underlined black text on white
+  background.</li>
+  <li><a href="lua/vt100.html"><b>vt100</b></a>: defines common VT100 (aka standard unix)
+  terminal input and output.</li>
+</ul>
+<p>
+<h2><a id="references" href="#references">Shoutouts and Inspiration</h2></a> <ul>
+  <li><a href="https://duskos.org">https://duskos.org</a> which inspired Civboot and which this software
+  eventually hopes to use as (one of) its target operating systems</li>
+  <li><a href="https://lua.org">https://lua.org</a> for creating an awesome and minimal programming langauge</li>
+  <li><a href="https://civboot.org">https://civboot.org</a></li>
+</ul>
+<p>
+<h2><a id="LICENSE" href="#LICENSE">LICENSE</h2></a>
+All software, tests, documentation, notes and anything else in this repository
+is released into the public domain (<a href="UNLICENSE">UNLICENSE</a>) unless otherwise noted in
+the given source file.
+<p>
+If you find any of this software helpful or copy large parts of it, please give
+us a a shoutout in your own projects and let us know by opening an
+<a href="https://github.com/civboot/civlua/issues">issue</a>. Please note that this is not
+required but is highly appreciated, thanks!
+</div></body>
 </html>

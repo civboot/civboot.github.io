@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+<h3>Table <a id="lines" href="#lines">lines</a> (<a href=".civ/lua/lines.lua:7"><i>src</i></a>)</h3>
+lines module, when called splits a string into lines.
+<span class=code>require'lines'(text) -&gt; table of lines</span>
+<p>
+sub-modules include several data structures with more performant
+mechanisms to insert/remove/etc based on real-world workloads
+(i.e. editor, parser, etc)
+<h2>Module <a id="lines.diff" href="#lines.diff">lines.diff</a> (<a href=".civ/lua/lines/diff.lua:6"><i>src</i></a>)</h2>
+Diffing module and command
+Example command: <span class=code>lines.diff{'file/path1.txt', 'file/path2.txt'}</span>
+Note: the arguments can be a string (path) or list of lines.
+<p>
+<h4>Value <a id="lines.diff.__name" href="#lines.diff.__name">lines.diff.__name</a></h4>
+<h3>Table <a id="lines.diff._toTest" href="#lines.diff._toTest">lines.diff._toTest</a></h3>
+<h3>Record <a id="lines.diff.Diff" href="#lines.diff.Diff">lines.diff.Diff</a> (<a href=".civ/lua/lines/diff.lua:35"><i>src</i></a>)</h3>
+Line-based diff.
+The default algorithm uses patience diff. Special thanks to:
+<a href="https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm">https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm</a>
+<p>
+The basic algorithm on before/after line lists: <ul>
+  <li>skip unchanged lines on both top and bottom</li>
+  <li>find unique lines in both sets and "align" them with
+  using "longest increasing sequence"</li>
+  <li>repeat for each aligned section</li>
+</ul>
+<p>
+Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>b</span></td>
+    <td>[lines] 
+    base, aka original lines</td>
+  </tr>
+  <tr>
+    <td><span class=code>c</span></td>
+    <td>[lines] 
+    change, aka new lines</td>
+  </tr>
+  <tr>
+    <td><span class=code>di</span></td>
+    <td>[int] 
+    len of noc/rem/add</td>
+  </tr>
+  <tr>
+    <td><span class=code>noc</span></td>
+    <td>[ints] 
+    nochange range (in both)</td>
+  </tr>
+  <tr>
+    <td><span class=code>rem</span></td>
+    <td>[ints] 
+    removed from b</td>
+  </tr>
+  <tr>
+    <td><span class=code>add</span></td>
+    <td>[ints] 
+    added from c</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__index</span></td>
+    <td>[Ty<Diff>] (<a href=".civ/lua/lines/diff.lua:35">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff._calc</span></td>
+    <td>[function] (<a href=".civ/lua/lines/diff.lua:145">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff._compress</span></td>
+    <td>[function] (<a href=".civ/lua/lines/diff.lua:176">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.diff.Diff.map</span></td>
+    <td>[function] (<a href=".civ/lua/lines/diff.lua:213">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="lines.diff.main" href="#lines.diff.main">lines.diff.main</a> (<a href=".civ/lua/lines/diff.lua:259"><i>src</i></a>)</h3>
+<h3>Record <a id="lines.Writer" href="#lines.Writer">lines.Writer</a></h3>
+<p>
+<h3>Table <a id="lines.Writer.__docs" href="#lines.Writer.__docs">lines.Writer.__docs</a></h3>
+<h3>Table <a id="lines.Writer.__fieldIds" href="#lines.Writer.__fieldIds">lines.Writer.__fieldIds</a></h3>
+<h3>Table <a id="lines.Writer.__fields" href="#lines.Writer.__fields">lines.Writer.__fields</a></h3>
+<h4>Value <a id="lines.Writer.__name" href="#lines.Writer.__name">lines.Writer.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.Writer.__index</span></td>
+    <td>[Ty<lines.Writer>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.Writer.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="lines.Writer.__fmt" href="#lines.Writer.__fmt">lines.Writer.__fmt</a> (<a href=".civ/lua/metaty.lua:234"><i>src</i></a>)</h4>
+The default __fmt method.
+<h4>Function <a id="lines.Writer.__newindex" href="#lines.Writer.__newindex">lines.Writer.__newindex</a> (<a href=".civ/lua/metaty.lua:303"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.Writer.extend" href="#lines.Writer.extend">lines.Writer.extend</a><span class=code>(r, l) -&gt; r</span> (<a href=".civ/lua/ds.lua:460"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.Writer.flush" href="#lines.Writer.flush">lines.Writer.flush</a> (<a href=".civ/lua/ds.lua:148"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.Writer.get" href="#lines.Writer.get">lines.Writer.get</a> (<a href=".civ/lua/pegl.lua:143"><i>src</i></a>)</h4>
+Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+and must define the <span class=code>parse</span> method.
+<h4>Function <a id="lines.Writer.icopy" href="#lines.Writer.icopy">lines.Writer.icopy</a> (<a href=".civ/lua/ds.lua:662"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.Writer.set" href="#lines.Writer.set">lines.Writer.set</a> (<a href=".civ/lua/pegl.lua:143"><i>src</i></a>)</h4>
+Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+and must define the <span class=code>parse</span> method.
+<h4>Function <a id="lines.Writer.write" href="#lines.Writer.write">lines.Writer.write</a> (<a href=".civ/lua/lines/Writer.lua:17"><i>src</i></a>)</h4>
+<h3>Record <a id="Gap" href="#Gap">Gap</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>bot</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>top</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>path</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>readonly</span></td>
+    <td>[bool] </td>
+  </tr>
+</table></div>
+<h3>Table <a id="Gap.__docs" href="#Gap.__docs">Gap.__docs</a></h3>
+<h3>Table <a id="Gap.__fieldIds" href="#Gap.__fieldIds">Gap.__fieldIds</a></h3>
+<h3>Table <a id="Gap.__fields" href="#Gap.__fields">Gap.__fields</a></h3>
+<h4>Value <a id="Gap.__name" href="#Gap.__name">Gap.__name</a></h4>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Gap.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Gap.close</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Gap.flush</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Gap.set</span></td>
+    <td>[function] (<a href=".civ/lua/lines/Gap.lua:83">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="Gap.__len" href="#Gap.__len">Gap.__len</a><span class=code>(g) -&gt; #g.bot + #g.top</span> (<a href=".civ/lua/lines/Gap.lua:54"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.__newindex" href="#Gap.__newindex">Gap.__newindex</a> (<a href=".civ/lua/lines/Gap.lua:83"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.__pairs" href="#Gap.__pairs">Gap.__pairs</a> (<a href=".civ/lua/ds/IFile.lua:58"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.dumpf" href="#Gap.dumpf">Gap.dumpf</a> (<a href=".civ/lua/lines/Gap.lua:132"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.extend" href="#Gap.extend">Gap.extend</a> (<a href=".civ/lua/lines/Gap.lua:99"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.get" href="#Gap.get">Gap.get</a> (<a href=".civ/lua/lines/Gap.lua:59"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.icopy" href="#Gap.icopy">Gap.icopy</a><span class=code>(g) -&gt; list</span> (<a href=".civ/lua/lines/Gap.lua:43"><i>src</i></a>)</h4>
+<h4>Function <a id="Gap.inset" href="#Gap.inset">Gap.inset</a><span class=code>(g, i, values, rmlen) -&gt; rm?</span> (<a href=".civ/lua/lines/Gap.lua:92"><i>src</i></a>)</h4>
+See lines.inset for documentation.
+<h4>Function <a id="Gap.load" href="#Gap.load">Gap.load</a><span class=code>(T, f, close) -&gt; Gap?, err?</span> (<a href=".civ/lua/lines/Gap.lua:52"><i>src</i></a>)</h4>
+Load gap from file, which can be a path.
+returns nil, err on error
+<h4>Function <a id="Gap.setGap" href="#Gap.setGap">Gap.setGap</a> (<a href=".civ/lua/lines/Gap.lua:119"><i>src</i></a>)</h4>
+set the gap to the line number, making <span class=code>l == #g.bot</span>.
+<h4>Function <a id="Gap.write" href="#Gap.write">Gap.write</a> (<a href=".civ/lua/lines/Gap.lua:130"><i>src</i></a>)</h4>
+<h3>Record <a id="lines.U3File" href="#lines.U3File">lines.U3File</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>f</span></td>
+    <td>[file] </td>
+  </tr>
+  <tr>
+    <td><span class=code>path</span></td>
+    <td>[str] </td>
+  </tr>
+  <tr>
+    <td><span class=code>mode</span></td>
+    <td>[str] </td>
+  </tr>
+  <tr>
+    <td><span class=code>len</span></td>
+    <td>[int] </td>
+  </tr>
+  <tr>
+    <td><span class=code>_i</span></td>
+    <td>[int] </td>
+  </tr>
+  <tr>
+    <td><span class=code>_m</span></td>
+    <td>[str] 
+    r/w mode</td>
+  </tr>
+  <tr>
+    <td><span class=code>sz</span></td>
+    <td>[int] 
+    the size of each value</td>
+  </tr>
+</table></div>
+<h3>Table <a id="lines.U3File.__docs" href="#lines.U3File.__docs">lines.U3File.__docs</a></h3>
+<h3>Table <a id="lines.U3File.__fieldIds" href="#lines.U3File.__fieldIds">lines.U3File.__fieldIds</a></h3>
+<h3>Table <a id="lines.U3File.__fields" href="#lines.U3File.__fields">lines.U3File.__fields</a></h3>
+<h4>Value <a id="lines.U3File.__name" href="#lines.U3File.__name">lines.U3File.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.U3File.__index</span></td>
+    <td>[Ty<lines.U3File>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lines.U3File.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:303">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.U3File.__pairs</span></td>
+    <td>[function] (<a href=".civ/lua/ds/IFile.lua:58">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.U3File.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.U3File.extend</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines.U3File.icopy</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:662">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="lines.U3File.__len" href="#lines.U3File.__len">lines.U3File.__len</a><span class=code>(fi) -&gt; fi.len</span> (<a href=".civ/lua/ds/IFile.lua:57"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.U3File.close" href="#lines.U3File.close">lines.U3File.close</a> (<a href=".civ/lua/ds/IFile.lua:62"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.U3File.closed" href="#lines.U3File.closed">lines.U3File.closed</a><span class=code>(fi) -&gt; bool</span> (<a href=".civ/lua/ds/IFile.lua:65"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.U3File.flush" href="#lines.U3File.flush">lines.U3File.flush</a><span class=code>(fi) -&gt; fi.f:flush()</span> (<a href=".civ/lua/ds/IFile.lua:56"><i>src</i></a>)</h4>
+<h4>Function <a id="lines.U3File.getbytes" href="#lines.U3File.getbytes">lines.U3File.getbytes</a> (<a href=".civ/lua/ds/IFile.lua:76"><i>src</i></a>)</h4>
+get bytes. If index out of bounds return nil.
+Panic if there are read errors.
+<h4>Function <a id="lines.U3File.move" href="#lines.U3File.move">lines.U3File.move</a><span class=code>(fi, to, mvFn) -&gt; fi</span> (<a href=".civ/lua/ds/IFile.lua:105"><i>src</i></a>)</h4>
+Move the IFile's path to <span class=code>to</span>.
+<p>
+<span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
+<span class=code>civix.mv</span> will be used.
+<p>
+This can be done on both closed and opened files.
+<p>
+The IFile will re-open on the new file regardless of the
+previous state.
+<h4>Function <a id="lines.U3File.reader" href="#lines.U3File.reader">lines.U3File.reader</a><span class=code>(fi) -&gt; IFile?, err?</span> (<a href=".civ/lua/ds/IFile.lua:119"><i>src</i></a>)</h4>
+Get a new read-only instance with an independent file-descriptor.
+<p>
+Warning: currently the reader's len will be static, so this should
+be mostly used for temporary cases. This might be changed in
+the future.
+<h4>Function <a id="lines.U3File.reload" href="#lines.U3File.reload">lines.U3File.reload</a><span class=code>(fi) -&gt; IFile?, errmsg?</span> (<a href=".civ/lua/ds/IFile.lua:48"><i>src</i></a>)</h4>
+Reload IFile from path.
+<h4>Function <a id="lines.U3File.setbytes" href="#lines.U3File.setbytes">lines.U3File.setbytes</a> (<a href=".civ/lua/ds/IFile.lua:86"><i>src</i></a>)</h4>
+<h3>Record <a id="File" href="#File">File</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>path</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>mode</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>f</span></td>
+    <td>[file] 
+    open file</td>
+  </tr>
+  <tr>
+    <td><span class=code>idx</span></td>
+    <td>[U3File] 
+    line index of f</td>
+  </tr>
+  <tr>
+    <td><span class=code>cache</span></td>
+    <td>[WeakV] 
+    cache of lines</td>
+  </tr>
+  <tr>
+    <td><span class=code>loadIdxFn</span></td>
+    <td>  
+    default=lines.futils.loadIdx</td>
+  </tr>
+  <tr>
+    <td><span class=code>_ln</span></td>
+    <td>[int] 
+    current line num (false=end)</td>
+  </tr>
+  <tr>
+    <td><span class=code>_pos</span></td>
+    <td>[bool] 
+    current file pos</td>
+  </tr>
+</table></div>
+<h4>Value <a id="File.IDX_DIR" href="#File.IDX_DIR">File.IDX_DIR</a></h4>
+<h3>Table <a id="File.__docs" href="#File.__docs">File.__docs</a></h3>
+<h3>Table <a id="File.__fieldIds" href="#File.__fieldIds">File.__fieldIds</a></h3>
+<h3>Table <a id="File.__fields" href="#File.__fields">File.__fields</a></h3>
+<h4>Value <a id="File.__name" href="#File.__name">File.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>File.__index</span></td>
+    <td>[Ty<File>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>File.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:303">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>File.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>File._initnew</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>File.extend</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>File.icopy</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:662">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="File.__len" href="#File.__len">File.__len</a><span class=code>(lf) -&gt; #lf.idx</span> (<a href=".civ/lua/lines/File.lua:123"><i>src</i></a>)</h4>
+<h4>Function <a id="File._reindex" href="#File._reindex">File._reindex</a> (<a href=".civ/lua/lines/File.lua:59"><i>src</i></a>)</h4>
+<h4>Function <a id="File.close" href="#File.close">File.close</a> (<a href=".civ/lua/lines/File.lua:88"><i>src</i></a>)</h4>
+<h4>Function <a id="File.flush" href="#File.flush">File.flush</a><span class=code>(lf) -&gt; ok, errmsg?</span> (<a href=".civ/lua/lines/File.lua:96"><i>src</i></a>)</h4>
+<h4>Function <a id="File.get" href="#File.get">File.get</a><span class=code>(lf, i) -&gt; line</span> (<a href=".civ/lua/lines/File.lua:140"><i>src</i></a>)</h4>
+Get line at index
+<h4>Function <a id="File.reader" href="#File.reader">File.reader</a><span class=code>(lf) -&gt; lines.File?, err?</span> (<a href=".civ/lua/lines/File.lua:173"><i>src</i></a>)</h4>
+Get a new read-only instance with an independent file-descriptor.
+<h4>Function <a id="File.set" href="#File.set">File.set</a> (<a href=".civ/lua/lines/File.lua:157"><i>src</i></a>)</h4>
+Set line at index
+<h4>Function <a id="File.write" href="#File.write">File.write</a><span class=code>(lf, ...) -&gt; ok, errmsg?</span> (<a href=".civ/lua/lines/File.lua:121"><i>src</i></a>)</h4>
+append to file
+<h3>Record <a id="EdFile" href="#EdFile">EdFile</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lf</span></td>
+    <td>[lines.File] 
+    indexed file</td>
+  </tr>
+  <tr>
+    <td><span class=code>dats</span></td>
+    <td>[list] 
+    list of Slc</td>
+    <td>Gap</td>
+  </tr>
+  <tr>
+    <td><span class=code>lens</span></td>
+    <td>[list] 
+    rolling sum of dat lengths</td>
+  </tr>
+</table></div>
+<h3>Table <a id="EdFile.__docs" href="#EdFile.__docs">EdFile.__docs</a></h3>
+<h3>Table <a id="EdFile.__fieldIds" href="#EdFile.__fieldIds">EdFile.__fieldIds</a></h3>
+<h3>Table <a id="EdFile.__fields" href="#EdFile.__fields">EdFile.__fields</a></h3>
+<h4>Value <a id="EdFile.__name" href="#EdFile.__name">EdFile.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>EdFile.__index</span></td>
+    <td>[Ty<EdFile>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>EdFile.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>EdFile.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:303">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>EdFile.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>EdFile.icopy</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:662">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="EdFile.__len" href="#EdFile.__len">EdFile.__len</a> (<a href=".civ/lua/lines/EdFile.lua:51"><i>src</i></a>)</h4>
+<h4>Function <a id="EdFile._datindex" href="#EdFile._datindex">EdFile._datindex</a><span class=code>(ef, i) -&gt; di</span> (<a href=".civ/lua/lines/EdFile.lua:60"><i>src</i></a>)</h4>
+get the index into dats where <span class=code>ef[i]</span> is located
+<h4>Function <a id="EdFile._updateLens" href="#EdFile._updateLens">EdFile._updateLens</a> (<a href=".civ/lua/lines/EdFile.lua:46"><i>src</i></a>)</h4>
+<h4>Function <a id="EdFile.close" href="#EdFile.close">EdFile.close</a><span class=code>(ef) -&gt; ef.lf:close()</span> (<a href=".civ/lua/lines/EdFile.lua:102"><i>src</i></a>)</h4>
+Note: this does NOT necessarily flush what you expect.
+<h4>Function <a id="EdFile.dumpf" href="#EdFile.dumpf">EdFile.dumpf</a> (<a href=".civ/lua/lines/EdFile.lua:118"><i>src</i></a>)</h4>
+Dump EdFile to file or path
+<h4>Function <a id="EdFile.extend" href="#EdFile.extend">EdFile.extend</a> (<a href=".civ/lua/lines/EdFile.lua:134"><i>src</i></a>)</h4>
+appends to lf for extend when possible.
+<h4>Function <a id="EdFile.flush" href="#EdFile.flush">EdFile.flush</a><span class=code>(ef) -&gt; ef.lf:flush()</span> (<a href=".civ/lua/lines/EdFile.lua:99"><i>src</i></a>)</h4>
+Flush the .lf member (which can only be extended).
+To write all data to disk use :dumpf()
+<h4>Function <a id="EdFile.get" href="#EdFile.get">EdFile.get</a><span class=code>(ef, i) -&gt; line</span> (<a href=".civ/lua/lines/EdFile.lua:69"><i>src</i></a>)</h4>
+Get line at index
+<h4>Function <a id="EdFile.inset" href="#EdFile.inset">EdFile.inset</a><span class=code>(ef, i, values, rmlen) -&gt; rm?</span> (<a href=".civ/lua/lines/EdFile.lua:250"><i>src</i></a>)</h4>
+insert into EdFile's dats.
+<h4>Function <a id="EdFile.reader" href="#EdFile.reader">EdFile.reader</a> (<a href=".civ/lua/lines/EdFile.lua:95"><i>src</i></a>)</h4>
+Return a read-only view of the EdFile which shares the
+associated data structures.
+<h4>Function <a id="EdFile.set" href="#EdFile.set">EdFile.set</a> (<a href=".civ/lua/lines/EdFile.lua:86"><i>src</i></a>)</h4>
+Set line at index.
+<h4>Function <a id="EdFile.write" href="#EdFile.write">EdFile.write</a><span class=code>(ef, ...) -&gt; self?, errmsg?</span> (<a href=".civ/lua/lines/EdFile.lua:81"><i>src</i></a>)</h4>
+<h2>Module <a id="lines.futils" href="#lines.futils">lines.futils</a> (<a href=".civ/lua/lines/futils.lua:3"><i>src</i></a>)</h2>
+utilities for file loading of lines.
+<p>
+<h4>Value <a id="lines.futils.__name" href="#lines.futils.__name">lines.futils.__name</a></h4>
+<h3>Function <a id="lines.futils.forceLoadIdx" href="#lines.futils.forceLoadIdx">lines.futils.forceLoadIdx</a> (<a href=".civ/lua/lines/futils.lua:15"><i>src</i></a>)</h3>
+<h3>Function <a id="lines.futils.loadIdx" href="#lines.futils.loadIdx">lines.futils.loadIdx</a><span class=code>(f, idxpath, fmode, reindex) -&gt; idxFile</span> (<a href=".civ/lua/lines/futils.lua:41"><i>src</i></a>)</h3>
+load or reindex the file at path to/from idxpath.
+<h2>Module <a id="rebuf.motion" href="#rebuf.motion">rebuf.motion</a> (<a href=".civ/lua/lines/motion.lua:4"><i>src</i></a>)</h2>
+module with helper methods for moving a cursor
+around a lines-like 2D grid.
+<p>
+<h3>Table <a id="rebuf.motion.PathKind" href="#rebuf.motion.PathKind">rebuf.motion.PathKind</a></h3>
+<h3>Table <a id="rebuf.motion.WordKind" href="#rebuf.motion.WordKind">rebuf.motion.WordKind</a></h3>
+<h4>Value <a id="rebuf.motion.__name" href="#rebuf.motion.__name">rebuf.motion.__name</a></h4>
+<h3>Function <a id="rebuf.motion.backword" href="#rebuf.motion.backword">rebuf.motion.backword</a><span class=code>(s, end_, getKind) -&gt; int</span> (<a href=".civ/lua/lines/motion.lua:113"><i>src</i></a>)</h3>
+Go backward to find the start of this (or previous) word
+<h3>Function <a id="rebuf.motion.decDistance" href="#rebuf.motion.decDistance">rebuf.motion.decDistance</a><span class=code>(s, e) -&gt; int</span> (<a href=".civ/lua/lines/motion.lua:17"><i>src</i></a>)</h3>
+decrease distance (start -> end) by 1
+<h3>Function <a id="rebuf.motion.findBack" href="#rebuf.motion.findBack">rebuf.motion.findBack</a><span class=code>(s, pat, end_, plain) -&gt; int</span> (<a href=".civ/lua/lines/motion.lua:144"><i>src</i></a>)</h3>
+find backwards
+this searches for the pattern and returns the LAST one found.
+This is HORRIBLY non-performant, only use for small amounts of data
+<h3>Function <a id="rebuf.motion.forword" href="#rebuf.motion.forword">rebuf.motion.forword</a><span class=code>(s, begin, getKind) -&gt; int</span> (<a href=".civ/lua/lines/motion.lua:98"><i>src</i></a>)</h3>
+Go forward to find the start of the next word
+<h3>Function <a id="rebuf.motion.getRange" href="#rebuf.motion.getRange">rebuf.motion.getRange</a><span class=code>(s, i, getKind) -&gt; si,ei</span> (<a href=".civ/lua/lines/motion.lua:129"><i>src</i></a>)</h3>
+get the <span class=code>range[si,ei]</span> of whatever is at <span class=code>s[i]</span>.
+<h3>Function <a id="rebuf.motion.lcGe" href="#rebuf.motion.lcGe">rebuf.motion.lcGe</a><span class=code>(l, c, l2, c2) -&gt; bool</span> (<a href=".civ/lua/lines/motion.lua:29"><i>src</i></a>)</h3>
+return whether l.c is >= l2.c2
+<h3>Function <a id="rebuf.motion.lcLe" href="#rebuf.motion.lcLe">rebuf.motion.lcLe</a><span class=code>(l, c, l2, c2) -&gt; bool</span> (<a href=".civ/lua/lines/motion.lua:23"><i>src</i></a>)</h3>
+return whether l.c is <= l2.c2
+<h3>Function <a id="rebuf.motion.lcWithin" href="#rebuf.motion.lcWithin">rebuf.motion.lcWithin</a><span class=code>(l, c, l1, c1, l2, c2) -&gt; bool</span> (<a href=".civ/lua/lines/motion.lua:54"><i>src</i></a>)</h3>
+<h3>Function <a id="rebuf.motion.pathKind" href="#rebuf.motion.pathKind">rebuf.motion.pathKind</a><span class=code>(ch) -&gt; ws|sym|path</span> (<a href=".civ/lua/lines/motion.lua:83"><i>src</i></a>)</h3>
+<h3>Function <a id="rebuf.motion.topLeft" href="#rebuf.motion.topLeft">rebuf.motion.topLeft</a><span class=code>(l, c, l2, c2) -&gt; (l, c)</span> (<a href=".civ/lua/lines/motion.lua:39"><i>src</i></a>)</h3>
+return the top-left of two points
+<h3>Function <a id="rebuf.motion.wordKind" href="#rebuf.motion.wordKind">rebuf.motion.wordKind</a><span class=code>(ch) -&gt; ws|sym|let</span> (<a href=".civ/lua/lines/motion.lua:75"><i>src</i></a>)</h3>
+<h3>Table <a id="table" href="#table">table</a></h3>
+<h2>Module <a id="lines.kev" href="#lines.kev">lines.kev</a> (<a href=".civ/lua/lines/kev.lua:13"><i>src</i></a>)</h2>
+kev: "Key Equal Value" serialization format.
+<p>
+This is an extremely common format in many unix utilities, "good enough"
+for a large number of configuration use cases. The format is simple: a file
+containing lines of <span class=code>key=value</span>. The input and output are a table of
+key,val strings (though tostring is called for <span class=code>to()</span>). Lines which don't
+have <span class=code>=</span> in them are ignored.
+<p>
+Nested data is absolutely not supported. Spaces are treated as literal both
+before and after <span class=code>=</span>. If you want a key containing <span class=code>=</span> or key/value
+containing newline then use a different format.
+<p>
+<h4>Value <a id="lines.kev.__name" href="#lines.kev.__name">lines.kev.__name</a></h4>
+<h3>Function <a id="lines.kev.dump" href="#lines.kev.dump">lines.kev.dump</a><span class=code>(t, f) -&gt; lines.dump(M.to(t), f)</span> (<a href=".civ/lua/lines/kev.lua:43"><i>src</i></a>)</h3>
+<h3>Function <a id="lines.kev.from" href="#lines.kev.from">lines.kev.from</a> (<a href=".civ/lua/lines/kev.lua:40"><i>src</i></a>)</h3>
+convert <span class=code>key=value</span> lines to a table.
+<h3>Function <a id="lines.kev.load" href="#lines.kev.load">lines.kev.load</a><span class=code>(f, to) -&gt; M.from(lines.load(f), to)</span> (<a href=".civ/lua/lines/kev.lua:42"><i>src</i></a>)</h3>
+<h3>Function <a id="lines.kev.to" href="#lines.kev.to">lines.kev.to</a> (<a href=".civ/lua/lines/kev.lua:29"><i>src</i></a>)</h3>
+convert to a table of <span class=code>key=value</span> lines.
+</div></body>
+</html>

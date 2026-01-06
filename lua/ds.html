@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+<b>ds</b>: absurdly necessary data structures and algorithms
+<p>
+ds is a small-ish lua library which fills many of the data structure and method
+gaps (needed "batteries") in Lua's standard library. It's only dependency is
+<a href="lib/metaty">lib/metaty</a> which it uses for defining it's records and <a href="lib/fmt">lib/fmt</a> which it
+uses to define the logging interface.
+<p>
+<h3>none: "set but none" vs nil's simply "unset"</h3>
+In Lua <span class=code>nil</span> always means "unset". Certain APIs (like JSON) might distinguish
+between unset vs null/empty/none. For such APIs <span class=code>none</span> can be used to mean "set
+as none" instead of simply "unset" (which is what <span class=code>nil</span> means).
+<p>
+<span class=code>none</span> overrides <span class=code>__metatable='none'</span> so that <span class=code>getmetatable(none)=='none'</span> and
+<span class=code>metaty.ty(none) == 'none'</span>.
+<p>
+<div class=info>WARNING: <span class=code>assert(none)</span> will pass.  Use <span class=code>ds.bool</span> to make <span class=code>none</span> falsy.</div>
+<p>
+<h3>path</h3>
+<span class=code>ds.path</span> has some functions for working with paths.
+<p>
+It interacts (but does not set) the <b>globals</b> <span class=code>CWD</span> and <span class=code>HOME</span> to get the
+"current working directory" and "home directory", respectively.
+<p>
+<h2>Module <a id="ds" href="#ds">ds</a> (<a href=".civ/lua/ds.lua:4"><i>src</i></a>)</h2>
+ds: data structures and algorithms.
+<p>
+<h3>Table <a id="ds.CONCRETE_TYPES" href="#ds.CONCRETE_TYPES">ds.CONCRETE_TYPES</a></h3>
+<h3>Table <a id="ds.DURATION_ZERO" href="#ds.DURATION_ZERO">ds.DURATION_ZERO</a> (<a href=".civ/lua/ds.lua:898"><i>src</i></a>)</h3>
+<h3>Table <a id="ds.IGNORE_TRACE" href="#ds.IGNORE_TRACE">ds.IGNORE_TRACE</a></h3>
+<h3>Table <a id="ds.R" href="#ds.R">ds.R</a> (<a href=".civ/lua/ds.lua:1327"><i>src</i></a>)</h3>
+indexrequire: <span class=code>R.foo</span> is same as <span class=code>require'foo'</span>
+This is mostly used in scripts/etc<div class=code-block>M.R = setmetatable({}, {<br>
+&nbsp; __index=function(_, k) return require(k) end,<br>
+&nbsp; __newindex=function() error"don't set fields" end,<br>
+})
+</div>
+<h4>Value <a id="ds.SKIP" href="#ds.SKIP">ds.SKIP</a></h4>
+<h4>Value <a id="ds.__name" href="#ds.__name">ds.__name</a></h4>
+<h3>Table <a id="ds.bytearray" href="#ds.bytearray">ds.bytearray</a> (<a href=".civ/lua/ds.lua:1176"><i>src</i></a>)</h3>
+bytearray: an array of bytes that can also be used as a file.
+<p>
+Construct with <span class=code>bytearray(str...)</span>
+<p>
+Methods:<ul>
+  <li><span class=code>b:len(v, fill='') --&gt; int</span>
+  get (no args) or set the bytearray length. When v is set, the first
+  character of fill will be used to fill any characters above the current
+  length.</li>
+  <li><span class=code>b:size() --&gt; int</span>
+  return the allocated space of the buffer.</li>
+  <li><span class=code>b:extend(str...) --&gt; b</span>
+  extend bytearray with strings after len.</li>
+  <li><span class=code>b:sub(si, ei) --&gt; string</span>: same as string:sub(...)</li>
+  <li><span class=code>b:replace(i, str)</span>:
+  replace the string at i with str, increasing length if necessary.</li>
+</ul>
+<p>
+In addition, bytearray is file-like with the methods read(), write(),
+seek() and flush(). close() will free all internal memory. pos(n) gets and
+sets the current "file" position, and supports negative indexes.
+<h3>Table <a id="ds.empty" href="#ds.empty">ds.empty</a></h3>
+<h3>Table <a id="ds.none" href="#ds.none">ds.none</a> (<a href=".civ/lua/ds.lua:809"><i>src</i></a>)</h3>
+none: "set as none" vs nil aka "unset"
+<p>
+none is a sentinel value. Use it in APIs where there is an
+"unset but none" such as JSON's "null".
+<h3>Record <a id="ds.BiMap" href="#ds.BiMap">ds.BiMap</a> (<a href=".civ/lua/ds.lua:1058"><i>src</i></a>)</h3>
+Bidirectional Map.
+Maps both <span class=code>key -&gt; value</span> and <span class=code>value -&gt; key</span>.
+Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = nil</span> to handle deletions.
+<p>
+Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.BiMap.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.BiMap.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.BiMap.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.BiMap.__index</span></td>
+    <td>[Ty<BiMap>] (<a href=".civ/lua/ds.lua:1058">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.BiMap.remove</span></td>
+    <td>[<span class=code>(t, k) -&gt; v</span>] (<a href=".civ/lua/ds.lua:1074">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Checked" href="#ds.Checked">ds.Checked</a> (<a href=".civ/lua/ds.lua:752"><i>src</i></a>)</h3>
+Table that errors on missing key
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Checked.__metatable</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Checked.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Deq" href="#ds.Deq">ds.Deq</a> (<a href=".civ/lua/ds.lua:1090"><i>src</i></a>)</h3>
+<span class=code>Deq() -&gt; Deq</span>, a deque
+Use as a first in/out with <span class=code>deq:push(v)/deq()</span>
+<p>
+Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp;pushRight()<br>
+&nbsp; popLeft() &nbsp; popRight()
+</div>
+Calling it is the same as popLeft (use as iterator)
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>right</span></td>
+    <td>[number] </td>
+  </tr>
+  <tr>
+    <td><span class=code>left</span></td>
+    <td>[number] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Deq.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Deq.__index</span></td>
+    <td>[Ty<Deq>] (<a href=".civ/lua/ds.lua:1090">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Deq.__call</span></td>
+    <td>[<span class=code>(deq) -&gt; v</span>] (<a href=".civ/lua/ds.lua:1116">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__len</span></td>
+    <td>[<span class=code>(d) -&gt; #d</span>] (<a href=".civ/lua/ds.lua:1123">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.clear</span></td>
+    <td>[<span class=code>(deq) -&gt; nil: clear deq</span>] (<a href=".civ/lua/ds.lua:1129">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.drain</span></td>
+    <td>[<span class=code>(deq) -&gt; table: get all items and clear deq</span>] (<a href=".civ/lua/ds.lua:1133">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.extendLeft</span></td>
+    <td>[<span class=code>(deq, vals) -&gt; nil</span>] (<a href=".civ/lua/ds.lua:1111">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.extendRight</span></td>
+    <td>[<span class=code>(deq, vals) -&gt; nil</span>] (<a href=".civ/lua/ds.lua:1102">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.pop</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:1116">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.popLeft</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:1116">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.popRight</span></td>
+    <td>[<span class=code>(deq) -&gt; v</span>] (<a href=".civ/lua/ds.lua:1121">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.push</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:1096">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.pushLeft</span></td>
+    <td>[<span class=code>(deq, val) -&gt; nil</span>] (<a href=".civ/lua/ds.lua:1105">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Deq.pushRight</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:1096">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Duration" href="#ds.Duration">ds.Duration</a> (<a href=".civ/lua/ds.lua:874"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>s</span></td>
+    <td>[int] 
+    seconds</td>
+  </tr>
+  <tr>
+    <td><span class=code>ns</span></td>
+    <td>[int] 
+    nanoseconds</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Duration.NANO</span></td>
+    <td>[number] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Duration.__index</span></td>
+    <td>[Ty<Duration>] (<a href=".civ/lua/ds.lua:874">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Duration.__add</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:890">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__lt</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:894">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.__sub</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:885">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.asSeconds</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:880">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.fromMs</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:879">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Duration.fromSeconds</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:878">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Epoch" href="#ds.Epoch">ds.Epoch</a> (<a href=".civ/lua/ds.lua:904"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>s</span></td>
+    <td>[int] 
+    seconds</td>
+  </tr>
+  <tr>
+    <td><span class=code>ns</span></td>
+    <td>[int] 
+    nanoseconds</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Epoch.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Epoch.__index</span></td>
+    <td>[Ty<Epoch>] (<a href=".civ/lua/ds.lua:904">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Epoch.__lt</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:920">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.__sub</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:916">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.asSeconds</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:880">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Epoch.fromSeconds</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:878">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Error" href="#ds.Error">ds.Error</a> (<a href=".civ/lua/ds.lua:1238"><i>src</i></a>)</h3>
+Error message, traceback and cause
+NOTE: you should only use this for printing/logging/etc.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>msg</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>traceback</span></td>
+    <td>[{path}] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cause</span></td>
+    <td>[Error] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Error.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Error.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Error.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Error.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Error.__index</span></td>
+    <td>[Ty<Error>] (<a href=".civ/lua/ds.lua:1238">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Error.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Error.from</span></td>
+    <td>[<span class=code>(msg, tb, cause) -&gt; Error</span>] (<a href=".civ/lua/ds.lua:1266">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Error.msgh</span></td>
+    <td>[<span class=code>(msg, level) -&gt; Error</span>] (<a href=".civ/lua/ds.lua:1271">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Forget" href="#ds.Forget">ds.Forget</a> (<a href=".civ/lua/ds.lua:744"><i>src</i></a>)</h3>
+Table that ignores new indexes. Used to disable caching in tests.
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Forget.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Forget.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Imm" href="#ds.Imm">ds.Imm</a> (<a href=".civ/lua/ds.lua:823"><i>src</i></a>)</h3>
+Immutable table
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Imm.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__metatable</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Imm.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__len</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:836">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__pairs</span></td>
+    <td>[<span class=code>(t) -&gt; next, rawget(t, IMM_DATA) or t</span>] (<a href=".civ/lua/ds.lua:833">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Imm.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.PlainStyler" href="#ds.PlainStyler">ds.PlainStyler</a> (<a href=".civ/lua/ds.lua:81"><i>src</i></a>)</h3>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__index</span></td>
+    <td>[Ty<PlainStyler>] (<a href=".civ/lua/ds.lua:81">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.PlainStyler.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Set" href="#ds.Set">ds.Set</a> (<a href=".civ/lua/ds.lua:928"><i>src</i></a>)</h3>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Set.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Set.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Set.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Set.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Set.__index</span></td>
+    <td>[Ty<Set>] (<a href=".civ/lua/ds.lua:928">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Set.__eq</span></td>
+    <td>[<span class=code>(self, t) -&gt; bool</span>] (<a href=".civ/lua/ds.lua:961">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Set.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Set.diff</span></td>
+    <td>[<span class=code>(self, s) -&gt; Set</span>] (<a href=".civ/lua/ds.lua:974">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Set.union</span></td>
+    <td>[<span class=code>(self, s) -&gt; Set</span>] (<a href=".civ/lua/ds.lua:967">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.Slc" href="#ds.Slc">ds.Slc</a> (<a href=".civ/lua/ds.lua:761"><i>src</i></a>)</h3>
+A slice of anything with start and end indexes.
+<div class=info>Note: This object does not hold a reference to the object being
+sliced.</div>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>si</span></td>
+    <td>[int] 
+    start index</td>
+  </tr>
+  <tr>
+    <td><span class=code>ei</span></td>
+    <td>[int] 
+    end index</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Slc.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Slc.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Slc.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Slc.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Slc.__index</span></td>
+    <td>[Ty<Slc>] (<a href=".civ/lua/ds.lua:761">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Slc.__len</span></td>
+    <td>[<span class=code>(s) -&gt; #s</span>] (<a href=".civ/lua/ds.lua:763">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Slc.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Slc.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Slc.merge</span></td>
+    <td>[<span class=code>(a, b) -&gt; first, second?</span>] (<a href=".civ/lua/ds.lua:770">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.TWriter" href="#ds.TWriter">ds.TWriter</a> (<a href=".civ/lua/ds.lua:1139"><i>src</i></a>)</h3>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.TWriter.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.TWriter.__index</span></td>
+    <td>[Ty<TWriter>] (<a href=".civ/lua/ds.lua:1139">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.TWriter.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.close</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.flush</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TWriter.write</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:1143">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.TypoSafe" href="#ds.TypoSafe">ds.TypoSafe</a> (<a href=".civ/lua/ds.lua:644"><i>src</i></a>)</h3>
+A typo-safe table, typically used in libraries for storing constants.
+<p>
+Adding keys is always allowed but getting non-existant keys is an error.
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__index</span></td>
+    <td>[Ty<TypoSafe>] (<a href=".civ/lua/ds.lua:644">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.TypoSafe.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.WeakK" href="#ds.WeakK">ds.WeakK</a> (<a href=".civ/lua/ds.lua:726"><i>src</i></a>)</h3>
+Weak key table, see docs on <span class=code>__mode</span>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.WeakK.__mode</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.WeakK.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.WeakKV" href="#ds.WeakKV">ds.WeakKV</a> (<a href=".civ/lua/ds.lua:738"><i>src</i></a>)</h3>
+Weak key+value table, see docs on <span class=code>__mode</span>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.WeakKV.__mode</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.WeakKV.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<h3>Record <a id="ds.WeakV" href="#ds.WeakV">ds.WeakV</a> (<a href=".civ/lua/ds.lua:732"><i>src</i></a>)</h3>
+Weak value table, see docs on <span class=code>__mode</span>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.WeakV.__mode</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.WeakV.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.noop</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.sconcat</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:67">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.update</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:49">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="ds.add" href="#ds.add">ds.add</a><span class=code>(t, ...) -&gt; t</span> (<a href=".civ/lua/ds.lua:474"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.auto" href="#ds.auto">ds.auto</a><span class=code>(mod, i) -&gt; (mod, i)</span> (<a href=".civ/lua/ds.lua:1314"><i>src</i></a>)</h3>
+auto-set nil locals using require(mod)
+<span class=code>local x, y, z; ds.auto'mm' -- sets x=mm.x; y=mm.y; z=mm.z</span>
+<h3>Function <a id="ds.bin" href="#ds.bin">ds.bin</a><span class=code>(uint, width--[[8]], sep4--[['_']]) -&gt; str</span> (<a href=".civ/lua/ds.lua:318"><i>src</i></a>)</h3>
+Convert integer to binary representation (0's and 1's) <ul>
+  <li>width will be the number of bits.</li>
+  <li>sep4 will be used to separate every 4 bits, set to
+  nil to disable.</li>
+</ul>
+<h3>Function <a id="ds.binarySearch" href="#ds.binarySearch">ds.binarySearch</a><span class=code>(t, v, cmp, si--[[1]], ei--[[#t]]) -&gt; index</span> (<a href=".civ/lua/ds.lua:997"><i>src</i></a>)</h3>
+Search the sorted table, return i such that: <ul>
+  <li><span class=code>cmp(t[i], v)</span> returns true  for indexes <= i</li>
+  <li><span class=code>cmp(t[i], v)</span> returns false for indexes >  i</li>
+</ul>
+If you want a value perfectly equal then check equality
+on the resulting index.
+<h3>Function <a id="ds.bool" href="#ds.bool">ds.bool</a><span class=code>(v) -&gt; bool</span> (<a href=".civ/lua/ds.lua:814"><i>src</i></a>)</h3>
+convert to boolean (none aware)
+<h3>Function <a id="ds.bound" href="#ds.bound">ds.bound</a><span class=code>(v, min, max) -&gt; value within [min,max]</span> (<a href=".civ/lua/ds.lua:192"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.check" href="#ds.check">ds.check</a> (<a href=".civ/lua/ds.lua:1204"><i>src</i></a>)</h3>
+Throw an error if <span class=code>select(i, ...)</span> is truthy, else return ...
+<p>
+For example, <span class=code>file:read'L'</span> returns <span class=code>line?, errmsg?</span>.
+However, the absence of line doesn't necessarily
+indicate the presence of errmsg: EOF is just <span class=code>nil</span>.
+<p>
+Therefore you can use <span class=code>line = check(2, f:read'L')</span>
+to only assert on the presence of errmsg.
+<h3>Function <a id="ds.clear" href="#ds.clear">ds.clear</a><span class=code>(t, si, len) -&gt; t</span> (<a href=".civ/lua/ds.lua:468"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.concat" href="#ds.concat">ds.concat</a><span class=code>(sep, ...) -&gt; string</span> (<a href=".civ/lua/ds.lua:67"><i>src</i></a>)</h3>
+concatenate the string arguments.
+<h3>Function <a id="ds.copy" href="#ds.copy">ds.copy</a><span class=code>(t, add) -&gt; new t</span> (<a href=".civ/lua/ds.lua:670"><i>src</i></a>)</h3>
+Copy and update full table
+<h3>Function <a id="ds.coroutineErrorMessage" href="#ds.coroutineErrorMessage">ds.coroutineErrorMessage</a><span class=code>(cor, err) -&gt; string</span> (<a href=".civ/lua/ds.lua:178"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.dagSort" href="#ds.dagSort">ds.dagSort</a><span class=code>(ids, parentMap) -&gt; sorted?, cycle?</span> (<a href=".civ/lua/ds.lua:1048"><i>src</i></a>)</h3>
+Sort the directed acyclic graph of ids + parentMap
+to put children before the parents.
+<p>
+returns <span class=code>nil, cycle</span> in the case of a cycle
+<h3>Function <a id="ds.decAbs" href="#ds.decAbs">ds.decAbs</a><span class=code>(v) -&gt; number</span> (<a href=".civ/lua/ds.lua:205"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.deepcopy" href="#ds.deepcopy">ds.deepcopy</a><span class=code>(t) -&gt; table</span> (<a href=".civ/lua/ds.lua:678"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.defaultExtend" href="#ds.defaultExtend">ds.defaultExtend</a><span class=code>(r, l) -&gt; r</span> (<a href=".civ/lua/ds.lua:460"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.defaultICopy" href="#ds.defaultICopy">ds.defaultICopy</a> (<a href=".civ/lua/ds.lua:662"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.dotpath" href="#ds.dotpath">ds.dotpath</a><span class=code>(dots) -&gt; list split by '.'</span> (<a href=".civ/lua/ds.lua:561"><i>src</i></a>)</h3>
+used with ds.getp and ds.setp. Example <div class=code-block>&nbsp; local dp = require'ds'.dotpath<br>
+&nbsp; ds.getp(t, dp'a.b.c')
+</div>
+<h3>Function <a id="ds.drain" href="#ds.drain">ds.drain</a><span class=code>(t, len--[[#t]]) -&gt; table</span> (<a href=".civ/lua/ds.lua:526"><i>src</i></a>)</h3>
+return len items from the end of <span class=code>t</span>, removing them from <span class=code>t</span>
+<h3>Function <a id="ds.emptyTable" href="#ds.emptyTable">ds.emptyTable</a><span class=code>() -&gt; {}</span> (<a href=".civ/lua/ds.lua:537"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.eprint" href="#ds.eprint">ds.eprint</a> (<a href=".civ/lua/ds.lua:1350"><i>src</i></a>)</h3>
+Print to io.sderr
+<h3>Function <a id="ds.eq" href="#ds.eq">ds.eq</a><span class=code>(a, b) -&gt; a == b</span> (<a href=".civ/lua/ds.lua:154"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.eval" href="#ds.eval">ds.eval</a><span class=code>(chunk, env, name) -&gt; (ok, ...)</span> (<a href=".civ/lua/ds.lua:717"><i>src</i></a>)</h3>
+evaluate lua code
+<h3>Function <a id="ds.extend" href="#ds.extend">ds.extend</a><span class=code>(t, l) -&gt; t: move vals to end of t</span> (<a href=".civ/lua/ds.lua:452"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.find" href="#ds.find">ds.find</a><span class=code>(subj, pats, si, plain) -&gt; (ms, me, pi, pat)</span> (<a href=".civ/lua/ds.lua:240"><i>src</i></a>)</h3>
+find any of a list of patterns. Return the match <span class=code>start, end</span> as well as
+the <span class=code>index, pat</span> of the pattern matched.
+<h3>Function <a id="ds.flatten" href="#ds.flatten">ds.flatten</a> (<a href=".civ/lua/ds.lua:486"><i>src</i></a>)</h3>
+return new list which contains all elements inserted in order
+<h3>Function <a id="ds.get" href="#ds.get">ds.get</a><span class=code>(t, k) -&gt; value</span> (<a href=".civ/lua/ds.lua:329"><i>src</i></a>)</h3>
+<span class=code>t[k]</span> if t is a raw table, else <span class=code>getmetatable(t).get(t, k)</span>
+<p>
+This lets many types be substitutable for raw-tables in some APIs (i.e. lines).
+<h3>Function <a id="ds.getOrSet" href="#ds.getOrSet">ds.getOrSet</a><span class=code>(t, k, newFn) -&gt; t[k] or newFn()</span> (<a href=".civ/lua/ds.lua:532"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.geti" href="#ds.geti">ds.geti</a><span class=code>(t, i) -&gt; t[i]</span> (<a href=".civ/lua/ds.lua:371"><i>src</i></a>)</h3>
+get index, handling negatives
+<h3>Function <a id="ds.getp" href="#ds.getp">ds.getp</a><span class=code>(t, path) -&gt; value? at path</span> (<a href=".civ/lua/ds.lua:574"><i>src</i></a>)</h3>
+get the value at the path or nil if the value or any
+intermediate table is missing.
+<div class=code-block>&nbsp; get(t, {'a', 2, 'c'}) &nbsp;-&gt; t.a?[2]?.c?<br>
+&nbsp; get(t, dotpath'a.b.c') -&gt; t.a?.b?.c?
+</div>
+<h3>Function <a id="ds.gt" href="#ds.gt">ds.gt</a><span class=code>(a, b) -&gt; a &gt; b</span> (<a href=".civ/lua/ds.lua:187"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.icopy" href="#ds.icopy">ds.icopy</a><span class=code>(t) -&gt; list</span> (<a href=".civ/lua/ds.lua:657"><i>src</i></a>)</h3>
+Copy list-elements only
+<h3>Function <a id="ds.iden" href="#ds.iden">ds.iden</a><span class=code>(...) -&gt; ...</span> (<a href=".civ/lua/ds.lua:150"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.ieq" href="#ds.ieq">ds.ieq</a> (<a href=".civ/lua/ds.lua:439"><i>src</i></a>)</h3>
+Return true if two list-like tables are equal.
+<h3>Function <a id="ds.ilast" href="#ds.ilast">ds.ilast</a><span class=code>(t, starti, endi) -&gt; iter[starti:endi]</span> (<a href=".civ/lua/ds.lua:432"><i>src</i></a>)</h3>
+iend(t, starti, endi=-1): get islice from the end.
+starti and endi must be negative.
+<p>
+Example: <span class=code>iend({1, 2, 3, 4, 5}, -3, -2) -&gt; 3, 4</span>
+<h3>Function <a id="ds.indexOf" href="#ds.indexOf">ds.indexOf</a><span class=code>(t, find) -&gt; int</span> (<a href=".civ/lua/ds.lua:600"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.indexOfPat" href="#ds.indexOfPat">ds.indexOfPat</a><span class=code>(strs, pat) -&gt; int</span> (<a href=".civ/lua/ds.lua:604"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.inext" href="#ds.inext">ds.inext</a><span class=code>(t, i) -&gt; (i+1, v)</span> (<a href=".civ/lua/ds.lua:393"><i>src</i></a>)</h3>
+next(t, key) but with indexes
+<h3>Function <a id="ds.inset" href="#ds.inset">ds.inset</a><span class=code>(t, i, values, rmlen) -&gt; nil</span> (<a href=".civ/lua/ds.lua:114"><i>src</i></a>)</h3>
+insert values into list at index i.
+Uses <span class=code>inset</span> method if available.
+rmlen, if provided, will cause <span class=code>t[i:i+rmlen]</span> to be removed first
+<p>
+inset is like an extend but the items are insert at any place in the array.
+The rmlen will also remove a certain number of items.
+<h3>Function <a id="ds.iprev" href="#ds.iprev">ds.iprev</a><span class=code>(t, i) -&gt; (i-1, v)</span> (<a href=".civ/lua/ds.lua:399"><i>src</i></a>)</h3>
+inext but reversed.
+<h3>Function <a id="ds.ireverse" href="#ds.ireverse">ds.ireverse</a><span class=code>(t) -&gt; iter</span> (<a href=".civ/lua/ds.lua:402"><i>src</i></a>)</h3>
+ipairs reversed
+<h3>Function <a id="ds.isEmpty" href="#ds.isEmpty">ds.isEmpty</a><span class=code>(t) -&gt; t == nil or next(t) == nil</span> (<a href=".civ/lua/ds.lua:340"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.isEven" href="#ds.isEven">ds.isEven</a><span class=code>(a) -&gt; bool</span> (<a href=".civ/lua/ds.lua:200"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.isOdd" href="#ds.isOdd">ds.isOdd</a><span class=code>(a) -&gt; bool</span> (<a href=".civ/lua/ds.lua:201"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.isPod" href="#ds.isPod">ds.isPod</a> (<a href=".civ/lua/ds.lua:142"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.isWithin" href="#ds.isWithin">ds.isWithin</a><span class=code>(v, min, max) -&gt; bool</span> (<a href=".civ/lua/ds.lua:185"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.islice" href="#ds.islice">ds.islice</a><span class=code>(t, starti, endi) -&gt; iter[starti:endi]</span> (<a href=".civ/lua/ds.lua:417"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.islower" href="#ds.islower">ds.islower</a><span class=code>(c) -&gt; string?</span> (<a href=".civ/lua/ds.lua:225"><i>src</i></a>)</h3>
+return the string if it is only lowercase letters
+<h3>Function <a id="ds.isupper" href="#ds.isupper">ds.isupper</a><span class=code>(c) -&gt; string?</span> (<a href=".civ/lua/ds.lua:222"><i>src</i></a>)</h3>
+return the string if it is only uppercase letters
+<h3>Function <a id="ds.keys" href="#ds.keys">ds.keys</a><span class=code>(t) -&gt; list</span> (<a href=".civ/lua/ds.lua:390"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.last" href="#ds.last">ds.last</a><span class=code>(t) -&gt; t[#t]</span> (<a href=".civ/lua/ds.lua:372"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.lineschunk" href="#ds.lineschunk">ds.lineschunk</a><span class=code>(dat) -&gt; iter()</span> (<a href=".civ/lua/ds.lua:705"><i>src</i></a>)</h3>
+convert lines-like table into chunk for eval
+<h3>Function <a id="ds.lt" href="#ds.lt">ds.lt</a><span class=code>(a, b) -&gt; a &lt; b</span> (<a href=".civ/lua/ds.lua:186"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.lte" href="#ds.lte">ds.lte</a><span class=code>(a, b) -&gt; a &lt;= b</span> (<a href=".civ/lua/ds.lua:188"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.main" href="#ds.main">ds.main</a><span class=code>(fn, ...) -&gt; errno?</span> (<a href=".civ/lua/ds.lua:1287"><i>src</i></a>)</h3>
+Helper function for running commands as "main".
+<h3>Function <a id="ds.merge" href="#ds.merge">ds.merge</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:516"><i>src</i></a>)</h3>
+recursively update t with add. This will call update on inner tables as
+well.
+<div class=info>Note: treats list indexes as normal keys (does not append)</div>
+<h3>Function <a id="ds.name" href="#ds.name">ds.name</a><span class=code>(t) -&gt; string</span> (<a href=".civ/lua/ds.lua:91"><i>src</i></a>)</h3>
+if t is a table returns t.__name or '?'
+<h3>Function <a id="ds.newTable" href="#ds.newTable">ds.newTable</a><span class=code>() -&gt; {}</span> (<a href=".civ/lua/ds.lua:153"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.nosupport" href="#ds.nosupport">ds.nosupport</a> (<a href=".civ/lua/ds.lua:149"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.only" href="#ds.only">ds.only</a><span class=code>(t) -&gt; t[1]</span> (<a href=".civ/lua/ds.lua:378"><i>src</i></a>)</h3>
+get the first (and assert only) element of the list
+<h3>Function <a id="ds.orderedKeys" href="#ds.orderedKeys">ds.orderedKeys</a><span class=code>(t, cmpFn) -&gt; keys</span> (<a href=".civ/lua/ds.lua:496"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.pairlen" href="#ds.pairlen">ds.pairlen</a><span class=code>(t) -&gt; int</span> (<a href=".civ/lua/ds.lua:346"><i>src</i></a>)</h3>
+the full length of all pairs
+<div class=info>WARNING: very slow, requires iterating the whole table</div>
+<h3>Function <a id="ds.popit" href="#ds.popit">ds.popit</a><span class=code>(t, i) -&gt; t[i] and length of t is reduced by 1</span> (<a href=".civ/lua/ds.lua:614"><i>src</i></a>)</h3>
+popit (aka pop-index-top) will return the value at <span class=code>t[i]</span>, replacing it
+with the value at the end (aka top) of the list.
+<p>
+if <span class=code>i &gt; #t</span> returns nil and doesn't affect the size of the list.
+<h3>Function <a id="ds.popk" href="#ds.popk">ds.popk</a><span class=code>(t, key) -&gt; t[k]: pop key</span> (<a href=".civ/lua/ds.lua:520"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.push" href="#ds.push">ds.push</a><span class=code>(t, v) -&gt; index</span> (<a href=".civ/lua/ds.lua:70"><i>src</i></a>)</h3>
+push the value onto the end of the table, return the index.
+<h3>Function <a id="ds.pushSortedKeys" href="#ds.pushSortedKeys">ds.pushSortedKeys</a><span class=code>(t, cmpFn) -&gt; t</span> (<a href=".civ/lua/ds.lua:503"><i>src</i></a>)</h3>
+adds all <span class=code>key=index</span> to the table so the keys can
+be iterated using <span class=code>for _, k in ipairs(t)</span>
+<h3>Function <a id="ds.rawgetp" href="#ds.rawgetp">ds.rawgetp</a><span class=code>(t, path) -&gt; value? at path</span> (<a href=".civ/lua/ds.lua:582"><i>src</i></a>)</h3>
+same as ds.getp but uses <span class=code>rawget</span>
+<h3>Function <a id="ds.rawislice" href="#ds.rawislice">ds.rawislice</a><span class=code>(state, i) -&gt; (i+1, v)</span> (<a href=".civ/lua/ds.lua:407"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.readPath" href="#ds.readPath">ds.readPath</a> (<a href=".civ/lua/ds.lua:686"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.replace" href="#ds.replace">ds.replace</a><span class=code>(t, r) -&gt; t</span> (<a href=".civ/lua/ds.lua:478"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.repr" href="#ds.repr">ds.repr</a><span class=code>(v) -&gt; sfmt('%q', v)</span> (<a href=".civ/lua/ds.lua:196"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.resource" href="#ds.resource">ds.resource</a> (<a href=".civ/lua/ds.lua:1334"><i>src</i></a>)</h3>
+Include a resource (raw data) relative to the current file.
+<p>
+Example: <span class=code>M.myData = ds.resource'data/myData.csv'</span>
+<h3>Function <a id="ds.resume" href="#ds.resume">ds.resume</a><span class=code>(th) -&gt; (ok, err, b, c)</span> (<a href=".civ/lua/ds.lua:1295"><i>src</i></a>)</h3>
+Same as coroutine.resume except uses a ds.Error object for errors
+(has traceback)
+<h3>Function <a id="ds.retFalse" href="#ds.retFalse">ds.retFalse</a><span class=code>() -&gt; false</span> (<a href=".civ/lua/ds.lua:152"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.retTrue" href="#ds.retTrue">ds.retTrue</a><span class=code>() -&gt; true</span> (<a href=".civ/lua/ds.lua:151"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.reverse" href="#ds.reverse">ds.reverse</a><span class=code>(t) -&gt; t (reversed)</span> (<a href=".civ/lua/ds.lua:447"><i>src</i></a>)</h3>
+reverse a list-like table in-place
+<h3>Function <a id="ds.rmleft" href="#ds.rmleft">ds.rmleft</a><span class=code>(t, rm, eq--[[ds.eq]]) -&gt; t (mutated)</span> (<a href=".civ/lua/ds.lua:552"><i>src</i></a>)</h3>
+remove (mutate) the left side of the table (list).
+noop if rm is not exactly equal to the left side.
+<h3>Function <a id="ds.sentinel" href="#ds.sentinel">ds.sentinel</a><span class=code>(name, mt) -&gt; NewType</span> (<a href=".civ/lua/ds.lua:803"><i>src</i></a>)</h3>
+<span class=code>sentinel(name, metatable)</span>
+Use to create a "sentinel type". Return the (singular) instance.
+<p>
+Sentinels are "single values" commonly used for things like: none, empty, EOF, etc.
+They have most metatable methods disallowed and are immutable down. Methods can
+only be set by the provided metatable value.
+<h3>Function <a id="ds.set" href="#ds.set">ds.set</a> (<a href=".civ/lua/ds.lua:338"><i>src</i></a>)</h3>
+<span class=code>t[k] = v</span> if t is a raw table, else <span class=code>getmetatable(t).set(t, k, v)</span>
+<p>
+This lets many types be substitutable for raw-tables in some APIs (i.e. lines).
+<h3>Function <a id="ds.setIfNil" href="#ds.setIfNil">ds.setIfNil</a><span class=code>(t, k, v) -&gt; nil</span> (<a href=".civ/lua/ds.lua:536"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.setp" href="#ds.setp">ds.setp</a><span class=code>(d, path, value, newFn) -&gt; nil</span> (<a href=".civ/lua/ds.lua:594"><i>src</i></a>)</h3>
+set the value at path using newFn (default=ds.newTable) to create
+missing intermediate tables.
+<div class=code-block>set(t, dotpath'a.b.c', 2) -- t.a?.b?.c = 2</div>
+<h3>Function <a id="ds.setup" href="#ds.setup">ds.setup</a> (<a href=".civ/lua/ds.lua:30"><i>src</i></a>)</h3>
+Default LUA_SETUP, though vt100 is recommended for most users.
+<h3>Function <a id="ds.shortloc" href="#ds.shortloc">ds.shortloc</a><span class=code>(level) -&gt; "dir/file.lua:10"</span> (<a href=".civ/lua/ds.lua:169"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.simplestr" href="#ds.simplestr">ds.simplestr</a> (<a href=".civ/lua/ds.lua:299"><i>src</i></a>)</h3>
+A way to declare simpler mulitline strings which: <ul>
+  <li>ignores the first/last newline if empty</li>
+  <li>removes leading whitespace equal to the first
+  line (or second line if first line has no indent)</li>
+</ul>
+Example: <div class=code-block>local s = require'ds'.simplestr<br>
+local mystr = s[[<br>
+&nbsp; this is<br>
+&nbsp; &nbsp; a string.<br>
+]]<br>
+T.eq('this is\n &nbsp;a string.', mystr)
+</div>
+<h3>Function <a id="ds.slice" href="#ds.slice">ds.slice</a><span class=code>(t, starti, endi) -&gt; list[starti:endi]</span> (<a href=".civ/lua/ds.lua:423"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.sort" href="#ds.sort">ds.sort</a><span class=code>(t, fn) -&gt; t</span> (<a href=".civ/lua/ds.lua:350"><i>src</i></a>)</h3>
+sort table and return it.
+Eventually this may use the <span class=code>__sort</span> metamethod
+<h3>Function <a id="ds.sort2" href="#ds.sort2">ds.sort2</a><span class=code>(a, b) -&gt; (small, large)</span> (<a href=".civ/lua/ds.lua:195"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.sortUnique" href="#ds.sortUnique">ds.sortUnique</a><span class=code>(t, sortFn, rmFn) -&gt; t</span> (<a href=".civ/lua/ds.lua:366"><i>src</i></a>)</h3>
+sort t and remove anything where <span class=code>rmFn(v1, v2)</span>
+(normally rmFn is <span class=code>ds.eq</span>)
+<h3>Function <a id="ds.split" href="#ds.split">ds.split</a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span> (<a href=".civ/lua/metaty.lua:221"><i>src</i></a>)</h3>
+split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
+<span class=code>ei</span> (end index)
+<div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
+&nbsp; ... do something with line<br>
+end
+</div>
+<h3>Function <a id="ds.splitList" href="#ds.splitList">ds.splitList</a><span class=code>(...) -&gt; list</span> (<a href=".civ/lua/ds.lua:247"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.squash" href="#ds.squash">ds.squash</a><span class=code>(s, repl) -&gt; string</span> (<a href=".civ/lua/ds.lua:256"><i>src</i></a>)</h3>
+Squash a string: convert all whitespace to repl (default=' ').
+<h3>Function <a id="ds.srcdir" href="#ds.srcdir">ds.srcdir</a><span class=code>(level) -&gt; "/path/to/dir/"</span> (<a href=".civ/lua/ds.lua:172"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.srcloc" href="#ds.srcloc">ds.srcloc</a><span class=code>(level) -&gt; "/path/to/dir/file.lua:10"</span> (<a href=".civ/lua/ds.lua:162"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.traceback" href="#ds.traceback">ds.traceback</a><span class=code>(level) -&gt; string</span> (<a href=".civ/lua/ds.lua:1223"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.tracelist" href="#ds.tracelist">ds.tracelist</a><span class=code>(tbstr, level) -&gt; {traceback}</span> (<a href=".civ/lua/ds.lua:1220"><i>src</i></a>)</h3>
+convert the string traceback into a list
+<h3>Function <a id="ds.trim" href="#ds.trim">ds.trim</a><span class=code>(subj, pat, index) -&gt; string</span> (<a href=".civ/lua/ds.lua:230"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.trimEnd" href="#ds.trimEnd">ds.trimEnd</a><span class=code>(subj, pat, index) -&gt; string</span> (<a href=".civ/lua/ds.lua:253"><i>src</i></a>)</h3>
+trim the end of the string by removing pat (default='%s')
+<h3>Function <a id="ds.try" href="#ds.try">ds.try</a><span class=code>(fn, ...) -&gt; (ok, ...)</span> (<a href=".civ/lua/ds.lua:1279"><i>src</i></a>)</h3>
+try to run the fn. Similar to pcall. Return one of: <ul>
+  <li>successs: <span class=code>(true, ...)</span></li>
+  <li>failure: <span class=code>(false, ds.Error{...})</span></li>
+</ul>
+<h3>Function <a id="ds.updateKeys" href="#ds.updateKeys">ds.updateKeys</a><span class=code>(t, add, keys) -&gt; t</span> (<a href=".civ/lua/ds.lua:491"><i>src</i></a>)</h3>
+like update but only for specified keys
+<h3>Function <a id="ds.usub" href="#ds.usub">ds.usub</a> (<a href=".civ/lua/ds.lua:270"><i>src</i></a>)</h3>
+utf8 sub. If len is pre-computed you can pass it in for better performance.
+<h3>Function <a id="ds.values" href="#ds.values">ds.values</a><span class=code>(t) -&gt; list</span> (<a href=".civ/lua/ds.lua:384"><i>src</i></a>)</h3>
+get only the values of pairs(t) as a list
+<h3>Function <a id="ds.walk" href="#ds.walk">ds.walk</a><span class=code>(t, fieldFn, tableFn, maxDepth, state) -&gt; nil</span> (<a href=".civ/lua/ds.lua:639"><i>src</i></a>)</h3>
+Walk the table up to depth maxDepth (or infinite if nil) <ul>
+  <li><span class=code>fieldFn(key, value, state) &nbsp; &nbsp;-&gt; stop</span> is called for every non-table value.</li>
+  <li><span class=code>tableFn(key, tblValue, state) -&gt; stop</span> is called for every table value</li>
+</ul>
+<p>
+If tableFn <span class=code>stop==ds.SKIP</span> (i.e. 'skip') then that table is not recursed.
+Else if stop then the walk is halted immediately
+<h3>Function <a id="ds.want" href="#ds.want">ds.want</a><span class=code>(mod) -&gt; module?</span> (<a href=".civ/lua/ds.lua:1320"><i>src</i></a>)</h3>
+like require but returns nil
+<h3>Function <a id="ds.writePath" href="#ds.writePath">ds.writePath</a> (<a href=".civ/lua/ds.lua:691"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.yeet" href="#ds.yeet">ds.yeet</a> (<a href=".civ/lua/ds.lua:1342"><i>src</i></a>)</h3>
+exit immediately with message and errorcode = 99
+<p>
+<h2>Module <a id="ds.B" href="#ds.B">ds.B</a> (<a href=".civ/lua/ds.lua:33"><i>src</i></a>)</h2>
+pure-lua bootstrapped library (mainly for bootstrap.lua)
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.B.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.B.push</span></td>
+    <td>[<span class=code>(t, v) -&gt; index</span>] (<a href=".civ/lua/ds.lua:43">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.B.string_concat</span></td>
+    <td>[<span class=code>(sep, ...) -&gt; string</span>] (<a href=".civ/lua/ds.lua:38">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.B.update</span></td>
+    <td>[<span class=code>(t, add) -&gt; t</span>] (<a href=".civ/lua/ds.lua:49">src</a>)</td>
+  </tr>
+</table></div>
+<h2>Module <a id="ds.bt" href="#ds.bt">ds.bt</a> (<a href=".civ/lua/ds.lua:1005"><i>src</i></a>)</h2>
+indexed table as Binary Tree.
+These functions treat an indexed table as a binary tree
+where root is at <span class=code>index=1</span>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.bt.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.bt.left</span></td>
+    <td>[<span class=code>(t, i) -&gt; t[i * 2]</span>] (<a href=".civ/lua/ds.lua:1006">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.bt.lefti</span></td>
+    <td>[<span class=code>(t, i) -&gt; i * 2</span>] (<a href=".civ/lua/ds.lua:1009">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.bt.parent</span></td>
+    <td>[<span class=code>(t, i) -&gt; t[i // 2]</span>] (<a href=".civ/lua/ds.lua:1008">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.bt.parenti</span></td>
+    <td>[<span class=code>(t, i) -&gt; i // 2</span>] (<a href=".civ/lua/ds.lua:1011">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.bt.right</span></td>
+    <td>[<span class=code>(t, i) -&gt; t[i * 2 + 1]</span>] (<a href=".civ/lua/ds.lua:1007">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.bt.righti</span></td>
+    <td>[<span class=code>(t, i) -&gt; i * 2 + 1</span>] (<a href=".civ/lua/ds.lua:1010">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="Iter" href="#Iter">Iter</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>_li</span></td>
+    <td>[int] = <span class=code>0</span>
+    left index of fns (stored at negative index)</td>
+  </tr>
+  <tr>
+    <td><span class=code>_nextK</span></td>
+    <td>[any] 
+    next key when <span class=code>iter()</span>ated</td>
+  </tr>
+</table></div>
+<h3>Table <a id="Iter.__docs" href="#Iter.__docs">Iter.__docs</a></h3>
+<h3>Table <a id="Iter.__fieldIds" href="#Iter.__fieldIds">Iter.__fieldIds</a></h3>
+<h3>Table <a id="Iter.__fields" href="#Iter.__fields">Iter.__fields</a></h3>
+<h4>Value <a id="Iter.__name" href="#Iter.__name">Iter.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Iter.__index</span></td>
+    <td>[Ty<Iter>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Iter.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Iter.__ipairs</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:149">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Iter.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Iter.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="Iter.__call" href="#Iter.__call">Iter.__call</a> (<a href=".civ/lua/ds/Iter.lua:272"><i>src</i></a>)</h4>
+use as an iterator.
+<h4>Function <a id="Iter.all" href="#Iter.all">Iter.all</a><span class=code>(it) -&gt; not it:find(allFn)</span> (<a href=".civ/lua/ds/Iter.lua:217"><i>src</i></a>)</h4>
+return true if any of the values are truthy
+<h4>Function <a id="Iter.any" href="#Iter.any">Iter.any</a><span class=code>(it) -&gt; not not it:find(anyFn)</span> (<a href=".civ/lua/ds/Iter.lua:221"><i>src</i></a>)</h4>
+return true if any of the values are truthy
+<h4>Function <a id="Iter.assertEq" href="#Iter.assertEq">Iter.assertEq</a> (<a href=".civ/lua/ds/Iter.lua:299"><i>src</i></a>)</h4>
+Used for testing. <span class=code>Iter:assertEq(it1, it2)</span> constructs both
+iterators using <span class=code>Iter()</span> and then asserts the results are
+identical.
+<h4>Function <a id="Iter.concat" href="#Iter.concat">Iter.concat</a><span class=code>(it, sep) -&gt; concat(it:to(), sep)</span> (<a href=".civ/lua/ds/Iter.lua:256"><i>src</i></a>)</h4>
+<h4>Function <a id="Iter.filter" href="#Iter.filter">Iter.filter</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:116"><i>src</i></a>)</h4>
+- emit only <span class=code>if fn(k, v)</span> results
+<h4>Function <a id="Iter.filterK" href="#Iter.filterK">Iter.filterK</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:123"><i>src</i></a>)</h4>
+- emit only <span class=code>if fn(k)</span> results
+<h4>Function <a id="Iter.filterV" href="#Iter.filterV">Iter.filterV</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:130"><i>src</i></a>)</h4>
+- emit only <span class=code>if fn(v)</span> results
+<h4>Function <a id="Iter.find" href="#Iter.find">Iter.find</a><span class=code>(it, fn) -&gt; k, v</span> (<a href=".civ/lua/ds/Iter.lua:212"><i>src</i></a>)</h4>
+run the iterator over all values, calling <span class=code>fn(k, v)</span> for each.
+return the first <span class=code>k, v</span> where the fn returns a truthy value.
+<h4>Function <a id="Iter.index" href="#Iter.index">Iter.index</a><span class=code>(it) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:191"><i>src</i></a>)</h4>
+emit <span class=code>i, k</span>, dropping values. <span class=code>i</span> starts at <span class=code>1</span> and increments each
+time called.
+<p>
+<div class=info> Note: this is most useful for iterators which don't emit a <span class=code>v</span>.
+i.e. getting the line number in <span class=code>file:lines()</span></div>
+<h4>Function <a id="Iter.keyIn" href="#Iter.keyIn">Iter.keyIn</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:155"><i>src</i></a>)</h4>
+emit <span class=code>k, v</span> for each non-nil <span class=code>t[k]</span>
+<h4>Function <a id="Iter.keyNotIn" href="#Iter.keyNotIn">Iter.keyNotIn</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:162"><i>src</i></a>)</h4>
+emit <span class=code>k, v</span> for each nil <span class=code>t[k]</span>
+<h4>Function <a id="Iter.keysTo" href="#Iter.keysTo">Iter.keysTo</a><span class=code>(it, to={}) -&gt; to</span> (<a href=".civ/lua/ds/Iter.lua:247"><i>src</i></a>)</h4>
+collect emitted <span class=code>k</span> as a list (vals are dropped)
+<h4>Function <a id="Iter.listen" href="#Iter.listen">Iter.listen</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:182"><i>src</i></a>)</h4>
+emit <span class=code>k, v</span> after calling <span class=code>fn(k, v)</span>.
+The results of the fn are ignored
+<h4>Function <a id="Iter.lookup" href="#Iter.lookup">Iter.lookup</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:136"><i>src</i></a>)</h4>
+emit<span class=code>v, $t[k]</span>, looking up the iter's values in the table's keys.
+<h4>Function <a id="Iter.lookupK" href="#Iter.lookupK">Iter.lookupK</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:141"><i>src</i></a>)</h4>
+emit <span class=code>t[k], v</span> for each non-nil <span class=code>t[k]</span>
+<h4>Function <a id="Iter.lookupV" href="#Iter.lookupV">Iter.lookupV</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:148"><i>src</i></a>)</h4>
+emit <span class=code>k, $t[v]</span> for each non-nil <span class=code>t[v]</span>
+<h4>Function <a id="Iter.map" href="#Iter.map">Iter.map</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:96"><i>src</i></a>)</h4>
+emit <span class=code>k, v = fn(v)</span> for each non-nil result
+<p>
+<div class=info>Note: if performance matters this is the most performant
+application function since it doesn't create an internal
+function.
+</div>
+<h4>Function <a id="Iter.mapK" href="#Iter.mapK">Iter.mapK</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:101"><i>src</i></a>)</h4>
+- emit <span class=code>fn(k), v)</span> for each non-nil result.
+<h4>Function <a id="Iter.mapV" href="#Iter.mapV">Iter.mapV</a><span class=code>(it, fn) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:109"><i>src</i></a>)</h4>
+emit <span class=code>k, fn(v)</span> for each non-nil result.
+(filtered when <span class=code>newK==nil</span>)
+<h4>Function <a id="Iter.of" href="#Iter.of">Iter.of</a><span class=code>(T, t) -&gt; T{pairs(t)}</span> (<a href=".civ/lua/ds/Iter.lua:45"><i>src</i></a>)</h4>
+create iterable of <span class=code>pairs(t)</span>
+<h4>Function <a id="Iter.ofList" href="#Iter.ofList">Iter.ofList</a><span class=code>(T, t) -&gt; T{ipairs(t)}</span> (<a href=".civ/lua/ds/Iter.lua:48"><i>src</i></a>)</h4>
+create iterable of <span class=code>ipairs(t)</span>
+<h4>Function <a id="Iter.ofOrdList" href="#Iter.ofOrdList">Iter.ofOrdList</a><span class=code>(T, t, cmpFn) -&gt; sortedIter[i, v]</span> (<a href=".civ/lua/ds/Iter.lua:74"><i>src</i></a>)</h4>
+sort t then iterate over list
+<h4>Function <a id="Iter.ofOrdMap" href="#Iter.ofOrdMap">Iter.ofOrdMap</a><span class=code>(T, t, cmpFn) -&gt; sortedIter[k, v]</span> (<a href=".civ/lua/ds/Iter.lua:69"><i>src</i></a>)</h4>
+create an iterable of <span class=code>t</span> which emits keys in order.
+<div class=info> WARNING: this first sorts the keys, which can be slow</div>
+<h4>Function <a id="Iter.ofSlc" href="#Iter.ofSlc">Iter.ofSlc</a><span class=code>(T, t, starti, endi) -&gt; iter[i, v]</span> (<a href=".civ/lua/ds/Iter.lua:82"><i>src</i></a>)</h4>
+iterate over slice of <span class=code>starti:endi</span> in <span class=code>t</span>
+<h4>Function <a id="Iter.ofUnpacked" href="#Iter.ofUnpacked">Iter.ofUnpacked</a> (<a href=".civ/lua/ds/Iter.lua:61"><i>src</i></a>)</h4>
+create an iterable that returns <span class=code>table.unpack</span> on each
+value in <span class=code>ipairs(t)</span>.
+<p>
+i.e. <span class=code>Iter:ofUnpacked{{5, 'five'}, {6, 'six'}}</span> will
+return (5, 'five') then (6, 'six')
+<h4>Function <a id="Iter.reset" href="#Iter.reset">Iter.reset</a><span class=code>(it) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:259"><i>src</i></a>)</h4>
+reset the iterator to run from the start
+<h4>Function <a id="Iter.run" href="#Iter.run">Iter.run</a><span class=code>(it, fn--[[noop]]) -&gt; nil</span> (<a href=".civ/lua/ds/Iter.lua:233"><i>src</i></a>)</h4>
+run the iterator over all values, calling <span class=code>fn(k, v)</span> for each.
+<h4>Function <a id="Iter.single" href="#Iter.single">Iter.single</a><span class=code>(k, v) -&gt; fn(): (k, v) .. nil</span> (<a href=".civ/lua/ds/Iter.lua:280"><i>src</i></a>)</h4>
+create an iterator that returns a single value
+<h4>Function <a id="Iter.swap" href="#Iter.swap">Iter.swap</a><span class=code>(it) -&gt; it[v, k]</span> (<a href=".civ/lua/ds/Iter.lua:196"><i>src</i></a>)</h4>
+emit <span class=code>v, k</span> (swaps key and value)
+<h4>Function <a id="Iter.to" href="#Iter.to">Iter.to</a><span class=code>(it, to={}) -&gt; to</span> (<a href=".civ/lua/ds/Iter.lua:240"><i>src</i></a>)</h4>
+collect non-nil <span class=code>k, v</span> into table-like object <span class=code>to</span>
+<h4>Function <a id="Iter.valIn" href="#Iter.valIn">Iter.valIn</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:169"><i>src</i></a>)</h4>
+emit <span class=code>k, v</span> for each non-nil <span class=code>t[v]</span>
+<h4>Function <a id="Iter.valNotIn" href="#Iter.valNotIn">Iter.valNotIn</a><span class=code>(it, t) -&gt; it</span> (<a href=".civ/lua/ds/Iter.lua:176"><i>src</i></a>)</h4>
+emit <span class=code>k, v</span> for each nil <span class=code>t[v]</span>
+<h4>Function <a id="Iter.valsTo" href="#Iter.valsTo">Iter.valsTo</a><span class=code>(it, to={}) -&gt; to</span> (<a href=".civ/lua/ds/Iter.lua:254"><i>src</i></a>)</h4>
+collect emitted <span class=code>v</span> as a list (keys are dropped)
+<h3>Record <a id="LL" href="#LL">LL</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>l</span></td>
+    <td>[&LL] 
+    left node</td>
+  </tr>
+  <tr>
+    <td><span class=code>r</span></td>
+    <td>[&LL] 
+    right node</td>
+  </tr>
+  <tr>
+    <td><span class=code>v</span></td>
+    <td>[any] 
+    value</td>
+  </tr>
+</table></div>
+<h3>Table <a id="LL.__docs" href="#LL.__docs">LL.__docs</a></h3>
+<h3>Table <a id="LL.__fieldIds" href="#LL.__fieldIds">LL.__fieldIds</a></h3>
+<h3>Table <a id="LL.__fields" href="#LL.__fields">LL.__fields</a></h3>
+<h4>Value <a id="LL.__name" href="#LL.__name">LL.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>LL.__index</span></td>
+    <td>[Ty<LL>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>LL.__ipairs</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:149">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>LL.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>LL.__pairs</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:149">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>LL.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="LL.__add" href="#LL.__add">LL.__add</a><span class=code>(ll, v) -&gt; tail</span> (<a href=".civ/lua/ds/LL.lua:94"><i>src</i></a>)</h4>
+Add DSL (ll + v). Puts node with v=v after tail, returns new tail.
+<h4>Function <a id="LL.__call" href="#LL.__call">LL.__call</a><span class=code>(ll) -&gt; ll.r (use with `for`)</span> (<a href=".civ/lua/ds/LL.lua:113"><i>src</i></a>)</h4>
+<h4>Function <a id="LL.__sub" href="#LL.__sub">LL.__sub</a> (<a href=".civ/lua/ds/LL.lua:111"><i>src</i></a>)</h4>
+Link DSL: l - r ==> l -> r
+Links <span class=code>l:tail() -&gt; r:head(), return r:tail()</span>
+<p>
+Note: This is for convienience and expressiveness of small lists.
+Use link() or insert() if performance matters.
+<p>
+Example: <div class=code-block>&nbsp; l6 &nbsp; &nbsp; = LL(3) - (LL(4) + 5) - L(6) ==&gt; (3 -&gt; 4 -&gt; 5 -&gt; 6)<br>
+&nbsp; l3tail = l1 - l2 - l3
+</div>
+<h4>Function <a id="LL.from" href="#LL.from">LL.from</a><span class=code>(T, list) -&gt; (head, tail) from list of vals</span> (<a href=".civ/lua/ds/LL.lua:43"><i>src</i></a>)</h4>
+<h4>Function <a id="LL.get" href="#LL.get">LL.get</a><span class=code>(ll, i) -&gt; node? (at index +/- i)</span> (<a href=".civ/lua/ds/LL.lua:86"><i>src</i></a>)</h4>
+<h4>Function <a id="LL.head" href="#LL.head">LL.head</a><span class=code>(ll) -&gt; ll</span> (<a href=".civ/lua/ds/LL.lua:45"><i>src</i></a>)</h4>
+<h4>Function <a id="LL.insert" href="#LL.insert">LL.insert</a> (<a href=".civ/lua/ds/LL.lua:60"><i>src</i></a>)</h4>
+insert LL(v) to right of ll
+<span class=code>(h -&gt; 2); h:insert(1) ==&gt; (h -&gt; 1 -&gt; 2)</span>
+<h4>Function <a id="LL.link" href="#LL.link">LL.link</a> (<a href=".civ/lua/ds/LL.lua:54"><i>src</i></a>)</h4>
+create l -> r link
+<h4>Function <a id="LL.rm" href="#LL.rm">LL.rm</a><span class=code>(ll) -&gt; head?</span> (<a href=".civ/lua/ds/LL.lua:73"><i>src</i></a>)</h4>
+remove node ll from linked list
+if ll was the head, returns the new head (or nil)
+<h4>Function <a id="LL.tail" href="#LL.tail">LL.tail</a><span class=code>(ll) -&gt; ll</span> (<a href=".civ/lua/ds/LL.lua:46"><i>src</i></a>)</h4>
+<h4>Function <a id="LL.tolist" href="#LL.tolist">LL.tolist</a><span class=code>(ll) -&gt; {a.v, b.v, c.v, ...}</span> (<a href=".civ/lua/ds/LL.lua:51"><i>src</i></a>)</h4>
+<h2>Module <a id="ds.path" href="#ds.path">ds.path</a> (<a href=".civ/lua/ds/path.lua:5"><i>src</i></a>)</h2>
+working with paths
+Call directly to convert a list|str to a list of path components.
+<p>
+<h4>Value <a id="ds.path.__name" href="#ds.path.__name">ds.path.__name</a></h4>
+<h3>Function <a id="ds.path.abs" href="#ds.path.abs">ds.path.abs</a><span class=code>(path, wd) -&gt; /absolute/path</span> (<a href=".civ/lua/ds/path.lua:112"><i>src</i></a>)</h3>
+Ensure the path is absolute, using the wd (default=cwd()) if necessary
+<p>
+This preserves the type of the input: str -> str; table -> table
+<h3>Function <a id="ds.path.append" href="#ds.path.append">ds.path.append</a> (<a href=".civ/lua/ds/path.lua:41"><i>src</i></a>)</h3>
+append text to path, adds a newline if text doesn't end in one.
+<h3>Function <a id="ds.path.canonical" href="#ds.path.canonical">ds.path.canonical</a><span class=code>(path) -&gt; M.resolve(M.abs(path))</span> (<a href=".civ/lua/ds/path.lua:156"><i>src</i></a>)</h3>
+Get the canonical path.
+This is a shortcut for <span class=code>resolve(abs(path))</span>.
+<h3>Function <a id="ds.path.cmpDirsLast" href="#ds.path.cmpDirsLast">ds.path.cmpDirsLast</a> (<a href=".civ/lua/ds/path.lua:257"><i>src</i></a>)</h3>
+path comparison function for <span class=code>table.sort</span> that sorts
+dirs last, else alphabetically.
+<h3>Function <a id="ds.path.concat" href="#ds.path.concat">ds.path.concat</a><span class=code>(t, _) -&gt; string</span> (<a href=".civ/lua/ds/path.lua:83"><i>src</i></a>)</h3>
+join a table of path components
+<h3>Function <a id="ds.path.cwd" href="#ds.path.cwd">ds.path.cwd</a> (<a href=".civ/lua/ds/path.lua:67"><i>src</i></a>)</h3>
+get/set current working directory
+<h3>Function <a id="ds.path.dir" href="#ds.path.dir">ds.path.dir</a> (<a href=".civ/lua/ds/path.lua:209"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.path.ext" href="#ds.path.ext">ds.path.ext</a><span class=code>(path) -&gt; string. path: [str|list]</span> (<a href=".civ/lua/ds/path.lua:98"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.path.first" href="#ds.path.first">ds.path.first</a> (<a href=".civ/lua/ds/path.lua:198"><i>src</i></a>)</h3>
+<span class=code>first/middle/last -&gt; ("first", "middle/last")</span>
+<h3>Function <a id="ds.path.hasBacktrack" href="#ds.path.hasBacktrack">ds.path.hasBacktrack</a><span class=code>(path) -&gt; bool. path: [str|list]</span> (<a href=".civ/lua/ds/path.lua:94"><i>src</i></a>)</h3>
+return whether a path has any '..' components
+<h3>Function <a id="ds.path.home" href="#ds.path.home">ds.path.home</a><span class=code>() -&gt; M.pathenv('HOME', 'HOMEDIR')</span> (<a href=".civ/lua/ds/path.lua:70"><i>src</i></a>)</h3>
+get the user's home directory
+<h3>Function <a id="ds.path.isDir" href="#ds.path.isDir">ds.path.isDir</a><span class=code>(path) -&gt; path:sub(-1) == '/'</span> (<a href=".civ/lua/ds/path.lua:214"><i>src</i></a>)</h3>
+return whether the path looks like a dir.
+Note: civlua tries to make all ftype='dir' paths end in '/'
+but other libraries or APIs may not conform to this.
+<h3>Function <a id="ds.path.itemeq" href="#ds.path.itemeq">ds.path.itemeq</a><span class=code>(a, b) -&gt; boolean: path items are equal</span> (<a href=".civ/lua/ds/path.lua:160"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.path.last" href="#ds.path.last">ds.path.last</a> (<a href=".civ/lua/ds/path.lua:205"><i>src</i></a>)</h3>
+<span class=code>first/middle/last -&gt; ("first/middle", "last")</span>
+<h3>Function <a id="ds.path.nice" href="#ds.path.nice">ds.path.nice</a><span class=code>(path, wd) -&gt; string</span> (<a href=".civ/lua/ds/path.lua:177"><i>src</i></a>)</h3>
+return a nice path (string) that is resolved and readable.
+<p>
+It's 'nice' because it has no '/../' or '/./' elements
+and has CWD stripped.
+<h3>Function <a id="ds.path.pathenv" href="#ds.path.pathenv">ds.path.pathenv</a> (<a href=".civ/lua/ds/path.lua:61"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.path.read" href="#ds.path.read">ds.path.read</a> (<a href=".civ/lua/ds/path.lua:24"><i>src</i></a>)</h3>
+read file at path or throw error
+<h3>Function <a id="ds.path.relative" href="#ds.path.relative">ds.path.relative</a> (<a href=".civ/lua/ds/path.lua:247"><i>src</i></a>)</h3>
+return the relative path needed to get from <span class=code>from</span> to <span class=code>to</span>.
+<p>
+Note: this ignores (pops) the last item in <span class=code>from</span> if it's not a dir/.
+<p>
+For example
+T.eq(relative('/foo/bar',  '/foo/baz/bob'), 'baz/bob')
+T.eq(relative('/foo/bar/', '/foo/baz/bob'), '../baz/bob')
+<h3>Function <a id="ds.path.resolve" href="#ds.path.resolve">ds.path.resolve</a><span class=code>(path, wd) -&gt; list|str</span> (<a href=".civ/lua/ds/path.lua:152"><i>src</i></a>)</h3>
+resolve any `..` or `.` path components, making the path
+/absolute if necessary.
+The return type is the same as the input type.
+<h3>Function <a id="ds.path.rmleft" href="#ds.path.rmleft">ds.path.rmleft</a> (<a href=".civ/lua/ds/path.lua:165"><i>src</i></a>)</h3>
+ds.rmleft for path components
+<h3>Function <a id="ds.path.short" href="#ds.path.short">ds.path.short</a> (<a href=".civ/lua/ds/path.lua:190"><i>src</i></a>)</h3>
+Return only the parent dir and final item.
+This is often used for documentation/etc
+<h3>Function <a id="ds.path.small" href="#ds.path.small">ds.path.small</a> (<a href=".civ/lua/ds/path.lua:184"><i>src</i></a>)</h3>
+Return the nice path but always keep either / or ./
+at the start.
+<h3>Function <a id="ds.path.toDir" href="#ds.path.toDir">ds.path.toDir</a><span class=code>(path) -&gt; path/</span> (<a href=".civ/lua/ds/path.lua:218"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.path.toNonDir" href="#ds.path.toNonDir">ds.path.toNonDir</a><span class=code>(path) -&gt; path (without ending /)</span> (<a href=".civ/lua/ds/path.lua:222"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.path.write" href="#ds.path.write">ds.path.write</a> (<a href=".civ/lua/ds/path.lua:32"><i>src</i></a>)</h3>
+write string to file at path or throw error
+<h2>Module <a id="ds.utf8" href="#ds.utf8">ds.utf8</a> (<a href=".civ/lua/ds/utf8.lua:4"><i>src</i></a>)</h2>
+utf8 stream decoding.
+Get the length by decodelen(firstbyte), then decode the whole character
+with decode(dat)
+<p>
+<h4>Value <a id="ds.utf8.__name" href="#ds.utf8.__name">ds.utf8.__name</a></h4>
+<h3>Function <a id="ds.utf8.decode" href="#ds.utf8.decode">ds.utf8.decode</a><span class=code>(dat) -&gt; int</span> (<a href=".civ/lua/ds/utf8.lua:25"><i>src</i></a>)</h3>
+decode utf8 data (table) into an integer.
+Use <span class=code>utf8.char</span> (from lua's stdlib) to turn into a string.
+<h3>Function <a id="ds.utf8.decodelen" href="#ds.utf8.decodelen">ds.utf8.decodelen</a><span class=code>(firstbyte) -&gt; U8LEN[0xF8 &amp; firstbyte]</span> (<a href=".civ/lua/ds/utf8.lua:17"><i>src</i></a>)</h3>
+given the first byte return the number of bytes in the utf8 char
+<h2>Module <a id="ds.heap" href="#ds.heap">ds.heap</a> (<a href=".civ/lua/ds/heap.lua:2"><i>src</i></a>)</h2>
+Binary Heap implementation
+<p>
+<h4>Value <a id="ds.heap.__name" href="#ds.heap.__name">ds.heap.__name</a></h4>
+<h3>Record <a id="ds.heap.Heap" href="#ds.heap.Heap">ds.heap.Heap</a> (<a href=".civ/lua/ds/heap.lua:67"><i>src</i></a>)</h3>
+Heap(t, cmp) binary heap using a table.
+A binary heap is a binary tree where the value of the parent always
+satisfies `cmp(parent, child) == true`
+Min Heap: cmp = function(p, c) return p < c end (default)
+Max Heap: cmp = function(p, c) return p > c end
+<p>
+add and push take only O(log n), making it very useful for
+priority queues and similar problems.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cmp</span></td>
+    <td>[function] = <span class=code>fn"ds.lt"[/home/rett/projects/civlua/.civ/lua/ds.lua:186]</span>
+    comparison function to use</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__index</span></td>
+    <td>[Ty<Heap>] (<a href=".civ/lua/ds/heap.lua:67">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.add</span></td>
+    <td>[function] (<a href=".civ/lua/ds/heap.lua:75">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.heap.Heap.pop</span></td>
+    <td>[<span class=code>(h) -&gt; v</span>] (<a href=".civ/lua/ds/heap.lua:84">src</a>)</td>
+  </tr>
+</table></div>
+<h2>Module <a id="ds.log" href="#ds.log">ds.log</a> (<a href=".civ/lua/ds/log.lua:18"><i>src</i></a>)</h2>
+Simple logging library, set i.e. LOGLEVEL=TRACE to enable logging.
+<p>
+This module has the functions <span class=code>trace info warn err crit</span> with the signature:
+<span class=code>function(fmt, ... [, data])</span> <ul>
+  <li>the ... are the format args which behave like <span class=code>fmt.format</span> (aka <span class=code>%q</span>
+  formats tables/etc).</li>
+  <li>data is optional arbitrary data that can be serialized/formatted.</li>
+</ul>
+<p>
+To enable logging the user should set a global (or env var) LOGLEVEL
+to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
+<p>
+This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
+which logs to stderr. This fn is called with signature
+<span class=code>function(level, srcloc, fmt, ...)</span>
+<p>
+<h4>Value <a id="ds.log.CRIT" href="#ds.log.CRIT">ds.log.CRIT</a></h4>
+<h4>Value <a id="ds.log.ERROR" href="#ds.log.ERROR">ds.log.ERROR</a></h4>
+<h4>Value <a id="ds.log.INFO" href="#ds.log.INFO">ds.log.INFO</a></h4>
+<h3>Table <a id="ds.log.LEVEL" href="#ds.log.LEVEL">ds.log.LEVEL</a> (<a href=".civ/lua/ds/log.lua:37"><i>src</i></a>)</h3><div class=code-block>local LEVEL = ds.Checked{<br>
+&nbsp; SLIENT=0, [0]='SILENT',<br>
+&nbsp; C=1, CRIT=1,<br>
+&nbsp; E=2, ERROR=2,<br>
+&nbsp; W=3, WARN=3,<br>
+&nbsp; I=4, INFO=4,<br>
+&nbsp; T=5, TRACE=5,<br>
+&nbsp; 'CRIT', 'ERROR', 'WARN', 'INFO', 'TRACE'<br>
+}; M.LEVEL = LEVEL
+</div>
+<h4>Value <a id="ds.log.TRACE" href="#ds.log.TRACE">ds.log.TRACE</a></h4>
+<h4>Value <a id="ds.log.WARN" href="#ds.log.WARN">ds.log.WARN</a></h4>
+<h4>Value <a id="ds.log.__name" href="#ds.log.__name">ds.log.__name</a></h4>
+<h3>Record <a id="ds.log.LogTable" href="#ds.log.LogTable">ds.log.LogTable</a> (<a href=".civ/lua/ds/log.lua:80"><i>src</i></a>)</h3>
+used in tests
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>tee</span></td>
+    <td>[fn(...)] 
+    call calls will also call tee</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__index</span></td>
+    <td>[Ty<LogTable>] (<a href=".civ/lua/ds/log.lua:80">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__call</span></td>
+    <td>[function] (<a href=".civ/lua/ds/log.lua:88">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__eq</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:439">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.log.LogTable.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="ds.log.crit" href="#ds.log.crit">ds.log.crit</a> (<a href=".civ/lua/ds/log.lua:71"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.err" href="#ds.log.err">ds.log.err</a> (<a href=".civ/lua/ds/log.lua:72"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.info" href="#ds.log.info">ds.log.info</a> (<a href=".civ/lua/ds/log.lua:74"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.levelInt" href="#ds.log.levelInt">ds.log.levelInt</a> (<a href=".civ/lua/ds/log.lua:43"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.levelStr" href="#ds.log.levelStr">ds.log.levelStr</a> (<a href=".civ/lua/ds/log.lua:47"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.logFn" href="#ds.log.logFn">ds.log.logFn</a> (<a href=".civ/lua/ds/log.lua:55"><i>src</i></a>)</h3>
+set the global logging level (default=os.getenv'LOGLEVEL')
+<h3>Function <a id="ds.log.setLevel" href="#ds.log.setLevel">ds.log.setLevel</a> (<a href=".civ/lua/ds/log.lua:52"><i>src</i></a>)</h3>
+set the global logging level (default=os.getenv'LOGLEVEL')
+<h3>Function <a id="ds.log.time" href="#ds.log.time">ds.log.time</a><span class=code>() -&gt; os.date():match'%d%d:%d%d:%d%d'</span> (<a href=".civ/lua/ds/log.lua:27"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.trace" href="#ds.log.trace">ds.log.trace</a> (<a href=".civ/lua/ds/log.lua:75"><i>src</i></a>)</h3>
+<h3>Function <a id="ds.log.warn" href="#ds.log.warn">ds.log.warn</a> (<a href=".civ/lua/ds/log.lua:73"><i>src</i></a>)</h3>
+<h3>Record <a id="ds.Grid" href="#ds.Grid">ds.Grid</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>h</span></td>
+    <td>[int] 
+    height</td>
+  </tr>
+  <tr>
+    <td><span class=code>w</span></td>
+    <td>[int] 
+    width</td>
+  </tr>
+</table></div>
+<h3>Table <a id="ds.Grid.__docs" href="#ds.Grid.__docs">ds.Grid.__docs</a></h3>
+<h3>Table <a id="ds.Grid.__fieldIds" href="#ds.Grid.__fieldIds">ds.Grid.__fieldIds</a></h3>
+<h3>Table <a id="ds.Grid.__fields" href="#ds.Grid.__fields">ds.Grid.__fields</a></h3>
+<h4>Value <a id="ds.Grid.__name" href="#ds.Grid.__name">ds.Grid.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Grid.__index</span></td>
+    <td>[Ty<ds.Grid>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.Grid.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.Grid.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="ds.Grid.clear" href="#ds.Grid.clear">ds.Grid.clear</a><span class=code>(g) -&gt; g</span> (<a href=".civ/lua/ds/Grid.lua:31"><i>src</i></a>)</h4>
+clear the grid
+<h4>Function <a id="ds.Grid.insert" href="#ds.Grid.insert">ds.Grid.insert</a> (<a href=".civ/lua/ds/Grid.lua:55"><i>src</i></a>)</h4>
+Insert the str into the Grid.
+Any newlines will be insert starting at column c.
+<p>
+This will automatically fill <span class=code>[1,c-1]</span> with spaces, but will
+NOT clear any data after the insert text, meaning it is essentially a
+replace.
+FIXME: considere renaming to replace... or something.
+<h2>Module <a id="ds.load" href="#ds.load">ds.load</a> (<a href=".civ/lua/ds/load.lua:29"><i>src</i></a>)</h2>
+load lua modules with custom or default environment in a sandboxed
+environment. This is extremely useful for configurations written in lua or
+writing your own config-like language.
+<p>
+The default environment (ds.load.ENV) has safe default functions which
+cannot access state and missing unsafe functions like getmetatable or the
+debug module.
+<p>
+<h2><a id="loading" href="#loading">loading</h2></a>
+To perform the load, call this module with:
+<div class=code-block>&nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result</div>
+inputs: <ul>
+  <li>path: path to load (lua-syntax file).</li>
+  <li>env: global environment.</li>
+  <li>envMeta: metatable of global environment. If env
+  already has a metatable this is ignored.</li>
+</ul>
+<p>
+outputs: <ul>
+  <li>ok: boolean to indicate load success or failure of script.</li>
+  <li>result: result or loading or ds.Error.</li>
+</ul>
+<p>
+Throws an error if the path is not valid lua code.
+<p>
+<h3>Table <a id="ds.load.ENV" href="#ds.load.ENV">ds.load.ENV</a> (<a href=".civ/lua/ds/load.lua:53"><i>src</i></a>)</h3>
+Default environment for sandboxed loading.<div class=code-block>M.ENV = {<br>
+&nbsp; __name = 'ds.load.ENV',<br>
+&nbsp; format=fmt.format,<br>
+&nbsp; insert=table.insert, push=ds.push,<br>
+&nbsp; sort=ds.sort,<br>
+&nbsp; extend=ds.extend, update=ds.update, merge=ds.merge,<br>
+&nbsp; concat=table.concat,<br>
+&nbsp; tostring=tostring, tointeger=math.tointeger,<br>
+&nbsp; tonumber=tonumber,<br>
+&nbsp; pairs=pairs, &nbsp; ipairs=ipairs,<br>
+&nbsp; isEmpty = ds.isEmpty,<br>
+&nbsp; error=error, &nbsp; assert=fmt.assertf,<br>
+<br>
+&nbsp; record = mty.record, enum = mty.enum,<br>
+&nbsp; type = mty.ty,<br>
+}; M.ENV.__index = M.ENV
+</div>
+<h4>Value <a id="ds.load.__name" href="#ds.load.__name">ds.load.__name</a></h4>
+<h3>Function <a id="ds.load.loadfile" href="#ds.load.loadfile">ds.load.loadfile</a><span class=code>(path, env, envMeta) -&gt; fn?, ds.Error?</span> (<a href=".civ/lua/ds/load.lua:70"><i>src</i></a>)</h3>
+Similar to lua's <span class=code>loadfile</span> but follows conventions of <span class=code>ds.load(...)</span>.
+Unlike loadfile, this throws an error if the path doesn't parse.
+<h3>Record <a id="ds.IFile" href="#ds.IFile">ds.IFile</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>f</span></td>
+    <td>[file] </td>
+  </tr>
+  <tr>
+    <td><span class=code>path</span></td>
+    <td>[str] </td>
+  </tr>
+  <tr>
+    <td><span class=code>mode</span></td>
+    <td>[str] </td>
+  </tr>
+  <tr>
+    <td><span class=code>len</span></td>
+    <td>[int] </td>
+  </tr>
+  <tr>
+    <td><span class=code>_i</span></td>
+    <td>[int] </td>
+  </tr>
+  <tr>
+    <td><span class=code>_m</span></td>
+    <td>[str] 
+    r/w mode</td>
+  </tr>
+  <tr>
+    <td><span class=code>sz</span></td>
+    <td>[int] 
+    the size of each value</td>
+  </tr>
+</table></div>
+<h3>Table <a id="ds.IFile.__docs" href="#ds.IFile.__docs">ds.IFile.__docs</a></h3>
+<h3>Table <a id="ds.IFile.__fieldIds" href="#ds.IFile.__fieldIds">ds.IFile.__fieldIds</a></h3>
+<h3>Table <a id="ds.IFile.__fields" href="#ds.IFile.__fields">ds.IFile.__fields</a></h3>
+<h4>Value <a id="ds.IFile.__name" href="#ds.IFile.__name">ds.IFile.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.IFile.__index</span></td>
+    <td>[Ty<ds.IFile>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ds.IFile.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.IFile.getbytes</span></td>
+    <td>[function] (<a href=".civ/lua/ds/IFile.lua:76">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ds.IFile.setbytes</span></td>
+    <td>[function] (<a href=".civ/lua/ds/IFile.lua:86">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="ds.IFile.__len" href="#ds.IFile.__len">ds.IFile.__len</a><span class=code>(fi) -&gt; fi.len</span> (<a href=".civ/lua/ds/IFile.lua:57"><i>src</i></a>)</h4>
+<h4>Function <a id="ds.IFile.__newindex" href="#ds.IFile.__newindex">ds.IFile.__newindex</a> (<a href=".civ/lua/metaty.lua:303"><i>src</i></a>)</h4>
+<h4>Function <a id="ds.IFile.__pairs" href="#ds.IFile.__pairs">ds.IFile.__pairs</a> (<a href=".civ/lua/ds/IFile.lua:58"><i>src</i></a>)</h4>
+<h4>Function <a id="ds.IFile.close" href="#ds.IFile.close">ds.IFile.close</a> (<a href=".civ/lua/ds/IFile.lua:62"><i>src</i></a>)</h4>
+<h4>Function <a id="ds.IFile.closed" href="#ds.IFile.closed">ds.IFile.closed</a><span class=code>(fi) -&gt; bool</span> (<a href=".civ/lua/ds/IFile.lua:65"><i>src</i></a>)</h4>
+<h4>Function <a id="ds.IFile.create" href="#ds.IFile.create">ds.IFile.create</a><span class=code>(T, sz, path) -&gt; IFile?, errmsg?</span> (<a href=".civ/lua/ds/IFile.lua:37"><i>src</i></a>)</h4>
+This creates a new index file at path (path=nil uses tmpfile()).
+Note: Use load if you want to load an existing index.
+<h4>Function <a id="ds.IFile.flush" href="#ds.IFile.flush">ds.IFile.flush</a><span class=code>(fi) -&gt; fi.f:flush()</span> (<a href=".civ/lua/ds/IFile.lua:56"><i>src</i></a>)</h4>
+<h4>Function <a id="ds.IFile.get" href="#ds.IFile.get">ds.IFile.get</a> (<a href=".civ/lua/ds/IFile.lua:76"><i>src</i></a>)</h4>
+get bytes. If index out of bounds return nil.
+Panic if there are read errors.
+<h4>Function <a id="ds.IFile.load" href="#ds.IFile.load">ds.IFile.load</a><span class=code>(T, sz, path, mode) -&gt; IFile?, errmsg?</span> (<a href=".civ/lua/ds/IFile.lua:54"><i>src</i></a>)</h4>
+load an index file
+<h4>Function <a id="ds.IFile.move" href="#ds.IFile.move">ds.IFile.move</a><span class=code>(fi, to, mvFn) -&gt; fi</span> (<a href=".civ/lua/ds/IFile.lua:105"><i>src</i></a>)</h4>
+Move the IFile's path to <span class=code>to</span>.
+<p>
+<span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
+<span class=code>civix.mv</span> will be used.
+<p>
+This can be done on both closed and opened files.
+<p>
+The IFile will re-open on the new file regardless of the
+previous state.
+<h4>Function <a id="ds.IFile.reader" href="#ds.IFile.reader">ds.IFile.reader</a><span class=code>(fi) -&gt; IFile?, err?</span> (<a href=".civ/lua/ds/IFile.lua:119"><i>src</i></a>)</h4>
+Get a new read-only instance with an independent file-descriptor.
+<p>
+Warning: currently the reader's len will be static, so this should
+be mostly used for temporary cases. This might be changed in
+the future.
+<h4>Function <a id="ds.IFile.reload" href="#ds.IFile.reload">ds.IFile.reload</a><span class=code>(fi) -&gt; IFile?, errmsg?</span> (<a href=".civ/lua/ds/IFile.lua:48"><i>src</i></a>)</h4>
+Reload IFile from path.
+<h4>Function <a id="ds.IFile.set" href="#ds.IFile.set">ds.IFile.set</a> (<a href=".civ/lua/ds/IFile.lua:86"><i>src</i></a>)</h4>
+</div></body>
+</html>

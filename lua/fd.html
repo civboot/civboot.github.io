@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+fd: synchronous and asynchronous file descriptors
+<p>
+fd implements an API identical to lua's <span class=code>file</span> object but with support for
+async operations following the <a href="lib/lap">lib/lap</a> protocol.
+<p>
+It also contains a few simple file-backed data structures (fd.VFile and
+fd.LLFile).
+<p>
+<h2>Module <a id="fd" href="#fd">fd</a> (<a href=".civ/lua/fd.lua:6"><i>src</i></a>)</h2>
+filedescriptor: direct control of filedescriptors.
+async operations support the LAP (see lib/lap) protocol.
+<p>
+Can override default `io` module for global async mode.
+<p>
+<h3>Table <a id="fd.FD" href="#fd.FD">fd.FD</a></h3>
+<h3>Table <a id="fd.FDT" href="#fd.FDT">fd.FDT</a></h3>
+<h3>Table <a id="fd.FMODE" href="#fd.FMODE">fd.FMODE</a> (<a href=".civ/lua/fd.lua:37"><i>src</i></a>)</h3><div class=code-block>M.FMODE = mty.enum'FMODE' {<br>
+&nbsp; sock = S.S_IFSOCK, link = S.S_IFLNK, file = S.S_IFREG,<br>
+&nbsp; blk = S.S_IFBLK, &nbsp;dir = S.S_IFDIR, &nbsp;chr = S.S_IFCHR,<br>
+&nbsp; fifo = S.S_IFIFO,<br>
+}
+</div>
+<h4>Value <a id="fd.PIPE_BUF" href="#fd.PIPE_BUF">fd.PIPE_BUF</a></h4>
+<h3>Table <a id="fd.PollList" href="#fd.PollList">fd.PollList</a> (<a href=".civ/lua/fd.lua:271"><i>src</i></a>)</h3><div class=code-block>M.PollList = setmetatable({<br>
+__name='PollList',<br>
+__index = {<br>
+&nbsp; __len = function(pl) return pl._pl:size() - #pl.avail end,<br>
+&nbsp; resize = function(pl, newSize)<br>
+&nbsp; &nbsp; local size = pl._pl:size(); assert(newSize &gt;= size, 'attempted shrink')<br>
+&nbsp; &nbsp; pl._pl:resize(newSize); for i=size,newSize-1 do push(pl.avail, i) end<br>
+&nbsp; end,<br>
+&nbsp; insert = function(pl, fileno, events)<br>
+&nbsp; &nbsp; local i = pl.map[fileno] or pop(pl.avail)<br>
+&nbsp; &nbsp; if not i then<br>
+&nbsp; &nbsp; &nbsp; pl:resize((pl._pl:size() == 0) and 8 or pl._pl.size() * 2)<br>
+&nbsp; &nbsp; &nbsp; i = assert(pop(pl.avail), 'failed to resize')<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; pl._pl:set(i, fileno, events)<br>
+&nbsp; &nbsp; pl.map[fileno] = i<br>
+&nbsp; end,<br>
+&nbsp; ready = function(pl, timeoutSec)<br>
+&nbsp; &nbsp; return pl._pl:ready(math.floor(timeoutSec * 1000))<br>
+&nbsp; end,<br>
+&nbsp; remove = function(pl, fileno)<br>
+&nbsp; &nbsp; local i = assert(pl.map[fileno])<br>
+&nbsp; &nbsp; push(pl.avail, i); pl.map[fileno] = nil;<br>
+&nbsp; &nbsp; pl._pl:set(i, -1, 0)<br>
+&nbsp; end,<br>
+}}, {<br>
+&nbsp; __call=function(ty_)<br>
+&nbsp; &nbsp; return setmetatable({<br>
+&nbsp; &nbsp; &nbsp; _pl=S.pollList(),<br>
+&nbsp; &nbsp; &nbsp; map &nbsp;= {}, -- map of fileno -&gt; pl[index]<br>
+&nbsp; &nbsp; &nbsp; avail = {}, -- list of available indexes<br>
+&nbsp; &nbsp; }, ty_)<br>
+&nbsp; end,<br>
+})
+</div>
+<h4>Value <a id="fd.__name" href="#fd.__name">fd.__name</a></h4>
+<h3>Table <a id="fd.io" href="#fd.io">fd.io</a></h3>
+<h4>Value <a id="fd.stdin" href="#fd.stdin">fd.stdin</a> (<a href=".civ/lua/fd.lua:321"><i>src</i></a>)</h4>
+<h4>Value <a id="fd.stdout" href="#fd.stdout">fd.stdout</a> (<a href=".civ/lua/fd.lua:322"><i>src</i></a>)</h4>
+<h3>Table <a id="fd.sys" href="#fd.sys">fd.sys</a></h3>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>fd.tmpfile</span></td>
+    <td>[function] (<a href=".civ/lua/fd.lua:294">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="fd.close" href="#fd.close">fd.close</a> (<a href=".civ/lua/fd.lua:288"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.fileno" href="#fd.fileno">fd.fileno</a> (<a href=".civ/lua/fd.lua:342"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.finishRunning" href="#fd.finishRunning">fd.finishRunning</a> (<a href=".civ/lua/fd.lua:87"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.flush" href="#fd.flush">fd.flush</a><span class=code>() -&gt; M.output():flush()</span> (<a href=".civ/lua/fd.lua:326"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.ftype" href="#fd.ftype">fd.ftype</a> (<a href=".civ/lua/fd.lua:346"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.input" href="#fd.input">fd.input</a><span class=code>() -&gt; M.stdin</span> (<a href=".civ/lua/fd.lua:324"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.ioAsync" href="#fd.ioAsync">fd.ioAsync</a> (<a href=".civ/lua/fd.lua:385"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.ioStd" href="#fd.ioStd">fd.ioStd</a> (<a href=".civ/lua/fd.lua:379"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.ioSync" href="#fd.ioSync">fd.ioSync</a> (<a href=".civ/lua/fd.lua:382"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.isCreate" href="#fd.isCreate">fd.isCreate</a> (<a href=".civ/lua/fd.lua:56"><i>src</i></a>)</h3>
+Given a string mode, return whether the file will be created
+if it doesn't exist.
+<h3>Function <a id="fd.isTrunc" href="#fd.isTrunc">fd.isTrunc</a><span class=code>(mode) -&gt; bool</span> (<a href=".civ/lua/fd.lua:50"><i>src</i></a>)</h3>
+Given a string mode, return whether the file will be truncated.
+<h3>Function <a id="fd.isatty" href="#fd.isatty">fd.isatty</a> (<a href=".civ/lua/fd.lua:350"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.lines" href="#fd.lines">fd.lines</a> (<a href=".civ/lua/fd.lua:314"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.modifiedEq" href="#fd.modifiedEq">fd.modifiedEq</a> (<a href=".civ/lua/fd.lua:95"><i>src</i></a>)</h3>
+return whether two fstat's have equal modification times
+FIXME: move this to civix
+<h3>Function <a id="fd.newFD" href="#fd.newFD">fd.newFD</a> (<a href=".civ/lua/fd.lua:75"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.newFDT" href="#fd.newFDT">fd.newFDT</a> (<a href=".civ/lua/fd.lua:75"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.open" href="#fd.open">fd.open</a> (<a href=".civ/lua/fd.lua:287"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.openFD" href="#fd.openFD">fd.openFD</a><span class=code>(...) -&gt; M.openWith(S.openFD, ...)</span> (<a href=".civ/lua/fd.lua:283"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.openFDT" href="#fd.openFDT">fd.openFDT</a><span class=code>(...) -&gt; M.openWith(S.openFDT, ...)</span> (<a href=".civ/lua/fd.lua:284"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.openFileno" href="#fd.openFileno">fd.openFileno</a> (<a href=".civ/lua/fd.lua:320"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.openWith" href="#fd.openWith">fd.openWith</a> (<a href=".civ/lua/fd.lua:282"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.output" href="#fd.output">fd.output</a><span class=code>() -&gt; M.stdout</span> (<a href=".civ/lua/fd.lua:325"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.read" href="#fd.read">fd.read</a> (<a href=".civ/lua/fd.lua:302"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.tmpfileFn" href="#fd.tmpfileFn">fd.tmpfileFn</a> (<a href=".civ/lua/fd.lua:293"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.type" href="#fd.type">fd.type</a> (<a href=".civ/lua/fd.lua:336"><i>src</i></a>)</h3>
+<h3>Function <a id="fd.write" href="#fd.write">fd.write</a><span class=code>(...) -&gt; M.output():write(...)</span> (<a href=".civ/lua/fd.lua:315"><i>src</i></a>)</h3>
+<p>
+<h2>Module <a id="fd._async" href="#fd._async">fd._async</a> (<a href=".civ/lua/fd.lua:71"><i>src</i></a>)</h2>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>fd._async.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>fd._async.tmpfile</span></td>
+    <td>[<span class=code>() -&gt; M.tmpfileFn(S.tmpFDT)</span>] (<a href=".civ/lua/fd.lua:295">src</a>)</td>
+  </tr>
+</table></div>
+<h2>Module <a id="fd._sync" href="#fd._sync">fd._sync</a> (<a href=".civ/lua/fd.lua:70"><i>src</i></a>)</h2>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>fd._sync.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>fd._sync.tmpfile</span></td>
+    <td>[<span class=code>() -&gt; M.tmpfileFn(S.tmpFD)</span>] (<a href=".civ/lua/fd.lua:294">src</a>)</td>
+  </tr>
+</table></div>
+</div></body>
+</html>

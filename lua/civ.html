@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+<h1><a id="civ_build_system_and_pkg_manager" href="#civ_build_system_and_pkg_manager">civ build system and pkg manager</h1></a>
+Civstack is a full developer tech stack, and the bedrock of that is the build
+system -- which is this package (<span class=code>civ</span>).
+<p>
+A "build system" is fundamentally a mechanism to convert a set of files and
+configuration (a package) into a runnable (and testable) software. A package
+manager is then a way to upload and depend on other packages.
+<p>
+A <i>good</i> build system has two other primary features: <ul>
+  <li>ergonomics: package specification is complete and easy to both read and write.</li>
+  <li>hermetic: each built component <i>can</i> be isolated from the rest of the system
+  and deterministically built.</li>
+</ul>
+<p>
+<h3><a id="PKG.lua" href="#PKG.lua">PKG.lua</h3></a>
+The <span class=code>PKG.lua</span> file is is how you specify how to build a package and what is
+exported from that package. Below is an example one which we will walk though.
+Before we do, a few notes:
+<ul>
+  <li>This file is 100% pure lua except with different builtin globals.</li>
+  <li>Noteablly none of lua's builtins are available, and instead there are several
+  functions for importing luk files (which we will get to).</li>
+</ul>
+<p>
+Example <span class=code>PKG.lua</span>:
+<div class=code-block>local P = { summary = "Does foo and some bar" }<br>
+<br>
+--- Imports a function to help us create Target<br>
+local cc &nbsp;= import'sys:cc.luk' &nbsp;-- C build targets<br>
+local lua = import'sys:lua.luk' -- Lua build targets<br>
+<br>
+-- Set up metadata for this PKG.lua file, this must be<br>
+-- returned at the end with the targets and PoD to provide<br>
+-- clients.<br>
+--<br>
+-- This also creates the global `P` value, which is the data<br>
+-- (build information) exported by this file.<br>
+P.foo = lua {<br>
+&nbsp; mod = 'foo',<br>
+&nbsp; dep = {<br>
+&nbsp; &nbsp; 'civ:lib',<br>
+&nbsp; &nbsp; 'myhub:foo#libfoo', &nbsp;-- the next target<br>
+&nbsp; },<br>
+}<br>
+<br>
+-- test rule<br>
+P.test = lua.test {<br>
+&nbsp; src = 'test.lua',<br>
+&nbsp; dep = { 'myhub:foo',<br>
+}<br>
+<br>
+-- C build target<br>
+P.libfoo = cc {<br>
+&nbsp; hdr = { 'foo.h' },<br>
+&nbsp; src = { 'foo.c' },<br>
+&nbsp; dep = {<br>
+&nbsp; &nbsp; 'myhub:bar#libbar',<br>
+&nbsp; },<br>
+}<br>
+<br>
+return P
+</div>
+<p>
+<div class=info>Every value assigned to <span class=code>P</span> must be either a concrete type or a
+<a href="#pvc.Target">#pvc.Target</a>.
+</div>
+<p>
+<h3><a id="civ-out" href="#civ-out">civ output directory</h3></a>
+By default, <span class=code>civ build</span> puts files in <span class=code>.out/civ/</span>. Wherever it puts it's output
+(whether during build or installation), the output structure under that directory
+is as follows: <ul>
+  <li><span class=code>bin/</span>: executable binaries/scripts segregated by pkg, i.e.
+  <span class=code>bin/pkgname_foo</span>. Also contains soft-links for binaries with unique names
+  to conform with <span class=code>PATH</span>, i.e. <span class=code>bin/foo</span>.</li>
+  <li><span class=code>lua/</span>: contains all <span class=code>mod.lua</span> files, and the sub-module files under
+  <span class=code>mod/sub.lua</span>. This conforms with
+  <a href="https://www.lua.org/manual/5.4/manual.html#pdf-package.searchpath">package.searchpath</a>,
+  which allows the normal lua loader to load these packages with <span class=code>LUA_PATH</span>
+  set to <span class=code>.../civ/lua/</span>.</li>
+  <li><span class=code>data/</span>: contains arbitrary data files defined by targets.</li>
+  <li><span class=code>lib/</span>: all library files in a flat directory, all of which must start with
+  <span class=code>lib</span> i.e. <span class=code>libfoo.so</span>. This is to conform with the envornment variables
+  <span class=code>LUA_CPATH, LD_LIBRARY_PATH</span>, etc as well as the <span class=code>cc -l</span> flag.</li>
+  <li><span class=code>include/</span>: header files, both <span class=code>.h</span> and <span class=code>.iH</span> (iA header) for linking
+  dynamic libraries during compilation.</li>
+  <li><span class=code>log/</span>: contains metadata about what each target installed, i.e. <span class=code>log/mypkg/foo.files</span> used
+  by the build system for incremental builds as well as by installation system to remove
+  files during uninstall.</li>
+</ul>
+<p>
+<h2>Module <a id="civ" href="#civ">civ</a> (<a href=".civ/lua/civ.lua:6"><i>src</i></a>)</h2>
+The civ build system command.
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<h1>Commands <a id="civ.Args" href="#civ.Args">civ.Args</a></h1>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Args.__cmd</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Args.subcmd</span></td>
+    <td>[boolean] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Args.build</span></td>
+    <td>[Ty<Build>] (<a href=".civ/lua/civ.lua:43">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Args.init</span></td>
+    <td>[Ty<Init>] (<a href=".civ/lua/civ.lua:36">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Args.install</span></td>
+    <td>[Ty<Install>] (<a href=".civ/lua/civ.lua:51">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Args.test</span></td>
+    <td>[Ty<Test>] (<a href=".civ/lua/civ.lua:46">src</a>)</td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Build</span></td>
+    <td>[Ty<Build>] (<a href=".civ/lua/civ.lua:43">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Init</span></td>
+    <td>[Ty<Init>] (<a href=".civ/lua/civ.lua:36">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Install</span></td>
+    <td>[Ty<Install>] (<a href=".civ/lua/civ.lua:51">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Test</span></td>
+    <td>[Ty<Test>] (<a href=".civ/lua/civ.lua:46">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="civ.Base" href="#civ.Base">civ.Base</a> (<a href=".civ/lua/civ.lua:40"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>config</span></td>
+    <td>[string] = <span class=code>".civconfig.lua"</span>
+    path to civ config.</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Base.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Base.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Base.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Base.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Base.__index</span></td>
+    <td>[Ty<Base>] (<a href=".civ/lua/civ.lua:40">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Base.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Base.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Base.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="civ.build" href="#civ.build">civ.build</a> (<a href=".civ/lua/civ.lua:123"><i>src</i></a>)</h3>
+<h3>Function <a id="civ.main" href="#civ.main">civ.main</a> (<a href=".civ/lua/civ.lua:197"><i>src</i></a>)</h3>
+<h3>Function <a id="civ.test" href="#civ.test">civ.test</a> (<a href=".civ/lua/civ.lua:137"><i>src</i></a>)</h3>
+<h2>Module <a id="civ.core" href="#civ.core">civ.core</a> (<a href=".civ/lua/civ/core.lua:4"><i>src</i></a>)</h2>
+Core civ (build system) types and functions.
+<p>
+<h4>Value <a id="civ.core.DEFAULT_CONFIG" href="#civ.core.DEFAULT_CONFIG">civ.core.DEFAULT_CONFIG</a></h4>
+<h4>Value <a id="civ.core.DEFAULT_OUT" href="#civ.core.DEFAULT_OUT">civ.core.DEFAULT_OUT</a></h4>
+<h4>Value <a id="civ.core.DIR" href="#civ.core.DIR">civ.core.DIR</a></h4>
+<h3>Table <a id="civ.core.ENV" href="#civ.core.ENV">civ.core.ENV</a> (<a href=".civ/lua/civ/core.lua:37"><i>src</i></a>)</h3>
+<h4>Value <a id="civ.core.HOME_CONFIG" href="#civ.core.HOME_CONFIG">civ.core.HOME_CONFIG</a></h4>
+<h4>Value <a id="civ.core.LIB_EXT" href="#civ.core.LIB_EXT">civ.core.LIB_EXT</a></h4>
+<h4>Value <a id="civ.core.__name" href="#civ.core.__name">civ.core.__name</a></h4>
+<h3>Record <a id="civ.core.Cfg" href="#civ.core.Cfg">civ.core.Cfg</a> (<a href=".civ/lua/civ/core.lua:164"><i>src</i></a>)</h3>
+The user configuration, typically at ./.civconfig.lua
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>path</span></td>
+    <td>[string] 
+    the path to this config file.</td>
+  </tr>
+  <tr>
+    <td><span class=code>host_os</span></td>
+    <td>[string] 
+    the operating system of this computer.'
+    Typically equal to civix.OS</td>
+  </tr>
+  <tr>
+    <td><span class=code>hubs</span></td>
+    <td>[{string: string}] 
+    table of hubname -> /absolute/dir/path</td>
+  </tr>
+  <tr>
+    <td><span class=code>buildDir</span></td>
+    <td>[string] 
+    directory to put build/test files.</td>
+  </tr>
+  <tr>
+    <td><span class=code>installDir</span></td>
+    <td>[string] 
+    directory to install files to.</td>
+  </tr>
+  <tr>
+    <td><span class=code>builder</span></td>
+    <td>[CfgBuilder] 
+    builder settings</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__index</span></td>
+    <td>[Ty<Cfg>] (<a href=".civ/lua/civ/core.lua:164">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Cfg.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Cfg.load</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:172">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="civ.core.CfgBuilder" href="#civ.core.CfgBuilder">civ.core.CfgBuilder</a> (<a href=".civ/lua/civ/core.lua:153"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>direct</span></td>
+    <td>[bool] 
+    prefer building directly
+    (running build scripts w/ dofile).
+    </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__index</span></td>
+    <td>[Ty<CfgBuilder>] (<a href=".civ/lua/civ/core.lua:153">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.CfgBuilder.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="civ.core.Civ" href="#civ.core.Civ">civ.core.Civ</a> (<a href=".civ/lua/civ/core.lua:184"><i>src</i></a>)</h3>
+Holds top-level data structures and algorithms for
+processing civ build graphs (pkgname graphs).
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cfg</span></td>
+    <td>[Cfg] 
+    the user config</td>
+  </tr>
+  <tr>
+    <td><span class=code>hubs</span></td>
+    <td>  
+    table of hub -> dir (cfg.hubs)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pkgs</span></td>
+    <td>  
+    table of pkgname -> pkg</td>
+  </tr>
+  <tr>
+    <td><span class=code>luk</span></td>
+    <td>[luk.Luk] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cycle</span></td>
+    <td>  </td>
+  </tr>
+  <tr>
+    <td><span class=code>worker</span></td>
+    <td>[civ.Worker] 
+    direct worker</td>
+  </tr>
+  <tr>
+    <td><span class=code>ENV</span></td>
+    <td>[table] 
+    environment for running workers</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Civ.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Civ.__index</span></td>
+    <td>[Ty<Civ>] (<a href=".civ/lua/civ/core.lua:184">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Civ.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.abspath</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:272">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.build</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:381">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.expand</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:214">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.expandAll</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:259">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.getPkgname</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:267">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.load</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:349">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.loadPkg</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:303">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.pkgDir</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:281">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.run</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:365">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.target</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:292">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.targetDepMap</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:354">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.test</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:430">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Civ.tgtDir</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:288">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="civ.core.Target" href="#civ.core.Target">civ.core.Target</a> (<a href=".civ/lua/civ/core.lua:118"><i>src</i></a>)</h3>
+A build target, the result of compiling a package.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pkgname</span></td>
+    <td>[str] 
+    name of package target is in.</td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[str] 
+    the name of the target.</td>
+  </tr>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[str] 
+    the kind of target: build, test, executable</td>
+  </tr>
+  <tr>
+    <td><span class=code>dir</span></td>
+    <td>[str] 
+    directory of src files</td>
+  </tr>
+  <tr>
+    <td><span class=code>src</span></td>
+    <td>[{key: str}] 
+    list of input source files (strings).</td>
+  </tr>
+  <tr>
+    <td><span class=code>dep</span></td>
+    <td>[{str}] 
+    list of input Target objects (dependencies).</td>
+  </tr>
+  <tr>
+    <td><span class=code>extra</span></td>
+    <td>[builtin] 
+    arbitrary value, used by run command</td>
+  </tr>
+  <tr>
+    <td><span class=code>api</span></td>
+    <td>[table] 
+    the lang-specific exported import paths.</td>
+  </tr>
+  <tr>
+    <td><span class=code>depIds</span></td>
+    <td>[{int}] 
+    list of dependency target ids. Populated for Worker.</td>
+  </tr>
+  <tr>
+    <td><span class=code>out</span></td>
+    <td>[table] 
+    POD table output segregated by language.<ul>
+      <li>t: PoD in a k/v table, can be used to configure downstream targets.</li>
+      <li>data: list of raw files.</li>
+      <li>include: header file paths for native code (C/iA).</li>
+      <li>lib: dynamic library files (i.e. libfoo.so)</li>
+      <li>bin: executable binaries</li>
+      <li>lua: lua files</li>
+    </ul> </td>
+  </tr>
+  <tr>
+    <td><span class=code>link</span></td>
+    <td>[{str: str}] 
+    link outputs from -> to</td>
+  </tr>
+  <tr>
+    <td><span class=code>tag</span></td>
+    <td>[table] 
+    arbitrary attributes like test, testonly, etc.</td>
+  </tr>
+  <tr>
+    <td><span class=code>ENV</span></td>
+    <td>[table] 
+    the environment that scripts run in.</td>
+  </tr>
+  <tr>
+    <td><span class=code>run</span></td>
+    <td>[str] 
+    executable script which performs the operation kind.</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Target.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__name</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__podders</span></td>
+    <td>[table] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Target.__index</span></td>
+    <td>[Ty<Target>] (<a href=".civ/lua/civ/core.lua:118">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.Target.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__fromPod</span></td>
+    <td>[function] (<a href=".civ/lua/pod.lua:214">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__toPod</span></td>
+    <td>[function] (<a href=".civ/lua/pod.lua:204">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.Target.tgtname</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:131">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="civ.core.TargetName" href="#civ.core.TargetName">civ.core.TargetName</a> (<a href=".civ/lua/civ/core.lua:86"><i>src</i></a>)</h3>
+Represents a pkgname.target parsed from a string
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pkgname</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__index</span></td>
+    <td>[Ty<TargetName>] (<a href=".civ/lua/civ/core.lua:86">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.TargetName.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.core.TargetName.parse</span></td>
+    <td>[function] (<a href=".civ/lua/civ/core.lua:93">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="civ.core.tgtname" href="#civ.core.tgtname">civ.core.tgtname</a> (<a href=".civ/lua/civ/core.lua:77"><i>src</i></a>)</h3>
+<h3>Function <a id="civ.core.tgtnameSplit" href="#civ.core.tgtnameSplit">civ.core.tgtnameSplit</a> (<a href=".civ/lua/civ/core.lua:75"><i>src</i></a>)</h3>
+<h3>Record <a id="civ.Worker" href="#civ.Worker">civ.Worker</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ids</span></td>
+    <td>[{int}] 
+    the target ids to work on.</td>
+  </tr>
+  <tr>
+    <td><span class=code>cfg</span></td>
+    <td>[civ.core.Cfg] </td>
+  </tr>
+  <tr>
+    <td><span class=code>tgtsDb</span></td>
+    <td>[lines.File] 
+    indexed line-file of targets by id</td>
+  </tr>
+  <tr>
+    <td><span class=code>tgtsCache</span></td>
+    <td>[id -> Target] 
+    already loaded targets</td>
+  </tr>
+</table></div>
+<h3>Table <a id="civ.Worker.__docs" href="#civ.Worker.__docs">civ.Worker.__docs</a></h3>
+<h3>Table <a id="civ.Worker.__fieldIds" href="#civ.Worker.__fieldIds">civ.Worker.__fieldIds</a></h3>
+<h3>Table <a id="civ.Worker.__fields" href="#civ.Worker.__fields">civ.Worker.__fields</a></h3>
+<h4>Value <a id="civ.Worker.__name" href="#civ.Worker.__name">civ.Worker.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Worker.__index</span></td>
+    <td>[Ty<civ.Worker>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>civ.Worker.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Worker.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>civ.Worker.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="civ.Worker.close" href="#civ.Worker.close">civ.Worker.close</a> (<a href=".civ/lua/civ/Worker.lua:97"><i>src</i></a>)</h4>
+Remove this as singleton.
+<h4>Function <a id="civ.Worker.copyOut" href="#civ.Worker.copyOut">civ.Worker.copyOut</a> (<a href=".civ/lua/civ/Worker.lua:71"><i>src</i></a>)</h4>
+Usage: <span class=code>worker = Worker:get()</span>
+<h4>Function <a id="civ.Worker.get" href="#civ.Worker.get">civ.Worker.get</a> (<a href=".civ/lua/civ/Worker.lua:61"><i>src</i></a>)</h4>
+Usage: <span class=code>worker = Worker:get()</span>
+<h4>Function <a id="civ.Worker.link" href="#civ.Worker.link">civ.Worker.link</a> (<a href=".civ/lua/civ/Worker.lua:84"><i>src</i></a>)</h4>
+Usage: <span class=code>worker = Worker:get()</span>
+<h4>Function <a id="civ.Worker.set" href="#civ.Worker.set">civ.Worker.set</a> (<a href=".civ/lua/civ/Worker.lua:94"><i>src</i></a>)</h4>
+Make self the singleton (future calls to Worker.get will return)
+<h4>Function <a id="civ.Worker.target" href="#civ.Worker.target">civ.Worker.target</a> (<a href=".civ/lua/civ/Worker.lua:63"><i>src</i></a>)</h4>
+Usage: <span class=code>worker = Worker:get()</span>
+</div></body>
+</html>

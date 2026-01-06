@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+simple but effective Lua type system using metatables
+<p>
+Metatype is a library and specification for creating performant, documented, and
+typo-safe Lua record-types which can be formatted.
+<p>
+<div class=info> Turn off typo checking by setting the global <span class=code>LUA_OPT=3</span> or higher.</div>
+<p>
+<div class=code-block>local G = G or _G<br>
+--- module documentation<br>
+local M = G.mod and mod'myMod' or {} -- (see pkg)<br>
+<br>
+local mty = require'metaty'<br>
+<br>
+-- Documentation for Pos (position)<br>
+M.Pos = mty'Pos' {<br>
+&nbsp; 'x[int]: x coordinate',<br>
+&nbsp; 'y[int]: y coordinate', y = 0,<br>
+}<br>
+<br>
+local p1 = Pos{x=4}<br>
+local p1 = Pos{x=4, y=3, z=5} -- error if checking turned on
+</div>
+<p>
+The above expands to the following. Note that the "typosafe" elements
+are removed when <span class=code>LUA_OPT &gt; 3</span>
+<div class=code-block>local M = {}<br>
+local metaty = require'metaty'<br>
+<br>
+local Pos = setmetatable({<br>
+&nbsp; __name='Pos',<br>
+&nbsp; y = 0,<br>
+&nbsp; -- used with metaty.Fmt and help()<br>
+&nbsp; __fields={'x', 'y', x='[int]', y='[int]'},<br>
+&nbsp; __newindex = metaty.newindex, -- typosafe setting<br>
+}, {<br>
+&nbsp; __call = function(T, t)<br>
+&nbsp; &nbsp; metaty.fieldsCheck(T.__fields, t) -- typosafe constructor<br>
+&nbsp; &nbsp; return setmetatable(t, T)<br>
+&nbsp; end,<br>
+&nbsp; __index = metaty.index, -- typosafe getting<br>
+})<br>
+Pos.__index = Pos<br>
+<br>
+-- `mod` gives documentation reflection<br>
+PKG_LOCS[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp; = 'path/to/file.lua:123'<br>
+PKG_NAMES[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp;= 'mymod.Pos'<br>
+PKG_LOOKUP['myMod.Pos'] = M.Pos
+</div>
+<p>
+<h3><a id="metaty-API" href="#metaty-API">API</h3></a> <ul>
+  <li><span class=code>ty(v)</span> return the metaty of <span class=code>v</span>. For tables this is <span class=code>getmetatable(v)</span>,
+  else it is <span class=code>type(v)</span>.</li>
+  <li><span class=code>metaty'name' {'field1[type] documentation', 'field2[type]'}</span>
+  creates a documented and typo-safe record type (see examples) <ul>
+    <li>the <span class=code>[type]</span> field can also be in the form <span class=code>{type}</span> for a list
+    of the type or <span class=code>{string: type}</span> for a map of the type.</li>
+    <li><span class=code>@&lt;decimal&gt;</span> (i.e. <span class=code>@2</span>) can be put after the type to specify the
+    decimal value to use for the field when de/serializing.
+    <p>
+    It is recommended that once you assign a field to a decimal value to
+    never change it if there is any chance it is stored or being used
+    by an RPC service/etc with the previous version.</li>
+  </ul></li>
+</ul>
+<p>
+See also: <a href="#Package_fmt">#Package_fmt</a>
+<p>
+<h3><a id="metaty-why" href="#metaty-why">Why?</h3></a>
+<p>
+Lua is a fast and fun language. However it often lacks the ability to express
+intent when it comes to the structure of data. Also, not only is it not
+type-safe but it is also TYPO-unsafe -- small mistakes in the name of a field
+can easily result in hard to diagnose bugs, even when they occur in one's
+unit-test suite.
+<p>
+Checking for typos incurrs a small performance cost, so it is disabled by
+default. However, it is well-worth the cost in your unit tests.
+<p>
+<h3><a id="metaty-spec" href="#metaty-spec">Spec</h3></a>
+For a type to be considered a "metaty" the only requirement is that it has a
+metatable set and that metatable has a <span class=code>__name</span> field.
+<p>
+The following fields can optionally be set on the metatable: <ul>
+  <li><span class=code>__fmt</span>: used with <a href="#Package_fmt">#Package_fmt</a></li>
+  <li><span class=code>__fields</span>: should contain a table of <span class=code>fieldName -&gt; fieldtype</span>.
+  <span class=code>fieldType</span> can be an arbitrary string and is only for documentation, though
+  future libraries/applications (type checkers) may eventually wish to consume
+  it. <span class=code>metaty</span> (the library) uses the format <span class=code>"fieldName [user-specified-type]"</span> <ul>
+    <li>This is used by formatting libraries when printing the types (so the fields
+    are printed in deterministic order).</li>
+  </ul></li>
+  <li>default values (i.e. <span class=code>y</span> in the example) are assigned directly to the type.
+  Documentation formatters may use these to format help messages.</li>
+  <li><span class=code>__fieldIds</span>: set using the <span class=code>@&lt;decimal&gt;</span> syntax after the type, used
+  for de/serializing.</li>
+</ul>
+<p>
+In addition, there is runtime type specification defined below.
+<p>
+<h3><a id="metaty-typoe-check" href="#metaty-typoe-check">Runtime typo checking (optional)</h3></a>
+<div class=info>Note: Runtime typo checking has a cost and can be disabled with
+LUA_OPT=3 or higher.</div>
+<p>
+You can override the typo-checking behavior of a single type with <div class=code-block>getmetatable(MyType).__call &nbsp;= myConstructor<br>
+getmetatable(MyType).__index = myIndex<br>
+MyType.__newindex &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;= myNewIndex
+</div>
+<p>
+<h3><a id="lua_opt" href="#lua_opt">LUA_OPT</h3></a>
+<span class=code>LUA_OPT</span> is an integer from 0-3 which is intended to have the following
+semantic meanings: <ul>
+  <li><span class=code>4</span>: may be used for more optimization of certain library functions with
+  reduced dynamic abilities, i.e.  logging.</li>
+  <li><span class=code>3</span>: optimize out most safety checks and documentation.</li>
+  <li><span class=code>2</span>: typosafety or related only, turn off below.</li>
+  <li><span class=code>1</span> (default): typosafety and related, plus include docs.</li>
+  <li><span class=code>0</span>: no optimizations, turn on anything. May be used as a debug mode or
+  similar.</li>
+</ul>
+<p>
+<h2>Module <a id="metaty" href="#metaty">metaty</a> (<a href=".civ/lua/metaty.lua:70"><i>src</i></a>)</h2>
+metaty: simple but effective Lua type system using metatable
+<p>
+<h4>Value <a id="metaty.DEPTH_ERROR" href="#metaty.DEPTH_ERROR">metaty.DEPTH_ERROR</a></h4>
+<h3>Table <a id="metaty.G" href="#metaty.G">metaty.G</a> (<a href=".civ/lua/metaty.lua:75"><i>src</i></a>)</h3>
+G allows assignment to globals and returns nil if a variable is missing.
+<p>
+Calling <span class=code>metaty.setup()</span> makes non-G globals typosafe.
+<h3>Table <a id="metaty.KEYWORD" href="#metaty.KEYWORD">metaty.KEYWORD</a></h3>
+<h4>Value <a id="metaty.__name" href="#metaty.__name">metaty.__name</a></h4>
+<h3>Table <a id="metaty.mod" href="#metaty.mod">metaty.mod</a> (<a href=".civ/lua/metaty.lua:80"><i>src</i></a>)</h3>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>metaty.constructChecked</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:316">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="metaty.callable" href="#metaty.callable">metaty.callable</a><span class=code>(obj) -&gt; bool: return if obj is callable</span> (<a href=".civ/lua/metaty.lua:166"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.construct" href="#metaty.construct">metaty.construct</a> (<a href=".civ/lua/metaty.lua:316"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.constructUnchecked" href="#metaty.constructUnchecked">metaty.constructUnchecked</a> (<a href=".civ/lua/metaty.lua:319"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.enum" href="#metaty.enum">metaty.enum</a> (<a href=".civ/lua/metaty.lua:521"><i>src</i></a>)</h3>
+Create an enum type which can convert between string and integers.
+<p>
+This "type" is mainly to allow typosafe enums, both when creating the variant
+(i.e. <span class=code>v = MyEnum.VARIANT</span>) and when matching using the <span class=code>matcher</span> method below.
+It also allows using checked enums in <span class=code>ds.pod</span>.
+<p>
+One of the main benefits of using an enum is to ensure that when you are
+matching you don't make a typo mistake (i.e. WOKER instead of WORKER). In
+lua there is no native <span class=code>switch</span> statement (or similar), but table lookup
+on functions can be equally as good -- see the example below.
+<p>
+<h2>Example</h2>
+<div class=code-block>M.Job = enum'Job' {<br>
+&nbsp; OWNER &nbsp; = 1,<br>
+&nbsp; MANAGER = 2,<br>
+&nbsp; COOK &nbsp; &nbsp;= 3,<br>
+&nbsp; WAITER &nbsp;= 4,<br>
+}<br>
+<br>
+assert('OWNER', M.Job.OWNER)<br>
+<br>
+-- either string or id will return string<br>
+assert('OWNER', M.Job.name(1))<br>
+assert('OWNER', M.Job.name('OWNER'))<br>
+<br>
+-- either string or id will return id<br>
+assert(1, M.Job.id(1))<br>
+assert(1, M.Job.id('OWNER'))<br>
+<br>
+-- create a table that converts a variant (name or id) -&gt; function.<br>
+local doJob = M.Job:matcher {<br>
+&nbsp; OWNER &nbsp; = function() print'tell them to get to work' end,<br>
+&nbsp; MANAGER = function() print'get to work!' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end,<br>
+&nbsp; COOK &nbsp; &nbsp;= function() print'order up!' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end,<br>
+&nbsp; WAITER &nbsp;= function() print'they want spam and eggs' &nbsp;end,<br>
+<br>
+&nbsp; -- Removing any of the above will cause an error that not all variants<br>
+&nbsp; -- are covered. You can use :partialMatcher if you want to<br>
+&nbsp; -- return nil instead.<br>
+&nbsp; --<br>
+&nbsp; -- Below will cause an error: no variant DISHWASHER<br>
+&nbsp; DISHWASHER = function() end<br>
+}<br>
+<br>
+-- call in your own function like:<br>
+doJob[job](my, args)
+</div>
+<p>
+<h3>Function <a id="metaty.enum_fromPod" href="#metaty.enum_fromPod">metaty.enum_fromPod</a><span class=code>(E, pset, e) -&gt; E.name(e)</span> (<a href=".civ/lua/metaty.lua:411"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.enum_matcher" href="#metaty.enum_matcher">metaty.enum_matcher</a> (<a href=".civ/lua/metaty.lua:432"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.enum_partialMatcher" href="#metaty.enum_partialMatcher">metaty.enum_partialMatcher</a> (<a href=".civ/lua/metaty.lua:421"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.enum_toPod" href="#metaty.enum_toPod">metaty.enum_toPod</a> (<a href=".civ/lua/metaty.lua:410"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.enum_tostring" href="#metaty.enum_tostring">metaty.enum_tostring</a><span class=code>(E) -&gt; E.__name</span> (<a href=".civ/lua/metaty.lua:407"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.eq" href="#metaty.eq">metaty.eq</a><span class=code>(a, b) -&gt; bool</span> (<a href=".civ/lua/metaty.lua:274"><i>src</i></a>)</h3>
+compare tables or anything else
+<h3>Function <a id="metaty.eqDeep" href="#metaty.eqDeep">metaty.eqDeep</a> (<a href=".civ/lua/metaty.lua:271"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.extend" href="#metaty.extend">metaty.extend</a> (<a href=".civ/lua/metaty.lua:405"><i>src</i></a>)</h3>
+Extend the Type with (optional) new name and (optional) additional fields.
+<h3>Function <a id="metaty.extendFields" href="#metaty.extendFields">metaty.extendFields</a> (<a href=".civ/lua/metaty.lua:348"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.fieldsCheck" href="#metaty.fieldsCheck">metaty.fieldsCheck</a> (<a href=".civ/lua/metaty.lua:312"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.fmt" href="#metaty.fmt">metaty.fmt</a> (<a href=".civ/lua/metaty.lua:234"><i>src</i></a>)</h3>
+The default __fmt method.
+<h3>Function <a id="metaty.fninfo" href="#metaty.fninfo">metaty.fninfo</a> (<a href=".civ/lua/metaty.lua:196"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.getmethod" href="#metaty.getmethod">metaty.getmethod</a> (<a href=".civ/lua/metaty.lua:132"><i>src</i></a>)</h3>
+get method of table if it exists.
+This first looks for the item directly on the table, then the item
+in the table's metatable. It does NOT use the table's normal <span class=code>__index</span>.
+<h3>Function <a id="metaty.hardIndex" href="#metaty.hardIndex">metaty.hardIndex</a> (<a href=".civ/lua/metaty.lua:291"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.hardNewindex" href="#metaty.hardNewindex">metaty.hardNewindex</a> (<a href=".civ/lua/metaty.lua:303"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.index" href="#metaty.index">metaty.index</a> (<a href=".civ/lua/metaty.lua:286"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.indexError" href="#metaty.indexError">metaty.indexError</a> (<a href=".civ/lua/metaty.lua:280"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.isEnv" href="#metaty.isEnv">metaty.isEnv</a> (<a href=".civ/lua/metaty.lua:121"><i>src</i></a>)</h3>
+isEnv: returns boolean for below values, else nil
+<h3>Function <a id="metaty.isEnvG" href="#metaty.isEnvG">metaty.isEnvG</a> (<a href=".civ/lua/metaty.lua:125"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.isMod" href="#metaty.isMod">metaty.isMod</a><span class=code>(t) -&gt; boolean</span> (<a href=".civ/lua/metaty.lua:86"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.isRecord" href="#metaty.isRecord">metaty.isRecord</a> (<a href=".civ/lua/metaty.lua:385"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.metaget" href="#metaty.metaget">metaty.metaget</a><span class=code>(t, k) -&gt; rawget(getmt(t), k)</span> (<a href=".civ/lua/metaty.lua:167"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.name" href="#metaty.name">metaty.name</a> (<a href=".civ/lua/metaty.lua:160"><i>src</i></a>)</h3>
+Given an object (function, table, userdata) return its name.
+return nil if it's not one of the above types
+<h3>Function <a id="metaty.namedEnum" href="#metaty.namedEnum">metaty.namedEnum</a> (<a href=".civ/lua/metaty.lua:466"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.namedRecord" href="#metaty.namedRecord">metaty.namedRecord</a> (<a href=".civ/lua/metaty.lua:373"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.nativeEq" href="#metaty.nativeEq">metaty.nativeEq</a><span class=code>(a, b) -&gt; a == b</span> (<a href=".civ/lua/metaty.lua:244"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.newindex" href="#metaty.newindex">metaty.newindex</a> (<a href=".civ/lua/metaty.lua:297"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.rawsplit" href="#metaty.rawsplit">metaty.rawsplit</a><span class=code>(subj, ctx) -&gt; (state, splitstr)</span> (<a href=".civ/lua/metaty.lua:210"><i>src</i></a>)</h3>
+You probably want split instead.
+Usage: <span class=code>for ctx, line in rawsplit, text, {'\n', 1} do</span>
+<h3>Function <a id="metaty.record" href="#metaty.record">metaty.record</a> (<a href=".civ/lua/metaty.lua:379"><i>src</i></a>)</h3>
+<h3>Function <a id="metaty.setup" href="#metaty.setup">metaty.setup</a> (<a href=".civ/lua/metaty.lua:106"><i>src</i></a>)</h3>
+Setup lua's global environment to meet metaty protocol.
+<p>
+Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
+not previously set).
+<h3>Function <a id="metaty.split" href="#metaty.split">metaty.split</a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span> (<a href=".civ/lua/metaty.lua:221"><i>src</i></a>)</h3>
+split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
+<span class=code>ei</span> (end index)
+<div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
+&nbsp; ... do something with line<br>
+end
+</div>
+<h3>Function <a id="metaty.tostring" href="#metaty.tostring">metaty.tostring</a> (<a href=".civ/lua/metaty.lua:240"><i>src</i></a>)</h3>
+The default __tostring method.
+<h3>Function <a id="metaty.ty" href="#metaty.ty">metaty.ty</a><span class=code>(v) -&gt; type: string or metatable</span> (<a href=".civ/lua/metaty.lua:142"><i>src</i></a>)</h3>
+Get the type of the value.
+<h3>Function <a id="metaty.tyName" href="#metaty.tyName">metaty.tyName</a><span class=code>(T, default) -&gt; string</span> (<a href=".civ/lua/metaty.lua:150"><i>src</i></a>)</h3>
+Given a type return it's name
+<h3>Function <a id="metaty.validKey" href="#metaty.validKey">metaty.validKey</a><span class=code>(s) -&gt; boolean: s=value is valid syntax</span> (<a href=".civ/lua/metaty.lua:181"><i>src</i></a>)</h3>
+</div></body>
+</html>

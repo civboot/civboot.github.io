@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+encode text color and style with a two ascii characters.
+<p>
+asciicolor is a protocol which encodes text color in terminals and (in future)
+elsewhere using only a single ascii character: i.e. <span class=code>b</span> for black, <span class=code>w</span> for
+white and <span class=code>n</span> for navy blue, etc. Capitalizing the character encodes a style
+(bold for foreground, underlined for background).
+<p>
+See <a href="#asciicolor.Color">#asciicolor.Color</a> for all codes.
+<p>
+The color codes are used by <a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a> to style text
+using an <span class=code>AcWriter</span>. See <a href="#vt100.AcWriter">#vt100.AcWriter</a> for the reference spec.
+<p>
+<h2>Module <a id="asciicolor" href="#asciicolor">asciicolor</a> (<a href=".civ/lua/asciicolor.lua:2"><i>src</i></a>)</h2>
+<p>
+<h3>Table <a id="asciicolor.CODES" href="#asciicolor.CODES">asciicolor.CODES</a></h3>
+<h4>Value <a id="asciicolor.CONFIG_PATH" href="#asciicolor.CONFIG_PATH">asciicolor.CONFIG_PATH</a></h4>
+<h3>Table <a id="asciicolor.Color" href="#asciicolor.Color">asciicolor.Color</a> (<a href=".civ/lua/asciicolor.lua:33"><i>src</i></a>)</h3>
+typosafe mapping of asciicode -> fullname
+<p>
+<div class=info> Note: These map to the available colors in a VT100 terminal emulator,
+See the vt100 module for that implementation</div><div class=code-block>M.Color = ds.TypoSafe{<br>
+&nbsp; z = 'zero', [' '] = 'zero', [''] = 'zero', -- aka default.<br>
+<br>
+&nbsp; -- &nbsp;(dark) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (light)<br>
+&nbsp; b = 'black', &nbsp; &nbsp; &nbsp; &nbsp; w = 'white',<br>
+&nbsp; d = 'darkgrey', &nbsp; &nbsp; &nbsp;l = 'lightgrey',<br>
+&nbsp; r = 'red', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; p = 'pink',<br>
+&nbsp; y = 'yellow', &nbsp; &nbsp; &nbsp; &nbsp;h = 'honey',<br>
+&nbsp; g = 'green', &nbsp; &nbsp; &nbsp; &nbsp; t = 'tea',<br>
+&nbsp; c = 'cyan', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;a = 'aqua',<br>
+&nbsp; n = 'navy', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;s = 'sky', -- blue<br>
+&nbsp; m = 'magenta', &nbsp; &nbsp; &nbsp; f = 'fuschia',<br>
+}
+</div>
+<h4>Value <a id="asciicolor.__name" href="#asciicolor.__name">asciicolor.__name</a></h4>
+<h3>Table <a id="asciicolor.dark" href="#asciicolor.dark">asciicolor.dark</a></h3>
+<h3>Record <a id="asciicolor.Styler" href="#asciicolor.Styler">asciicolor.Styler</a> (<a href=".civ/lua/asciicolor.lua:140"><i>src</i></a>)</h3>
+Create a styler
+<p>
+Note: pass f (file) to create the default AcWriter with the file.
+Note: pass mode, stylepath to control loadStyle
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>acwriter</span></td>
+    <td>[AcWriter] </td>
+  </tr>
+  <tr>
+    <td><span class=code>style</span></td>
+    <td>[table] = <span class=code>{api="G", bar={basel="Bw", bg="w", changel="Bw", error="Bw", fg="b", h3="Bw", line="nw", meta="lw"}, base="F", basel="Wf", bg="b", bold="Z", boldul="ZZ", builtin="p", call="c", change="G", changel="Wg", char="g", code="hb", comment="zb", commentbox="bl", dispatch="C", empty="zd", error="Wr", good="G", h1="N", h2="S", h3="W", h4="Z", info="bl", key="T", keyword="R", line="ld", literal="h", match="Bf", meta="d", notify="C", num="N", path="m", ref="cZ", string="g", stringbox="d", symbol="A", type="h", ul="zZ", var="G", warn="Y"}</span>
+    default=loadStyle() in Fmt</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>asciicolor.Styler.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>asciicolor.Styler.__index</span></td>
+    <td>[Ty<Styler>] (<a href=".civ/lua/asciicolor.lua:140">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>asciicolor.Styler.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.flush</span></td>
+    <td>[<span class=code>(st) -&gt; st.acwriter:flush()</span>] (<a href=".civ/lua/asciicolor.lua:145">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.getFB</span></td>
+    <td>[<span class=code>(st, style) -&gt; fb</span>] (<a href=".civ/lua/asciicolor.lua:163">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.level</span></td>
+    <td>[<span class=code>(st, add) -&gt; st.acwriter.f:level(add)</span>] (<a href=".civ/lua/asciicolor.lua:144">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.styled</span></td>
+    <td>[function] (<a href=".civ/lua/asciicolor.lua:171">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Styler.write</span></td>
+    <td>[function] (<a href=".civ/lua/asciicolor.lua:176">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="asciicolor.assertcode" href="#asciicolor.assertcode">asciicolor.assertcode</a><span class=code>(ac) -&gt; single leter (or error)</span> (<a href=".civ/lua/asciicolor.lua:54"><i>src</i></a>)</h3>
+<h3>Function <a id="asciicolor.loadStyle" href="#asciicolor.loadStyle">asciicolor.loadStyle</a> (<a href=".civ/lua/asciicolor.lua:131"><i>src</i></a>)</h3>
+<h3>Function <a id="asciicolor.mode" href="#asciicolor.mode">asciicolor.mode</a><span class=code>() -&gt; G.CLIMODE or os.getenv'CLIMODE'</span> (<a href=".civ/lua/asciicolor.lua:117"><i>src</i></a>)</h3>
+<h3>Function <a id="asciicolor.setup" href="#asciicolor.setup">asciicolor.setup</a> (<a href=".civ/lua/asciicolor.lua:189"><i>src</i></a>)</h3>
+Setup standard formatters (io.fmt and io.user).
+<h3>Function <a id="asciicolor.stylePath" href="#asciicolor.stylePath">asciicolor.stylePath</a><span class=code>() -&gt; pth.concat{pth.home(), CONFIG_PATH}</span> (<a href=".civ/lua/asciicolor.lua:119"><i>src</i></a>)</h3>
+<p>
+<h2>Module <a id="asciicolor.Ascii" href="#asciicolor.Ascii">asciicolor.Ascii</a> (<a href=".civ/lua/asciicolor.lua:36"><i>src</i></a>)</h2>
+typosafe mapping of fullname -> asciichar
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.__name</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.aqua</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.black</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.cyan</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.darkgrey</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.fuschia</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.green</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.honey</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.lightgrey</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.magenta</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.navy</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.pink</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.red</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.sky</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.tea</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.white</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.yellow</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>asciicolor.Ascii.zero</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+</div></body>
+</html>

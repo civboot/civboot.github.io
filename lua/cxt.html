@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+<h1>cxt: text markup for civilization</h1>
+<p>
+It should not take more than a few minutes to know how to read and write
+documentation.
+<p>
+cxt is an ultra-simple markup language which is designed to be as easy as
+possible to parse (for computers <i>and</i> humans) while still using as few
+characters as possible to express format for common cases. The <span class=code>src/</span>
+dir of <a href="code.commonmark.org">CommonMark</a> contains more than 20,000 lines of
+code whereas cxt is implemented in less than 500.
+<p>
+cxt is designed to: <ul>
+  <li>Make document writing easy: use relatively few characters to express
+  common formatting</li>
+  <li>Make document parsing easy: unambiguous, unlike <span class=code>Ma**rk_do*wn</span></li>
+  <li>Readable as raw text</li>
+  <li>structured data can be consumed: supports arbitrary attributes</li>
+</ul>
+<p>
+CXT contains only three special characters for deliniating formatting controls: <ul>
+  <li>the two bracket characters <span class=code>[]</span></li>
+  <li>a way to escape brackets and itself <span class=code>\\</span>, <span class=code>\[</span> and <span class=code>\]</span></li>
+</ul>
+<p>
+There are two ways to specify attributes for a block: <ul>
+  <li>short: <span class=code>[*bold text]</span> where <span class=code>*</span> can be any of the shortcuts below</li>
+  <li>full: <span class=code>[{*_ attr1 attr2=value}bold underlined with attr 1 and 2]</span></li>
+</ul>
+<p>
+The following attributes and shortcuts are supported
+<div class=code-block>&nbsp; b i u &nbsp; bold (*), italic (,) and underlined (_)<br>
+&nbsp; * , _ &nbsp; Example: [*bold] [,italic] [_underlined]<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[{*,_}bold italic and underlined]<br>
+<br>
+&nbsp; code &nbsp; &nbsp;inline or block code (depending on whether newlines exist)<br>
+&nbsp; &nbsp;$ &nbsp; &nbsp; &nbsp;shortcut: [$inline code]<br>
+&nbsp; &nbsp;#... &nbsp; See also: '[#... ]#...' which sets the code attribute.<br>
+<br>
+&nbsp; quote &nbsp; create a quote block<br>
+&nbsp; &nbsp;" &nbsp; &nbsp; &nbsp;Example: ["quote block]<br>
+<br>
+&nbsp; list &nbsp; &nbsp;list syntax, see demos<br>
+&nbsp; &nbsp;+ &nbsp; &nbsp; &nbsp;Example: [+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; * list item 1<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; * list item 2<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]<br>
+<br>
+&nbsp; table &nbsp; table syntax, see demos.<br>
+&nbsp; # head &nbsp;modify the delimiters with row/col/head attrs.<br>
+&nbsp; + row<br>
+&nbsp; | col<br>
+<br>
+&nbsp; hidden &nbsp;hidden block, used for comments and/or assigning attributes<br>
+&nbsp; &nbsp;! &nbsp; &nbsp; &nbsp;Example: [!hidden block]<br>
+<br>
+&nbsp; #... &nbsp; &nbsp;any number of # characters create a "raw" block that must<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; have the same number of # characters closing it.<br>
+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [##<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; some code<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]##<br>
+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [{## code=html}<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;b&gt;example html&lt;/b&gt;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]##<br>
+<br>
+&nbsp; href &nbsp; &nbsp;hyper reference, aka a url.<br>
+&nbsp; &lt;href&gt;<br>
+<br>
+&nbsp; &nbsp;path &nbsp; a path, typically relative to project or website root.<br>
+&nbsp; &nbsp; / &nbsp; &nbsp; Example: [/path/to/file.lua]<br>
+<br>
+&nbsp; name &nbsp; &nbsp;sets the name of the block.<br>
+&nbsp; &nbsp;n &nbsp; &nbsp; &nbsp;Used with: [@name] &nbsp;href=#name &nbsp;anyAttr=@name<br>
+&nbsp; &nbsp;: &nbsp; &nbsp; &nbsp;shortcut: [{: ...}name]<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Example: [{name=Civboot href=http://civboot.org}Civboot]<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Example: [{: href=http://civboot.org}Civboot]<br>
+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; You can link to the named item with [&lt;#name&gt;link to name].<br>
+<br>
+&nbsp; value &nbsp; when @ is used for an attr value, it will get this attribute.<br>
+&nbsp; &nbsp;v &nbsp; &nbsp; &nbsp;defaults to "href" if the node has one, else "text" which<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; is the node's text.<br>
+<br>
+&nbsp; &nbsp;@ &nbsp; &nbsp; &nbsp;copies a block with given name. When used as an attr value<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; it gets the attribute referenced by "value"<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Example:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [{!:href=http://civboot.org}Civboot] creates a hidden named block<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [@Civboot] clones the block (removing name and hidden)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [&lt;@Civboot&gt;Civboot Project] has href=http://civboot.org<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; note: the default for "value" is "href" if it exists.<br>
+<br>
+&nbsp;escapes<br>
+&nbsp; &nbsp;\[ &nbsp; &nbsp;literal [<br>
+&nbsp; &nbsp;\] &nbsp; &nbsp;literal ]<br>
+&nbsp; &nbsp;\\ &nbsp; &nbsp;literal \<br>
+&nbsp; &nbsp;\* &nbsp; &nbsp;literal \*, where * is any other character
+</div>
+<p>
+<div class=info> Note:
+Any value after a bracket besides <span class=code>&nbsp;{...} b i u * , _ $ " + ! / : v @ </span>
+is invalid.</div>
+<p>
+<h2><a id="Demos" href="#Demos">Demos</h2></a>
+<p>
+<h3>Inline Code:</h3>
+<p>
+<span class=code>[$inline code]. Note that [$balanced[brackets] are allowed]</span> <ul>
+  <li><span class=code>inline code</span>. Note that <span class=code>balanced[brackets] are allowed</span></li>
+</ul>
+<p>
+<h3>Code block:</h3>
+<p>
+Writing this: <div class=code-block>[{## lang=lua}<br>
+function example()<br>
+&nbsp; print'Hello world'<br>
+end<br>
+]##
+</div>
+<p>
+Will create a formatted code block: <div class=code-block>function example()<br>
+&nbsp; print'Hello world'<br>
+end
+</div>
+<p>
+<h3>Text Formatting</h3>
+<span class=code>[*bold], [,italic] and [_underlined]</span> <ul>
+  <li><b>bold</b>, <i>italic</i> and <u>underlined</u></li>
+</ul>
+<p>
+<h3>Linking</h3>
+<span class=code>[{b i href=http://civboot.org}bold italic link]</span> <ul>
+  <li><a href="http://civboot.org"><b><i>bold italic link</i></b></a></li>
+</ul>
+<p>
+<h3>List</h3>
+Lists are started with <span class=code>+</span>, each items is deliniated by <span class=code>*</span>: <div class=code-block>A list of stuff: [+<br>
+* example list<br>
+* with sub list:[+<br>
+&nbsp; * sub item<br>
+&nbsp; * multi-line<br>
+<br>
+&nbsp; &nbsp; sub item.<br>
+&nbsp; * inner code block<br>
+&nbsp; &nbsp; [##<br>
+&nbsp; &nbsp; function example()<br>
+&nbsp; &nbsp; &nbsp; print'example inner block'<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; ]##<br>
+&nbsp; * final sub<br>
+]<br>
+* final item<br>
+]
+</div>
+<p>
+A list of stuff: <ul>
+  <li>example list</li>
+  <li>with sub list:<ul>
+    <li>sub item</li>
+    <li>multi-line
+    <p>
+    sub item.</li>
+    <li>inner code block
+    <div class=code-block>function example()<br>
+&nbsp; print'example inner block'<br>
+end
+</div></li>
+    <li>final sub</li>
+  </ul></li>
+  <li>final item</li>
+</ul>
+<p>
+<h3>Hidden</h3>
+<span class=code>Hidden block: "[! this is hidden]"</span> <ul>
+  <li>Hidden block: ""</li>
+</ul>
+<p>
+<h3>Table</h3>
+A table is created by the 'table' attribute. We also set the <span class=code>head</span>, <span class=code>row</span>
+and <span class=code>col</span> to the defaults for demonstration (they can be excluded). The
+<span class=code>row</span> and <span class=code>head</span> deliminters are only recognized at the start of a line.
+<p>
+<div class=code-block>A table: [{table head=# row=+ col=|}<br>
+# col 1 &nbsp; &nbsp; &nbsp;| col 2 &nbsp; | col 3<br>
++ row [*1.1] | row 1.2 | row 1.3<br>
++ row [*1.1] | row 1.2 | row 1.3<br>
+]
+</div>
+<p>
+A table: <div class=table><table>
+  <tr>
+    <th>col 1</th>
+    <th>col 2</th>
+    <th>col 3</th>
+  </tr>
+  <tr>
+    <td>row <b>1.1</b></td>
+    <td>row 1.2</td>
+    <td>row 1.3</td>
+  </tr>
+  <tr>
+    <td>row <b>1.1</b></td>
+    <td>row 1.2</td>
+    <td>row 1.3</td>
+  </tr>
+</table></div>
+<p>
+<h3>Table with large columns</h3>
+For very large or multi-lined columns, you can organize them similar to
+sub-lists: <div class=code-block>[{table}<br>
+# 1st header column<br>
+| 2nd header column<br>
+| 3rd header column<br>
++ long row 1.1<br>
+| long row 1.2<br>
+<br>
+&nbsp; Even includes new line!<br>
+| long row 1.3<br>
+&nbsp; [{## code=lua}<br>
+&nbsp; function example()<br>
+&nbsp; &nbsp; return "code block"<br>
+&nbsp; end<br>
+&nbsp; ]##<br>
++ row 2.1<br>
+| row 2.2<br>
+| row 2.3<br>
+]
+</div>
+<p>
+<div class=table><table>
+  <tr>
+    <th>1st header column
+    </th>
+    <th>2nd header column
+    </th>
+    <th>3rd header column</th>
+  </tr>
+  <tr>
+    <td>long row 1.1
+    </td>
+    <td>long row 1.2
+    <p>
+    Even includes new line!
+    </td>
+    <td>long row 1.3
+    <div class=code-block>function example()<br>
+&nbsp; return "code block"<br>
+end
+</div></td>
+  </tr>
+  <tr>
+    <td>row 2.1
+    </td>
+    <td>row 2.2
+    </td>
+    <td>row 2.3</td>
+  </tr>
+</table></div>
+<p>
+<h3>Named Nodes and Values</h3>
+<div class=info> <b>Note</b>: all visible named blocks have a ☍ link next to them and serve dual
+purpose of being referenced within the cxt file using <span class=code>[@name]</span> and by
+local and external links (<span class=code>href=#name</span>) </div>
+<p>
+<span class=code>A hidden named block: "[{!:href=http://civboot.org}Civboot]"</span> <ul>
+  <li>A hidden named block: ""</li>
+</ul>
+<p>
+<span class=code>A visible named block: [{:href=https://github.com/civboot/civlua}civlua]</span> <ul>
+  <li>A visible named block: <a id="civlua" href="#civlua"><a href="https://github.com/civboot/civlua">civlua</a></a></li>
+</ul>
+<p>
+<span class=code>[@Civboot] clones the hidden block (removing the [$clone] attribute)</span> <ul>
+  <li><a href="http://civboot.org">Civboot</a> clones the hidden block (removing the <span class=code>clone</span> attribute)</li>
+</ul>
+<p>
+<span class=code>[&lt;@Civboot&gt;Civboot Project] has [$href=http://civboot.org].</span><ul>
+  <li><a href="http://civboot.org">Civboot Project</a> has <span class=code>href=http://civboot.org</span>.</li>
+</ul>
+<p>
+<div class=code-block>You can also link to named blocks with [$href=#name], for instance the "Demos"<br>
+header is named [&lt;#Demos&gt;Demos].
+</div> <ul>
+  <li>You can also link to named blocks with <span class=code>href=#name</span>, for instance the "Demos"
+  header is named <a href="#Demos">Demos</a>.</li>
+</ul>
+<p>
+<h3>Escaping [brackets]</h3>
+<div class=code-block>You can \[escape\] brackets to render them directly.<br>
+You can also escape '\\'.
+</div> <ul>
+  <li>You can [escape] brackets to render them directly.
+  You can also escape '\'.</li>
+</ul>
+<p>
+<h2>UNLICENSE</h2>
+Cxt is in the the public domain, see the <a href="../UNLICENSE">UNLICENSE</a> for details.
+<p>
+It was originally created by Rett Berg as part of the <a href="http://civboot.org">Civboot</a> project.
+<h2>Module <a id="cxt" href="#cxt">cxt</a> (<a href=".civ/lua/cxt.lua:2"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="cxt.__name" href="#cxt.__name">cxt.__name</a></h4>
+<h3>Table <a id="cxt.attr" href="#cxt.attr">cxt.attr</a> (<a href=".civ/lua/cxt.lua:68"><i>src</i></a>)</h3>
+<h3>Table <a id="cxt.attrSym" href="#cxt.attrSym">cxt.attrSym</a> (<a href=".civ/lua/cxt.lua:63"><i>src</i></a>)</h3><div class=code-block>M.attrSym = Key{kind='attrSym', {<br>
+&nbsp; '!', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -- hidden<br>
+&nbsp; '*', '/', '_', &nbsp; -- bold, italic, underline<br>
+&nbsp; ':', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -- define node name<br>
+}}
+</div>
+<h3>Table <a id="cxt.attrs" href="#cxt.attrs">cxt.attrs</a></h3>
+<h3>Table <a id="cxt.fmtAttr" href="#cxt.fmtAttr">cxt.fmtAttr</a></h3>
+<h3>Table <a id="cxt.htmlFmt" href="#cxt.htmlFmt">cxt.htmlFmt</a> (<a href=".civ/lua/cxt.lua:446"><i>src</i></a>)</h3>
+<h3>Table <a id="cxt.keyval" href="#cxt.keyval">cxt.keyval</a></h3>
+<h3>Record <a id="cxt.Config" href="#cxt.Config">cxt.Config</a> (<a href=".civ/lua/cxt.lua:451"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>header</span></td>
+    <td>[string] 
+    typically used for html header</td>
+  </tr>
+  <tr>
+    <td><span class=code>pathUrl</span></td>
+    <td>[function(path) -> url] = <span class=code>fn"ds.iden"[/home/rett/projects/civlua/.civ/lua/ds.lua:150]</span></td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.Config.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Config.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Config.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Config.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.Config.__index</span></td>
+    <td>[Ty<Config>] (<a href=".civ/lua/cxt.lua:451">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.Config.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Config.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Config.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="cxt.Writer" href="#cxt.Writer">cxt.Writer</a> (<a href=".civ/lua/cxt.lua:462"><i>src</i></a>)</h3>
+A Writer for cxt serializers (terminal, http, etc) to use.
+<p>
+The writer contains: <ul>
+  <li>The src lines and token decoder for getting pegl.Token values.</li>
+  <li>The destination lines and current indent level.</li>
+</ul>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>src</span></td>
+    <td>  </td>
+  </tr>
+  <tr>
+    <td><span class=code>to</span></td>
+    <td>  </td>
+  </tr>
+  <tr>
+    <td><span class=code>config</span></td>
+    <td>[Config] = <span class=code>Config{header=nil, pathUrl=fn"ds.iden"[/home/rett/projects/civlua/.civ/lua/ds.lua:150]}</span></td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.Writer.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.Writer.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.__len</span></td>
+    <td>[function] (<a href=".civ/lua/cxt.lua:483">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.eqStr</span></td>
+    <td>[function] (<a href=".civ/lua/cxt.lua:472">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.fromParser</span></td>
+    <td>[function] (<a href=".civ/lua/cxt.lua:465">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.level</span></td>
+    <td>[<span class=code>(w, add) -&gt; w.to:level(add)</span>] (<a href=".civ/lua/cxt.lua:484">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.Writer.tokenStr</span></td>
+    <td>[function] (<a href=".civ/lua/cxt.lua:468">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="cxt._codeHashes" href="#cxt._codeHashes">cxt._codeHashes</a> (<a href=".civ/lua/cxt.lua:37"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt._hasUnbalancedBrackets" href="#cxt._hasUnbalancedBrackets">cxt._hasUnbalancedBrackets</a> (<a href=".civ/lua/cxt.lua:33"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.assertParse" href="#cxt.assertParse">cxt.assertParse</a><span class=code>(dat, expected, dbg) -&gt; node</span> (<a href=".civ/lua/cxt.lua:443"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.checkParse" href="#cxt.checkParse">cxt.checkParse</a><span class=code>(dat, context) -&gt; dat</span> (<a href=".civ/lua/cxt.lua:419"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.code" href="#cxt.code">cxt.code</a> (<a href=".civ/lua/cxt.lua:51"><i>src</i></a>)</h3>
+create <span class=code>[$inline code]</span>
+<h3>Function <a id="cxt.codeblock" href="#cxt.codeblock">cxt.codeblock</a> (<a href=".civ/lua/cxt.lua:44"><i>src</i></a>)</h3>
+create a <span class=code>[##code block]##</span>
+<h3>Function <a id="cxt.content" href="#cxt.content">cxt.content</a> (<a href=".civ/lua/cxt.lua:350"><i>src</i></a>)</h3>
+parse normal content, adding to node
+<h3>Function <a id="cxt.escape" href="#cxt.escape">cxt.escape</a><span class=code>(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span> (<a href=".civ/lua/cxt.lua:24"><i>src</i></a>)</h3>
+escape the string so it renders literally
+<h3>Function <a id="cxt.parse" href="#cxt.parse">cxt.parse</a> (<a href=".civ/lua/cxt.lua:407"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.parsedStrings" href="#cxt.parsedStrings">cxt.parsedStrings</a> (<a href=".civ/lua/cxt.lua:436"><i>src</i></a>)</h3>
+<h2>Module <a id="cxt.term" href="#cxt.term">cxt.term</a> (<a href=".civ/lua/cxt/term.lua:3"><i>src</i></a>)</h2>
+cxt for the terminal, either plain text or vt100/etc
+<p>
+<h3>Table <a id="cxt.term.HEADER" href="#cxt.term.HEADER">cxt.term.HEADER</a></h3>
+<h3>Table <a id="cxt.term.STYLES" href="#cxt.term.STYLES">cxt.term.STYLES</a></h3>
+<h4>Value <a id="cxt.term.__name" href="#cxt.term.__name">cxt.term.__name</a></h4>
+<h3>Record <a id="cxt.term.Args" href="#cxt.term.Args">cxt.term.Args</a> (<a href=".civ/lua/cxt/term.lua:25"><i>src</i></a>)</h3>
+Render cxt on a terminal.
+<p>
+Will render an input string or --inp=file.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>inp</span></td>
+    <td>[path</td>
+    <td>file] 
+    input file</td>
+  </tr>
+  <tr>
+    <td><span class=code>out</span></td>
+    <td>[path</td>
+    <td>file] 
+    output file (default=stdout)</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.term.Args.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.term.Args.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.term.Args.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.term.Args.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.term.Args.__index</span></td>
+    <td>[Ty<Args>] (<a href=".civ/lua/cxt/term.lua:25">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cxt.term.Args.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.term.Args.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>cxt.term.Args.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="cxt.term.convert" href="#cxt.term.convert">cxt.term.convert</a> (<a href=".civ/lua/cxt/term.lua:138"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.term.main" href="#cxt.term.main">cxt.term.main</a> (<a href=".civ/lua/cxt/term.lua:149"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.term.serialize" href="#cxt.term.serialize">cxt.term.serialize</a> (<a href=".civ/lua/cxt/term.lua:130"><i>src</i></a>)</h3>
+<h2>Module <a id="cxt.html" href="#cxt.html">cxt.html</a> (<a href=".civ/lua/cxt/html.lua:2"><i>src</i></a>)</h2>
+Serialize cxt nodes as html
+<p>
+<h4>Value <a id="cxt.html.__name" href="#cxt.html.__name">cxt.html.__name</a></h4>
+<h3>Function <a id="cxt.html.assertHtml" href="#cxt.html.assertHtml">cxt.html.assertHtml</a> (<a href=".civ/lua/cxt/html.lua:210"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.html.convert" href="#cxt.html.convert">cxt.html.convert</a> (<a href=".civ/lua/cxt/html.lua:203"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.html.htmlEncode" href="#cxt.html.htmlEncode">cxt.html.htmlEncode</a> (<a href=".civ/lua/cxt/html.lua:107"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.html.main" href="#cxt.html.main">cxt.html.main</a> (<a href=".civ/lua/cxt/html.lua:227"><i>src</i></a>)</h3>
+<h3>Function <a id="cxt.html.serialize" href="#cxt.html.serialize">cxt.html.serialize</a> (<a href=".civ/lua/cxt/html.lua:188"><i>src</i></a>)</h3>
+serialize the node to the writer.
+<h3>Function <a id="cxt.html.serializeDoc" href="#cxt.html.serializeDoc">cxt.html.serializeDoc</a> (<a href=".civ/lua/cxt/html.lua:195"><i>src</i></a>)</h3>
+</div></body>
+</html>

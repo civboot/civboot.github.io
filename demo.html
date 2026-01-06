@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<nav>
+  <ul>
+    <a href="/games/index.html" class=nav>Tutorial</a>
+    <a href="/lua/index.html"   class='nav nav-selected'>Lua</a>
+  </ul>
+</nav>
+
+<body>
+<div class=doc>
+<h1>Under Construction</h1>
+<div class=warn>
+  <p>Go to <a href="https://github.com/civboot/civlua">civlua</a> project for
+  the most up-to-date documentation.
+
+  <p>This site is under construction. Right now I am only using it to play with
+  github pages and styling what the output of cxt will be.
+</div>
+
+<h2>Header 2</h2>
+
+Quote:
+<div class=info>
+  <p>This is a quote</p>
+  <p>...by <a href="#">somebody</a>.</p>
+</div>
+
+<h3>Header 3</h3>
+<h6>Header 6</h6>
+
+<p>Some link to <a href="https://google.com">google.com</a>,
+and <a href="https://dontgohere.com">don't go here</a>
+</p>
+
+<p>A list.</p>
+<ul>
+  <li>item 1.</li>
+  <li><p><span class="code">inline-code</span></li>
+</ul>
+
+
+<p>block code:</p>
+
+<div class="code-block">
+  <span class=syn-kw>function</span> <a class=syn-name href="">foo</a>(a)<br>
+  &nbsp; <span class=syn-call>print</span><span class=syn-string
+  >"0Oo0 - some really really looooooooong text... yup it keeps going and going and going..."</span>
+  <br>
+  &nbsp; <span class=syn-kw>return</span> a + 3&nbsp; <span class=syn-comment>// adding three</span><br>
+  <span class=syn-kw>end</span><br>
+</div>
+
+<p>Short code:</p>
+<div class="code-block">
+  foo()&nbsp; <span class=syn-comment>// comment</span>
+</div>
+
+<h2>A Table</h2>
+<p>Some text before the table.</p>
+
+<div class=table><table>
+  <tbody><tr>
+    <th>1st header column
+    </th>
+    <th>2nd header column
+    </th>
+    <th>3rd header column</th>
+  </tr>
+  <tr>
+    <td>long row 1.1
+    </td>
+    <td>long row 1.2
+    <p>
+    Even includes new line!
+    </p>
+    <div class=info>
+      <p>... and some info!</p>
+    </div>
+</div>
+    </td>
+    <td>long row 1.3
+      <div class=code-block><span class=syn-kw>function</span> <a class=syn-name href="">example</a>(a)<br>
+        &nbsp; <span class=syn-kw>return</span> <span class=syn-string>"code block"</span><br>
+        <span class=syn-kw>end</span>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>row 2.1
+    </td>
+    <td>row 2.2
+    </td>
+    <td>row 2.3</td>
+  </tr>
+</tbody></table></div>
+
+<p>End of table... </p>
+<div class=table><table>
+  <tr><td>very</td> <td>shrt</td></tr>
+</table></div>
+
+</div>
+</body>
+</html>

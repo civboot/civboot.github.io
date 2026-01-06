@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+PEG like recursive descent Parser for Lua.
+<p>
+PEG stands for "Parsing Expression Grammar" and is one of the simplest parsing
+grammars since it maps very-closesly to recursive descent -- which is a
+hand-rolled parser that uses recursion. This library is a pure-LUA
+recursive-descent parser which exports types and functions to create a PEG-like
+DSL that is still just recursive descent under the hood.
+<p>
+The benefits of this library are: <ul>
+  <li><i>vs hand-rolled recursive descent</i> is more concise and readable, as well as
+  providing automatic error messages (i.e. symbol locations in your stack) and
+  debugging.</li>
+  <li><i>vs PEG</i> is nearly as concise while maintaining the ability to hand-roll any
+  logic needed.</li>
+</ul>
+<p>
+<h2><a id="pegl-resources" href="#pegl-resources">Resources</h2></a>
+If you are completely new to parsers and especially if you want to write your
+own language with an AST then I cannot recommend
+<a href="http://www.craftinginterpreters.com">http://www.craftinginterpreters.com</a> enough. It might be a better place to
+start than this library.
+<p>
+<h2><a id="pegl-intro" href="#pegl-intro">Introduction</h2></a>
+A parser is a way to convert text into structured node objects so that the text
+can be compiled or annotated by a program. For example you might want to convert
+some source code like:
+<p>
+<div class=code-block>x = 1 + 2</div>
+<p>
+Into something like:
+<p>
+<div class=code-block>{'x', '=', {'1', '+', '2', kind='op'}, kind='assign'}</div>
+<p>
+A recursive descent parser does so via hand-rolled functions which typically
+<i>recurse</i> into eachother. Each function attempts to parse from the current
+parser position using its spec (which may be composed of calling other parsing
+functions) and returns either the successfully parsed node or <span class=code>nil</span> (or
+returns/throws an error if it finds a syntax error).
+<p>
+PEGL is a Lua library for writing the common-cases of a recursive descent parser
+in a (pure Lua) syntax similar to PEG, while still being able to easily fallback
+to hand-rolled recursive descent when needed.
+<p>
+Most traditional PEG parsers (as well as other parsers) struggle with
+complicated syntax such as Lua's <span class=code>===[raw string syntax]===]</span>, python's
+whitespace denoted syntax or C's lookahead requirements (<span class=code>(U2)*c**h</span> --
+recursive descent can solve a lot of these problems relatively easily and
+performantly.  However, recursive descent parsers can be very verbose and
+sometimes difficult to understand. Below is a comparison of the above example
+in both PEG, PEGL and a "traditional" (though not very good) recursive descent
+implementation.
+<p>
+<h3>Examples</h3>
+<p>
+<b>PEG</b>: most concise but harder to fallback to hand-rolled recursive descent
+<div class=code-block>grammar = [[<br>
+num &nbsp; &nbsp;&lt;- '%d'<br>
+name &nbsp; &lt;- '%w'<br>
+setVar &lt;- num '=' name<br>
+expr &nbsp; &lt;- setVar / ... other valid expressions<br>
+]]<br>
+p:parse(grammar)
+</div>
+<p>
+<b>PEGL</b>: very concise and easy to fallback to hand-rolled recursive descent.
+Things like `kind` and `name` make debug printing easier. Simply name your
+specs, putting them together into a root spec and parsing:
+<p>
+<div class=code-block>num &nbsp; &nbsp;= Pat{'%d+', kind='num'} -- kind=num sets the node name<br>
+name &nbsp; = Pat{'%w+', kind='name'}<br>
+-- Note: UNPIN and PIN are used for when errors should be raised<br>
+setVar = {UNPIN, name, '=', PIN, num, kind='setVar'}<br>
+expr &nbsp; = Or{setVar, ... other valid expressions, name='expr'}<br>
+p:parse(expr)<br>
+]<br>
+<br>
+["Note: the difference between name and kind is that a node<br>
+&nbsp; with [$kind] set will [*never be unpacked]. For instance,<br>
+&nbsp; to define a [$block; of; items;] you might use [$name] since you want<br>
+&nbsp; [$single;] to not be represented as just [$single] instead of<br>
+&nbsp; [$block { single }].<br>
+]<br>
+<br>
+[*Recursive Descent]: not very concise, harder to debug. [{## lang=lua}<br>
+-- Note: p=parser, an object which tracks the current position<br>
+-- in it's `state`<br>
+<br>
+function parseNum(p)<br>
+&nbsp; local num = p:consume('%d+') -- return result and advance position<br>
+&nbsp; if num then -- found<br>
+&nbsp; &nbsp; return {num, kind='num'} end<br>
+&nbsp; end<br>
+end<br>
+<br>
+function parseSetVar(p)<br>
+&nbsp; local state = p.state()<br>
+&nbsp; local name = p:consume('%w+')<br>
+&nbsp; if not name then return end<br>
+&nbsp; local eq, num = p:consume('='), parseNum(p)<br>
+&nbsp; if not (eq and num) then<br>
+&nbsp; &nbsp; -- didn't match, reset state and return<br>
+&nbsp; &nbsp; p.setState(state)<br>
+&nbsp; &nbsp; return<br>
+&nbsp; end<br>
+&nbsp; return {{name, kind='name'}, eq, num, kind='setVar'}<br>
+end<br>
+<br>
+function expression(p)<br>
+&nbsp; local expr = parseSetVar(p)<br>
+&nbsp; if expr then return expr end<br>
+&nbsp; -- ... other possible expressions<br>
+end<br>
+<br>
+expression(p)
+</div>
+<p>
+See <a href="#pegl.Seq">#pegl.Seq</a> for the basic API of parsing specs.
+<h2>Module <a id="pegl" href="#pegl">pegl</a> (<a href=".civ/lua/pegl.lua:4"><i>src</i></a>)</h2>
+pegl: peg-like lua parser
+<p>
+<h3>Table <a id="pegl.EMPTY" href="#pegl.EMPTY">pegl.EMPTY</a> (<a href=".civ/lua/pegl.lua:262"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.EOF" href="#pegl.EOF">pegl.EOF</a> (<a href=".civ/lua/pegl.lua:269"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.Empty" href="#pegl.Empty">pegl.Empty</a><span class=code>() -&gt; M.EMPTY</span> (<a href=".civ/lua/pegl.lua:263"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.Eof" href="#pegl.Eof">pegl.Eof</a> (<a href=".civ/lua/pegl.lua:275"><i>src</i></a>)</h3><div class=code-block>M.Eof = ds.sentinel('Eof', {<br>
+&nbsp; __tostring = function() return 'Eof' end,<br>
+&nbsp; parse = function(self, p)<br>
+&nbsp; &nbsp; p:skipEmpty(); if p:isEof() then return M.EOF end<br>
+&nbsp; end<br>
+})
+</div>
+<h3>Table <a id="pegl.PIN" href="#pegl.PIN">pegl.PIN</a> (<a href=".civ/lua/pegl.lua:257"><i>src</i></a>)</h3>
+<h4>Value <a id="pegl.SPAN_PACK" href="#pegl.SPAN_PACK">pegl.SPAN_PACK</a></h4>
+<h3>Table <a id="pegl.UNPIN" href="#pegl.UNPIN">pegl.UNPIN</a> (<a href=".civ/lua/pegl.lua:258"><i>src</i></a>)</h3>
+<h4>Value <a id="pegl.__name" href="#pegl.__name">pegl.__name</a></h4>
+<h3>Table <a id="pegl.fmtKinds" href="#pegl.fmtKinds">pegl.fmtKinds</a></h3>
+<h3>Table <a id="pegl.testing" href="#pegl.testing">pegl.testing</a></h3>
+<h3>Record <a id="pegl.Config" href="#pegl.Config">pegl.Config</a> (<a href=".civ/lua/pegl.lua:95"><i>src</i></a>)</h3>
+The config spec defines custom behavior when parsing. It's attributes
+can be set to change how the parser skips empty (whitespace) and handles comments.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>skipEmpty</span></td>
+    <td>[fn(p) -> nil] = <span class=code>fn"pegl.skipEmpty"[/home/rett/projects/civlua/.civ/lua/pegl.lua:305]</span>
+    default=skip whitespace <ul>
+      <li>must be a function that accepts the `Parser`
+      and advances it's `l` and `c` past any empty (white) space. It must also set
+      `p.line` appropriately when `l` is moved.</li>
+      <li>The return value is ignored.</li>
+      <li>The default is to skip all whitespace (spaces, newlines, tabs, etc). This
+      should work for _most_ languages but fails for languages like python.</li>
+      <li>Recommendation: If your language has only a few whitespace-aware nodes (i.e.
+      strings) then hand-roll those as recursive-descent functions and leave
+      this function alone.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td><span class=code>skipComment</span></td>
+    <td>[function] 
+    fn(p) -> Token for found comment</td>
+  </tr>
+  <tr>
+    <td><span class=code>tokenizer</span></td>
+    <td>[fn(p) -> nil] = <span class=code>fn"pegl.defaultTokenizer"[/home/rett/projects/civlua/.civ/lua/pegl.lua:318]</span>
+    Requires: <ul>
+      <li>must return one token. The default is to return a single punctuation character
+      or a whole word (<span class=code>_%w</span>)</li>
+      <li>Objects like <span class=code>Key</span> can use the single punctuation characters in a Trie-like
+      performant data structure.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td><span class=code>dbg</span></td>
+    <td>[boolean] 
+    if true, prints out huge amounts of debug information of parsing.</td>
+  </tr>
+  <tr>
+    <td><span class=code>lenient</span></td>
+    <td>[bool] 
+    if set, syntax errors do not cause failure.
+    Instead, all errors act as if the current block missed but was UNPIN.
+    </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Config.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Config.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Config.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Config.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Config.__index</span></td>
+    <td>[Ty<Config>] (<a href=".civ/lua/pegl.lua:95">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Config.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Config.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Config.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Config.newFmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:764">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.FmtPegl" href="#pegl.FmtPegl">pegl.FmtPegl</a> (<a href=".civ/lua/pegl.lua:754"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>kinds</span></td>
+    <td>[table] = <span class=code>{EMPTY=fn"function"[/home/rett/projects/civlua/.civ/lua/pegl.lua:745], EOF=fn"function"[/home/rett/projects/civlua/.civ/lua/pegl.lua:744], base10=fn"function"[/home/rett/projects/civlua/.civ/lua/pegl.lua:748], base16=fn"function"[/home/rett/projects/civlua/.civ/lua/pegl.lua:749], name=fn"function"[/home/rett/projects/civlua/.civ/lua/pegl.lua:746], ty=fn"function"[/home/rett/projects/civlua/.civ/lua/pegl.lua:747]}</span>
+    kind -> fmtFn</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__index</span></td>
+    <td>[Ty<FmtPegl>] (<a href=".civ/lua/pegl.lua:754">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__call</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:759">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.FmtPegl.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Key" href="#pegl.Key">pegl.Key</a> (<a href=".civ/lua/pegl.lua:189"><i>src</i></a>)</h3>
+The table given to <span class=code>Key</span> forms a Trie which is extremely performant. Key depends
+strongly on the <span class=code>tokenizer</span> passed to Config.
+<p>
+Example: <span class=code>Key{{'myKeword', ['+']={'+'=true}}, kind='kw'}</span> will match tokens "myKeyword"
+and "+" followed by "+" (but not "+" not followed by "+").
+<p>
+To also match "+" use <span class=code>['+']={true, '+'=true}</span>
+<p>
+<div class=info>Note: The `Key` constructor converts all list items into
+<span class=code>value=true</span>, so <span class=code>{'a', 'b'}</span> is converted to <span class=code>{a=true, b=true}</span></div>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>keys</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Key.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Key.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Key.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Key.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Key.__index</span></td>
+    <td>[Ty<Key>] (<a href=".civ/lua/pegl.lua:189">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Key.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Key.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Key.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Key.parse</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:361">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Many" href="#pegl.Many">pegl.Many</a> (<a href=".civ/lua/pegl.lua:217"><i>src</i></a>)</h3>
+match a Spec multiple times
+Example: <span class=code>Many{'keyword', OtherSpec, min=1, kind='myMany'}</span> will match the
+given sequence one or more times (<span class=code>min=0</span> times by default). The parse
+result is a list with <span class=code>kind='myMany'</span>.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>min</span></td>
+    <td>[int] = <span class=code>0</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Many.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Many.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Many.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Many.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Many.__index</span></td>
+    <td>[Ty<Many>] (<a href=".civ/lua/pegl.lua:217">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Many.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Many.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Many.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Many.parse</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:451">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Not" href="#pegl.Not">pegl.Not</a> (<a href=".civ/lua/pegl.lua:252"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Not.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Not.__index</span></td>
+    <td>[Ty<Not>] (<a href=".civ/lua/pegl.lua:252">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Not.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.extend</span></td>
+    <td>[<span class=code>(r, l) -&gt; r</span>] (<a href=".civ/lua/ds.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.get</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.parse</span></td>
+    <td>[<span class=code>(self, p) -&gt; not M.parseSeq(p, self)</span>] (<a href=".civ/lua/pegl.lua:253">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Not.set</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Or" href="#pegl.Or">pegl.Or</a> (<a href=".civ/lua/pegl.lua:207"><i>src</i></a>)</h3>
+choose one spec
+<p>
+Example: <span class=code>Or{'keyword', OtherSpec, Empty}</span> will match one of the three
+specs given.  Note that <span class=code>Empty</span> will always match (and return
+<span class=code>pegl.EMPTY</span>).  Without <span class=code>Empty</span> this could return <span class=code>nil</span>, causing a
+parent <span class=code>Or</span> to match a different spec.
+<p>
+<div class=info>Note: <span class=code>Maybe(spec)</span> literally expands to <span class=code>Or{spec, Empty}</span></div>
+<p>
+Prefer <span class=code>Key</span> if selecting among multiple string or token paths as <span class=code>Or</span> is
+not performant (<span class=code>O(N)</span> vs Key's <span class=code>O(1)</span>)
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Or.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Or.__index</span></td>
+    <td>[Ty<Or>] (<a href=".civ/lua/pegl.lua:207">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Or.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.extend</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.get</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.parse</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:430">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Or.set</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Parser" href="#pegl.Parser">pegl.Parser</a> (<a href=".civ/lua/pegl.lua:117"><i>src</i></a>)</h3>
+The parser tracks the current position of parsing in `dat` and has several
+convienience methods for hand-rolling your own recursive descent functions.
+<p>
+<div class=info> Note: the location is **line/col based** (not position based) because it
+is designed to work with an application that stores the strings as lines
+(a text editor) </div>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>dat</span></td>
+    <td>[lines] 
+    reference to the underlying data.
+    Must look like a table of lines</td>
+  </tr>
+  <tr>
+    <td><span class=code>l</span></td>
+    <td>[int] 
+    line, incremented when <span class=code>c</span> is exhausted</td>
+  </tr>
+  <tr>
+    <td><span class=code>c</span></td>
+    <td>[int] 
+    column in <span class=code>line</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>line</span></td>
+    <td>[string] 
+    the current line (<span class=code>dat:get(l)</span>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lines</span></td>
+    <td>  </td>
+  </tr>
+  <tr>
+    <td><span class=code>config</span></td>
+    <td>[Config] </td>
+  </tr>
+  <tr>
+    <td><span class=code>stack</span></td>
+    <td>[list] </td>
+  </tr>
+  <tr>
+    <td><span class=code>stackL</span></td>
+    <td>[list] </td>
+  </tr>
+  <tr>
+    <td><span class=code>stackC</span></td>
+    <td>[list] </td>
+  </tr>
+  <tr>
+    <td><span class=code>stackLast</span></td>
+    <td>[{item, l, c}] </td>
+  </tr>
+  <tr>
+    <td><span class=code>commentLC</span></td>
+    <td>[table] 
+    table of {line={col=CommentToken}}</td>
+  </tr>
+  <tr>
+    <td><span class=code>dbgLevel</span></td>
+    <td>[number] = <span class=code>0</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>path</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>firstError</span></td>
+    <td>[{l=int,c=int, [1]=str}] 
+    first error.</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Parser.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Parser.__index</span></td>
+    <td>[Ty<Parser>] (<a href=".civ/lua/pegl.lua:117">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Parser.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.assertNode</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:497">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.checkPin</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:638">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.consume</span></td>
+    <td>[<span class=code>(p, pat, plain) -&gt; Token</span>] (<a href=".civ/lua/pegl.lua:550">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.dbg</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:688">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.dbgEnter</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:664">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.dbgLeave</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:673">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.dbgMatched</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:676">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.dbgMissed</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:679">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.dbgUnpack</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:682">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.error</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:648">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.incLine</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:565">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.isEof</span></td>
+    <td>[<span class=code>(p) -&gt; isAtEndOfFile</span>] (<a href=".civ/lua/pegl.lua:566">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.makeStrTokens</span></td>
+    <td>[<span class=code>(p, t) -&gt; t</span>] (<a href=".civ/lua/pegl.lua:593">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.new</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:534">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.parse</span></td>
+    <td>[<span class=code>(p, spec) -&gt; node</span>] (<a href=".civ/lua/pegl.lua:544">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.parseAssert</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:656">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.peek</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:558">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.setState</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:574">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.skipEmpty</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:570">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.state</span></td>
+    <td>[<span class=code>(p) -&gt; {l=p.l, c=p.c, line=p.line}</span>] (<a href=".civ/lua/pegl.lua:572">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.sub</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:561">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.toStrTokens</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:585">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.tokenStr</span></td>
+    <td>[<span class=code>(p, t) -&gt; string</span>] (<a href=".civ/lua/pegl.lua:594">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.trimTokenLast</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:616">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Parser.trimTokenStart</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:603">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Pat" href="#pegl.Pat">pegl.Pat</a> (<a href=".civ/lua/pegl.lua:150"><i>src</i></a>)</h3>
+<span class=code>Pat{'%w+', kind='word'}</span> will create a Token with the span matching the
+<span class=code>%w+</span> pattern and the kind of <span class=code>word</span> when matched.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Pat.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Pat.__index</span></td>
+    <td>[Ty<Pat>] (<a href=".civ/lua/pegl.lua:150">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Pat.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.extend</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.get</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.parse</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:376">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Pat.set</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Seq" href="#pegl.Seq">pegl.Seq</a> (<a href=".civ/lua/pegl.lua:251"><i>src</i></a>)</h3>
+A Sequence of parsers. Note that <span class=code>Parser</span> treats <span class=code>Seq{'a'}</span> and <span class=code>{'a'}</span>
+identically (you can use plain tables instead).
+<p>
+Raw strings are treated as keywords (the are parsed literally and have
+<span class=code>key</span> set to themselves). Functions are called with the <span class=code>parser</span> as the
+only argument and must return the node/s they parsed or <span class=code>nil</span> for a
+non-error match.
+<p>
+A sequence is a list of either other parsers
+(<span class=code>Seq, {}, "keyword", fn(p), Not, Or, etc</span>} and/or plain strings which are
+treated as keywords and will have <span class=code>kind</span> be set to themselves when parsed.
+<p>
+If the first spec matches but a later one doesn't an <span class=code>error</span> will be thrown
+(instead of <span class=code>nil</span> returned) unless <span class=code>UNPIN</span> is used. See the PIN/UNPIN
+docs for details.
+<p>
+<h4>PIN/UNPIN: Syntax Error Reporting</h4>
+PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
+`{...}`) by throwing an <span class=code>error</span> if a "pinned" spec is missing. <ul>
+  <li>By default, no error will be raised if the first spec is missing. After the
+  first spec, <span class=code>pin=true</span> and any missing specs to throw an error with context.</li>
+  <li><span class=code>PIN</span> can be used to force <span class=code>pin=true</span> until <span class=code>UNPIN</span> is (optionally)
+  specified.</li>
+  <li><span class=code>UNPIN</span> can be used to force <span class=code>pin=false</span> until <span class=code>PIN</span> is (optionally)
+  specified.</li>
+  <li>PIN / UNPIN only affect the <i>current</i> sequence (they do not pin
+  sub-sequences).</li>
+</ul>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Seq.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Seq.__index</span></td>
+    <td>[Ty<Seq>] (<a href=".civ/lua/pegl.lua:251">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Seq.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.extend</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.get</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.parse</span></td>
+    <td>[<span class=code>(seq, p) -&gt; M.parseSeq(p, seq)</span>] (<a href=".civ/lua/pegl.lua:411">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Seq.set</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="pegl.Token" href="#pegl.Token">pegl.Token</a> (<a href=".civ/lua/pegl.lua:33"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>kind</span></td>
+    <td>[string] 
+    optional, used for debugging</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Token.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Token.__index</span></td>
+    <td>[Ty<Token>] (<a href=".civ/lua/pegl.lua:33">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.Token.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.decode</span></td>
+    <td>[<span class=code>(t, dat) -&gt; lines.sub(dat, M.decodeSpan(t[1]))</span>] (<a href=".civ/lua/pegl.lua:38">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.encode</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:37">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.Token.span</span></td>
+    <td>[<span class=code>(t, dec) -&gt; M.decodeSpan(t[1])</span>] (<a href=".civ/lua/pegl.lua:34">src</a>)</td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.fmtSpec</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:132">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="pegl.Maybe" href="#pegl.Maybe">pegl.Maybe</a><span class=code>(spec) -&gt; M.Or{spec, M.Empty}</span> (<a href=".civ/lua/pegl.lua:208"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.assertParse" href="#pegl.assertParse">pegl.assertParse</a><span class=code>(t) -&gt; result, node, parser</span> (<a href=".civ/lua/pegl.lua:513"><i>src</i></a>)</h3>
+Parse the <span class=code>dat</span> with the <span class=code>spec</span>, asserting the resulting "string tokens"
+are identical to <span class=code>expect</span>.
+<p>
+the input is a table of the form: <div class=code-block>&nbsp; {dat, spec, expect, dbg=nil, config=default} --&gt; nil</div>
+<h3>Function <a id="pegl.assertParseError" href="#pegl.assertParseError">pegl.assertParseError</a> (<a href=".civ/lua/pegl.lua:520"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.decodeSpan" href="#pegl.decodeSpan">pegl.decodeSpan</a> (<a href=".civ/lua/pegl.lua:31"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.defaultTokenizer" href="#pegl.defaultTokenizer">pegl.defaultTokenizer</a> (<a href=".civ/lua/pegl.lua:318"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.encodeSpan" href="#pegl.encodeSpan">pegl.encodeSpan</a> (<a href=".civ/lua/pegl.lua:27"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.firstToken" href="#pegl.firstToken">pegl.firstToken</a><span class=code>(list) -&gt; t, listWithToken</span> (<a href=".civ/lua/pegl.lua:51"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.isEmpty" href="#pegl.isEmpty">pegl.isEmpty</a><span class=code>(t) -&gt; mty.eq(M.EMPTY, t)</span> (<a href=".civ/lua/pegl.lua:265"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.isKeyword" href="#pegl.isKeyword">pegl.isKeyword</a><span class=code>(t) -&gt; #t == 1 and t.kind == t[1]</span> (<a href=".civ/lua/pegl.lua:719"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.lastToken" href="#pegl.lastToken">pegl.lastToken</a><span class=code>(list) -&gt; t, listWithToken</span> (<a href=".civ/lua/pegl.lua:58"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.nodeSpan" href="#pegl.nodeSpan">pegl.nodeSpan</a> (<a href=".civ/lua/pegl.lua:64"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.notEmpty" href="#pegl.notEmpty">pegl.notEmpty</a><span class=code>(t) -&gt; not mty.eq(M.EMPTY, t)</span> (<a href=".civ/lua/pegl.lua:266"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.parse" href="#pegl.parse">pegl.parse</a><span class=code>(dat, spec, config) -&gt; list[Node]</span> (<a href=".civ/lua/pegl.lua:477"><i>src</i></a>)</h3>
+Parse a spec, returning the nodes or throwing a syntax error.
+<p>
+<span class=code>config</span> is used to define settings of the parser such as how to skip
+comments and whether to use debug mode.
+<h3>Function <a id="pegl.parseSeq" href="#pegl.parseSeq">pegl.parseSeq</a> (<a href=".civ/lua/pegl.lua:409"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.skipEmpty" href="#pegl.skipEmpty">pegl.skipEmpty</a> (<a href=".civ/lua/pegl.lua:305"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.skipEmptyMinimal" href="#pegl.skipEmptyMinimal">pegl.skipEmptyMinimal</a> (<a href=".civ/lua/pegl.lua:313"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.skipWs1" href="#pegl.skipWs1">pegl.skipWs1</a> (<a href=".civ/lua/pegl.lua:287"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.specToStr" href="#pegl.specToStr">pegl.specToStr</a> (<a href=".civ/lua/pegl.lua:137"><i>src</i></a>)</h3>
+<h3>Function <a id="pegl.specTy" href="#pegl.specTy">pegl.specTy</a> (<a href=".civ/lua/pegl.lua:146"><i>src</i></a>)</h3>
+Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+and must define the <span class=code>parse</span> method.
+<p>
+<h2>Module <a id="pegl.common" href="#pegl.common">pegl.common</a> (<a href=".civ/lua/pegl.lua:692"><i>src</i></a>)</h2>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pegl.common.__name</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.common.base10</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.common.base16</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.common.base2</span></td>
+    <td>[Pat] (<a href=".civ/lua/pegl.lua:706">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.common.name</span></td>
+    <td>[Pat] (<a href=".civ/lua/pegl.lua:698">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.common.nameStr</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pegl.common.ty</span></td>
+    <td>[Pat] (<a href=".civ/lua/pegl.lua:702">src</a>)</td>
+  </tr>
+</table></div>
+<h2>Module <a id="pegl.lua" href="#pegl.lua">pegl.lua</a> (<a href=".civ/lua/pegl/lua.lua:7"><i>src</i></a>)</h2>
+Lua syntax in PEGL
+<p>
+http://parrot.github.io/parrot-docs0/0.4.7/html/languages/lua/doc/lua51.bnf.html
+was used as a reference.
+<p>
+<h4>Value <a id="pegl.lua.__name" href="#pegl.lua.__name">pegl.lua.__name</a></h4>
+<h3>Table <a id="pegl.lua.call" href="#pegl.lua.call">pegl.lua.call</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.config" href="#pegl.lua.config">pegl.lua.config</a> (<a href=".civ/lua/pegl/lua.lua:265"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.lua.exp" href="#pegl.lua.exp">pegl.lua.exp</a></h3>
+<h3>Table <a id="pegl.lua.exp1" href="#pegl.lua.exp1">pegl.lua.exp1</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.explist" href="#pegl.lua.explist">pegl.lua.explist</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.field" href="#pegl.lua.field">pegl.lua.field</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.lenient" href="#pegl.lua.lenient">pegl.lua.lenient</a> (<a href=".civ/lua/pegl/lua.lua:91"><i>src</i></a>)</h3><div class=code-block>M.lenient = Or{<br>
+&nbsp; stmt, ';',<br>
+&nbsp; laststmt,<br>
+&nbsp; M.unexpectedKeyW, M.unexpectedGroup, M.unexpectedToken,<br>
+}
+</div>
+<h3>Table <a id="pegl.lua.lenientBlock" href="#pegl.lua.lenientBlock">pegl.lua.lenientBlock</a> (<a href=".civ/lua/pegl/lua.lua:92"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.lua.lenientConfig" href="#pegl.lua.lenientConfig">pegl.lua.lenientConfig</a> (<a href=".civ/lua/pegl/lua.lua:266"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.lua.name" href="#pegl.lua.name">pegl.lua.name</a></h3>
+<h3>Table <a id="pegl.lua.num" href="#pegl.lua.num">pegl.lua.num</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.src" href="#pegl.lua.src">pegl.lua.src</a></h3>
+<h3>Table <a id="pegl.lua.stmt" href="#pegl.lua.stmt">pegl.lua.stmt</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.str" href="#pegl.lua.str">pegl.lua.str</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted<div class=code-block>M.B.update = function(t, add) --&gt; t<br>
+&nbsp; for k,v in pairs(add) do t[k] = v end
+</div>
+<h3>Table <a id="pegl.lua.unexpectedGroup" href="#pegl.lua.unexpectedGroup">pegl.lua.unexpectedGroup</a> (<a href=".civ/lua/pegl/lua.lua:84"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.lua.unexpectedKeyW" href="#pegl.lua.unexpectedKeyW">pegl.lua.unexpectedKeyW</a> (<a href=".civ/lua/pegl/lua.lua:83"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.lua.unexpectedToken" href="#pegl.lua.unexpectedToken">pegl.lua.unexpectedToken</a> (<a href=".civ/lua/pegl/lua.lua:85"><i>src</i></a>)</h3>
+<h3>Table <a id="pegl.lua.varset" href="#pegl.lua.varset">pegl.lua.varset</a></h3>
+<h3>Function <a id="pegl.lua.skipComment" href="#pegl.lua.skipComment">pegl.lua.skipComment</a><span class=code>(t, add) -&gt; t</span> (<a href=".civ/lua/ds.lua:47"><i>src</i></a>)</h3>
+return t with the key/vals of add inserted
+</div></body>
+</html>

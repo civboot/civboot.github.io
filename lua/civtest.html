@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+Civtest: absurdly simple test library
+<p>
+This is a no-frills test library. It simply builds on <a href="lib/metaty">lib/metaty</a> and
+<a href="lib/ds">lib/ds</a> to provide the simplest possible needs for testing.
+<h2>Module <a id="civtest" href="#civtest">civtest</a> (<a href=".civ/lua/civtest.lua:4"><i>src</i></a>)</h2>
+module for writing simple tests
+<p>
+<h4>Value <a id="civtest.SUBNAME" href="#civtest.SUBNAME">civtest.SUBNAME</a></h4>
+<h4>Value <a id="civtest.__name" href="#civtest.__name">civtest.__name</a></h4>
+<h3>Function <a id="civtest.binEq" href="#civtest.binEq">civtest.binEq</a> (<a href=".civ/lua/civtest.lua:83"><i>src</i></a>)</h3>
+<h3>Function <a id="civtest.contains" href="#civtest.contains">civtest.contains</a><span class=code>(plain, subj) -&gt; !?error</span> (<a href=".civ/lua/civtest.lua:106"><i>src</i></a>)</h3>
+assert <span class=code>subj:find(pat, 1, true)</span> (plain find)
+<h3>Function <a id="civtest.eq" href="#civtest.eq">civtest.eq</a> (<a href=".civ/lua/civtest.lua:71"><i>src</i></a>)</h3>
+Assert that <span class=code>a</span> equals <span class=code>b</span> (according to <a href="#metaty.eq">#metaty.eq</a>.
+<h3>Function <a id="civtest.exists" href="#civtest.exists">civtest.exists</a> (<a href=".civ/lua/civtest.lua:131"><i>src</i></a>)</h3>
+Assert that the path exists.
+<h3>Function <a id="civtest.matches" href="#civtest.matches">civtest.matches</a><span class=code>(pat, subj) -&gt; !?error</span> (<a href=".civ/lua/civtest.lua:95"><i>src</i></a>)</h3>
+assert <span class=code>subj:find(pat)</span>
+<h3>Function <a id="civtest.path" href="#civtest.path">civtest.path</a> (<a href=".civ/lua/civtest.lua:161"><i>src</i></a>)</h3>
+Assert that path matches expect. Expect can be of type:
+* string: asserts the file contents match.
+* table: recursively assert the subtree contents exist.
+<h3>Function <a id="civtest.pathEq" href="#civtest.pathEq">civtest.pathEq</a> (<a href=".civ/lua/civtest.lua:141"><i>src</i></a>)</h3>
+Assert the contents at the two paths are equal
+<h3>Function <a id="civtest.runTest" href="#civtest.runTest">civtest.runTest</a> (<a href=".civ/lua/civtest.lua:48"><i>src</i></a>)</h3>
+Run the test, printing information to the terminal.
+<p>
+This function computes name=<span class=code>name..civtest.SUBNAME</span>
+and sets civtest.NAME to the new name, which can be
+used in the test.
+<p>
+<div class=info>Note: normally this is called when the user sets
+a key to the civtest module, which has __newindex()
+overriden to call this function.
+</div>
+<h3>Function <a id="civtest.showDiff" href="#civtest.showDiff">civtest.showDiff</a> (<a href=".civ/lua/civtest.lua:64"><i>src</i></a>)</h3>
+<h3>Function <a id="civtest.throws" href="#civtest.throws">civtest.throws</a><span class=code>(contains, fn) -&gt; ds.Error</span> (<a href=".civ/lua/civtest.lua:124"><i>src</i></a>)</h3>
+assert <span class=code>fn()</span> fails and the <span class=code>contains</span> is in the message.
+</div></body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+LAP: Lua Asynchronous Protocol
+<p>
+Lua has one of the coolest yet most underutilized asynchronous programming
+tools: the <span class=code>coroutine</span> module, specifically <span class=code>coroutine.yield</span>. Lua's <span class=code>yield</span>
+can be called from any depth, resuming execution at the callsite upon
+<span class=code>coroutine.resume</span>. This means that if we swap out traditionally blocking APIs
+like <span class=code>file:read</span> with ones that are non-blocking and yielding (i.e. by running
+IO in a separate thread or using unix's <span class=code>aio</span> interface) we use most libraries
+asynchronously without changing a single line of code.
+<p>
+<div class=info>For an example of implementing the LAP protocol see <a href="#Package_fd">#Package_fd</a></div>
+<p>
+LAP is a lightweight zero-dependency asynchronous protocol which aims to take
+advantage of Lua's awesomeness. It is architected to allow libraries to provide
+a lightweight "asynchronous mode" so that they can be used asynchronously by a
+coroutine executor. This allows users and library authors to write code that
+looks synchronous but which can be executed asynchronously at the application
+author's discression.
+<p>
+This folder also contains the <span class=code>lap.lua</span> library, see the Library section.
+Library authors <b>do not</b> need to depend on this library to work with the LAP
+protocol.
+<p>
+The LAP protocol has two components: <ul>
+  <li>yielding protocol: An ultra simple yet optionally-performant to communicate
+  with the executor loop (example: see <span class=code>lap.Lap</span>)</li>
+  <li>two global tables which libraries can use to schedule coroutines (<span class=code>LAP_READY</span>)
+  and register their asynchronous API (<span class=code>LAP_FNS_ASYNC</span> and <span class=code>LAP_FNS_SYNC</span>)</li>
+</ul>
+Library authors can fully support the protocol by following the
+Yielding Protocol below and copy/pasting the following:
+<div class=code-block>LAP_FNS_SYNC &nbsp;= LAP_FNS_SYNC &nbsp;or {}<br>
+LAP_FNS_ASYNC = LAP_FNS_ASYNC or {}<br>
+<br>
+// register functions to switch modes, see end of lap.lua for example<br>
+table.insert(LAP_FNS_SYNC, &nbsp;function() ... end)<br>
+table.insert(LAP_FNS_ASYNC, function() ... end)<br>
+<br>
+// implement your asynchronous functions by following the protocol.
+</div>
+<p>
+Library authors should make their default API <b>synchronous</b> (blocking) by
+default, except for items that cannot be used synchronously.
+<p>
+<h3><span class=code>LAP_READY</span> Global Table</h3>
+<span class=code>LAP_READY</span> is a global key/value table where the keys are the coroutines which
+should be run at some later time (by the executor). The values are arbitrary
+(typically a string identifier for debugging).
+<p>
+This means that a coroutine can schedule another coroutine <span class=code>cor</span> by simply doing
+<span class=code>LAP_READY[cor] = "my_identifier"</span>. This simple feature can be used for many
+purposes such as creating Channel datastructures as well as handling any/all
+behavior. See the Library section for details.
+<p>
+<h3><a id="lap-protocol" href="#lap-protocol">Yielding Protocol</h3></a>
+LAP's yielding protocol makes it trivial for Lua libraries to interface with
+executors. Libraries can simply call <span class=code>coroutine.yield</span> with one of the
+following and a compliant executor will perform the behavior specified if it is
+supported (else it will run the coroutine on the next loop). <ul>
+  <li><span class=code>yield(nil)</span> or <span class=code>yield(false)</span>: forget the coroutine, the executor will not
+  run it.</li>
+  <li><span class=code>yield(true)</span>: run the corroutine again as soon as possible. <ul>
+    <li>Should prevent the executor loop from sleeping.</li>
+    <li>Equivalent to: <span class=code>LAP_READY[coroutine.running()] = true; coroutine.yield()</span></li>
+  </ul></li>
+  <li><span class=code>yield("sleep", sleepSec)</span>: run the coroutine again after <span class=code>sleepSec</span> seconds
+  (a float).</li>
+  <li><span class=code>yield("poll", fileno, events)</span>: tell the coroutine to use unix's
+  <span class=code>poll(fileno, events)</span> syscall to determine when ready.</li>
+  <li>Other yield values may be defined by application-specific executors.
+  If the executor doesn't recognize a value it can either throw an error or
+  treat it as <span class=code>true</span> (aka "ready"), depending on the application requirements.</li>
+</ul>
+<p>
+<h4><a id="lap-globals" href="#lap-globals">Global Variables</h4></a>
+<p>
+There are four global variables defined by the LAP protocol: <ul>
+  <li><span class=code>LAP_READY</span>: contains the currently ready coroutines for the executor loop to
+  resume.</li>
+  <li><span class=code>LAP_FNS_SYNC</span> / <span class=code>LAP_FNS_ASYNC</span>: contains functions to switch lua to synchronous /
+  asynchronous modes, respectively.</li>
+  <li><span class=code>LAP_ASYNC</span>: is set to true when in async mode to determine behavior at
+  runtime.</li>
+</ul>
+<p>
+The sync/async tables allows a user to write code in a blocking style yet it
+can be run asynchronously, such as the following. You can even switch back and
+forth so that tests can be run in both modes.
+<p>
+<div class=code-block>function getLines(path, fn)<br>
+&nbsp; local lines = {}<br>
+&nbsp; for line in io.lines(path) do<br>
+&nbsp; &nbsp; table.insert(lines, line)<br>
+&nbsp; end<br>
+&nbsp; return lines<br>
+end
+</div>
+<p>
+<div class=info>Recomendation: use <a href="#lap.async">#lap.async</a> and <a href="#lap.sync">#lap.sync</a> to switch modes</div>
+<p>
+<h3><span class=code>lap.lua</span> Library</h3>
+The (pure lua) <a href="#lap">#lap</a> library implements: <ul>
+  <li><a href="#lap.Lap">#lap.Lap</a> default implementation of a single loop (aka "lap") in an
+  executor.</li>
+  <li><a href="#lap.Any">#lap.Any</a> and <a href="lap.all">lap.all</a> for interacting with lists of coroutines.</li>
+  <li><a href="#lap.channel()">#lap.channel()</a> which creates the <a href="#lap.Recv">#lap.Recv</a> and <a href="#lap.Send">#lap.Send</a> channel types to send
+  values between coroutines.</li>
+  <li><a href="#lap.async">#lap.async</a> / <a href="#lap.sync">#lap.sync</a>: switches all registered libraries to
+  async/sync mode (just calls every function in <a href="#lap.LAP_FNS_SYNC">#lap.LAP_FNS_SYNC</a> or
+  <a href="#LAP_FNS_ASYNC">#LAP_FNS_ASYNC</a>)</li>
+</ul>
+<h2>Module <a id="lap" href="#lap">lap</a> (<a href=".civ/lua/lap.lua:4"><i>src</i></a>)</h2>
+superpower your libraries run either sync or async
+<p>
+<h3>Table <a id="lap.LAP_UPDATE" href="#lap.LAP_UPDATE">lap.LAP_UPDATE</a></h3>
+<h4>Value <a id="lap.__name" href="#lap.__name">lap.__name</a></h4>
+<h3>Table <a id="lap._async" href="#lap._async">lap._async</a></h3>
+<h3>Table <a id="lap._sync" href="#lap._sync">lap._sync</a></h3>
+<h3>Record <a id="lap.Any" href="#lap.Any">lap.Any</a> (<a href=".civ/lua/lap.lua:229"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>cor</span></td>
+    <td>[thread] </td>
+  </tr>
+  <tr>
+    <td><span class=code>fns</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>done</span></td>
+    <td>[table] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Any.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Any.__index</span></td>
+    <td>[Ty<Any>] (<a href=".civ/lua/lap.lua:229">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Any.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.ignore</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:244">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.restart</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:260">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.schedule</span></td>
+    <td>[<span class=code>(self) -&gt; self</span>] (<a href=".civ/lua/lap.lua:249">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Any.yield</span></td>
+    <td>[<span class=code>(self) -&gt; fnIndex</span>] (<a href=".civ/lua/lap.lua:255">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="lap.Lap" href="#lap.Lap">lap.Lap</a> (<a href=".civ/lua/lap.lua:330"><i>src</i></a>)</h3>
+A single lap of the executor loop
+<p>
+Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedule other fns<br>
+&nbsp; lap.schedule(myMainFn)<br>
+<br>
+&nbsp; -- create a Lap instance with the necessary configs<br>
+&nbsp; local Lap = lap.Lap{<br>
+&nbsp; &nbsp; sleepFn=civix.sleep, monoFn=civix.monoSecs, pollList=fd.PollList()<br>
+&nbsp; }<br>
+<br>
+&nbsp; -- run repeatedly while there are coroutines to run<br>
+&nbsp; while next(LAP_READY) do<br>
+&nbsp; &nbsp; errors = Lap(); if errors then<br>
+&nbsp; &nbsp; &nbsp; -- handle errors<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; -- do other things in your application's executor loop<br>
+&nbsp; end
+</div>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>sleepFn</span></td>
+    <td>[function] </td>
+  </tr>
+  <tr>
+    <td><span class=code>monoFn</span></td>
+    <td>[function] </td>
+  </tr>
+  <tr>
+    <td><span class=code>monoHeap</span></td>
+    <td>[Heap] </td>
+  </tr>
+  <tr>
+    <td><span class=code>defaultSleep</span></td>
+    <td>[float] = <span class=code>0x1.47ae147ae147bp-7</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>pollMap</span></td>
+    <td>[table[fileno,coroutine]] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pollList</span></td>
+    <td>[PollList] 
+    Poll list data structure. Required methods:
+    * __len                   to get length with `#`
+    * insert(fileno, events)  insert the fileno+events into the poll list
+    * remove(fileno)          remove the fileno from poll list
+    * ready(self, durationSec) -> {filenos}
+    poll for durationSec (float), return any ready filenos.
+    </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Lap.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Lap.__index</span></td>
+    <td>[Ty<Lap>] (<a href=".civ/lua/lap.lua:330">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Lap.__call</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:394">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.execute</span></td>
+    <td>[<span class=code>(lap, cor, note) -&gt; errstr?</span>] (<a href=".civ/lua/lap.lua:351">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.isDone</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:397">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.poll</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:339">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.run</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:427">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.sleep</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:338">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Lap.stop</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:337">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="lap.Recv" href="#lap.Recv">lap.Recv</a> (<a href=".civ/lua/lap.lua:105"><i>src</i></a>)</h3>
+<span class=code>Recv() -&gt; recv</span> the receive side of channel.
+<p>
+Is considered closed when all senders are closed.
+<p>
+Notes: <ul>
+  <li>Use <span class=code>recv:sender()</span> to create a sender. You can create
+  multiple senders.</li>
+  <li>Use <span class=code>recv:recv()</span> or simply <span class=code>recv()</span> to receive a value
+  (or block)</li>
+  <li>User <span class=code>sender:send(v)</span> or simply <span class=code>sender(v)</span> to send a value.</li>
+  <li><span class=code>recv:close()</span> when done. Also closes all senders.</li>
+  <li><span class=code>#recv</span> gets number of items buffered.</li>
+  <li><span class=code>recv:isDone()</span> returns true when either recv is closed
+  OR all senders are closed and <span class=code>#recv == 0</span></li>
+</ul>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>deq</span></td>
+    <td>[Deq] </td>
+  </tr>
+  <tr>
+    <td><span class=code>_sends</span></td>
+    <td>[WeakKV] </td>
+  </tr>
+  <tr>
+    <td><span class=code>cor</span></td>
+    <td>[thread] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Recv.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Recv.__index</span></td>
+    <td>[Ty<Recv>] (<a href=".civ/lua/lap.lua:105">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Recv.__call</span></td>
+    <td>[<span class=code>(r) -&gt; r.deq()</span>] (<a href=".civ/lua/lap.lua:136">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__close</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:115">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__len</span></td>
+    <td>[<span class=code>(r) -&gt; #r.deq</span>] (<a href=".civ/lua/lap.lua:117">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.close</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:115">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.drain</span></td>
+    <td>[<span class=code>(r) -&gt; r.deq:drain()</span>] (<a href=".civ/lua/lap.lua:139">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.hasSender</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:130">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.isClosed</span></td>
+    <td>[<span class=code>(r) -&gt; r._s</span>] (<a href=".civ/lua/lap.lua:118">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.isDone</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:122">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.recv</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:136">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.sender</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:127">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Recv.wait</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:135">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="lap.Send" href="#lap.Send">lap.Send</a> (<a href=".civ/lua/lap.lua:152"><i>src</i></a>)</h3>
+Sender, created through <span class=code>recv:sender()</span>
+Is considered closed if the receiver is closed.  The receiver will
+automatically close if it is garbage collected.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>_recv</span></td>
+    <td>[Recv] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Send.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__mode</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Send.__index</span></td>
+    <td>[Ty<Send>] (<a href=".civ/lua/lap.lua:152">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>lap.Send.__call</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:171">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__close</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:165">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__len</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:189">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.close</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:165">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.extend</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:175">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.extendLeft</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:185">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.isClosed</span></td>
+    <td>[<span class=code>(s) -&gt; s._recv == nil</span>] (<a href=".civ/lua/lap.lua:167">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.push</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:171">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>lap.Send.pushLeft</span></td>
+    <td>[function] (<a href=".civ/lua/lap.lua:180">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="lap.all" href="#lap.all">lap.all</a> (<a href=".civ/lua/lap.lua:438"><i>src</i></a>)</h3>
+<h3>Function <a id="lap.async" href="#lap.async">lap.async</a> (<a href=".civ/lua/lap.lua:59"><i>src</i></a>)</h3>
+Switch lua to asynchronous (yielding) mode
+<h3>Function <a id="lap.formatCorErrors" href="#lap.formatCorErrors">lap.formatCorErrors</a> (<a href=".civ/lua/lap.lua:45"><i>src</i></a>)</h3>
+<h3>Function <a id="lap.lt1" href="#lap.lt1">lap.lt1</a><span class=code>(a, b) -&gt; a[1] &lt; b[1]</span> (<a href=".civ/lua/lap.lua:264"><i>src</i></a>)</h3>
+<h3>Function <a id="lap.reset" href="#lap.reset">lap.reset</a> (<a href=".civ/lua/lap.lua:36"><i>src</i></a>)</h3>
+Clear all lap globals.
+<h3>Function <a id="lap.schedule" href="#lap.schedule">lap.schedule</a> (<a href=".civ/lua/lap.lua:438"><i>src</i></a>)</h3>
+<h3>Function <a id="lap.sync" href="#lap.sync">lap.sync</a> (<a href=".civ/lua/lap.lua:52"><i>src</i></a>)</h3>
+Switch lua to synchronous mode
+<h3>Function <a id="lap.yield" href="#lap.yield">lap.yield</a> (<a href=".civ/lua/lap.lua:438"><i>src</i></a>)</h3>
+</div></body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+<span class=code>pvc &lt;cmd&gt;</span>: patch version control command line utility.
+<p>
+<div class=info>NOTICE: pvc now works but will have bugs and the API is subject to change.
+Use at your own risk and always back up work that you are using pvc
+to track (aka use <a href="#pvc-git">git and pvc together</a>).
+</div>
+<p>
+<h3><a id="pvc-install" href="#pvc-install">Installation</h3></a>
+<p>
+Simply follow civlua's <a href="#Installation">#Installation</a> and add the following to your <span class=code>.bashrc</span>
+<div class=code-block>alias pvc="civlua pvc"</div>
+<p>
+<h2><a id="pvc-about" href="#pvc-about">About</h2></a>
+<b>pvc</b> is a version control system similar to git or mercurial, but is ultra
+simple: branches are simply a <span class=code>base</span> followed by a set of unix patches with
+incrementing id. The only fundamental disadvantage (or advantage) of using pvc
+instead of git is that pvc supports only fast-forward merges, which are the
+cleanest and simplest to understand.
+<p>
+Builtin cmds:<ul>
+  <li><span class=code>init dir</span>: initialize the <span class=code>dir</span> (default=CWD) for PVC.</li>
+  <li><span class=code>diff branch1 branch2</span>: get the difference (aka the patch) between
+  <span class=code>branch1</span> (default=<span class=code>at</span>) and <span class=code>branch2</span> (default=local). Each value can be
+  either a branch name or a directory which contains a <span class=code>.pvcpaths</span> file.
+  <p>
+  <div class=info>See <b>Usage</b> for how this can be used for the first commit.</div></li>
+  <li><span class=code>commit</span>: add changes to the current branch as a patch and move <span class=code>at</span>
+  forward. The commit message can be written to the COMMIT file or be
+  specified after the <span class=code>--</span> argument (multiple are space-separated).</li>
+  <li><span class=code>at [branch]</span>: if <span class=code>branch</span> is empty then return the active
+  <span class=code>branch#id</span>.
+  <p>
+  If <span class=code>branch</span> is set then this sets the active <span class=code>branch#id</span>, causing the
+  local directory to be updated (default id=tip).
+  <div class=info>git equivalent: <span class=code>checkout</span></div></li>
+  <li><span class=code>tip [branch]</span>: get the highest id for branch (default=current).</li>
+  <li><span class=code>branch name [from]</span>: start a new branch of name <span class=code>name</span>. The optional
+  <span class=code>from</span> (default=<span class=code>at</span>) argument can specify a local <span class=code>branch#id</span> or an
+  (external) <span class=code>path/to/dir</span> to graft onto the pvc tree.
+  <p>
+  <div class=info>the <span class=code>from/dir</span> is commonly used by maintainers to accept patches from
+  contributors.
+  </div></li>
+  <li><span class=code>rebase [branch [id]]</span>: change the base of branch to id.
+  (default branch=current, id=branch base's tip)</li>
+  <li><span class=code>grow from</span>: copy the commits at <span class=code>from</span> onto current branch.
+  The base of <span class=code>from</span> must be the current branch's tip.
+  Then move the branch to backup.
+  <div class=info>in git this is a "fast forward" merge</div></li>
+  <li><span class=code>pvc show [branch#id] --num=10 --full</span>
+  <p>
+  If no branch is specified: show branches. <span class=code>full</span> also displays
+  the base and tip.
+  <p>
+  Else show branch#id and the previous <span class=code>num</span> commit messages.
+  With <span class=code>full</span> show the full commit message, else show only
+  the first line.</li>
+  <li><span class=code>pvc desc branch [$path/to/new]</span>
+  get or set the description for a single branch id.
+  The default branch is <span class=code>at</span>.
+  <p>
+  The new description can be passed via <span class=code>path/to/new</span> or
+  after <span class=code>--</span> (like commit).</li>
+  <li><span class=code>pvc squash [branch#id endId]</span>
+  squash branch id -> endId (inclusive) into a single patch at <span class=code>id</span>.
+  <p>
+  You can then edit the description by using <span class=code>pvc desc branch#id</span>.</li>
+  <li><span class=code>export path/ [branch]</span>: (warning: untested)
+  copy all patch files in the branch directory to
+  <span class=code>path/</span>. If an <span class=code>#id</span> is specified then it is used as the maximum id
+  (defaults: branch=current, id=tip)
+  <p>
+  <div class=info>the resulting directory is commonly sent to <span class=code>tar -zcvf branch.tar.gz path/</span>
+  and then <span class=code>branch.tar.gz</span> sent to a maintainer to be merged
+  </div></li>
+  <li><span class=code>prune branch id</span>: (warning: untested) remove a branch by moving it to a
+  backup directory. If an id is given then instead move ids from <span class=code>[id,tip]</span>
+  (inclusive) to a backup.</li>
+</ul>
+<p>
+<h2><a id="pvc-init" href="#pvc-init">Initiaize your pvc repo</h2></a>
+<div class=info>You may also want to see <a href="#pvc-git">#pvc-git</a> to use git for backups</div>
+<p>
+First install <a href="#Package_civ">#Package_civ</a>, then run pvc in bash with <span class=code>civ.lua pvc &lt;cmd&gt;</span>.
+<p>
+To track an existing directory:<ul>
+  <li><span class=code>cd path/to/dir</span> to navigate to the directory</li>
+  <li><span class=code>pvc init</span> to initialize pvc</li>
+  <li><span class=code>pvc diff</span> prints the diff of local changes to stderr and untracked files
+  (that are not matched in <span class=code>.pvcignore</span> to stdout. Edit <span class=code>.pvcignore</span>
+  with appropriate entries (see <a href="#pvcignore">#pvcignore</a>) to ignore paths you don't
+  want tracked until <span class=code>pvc diff</span> shows only files you want tracked.
+  <p>
+  When ready, running <span class=code>pvc diff &gt;&gt; .pvcpaths</span> in bash will track all untracked
+  files.
+  <div class=info>Alternatively, manually add files to <span class=code>.pvcpaths</span></div></li>
+  <li><span class=code>pvc commit -- initial pvc commit</span> will commit your changes to
+  <span class=code>.pvc/main/commit/.../1.p</span>.</li>
+</ul>
+<p>
+<h3><a id="pvcignore" href="#pvcignore">pvcignore</h3></a>
+The <span class=code>.pvcignore</span> file should contain a line-separated list of <a href="#string.find">#string.find</a>
+patterns that should be ignored. Items ending in <span class=code>/</span> will apply to whole
+directories. A common pvc ignore file might look like:
+<p>
+<div class=code-block># directories<br>
+%.git/<br>
+%.out/<br>
+<br>
+# extensions<br>
+%.so$<br>
+<br>
+# binary files<br>
+%./path/to/some_binary
+</div>
+<p>
+<h3><a id="pvc-git" href="#pvc-git">Use with git</h3></a>
+pvc is still in early development, so there is no hosting service which
+ergonomically supports backing-up development. The following is how pvc
+(and civlua) itself is developed and seems to work well.
+<p>
+Basically, we are going to have two git repositories. I will use
+civlua as the example:<ul>
+  <li><a href="https://github.com/civboot/civlua">https://github.com/civboot/civlua</a>: your "main" one that hosts your released
+  versions and documentation. This should NOT contain any <span class=code>.pvc/</span> files (but
+  should contain i.e.  <span class=code>.pvcpaths</span>).</li>
+  <li><a href="https://github.com/vitiral/civlua.pvc/commits/main/">https://github.com/vitiral/civlua.pvc/commits/main/</a>: is literally the git
+  repository for your <span class=code>.pvc/</span> directory. While developing we can push
+  commits/branches/whatever here.</li>
+</ul>
+<p>
+<b>First</b>, put <span class=code>.pvc/</span> in your main repo's <span class=code>.gitignore</span>
+<div class=code-block>echo .pvc &gt;&gt; .gitignore</div>
+<p>
+<b>Second</b>, follow the <a href="#pvc-init">#pvc-init</a> section above. This should include adding
+all your files to pvc and making your first pvc commit.
+<p>
+<b>Third</b>, <span class=code>cd .pvc/</span> and create your git repository <i>inside the .pvc/
+directory</i>. This will literally track your patch files themselves. Use the
+following as your <span class=code>.pvc/.gitignore</span>. You may also want to add a <span class=code>README.md</span>
+directing folks to your main git repo.
+<div class=code-block># .pvc/.gitignore<br>
+**/*.snap/<br>
+backup/
+</div>
+<p>
+Finally, add the following to your <span class=code>.bashrc</span>
+<div class=code-block># Note: you must also have pvc aliased<br>
+function pvcp() {<br>
+&nbsp; desc="$(pvc at): $(pvc desc --full)"<br>
+&nbsp; (cd .pvc/ &amp;&amp;<br>
+&nbsp; &nbsp; git add ./ &amp;&amp;<br>
+&nbsp; &nbsp; git commit -am "$desc" &amp;&amp;<br>
+&nbsp; &nbsp; git push origin main)<br>
+}
+</div>
+<p>
+Now you can hack using <span class=code>pvc commit</span> etc and push to your <span class=code>repo.pvc</span> by
+simply calling <span class=code>pvcp</span>. Your git commit log will be your current <span class=code>at</span>
+location followed by the commit message. When you want to push your
+documentation or releases to git, simply do so -- your main commit log
+won't be polluted by commiting pvc files.
+<p>
+<h1><a id="pvc-arch" href="#pvc-arch">Architecture</h1></a>
+<p>
+This architecture is given both so users can debug or fix any errors as well as
+to make it easier to create other implementations of pvc (i.e. in bash).
+<p>
+pvc is composed of the following components: <ul>
+  <li><b>repo</b>: the pvc repo (repository) is stored in the <span class=code>.pvc/</span> directory inside of
+  a <b>project</b>. It contains directories (which are the branches) and the plaintext file
+  <span class=code>at</span> which defines the "current commit" as a <b>commit reference</b> (i.e. <span class=code>branch#123</span>).
+  Additionally it contains: <ul>
+    <li><span class=code>backup/</span> directory, which contain <span class=code>name-&lt;epochsec&gt;/</span> directories for backups. In
+    general, pvc should not delete things but should instead move things to a backup
+    directory, reporting these operations to the user (and possibly a log file as well).</li>
+  </ul></li>
+  <li><b>pvcpaths</b> is the project-local <span class=code>.pvcpaths</span> file which contains a
+  newline-separated list of project-relative paths.  This is used by pvc to
+  determine which paths are tracked. It's contents are tracked as a normal file
+  (it is included in the patch diff).</li>
+  <li><b>branch</b>: a branch is a directory inside the repo (i.e. <span class=code>.pvc/main/</span>). It
+  contains the <span class=code>commit/</span> directory (described in <b>commit</b>) and the plain-text files:
+  <ul>
+    <li><b>base</b>: contains <span class=code>branch#123</span>. This file is not present if the branch is
+    the trunk.</li>
+    <li><b>tip</b>: contains an ascii decimal number, representing the last commit id.</li>
+  </ul></li>
+  <li><b>branch (action)</b>: to "create a branch" means to create a new directory
+  inside <span class=code>.pvc/</span> and initialize it with the proper <span class=code>base</span> and <span class=code>tip</span> files.
+  The base branch must already exist.</li>
+  <li><b>commit (noun)</b>: refers to a single patch file (i.e. <span class=code>.pvc/branch/commit/.../123.p</span>). <ul>
+    <li>The length of <span class=code>commit/.../</span> is stored in <span class=code>commit/depth</span> which is an ascii
+    decimal number, always divisible by 2. Each sub-directory has exactly two
+    digits. For instance, a depth of 4 would store <span class=code>12.p</span> in
+    <span class=code>commit/00/00/12.p</span> and store <span class=code>123456.p</span> in <span class=code>12/34/123456.p</span>.</li>
+    <li><b>description</b>: the top of the patch file (before the first unidiff)
+    contains a plain-text description of the commit.</li>
+    <li><b>diffs</b>: the rest of the patch file contains a series of file differences
+    from the previous patch version in the <a href="https://en.wikipedia.org/wiki/Diff#Unified_format">unidiff</a> (aka <span class=code>diff -u</span>) format.</li>
+    <li><b>commit</b> is often shorthand for the <span class=code>commit reference</span> (i.e.
+    <span class=code>branch#123</span>), which refers uniquely to a specific branch and patch file
+    or snapshot directory.</li>
+  </ul></li>
+  <li><b>commit (action)</b>: "making a commit" means to take the difference of the
+  current directory and store it as a patch file in the branch's <span class=code>commit/</span>
+  directory.</li>
+  <li><b>snapshot</b>: a snapshot is the local directory state at a specific commit. It
+  is a directory which uses the extension <span class=code>.snap/</span> inside of the <span class=code>commit/</span>
+  directory, i.e. <span class=code>commit/00/123.snap/</span>.</li>
+  <li><b>checkout (action)</b>: to "checkout a commit" means to make the local project
+  directory the same as the commit. This is performed by finding the closest
+  <b>snapshot</b> and applying commit patches (either forwards or backwards) in
+  order to make the snapshot reflect the commits state.</li>
+  <li><b>rebase (action)</b>: to "rebase a branch" means to increase the id of it's
+  <b>base</b>. This is accomplished by making a copy of the new id's snapshot and
+  repeatedly applying the unix <span class=code>merge</span> command (or equivalent) on each change,
+  using the copied snapshot as <span class=code>to</span> and incrementing the <span class=code>base</span> along the
+  change patches. Each new <span class=code>patch</span> file should be stored, incrementing from
+  the base. <ul>
+    <li>the software should detect if conflicts are unresolveable and exit, telling the
+    user how to fix them. The software should be able to resume the rebase once
+    the conflicts are resolved.</li>
+    <li>For example, the reference implementation creates a new branch called
+    <span class=code>branch__rebase</span> to perform this action. When calling rebase, it first
+    checks for this branch and attempts to resume from it. On failure,
+    it tells the user where the failing files that need to be fixed are
+    located.</li>
+    <li>when the rebase is complete, the old branch should be moved to <span class=code>.pvc/backup</span>
+    then replaced with the rebased version.</li>
+  </ul></li>
+  <li><b>merge</b>: merges a branch onto another one. The branch must already be
+  rebased to the tip (also called a "fast forward merge"), so this is literally
+  just copying the patch files and incrementing the <b>tip</b>.</li>
+  <li><b>squash</b>: combines multiple commits into one, moving larger commits down.
+  The descriptions should be concatenated, and can be edited separately by the
+  user.</li>
+  <li><b>export</b>: simply copies a <b>branch</b> without it's snapshot directories to a
+  separate directory, which can be sent to a maintainer to be merged.</li>
+</ul>
+<p>
+<h2>Other Operations</h2>
+Other operations, such as showing commit messages or ammending a commit, are
+not defined explicitly, but you can see the reference implementation for
+details. Typically their implementation is either straightforward or can be
+performed by variations of the above operations.
+<p>
+Also, operations which mutate the meaning of a commit (such as squash or
+rebase) should check to make sure that no branches depend on the branch being
+mutated.
+<p>
+
+
+<h2>Module <a id="pvc2" href="#pvc2">pvc2</a> (<a href=".civ/lua/pvc.lua:2"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="pvc2.DOT" href="#pvc2.DOT">pvc2.DOT</a></h4>
+<h4>Value <a id="pvc2.INIT_PATCH" href="#pvc2.INIT_PATCH">pvc2.INIT_PATCH</a></h4>
+<h4>Value <a id="pvc2.INIT_PVCPATHS" href="#pvc2.INIT_PVCPATHS">pvc2.INIT_PVCPATHS</a></h4>
+<h4>Value <a id="pvc2.PVCPATHS" href="#pvc2.PVCPATHS">pvc2.PVCPATHS</a></h4>
+<h4>Value <a id="pvc2.PVC_DONE" href="#pvc2.PVC_DONE">pvc2.PVC_DONE</a></h4>
+<h3>Table <a id="pvc2.RESERVED_NAMES" href="#pvc2.RESERVED_NAMES">pvc2.RESERVED_NAMES</a></h3>
+<h4>Value <a id="pvc2.__name" href="#pvc2.__name">pvc2.__name</a></h4>
+<h3>Record <a id="pvc2.Diff" href="#pvc2.Diff">pvc2.Diff</a> (<a href=".civ/lua/pvc.lua:184"><i>src</i></a>)</h3>
+<span class=code>Diff:of(dir1, dir2)</span> returns what changed between two pvc dirs.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>dir1</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>dir2</span></td>
+    <td>[string] </td>
+  </tr>
+  <tr>
+    <td><span class=code>equal</span></td>
+    <td>[list] </td>
+  </tr>
+  <tr>
+    <td><span class=code>changed</span></td>
+    <td>[list] </td>
+  </tr>
+  <tr>
+    <td><span class=code>deleted</span></td>
+    <td>[list] </td>
+  </tr>
+  <tr>
+    <td><span class=code>created</span></td>
+    <td>[list] </td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pvc2.Diff.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pvc2.Diff.__index</span></td>
+    <td>[Ty<Diff>] (<a href=".civ/lua/pvc.lua:184">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pvc2.Diff.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.format</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:226">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.hasDiff</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:207">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.of</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:203">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.Diff.patch</span></td>
+    <td>[<span class=code>(d) -&gt; patchText</span>] (<a href=".civ/lua/pvc.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="pvc2.at" href="#pvc2.at">pvc2.at</a> (<a href=".civ/lua/pvc.lua:435"><i>src</i></a>)</h3>
+get or set where the working id is at.
+<h3>Function <a id="pvc2.backupDir" href="#pvc2.backupDir">pvc2.backupDir</a><span class=code>(P, name) -&gt; string</span> (<a href=".civ/lua/pvc.lua:637"><i>src</i></a>)</h3>
+return a backup directory (uses the timestamp)
+<h3>Function <a id="pvc2.backupId" href="#pvc2.backupId">pvc2.backupId</a><span class=code>() -&gt; tostring(ix.epoch():asSeconds())</span> (<a href=".civ/lua/pvc.lua:43"><i>src</i></a>)</h3>
+this exists for tests to override
+<h3>Function <a id="pvc2.branch" href="#pvc2.branch">pvc2.branch</a><span class=code>(P, name, fbr,fid) -&gt; bdir, id</span> (<a href=".civ/lua/pvc.lua:561"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.branchDir" href="#pvc2.branchDir">pvc2.branchDir</a> (<a href=".civ/lua/pvc.lua:250"><i>src</i></a>)</h3>
+return the branch path in project regardless of whether it exists
+<h3>Function <a id="pvc2.branches" href="#pvc2.branches">pvc2.branches</a><span class=code>(P) -&gt; list</span> (<a href=".civ/lua/pvc.lua:577"><i>src</i></a>)</h3>
+get all branches
+<h3>Function <a id="pvc2.calcPatchDepth" href="#pvc2.calcPatchDepth">pvc2.calcPatchDepth</a> (<a href=".civ/lua/pvc.lua:172"><i>src</i></a>)</h3>
+calculate necessary directory depth.
+Example: 01/23/12345.p has dirDepth=4
+<h3>Function <a id="pvc2.checkBranch" href="#pvc2.checkBranch">pvc2.checkBranch</a> (<a href=".civ/lua/pvc.lua:597"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.commit" href="#pvc2.commit">pvc2.commit</a><span class=code>(P, desc) -&gt; snap/, id</span> (<a href=".civ/lua/pvc.lua:544"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.deepen" href="#pvc2.deepen">pvc2.deepen</a> (<a href=".civ/lua/pvc.lua:354"><i>src</i></a>)</h3>
+increase the depth of branch by 2, adding a <span class=code>00/</span> directory.
+<h3>Function <a id="pvc2.depth" href="#pvc2.depth">pvc2.depth</a><span class=code>(bdir) -&gt; readInt(toDir(bdir)..'commit/depth')</span> (<a href=".civ/lua/pvc.lua:261"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.desc" href="#pvc2.desc">pvc2.desc</a><span class=code>(ppath, num) -&gt; {string}</span> (<a href=".civ/lua/pvc.lua:749"><i>src</i></a>)</h3>
+return the description of ppath
+<h3>Function <a id="pvc2.diff" href="#pvc2.diff">pvc2.diff</a><span class=code>(P, branch1, branch2) -&gt; Diff</span> (<a href=".civ/lua/pvc.lua:482"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.getbase" href="#pvc2.getbase">pvc2.getbase</a><span class=code>(bdir, br) -&gt; br, id</span> (<a href=".civ/lua/pvc.lua:256"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.graft" href="#pvc2.graft">pvc2.graft</a> (<a href=".civ/lua/pvc.lua:604"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.grow" href="#pvc2.grow">pvc2.grow</a> (<a href=".civ/lua/pvc.lua:738"><i>src</i></a>)</h3>
+Grow <span class=code>to</span> by copying patches <span class=code>from</span>
+<h3>Function <a id="pvc2.init" href="#pvc2.init">pvc2.init</a> (<a href=".civ/lua/pvc.lua:494"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.merge" href="#pvc2.merge">pvc2.merge</a> (<a href=".civ/lua/pvc.lua:628"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.nameId" href="#pvc2.nameId">pvc2.nameId</a><span class=code>(P, branch,id) -&gt; br,id</span> (<a href=".civ/lua/pvc.lua:551"><i>src</i></a>)</h3>
+get the conventional brName, id for a branch,id pair
+<h3>Function <a id="pvc2.parseBranch" href="#pvc2.parseBranch">pvc2.parseBranch</a><span class=code>(str, bdefault, idefault) -&gt; branch, id</span> (<a href=".civ/lua/pvc.lua:364"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.patchPath" href="#pvc2.patchPath">pvc2.patchPath</a><span class=code>(bdir, id, last, depth) -&gt; string?</span> (<a href=".civ/lua/pvc.lua:273"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.patchPost" href="#pvc2.patchPost">pvc2.patchPost</a> (<a href=".civ/lua/pvc.lua:153"><i>src</i></a>)</h3>
+Given a patch string perform post-patch requirements in dir.
+<p>
+These must be given near the top of the patch file, before the first
+<span class=code>---</span>.  Supported commands (arguments are actually tab separated):
+<div class=code-block>! rename before &nbsp;after<br>
+! swap &nbsp; first &nbsp; second
+</div>
+<p>
+If reverse is given it does the opposite; also this should be called BEFORE
+calling <span class=code>patch(reverse=true)</span>
+<h3>Function <a id="pvc2.pathsUpdate" href="#pvc2.pathsUpdate">pvc2.pathsUpdate</a> (<a href=".civ/lua/pvc.lua:448"><i>src</i></a>)</h3>
+update paths file (path) with the added and removed items
+<h3>Function <a id="pvc2.rawat" href="#pvc2.rawat">pvc2.rawat</a> (<a href=".civ/lua/pvc.lua:371"><i>src</i></a>)</h3>
+get or hard set the current branch/id
+<h3>Function <a id="pvc2.rawtip" href="#pvc2.rawtip">pvc2.rawtip</a> (<a href=".civ/lua/pvc.lua:260"><i>src</i></a>)</h3>
+<h3>Function <a id="pvc2.rebase" href="#pvc2.rebase">pvc2.rebase</a><span class=code>(P, branch, id) -&gt; backup/dir/</span> (<a href=".civ/lua/pvc.lua:702"><i>src</i></a>)</h3>
+rebase the branch (current branch) to make it's baseid=id
+<h3>Function <a id="pvc2.resolve" href="#pvc2.resolve">pvc2.resolve</a><span class=code>(P, branch) -&gt; br, id, bdir</span> (<a href=".civ/lua/pvc.lua:461"><i>src</i></a>)</h3>
+resolve a branch name. It can be one of: <ul>
+  <li>A directory with <span class=code>/</span> in it.</li>
+  <li><span class=code>branch</span> or <span class=code>branch#id</span></li>
+  <li>Special: at</li>
+</ul>
+<h3>Function <a id="pvc2.resolve2" href="#pvc2.resolve2">pvc2.resolve2</a><span class=code>(P, br1, br2) -&gt; branch1/ branch2/</span> (<a href=".civ/lua/pvc.lua:478"><i>src</i></a>)</h3>
+resolve two branches into their branch directories. Defaults:<ul>
+  <li>br1 = 'at'</li>
+  <li>br2 = 'local'</li>
+</ul>
+<h3>Function <a id="pvc2.resolveSnap" href="#pvc2.resolveSnap">pvc2.resolveSnap</a><span class=code>(P, branch) -&gt; snap/, br, id, bdir</span> (<a href=".civ/lua/pvc.lua:469"><i>src</i></a>)</h3>
+resolve and take snapshot, permits local
+<h3>Function <a id="pvc2.rpatch" href="#pvc2.rpatch">pvc2.rpatch</a> (<a href=".civ/lua/pvc.lua:165"><i>src</i></a>)</h3>
+reverse patch, applying diff to dir
+<h3>Function <a id="pvc2.snapDir" href="#pvc2.snapDir">pvc2.snapDir</a><span class=code>(bdir, id) -&gt; string?</span> (<a href=".civ/lua/pvc.lua:278"><i>src</i></a>)</h3>
+Get the snap/ path regardless of whether it exists
+<h3>Function <a id="pvc2.snapshot" href="#pvc2.snapshot">pvc2.snapshot</a><span class=code>(P, br,id) -&gt; .../id.snap/</span> (<a href=".civ/lua/pvc.lua:347"><i>src</i></a>)</h3>
+Snapshot the branch#id by applying patches.
+Return the snapshot directory
+<h3>Function <a id="pvc2.squash" href="#pvc2.squash">pvc2.squash</a> (<a href=".civ/lua/pvc.lua:801"><i>src</i></a>)</h3>
+squash num commits together before br#id.
+<p>
+<h2>Module <a id="pvc2.main" href="#pvc2.main">pvc2.main</a> (<a href=".civ/lua/pvc.lua:814"><i>src</i></a>)</h2>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pvc2.main.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>pvc2.main.at</span></td>
+    <td>[<span class=code>(args) -&gt; string</span>] (<a href=".civ/lua/pvc.lua:865">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.branch</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:893">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.commit</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:852">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.desc</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:972">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.diff</span></td>
+    <td>[<span class=code>(args) -&gt; Diff</span>] (<a href=".civ/lua/pvc.lua:840">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.export</span></td>
+    <td>[<span class=code>(args) -&gt; to</span>] (<a href=".civ/lua/pvc.lua:1073">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.grow</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:1020">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.help</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:817">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.init</span></td>
+    <td>[<span class=code>(args) -&gt; nil</span>] (<a href=".civ/lua/pvc.lua:822">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.prune</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:1047">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.rebase</span></td>
+    <td>[<span class=code>(args) -&gt; string</span>] (<a href=".civ/lua/pvc.lua:1010">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.show</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:937">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.snap</span></td>
+    <td>[<span class=code>(args) -&gt; snap/</span>] (<a href=".civ/lua/pvc.lua:1086">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.squash</span></td>
+    <td>[function] (<a href=".civ/lua/pvc.lua:990">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>pvc2.main.tip</span></td>
+    <td>[<span class=code>(args) -&gt; string</span>] (<a href=".civ/lua/pvc.lua:873">src</a>)</td>
+  </tr>
+</table></div>
+<h2>Module <a id="pvc.unix" href="#pvc.unix">pvc.unix</a> (<a href=".civ/lua/pvc/unix.lua:6"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="pvc.unix.__name" href="#pvc.unix.__name">pvc.unix.__name</a></h4>
+<h3>Function <a id="pvc.unix.diff" href="#pvc.unix.diff">pvc.unix.diff</a><span class=code>(a,al, b,bl) -&gt; string?</span> (<a href=".civ/lua/pvc/unix.lua:60"><i>src</i></a>)</h3>
+Get the unified diff using unix <span class=code>diff --unified=1</span>,
+properly handling file creation/deleting
+the <span class=code>l</span> variables are the "label" to use.
+when the coresponding value is nil then the label is <span class=code>/dev/null</span>
+<h3>Function <a id="pvc.unix.merge" href="#pvc.unix.merge">pvc.unix.merge</a><span class=code>(to, base, change) -&gt; ok, err</span> (<a href=".civ/lua/pvc/unix.lua:91"><i>src</i></a>)</h3>
+incorporate all changes that went into going from base to change into to
+<h3>Function <a id="pvc.unix.patch" href="#pvc.unix.patch">pvc.unix.patch</a> (<a href=".civ/lua/pvc/unix.lua:72"><i>src</i></a>)</h3>
+forward patch
+<h3>Function <a id="pvc.unix.rpatch" href="#pvc.unix.rpatch">pvc.unix.rpatch</a> (<a href=".civ/lua/pvc/unix.lua:80"><i>src</i></a>)</h3>
+reverse patch
+</div></body>
+</html>

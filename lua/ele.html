@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<body><div class=doc>
+<h1>Ele: Extendable Lua Editor</h1>
+<p>
+Ele is an (**In Development**) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor.
+<p>
+Ele's primary goals are: <ul>
+  <li>Implemented in a minimal amount of understandable code. It is the main editor
+  for Civboot</li>
+  <li>Enjoyable and extendable for developers to fit their workflow <ul>
+    <li>undo/redo, syntax highlighting, plugins, user-configurable bindings
+    (supports vim/emacs style), etc.</li>
+  </ul></li>
+  <li>Implements a lua shell (zsh competitor)</li>
+  <li>Can handle any size text file</li>
+  <li>Cross platform (currently vt100-only protocol, which should run anywhere)</li>
+</ul>
+<p>
+Non-goals of Ele are: <ul>
+  <li>Focusing on performance against the other goals. It should be fast enough
+  to be an editor and should not choke on large files -- otherwise performance
+  is not important.</li>
+</ul>
+<p>
+<h1>Architecture</h1>
+<p>
+Ele is architected using the MVI (model-view-intent) architecture, also
+known as the "React architecture" from the web library of the same
+name.
+<p>
+<div class=code-block>&nbsp; &nbsp;,_____________________________________________<br>
+&nbsp; &nbsp;| intent(): keyboard, timer, executor, etc &nbsp; &nbsp;|<br>
+&nbsp; &nbsp;`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'<br>
+&nbsp; &nbsp;/\ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|| Data + events<br>
+&nbsp; &nbsp;|| Data + scheduled &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \/<br>
+&nbsp; ,__________________ &nbsp; Data + scheduled ,____________________________<br>
+&nbsp; | view(): paint &nbsp; &nbsp;| &lt;================ | model(): keybind, actions &nbsp;|<br>
+&nbsp; `~~~~~~~~~~~~~~~~~~' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+</div>
+<p>
+In practice, this is accomplished in four coroutines spawned
+by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
+  <li>A coroutine that listens to stdin for vt100 key sequences
+  and sends event (plain-old-table values) to the <span class=code>keys</span>
+  channel.</li>
+  <li>A coroutine that listens to key actions and converts them
+  to events (again, plain-old-tables) based on the ele.bindings,
+  which are sent on an events channel. This also handles
+  chords correctly, see the ele.bindings documentation.</li>
+  <li>A coroutine that listens for event tables, looks up their
+  <span class=code>action</span> in ele.actions and runs the appropriate action.</li>
+  <li>A coroutine that "draws" the current display once per "frame"
+  This is done by recursing the tree from <span class=code>Editor.root</span> down,
+  having them write the relevant text to a vt100.Term object,
+  which gets flushed to the display at the end.</li>
+</ul>
+<p>
+This roughly implements the MVI architecture because ALL actions
+are performed sequentially based on the ordering in the <span class=code>events</span>
+channel.
+<p>
+Actions or plugins have the option to spawn their own coroutine. However,
+this behavior should be extremely rare, and reserved mostly for things that
+really can happen concurrently with no user feedback needed, such as saving a
+file, finding file lints, or updating syntax highlighting. Most real-world
+editor operations can block the user while they happen, and if they can't
+then they should consider not being included as an editor operation. Some
+exceptions such as searching for patterns in a recursive tree should be
+spawned as a coroutine but be cancelled if the user modifies the buffer
+that the results are being written to in any way.
+<p>
+<h1>Adding Bindings</h1>
+Adding simple bindings is easy. Simply insert the space-separated chord
+of keys you want to go to your binding to one of ele's default modes, or
+create your own.  ele.bindings's <span class=code>command</span>, <span class=code>insert</span> and/or <span class=code>system</span>
+entries are where you will find the default modes. For instance,
+the following will insert the expected text at the cursor position
+from command mode:
+<p>
+<div class=code-block>local B = require'ele.bindings'<br>
+B.command['y y'] = {action='insert', 'Why oh why did I bind this?\n'},
+</div>
+<p>
+To write your own action you must: <ul>
+  <li>Add a callable to ele.actions which implements the intended behavior. The
+  signature is: <span class=code>fn(Editor, event, Channel[event])</span>. You may modify the Editor
+  in the appropriate way for your action.  You are recommended to handle
+  <span class=code>event.times</span> to do your action multiple times (if that makes sense for your
+  action). Note that you are free to throw errors -- any errors will be caught
+  and logged.</li>
+  <li>Add a binding to an editor mode. The binding can either be a plain table,
+  which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
+  Using the callable API is slightly complex but allows for complex key
+  interactions where you build-up a command with a chaing (aka "chord") of
+  multiple key inputs. Refer to the ele.bindings documentation.</li>
+</ul>
+<p>
+<h1>Editor API</h1>
+ele.Editor is the main object most custom actions or Ele scripts will
+interact with. It has several fields, but the fields and methods that most
+folks will care about are: <ul>
+  <li><span class=code>edit</span>: this is the current edit buffer and is typically where the
+  user wants to insert or otherwise interact with text. It is
+  typically a ele.edit.Edit instance, though plugins may
+  eventually allow other types to be used.</li>
+  <li><span class=code>view</span> this is the "root" view, which contains a tree who's
+  leaves are the visible Edit views.</li>
+  <li><span class=code>ext</span> a plain table that extensions can set Edit-local values
+  too. Very useful for plugins.</li>
+  <li><span class=code>:buffer(idOrPath) --&gt; Buffer</span> this will get or create a buffer.</li>
+  <li><span class=code>:focus(idOrPath) --&gt; Edit</span> focus on a buffer, replacing
+  the current one.</li>
+</ul>
+<p>
+Most plugins will simply get <span class=code>edit</span> and then insert/remove/search
+its <span class=code>buf</span> data using its APIs and/or change its <span class=code>l,c</span> (line,column) values.
+They are free to use any lua API to do so, but should avoid large amounts
+of work as much as possible.
+<p>
+<h2>Module <a id="ele" href="#ele">ele</a> (<a href=".civ/lua/ele.lua:2"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="ele.__name" href="#ele.__name">ele.__name</a></h4>
+<h3>Function <a id="ele.main" href="#ele.main">ele.main</a> (<a href=".civ/lua/ele.lua:77"><i>src</i></a>)</h3>
+<h2>Module <a id="ele.types" href="#ele.types">ele.types</a> (<a href=".civ/lua/ele/types.lua:1"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="ele.types.ID" href="#ele.types.ID">ele.types.ID</a></h4>
+<h4>Value <a id="ele.types.INIT_BUFS" href="#ele.types.INIT_BUFS">ele.types.INIT_BUFS</a></h4>
+<h4>Value <a id="ele.types.WELCOME" href="#ele.types.WELCOME">ele.types.WELCOME</a></h4>
+<h4>Value <a id="ele.types.__name" href="#ele.types.__name">ele.types.__name</a></h4>
+<h3>Record <a id="ele.types.HSplit" href="#ele.types.HSplit">ele.types.HSplit</a> (<a href=".civ/lua/ele/types.lua:70"><i>src</i></a>)</h3>
+A container with windows split horizontally (i.e. wide windows)
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>container</span></td>
+    <td>[Editor</td>
+    <td>VSplit</td>
+    <td>HSplit] 
+    parent container</td>
+  </tr>
+  <tr>
+    <td><span class=code>tl</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tc</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>th</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tw</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__index</span></td>
+    <td>[Ty<HSplit>] (<a href=".civ/lua/ele/types.lua:70">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.close</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.insert</span></td>
+    <td>[function] (<a href=".civ/lua/ele/types.lua:34">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.remove</span></td>
+    <td>[<span class=code>(sp, v) -&gt; v</span>] (<a href=".civ/lua/ele/types.lua:53">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.HSplit.replace</span></td>
+    <td>[<span class=code>(sp, from, to) -&gt; from</span>] (<a href=".civ/lua/ele/types.lua:42">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ele.types.VSplit" href="#ele.types.VSplit">ele.types.VSplit</a> (<a href=".civ/lua/ele/types.lua:29"><i>src</i></a>)</h3>
+A container with windows split vertically (i.e. tall windows)
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>container</span></td>
+    <td>[Editor</td>
+    <td>VSplit</td>
+    <td>HSplit] 
+    parent container</td>
+  </tr>
+  <tr>
+    <td><span class=code>tl</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tc</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>th</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tw</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__index</span></td>
+    <td>[Ty<VSplit>] (<a href=".civ/lua/ele/types.lua:29">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.close</span></td>
+    <td>[function] (<a href=".civ/lua/ds.lua:148">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.draw</span></td>
+    <td>[function] (<a href=".civ/lua/ele/types.lua:67">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.insert</span></td>
+    <td>[function] (<a href=".civ/lua/ele/types.lua:34">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.remove</span></td>
+    <td>[function] (<a href=".civ/lua/ele/types.lua:53">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.VSplit.replace</span></td>
+    <td>[function] (<a href=".civ/lua/ele/types.lua:42">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="ele.types.checkAction" href="#ele.types.checkAction">ele.types.checkAction</a><span class=code>(data, action) -&gt; errstring</span> (<a href=".civ/lua/ele/types.lua:131"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.types.checkBinding" href="#ele.types.checkBinding">ele.types.checkBinding</a> (<a href=".civ/lua/ele/types.lua:94"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.types.checkBindings" href="#ele.types.checkBindings">ele.types.checkBindings</a> (<a href=".civ/lua/ele/types.lua:119"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.types.checkMode" href="#ele.types.checkMode">ele.types.checkMode</a><span class=code>(data, mode) -&gt; errstring</span> (<a href=".civ/lua/ele/types.lua:125"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.types.uniqueId" href="#ele.types.uniqueId">ele.types.uniqueId</a> (<a href=".civ/lua/ele/types.lua:88"><i>src</i></a>)</h3>
+<p>
+<h2>Module <a id="ele.types.term" href="#ele.types.term">ele.types.term</a> (<a href=".civ/lua/vt100.lua:9"><i>src</i></a>)</h2>
+Civboot vt100 Terminal library that supports LAP protocol.
+Module for interacting with the vt100 via keys and AsciiColors.
+<div class=code-block>License CC0 / UNLICENSE<br>
+Originally written 2022 Phil Leblanc, modified 2023 Rett Berg (Civboot.org)<br>
+Authorized for relicense in: http://github.com/philanc/plterm/issues/4
+</div>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.term.Bg</span></td>
+    <td>[TypoSafe] (<a href=".civ/lua/vt100.lua:242">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.BgColor</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.CMD</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.Fg</span></td>
+    <td>[TypoSafe] (<a href=".civ/lua/vt100.lua:242">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.FgColor</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.INP_SEQ</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.INP_SEQO</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.LITERALS</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.Style</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.VALID_KEY</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.term.Term</span></td>
+    <td>[Ty<Term>] (<a href=".civ/lua/vt100.lua:57">src</a>)</td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.types.term.Fmt</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:429">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.acwrite</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:292">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.checkKey</span></td>
+    <td>[<span class=code>(key) -&gt; key?, errstring?</span>] (<a href=".civ/lua/vt100.lua:175">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.colorFB</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:262">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.ctrlChar</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:121">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.key</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:121">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.keyError</span></td>
+    <td>[<span class=code>(key) -&gt; errstring?</span>] (<a href=".civ/lua/vt100.lua:171">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.literal</span></td>
+    <td>[<span class=code>(key) -&gt; literalstring?</span>] (<a href=".civ/lua/vt100.lua:143">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.main</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:447">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.restoremode</span></td>
+    <td>[<span class=code>(mode) -&gt; os.execute('stty '..mode)</span>] (<a href=".civ/lua/vt100.lua:404">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.savemode</span></td>
+    <td>[<span class=code>() -&gt; mode?, errmsg?</span>] (<a href=".civ/lua/vt100.lua:403">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.setrawmode</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:397">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.setsanemode</span></td>
+    <td>[<span class=code>() -&gt; os.execute'stty sane'</span>] (<a href=".civ/lua/vt100.lua:398">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.setup</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:460">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.start</span></td>
+    <td>[<span class=code>() -&gt; savedmode</span>] (<a href=".civ/lua/vt100.lua:410">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.types.term.stop</span></td>
+    <td>[function] (<a href=".civ/lua/vt100.lua:416">src</a>)</td>
+  </tr>
+</table></div>
+<p>
+<span class=code>ele.types.term.ctrl</span> | [Mod<vt100.ctrl>] (<a href=".civ/lua/vt100.lua:34">src</a>)
+<h2>Module <a id="ele.keys" href="#ele.keys">ele.keys</a> (<a href=".civ/lua/ele/bindings.lua:5"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="ele.keys.__name" href="#ele.keys.__name">ele.keys.__name</a></h4>
+<h3>Table <a id="ele.keys.backspace" href="#ele.keys.backspace">ele.keys.backspace</a></h3>
+<h3>Table <a id="ele.keys.command" href="#ele.keys.command">ele.keys.command</a> (<a href=".civ/lua/ele/bindings.lua:420"><i>src</i></a>)</h3>
+Command Mode: control the editor's text functions and
+enter other modes.
+<h3>Table <a id="ele.keys.commandMode" href="#ele.keys.commandMode">ele.keys.commandMode</a></h3>
+<h3>Table <a id="ele.keys.createPath" href="#ele.keys.createPath">ele.keys.createPath</a></h3>
+<h3>Table <a id="ele.keys.delkey" href="#ele.keys.delkey">ele.keys.delkey</a></h3>
+<h3>Table <a id="ele.keys.exit" href="#ele.keys.exit">ele.keys.exit</a></h3>
+<h3>Table <a id="ele.keys.goPath" href="#ele.keys.goPath">ele.keys.goPath</a></h3>
+<h3>Table <a id="ele.keys.hideOverlay" href="#ele.keys.hideOverlay">ele.keys.hideOverlay</a></h3>
+<h3>Table <a id="ele.keys.insert" href="#ele.keys.insert">ele.keys.insert</a> (<a href=".civ/lua/ele/bindings.lua:408"><i>src</i></a>)</h3>
+Insert Mode: directly insert text into the buffer.
+<h3>Table <a id="ele.keys.insertAbove" href="#ele.keys.insertAbove">ele.keys.insertAbove</a></h3>
+<h3>Table <a id="ele.keys.insertBelow" href="#ele.keys.insertBelow">ele.keys.insertBelow</a></h3>
+<h3>Table <a id="ele.keys.insertMode" href="#ele.keys.insertMode">ele.keys.insertMode</a></h3>
+<h3>Table <a id="ele.keys.insertTab" href="#ele.keys.insertTab">ele.keys.insertTab</a></h3>
+<h3>Table <a id="ele.keys.inserteol" href="#ele.keys.inserteol">ele.keys.inserteol</a></h3>
+<h3>Table <a id="ele.keys.insertsot" href="#ele.keys.insertsot">ele.keys.insertsot</a></h3>
+<h3>Table <a id="ele.keys.movement" href="#ele.keys.movement">ele.keys.movement</a></h3>
+<h3>Table <a id="ele.keys.navBuf" href="#ele.keys.navBuf">ele.keys.navBuf</a></h3>
+<h3>Table <a id="ele.keys.navCbd" href="#ele.keys.navCbd">ele.keys.navCbd</a></h3>
+<h3>Table <a id="ele.keys.navCwd" href="#ele.keys.navCwd">ele.keys.navCwd</a></h3>
+<h3>Table <a id="ele.keys.pathBack" href="#ele.keys.pathBack">ele.keys.pathBack</a></h3>
+<h3>Table <a id="ele.keys.pathBackExpand" href="#ele.keys.pathBackExpand">ele.keys.pathBackExpand</a></h3>
+<h3>Table <a id="ele.keys.pathExpand" href="#ele.keys.pathExpand">ele.keys.pathExpand</a></h3>
+<h3>Table <a id="ele.keys.pathFocus" href="#ele.keys.pathFocus">ele.keys.pathFocus</a></h3>
+<h3>Table <a id="ele.keys.pathFocusExpand" href="#ele.keys.pathFocusExpand">ele.keys.pathFocusExpand</a></h3>
+<h3>Table <a id="ele.keys.redo" href="#ele.keys.redo">ele.keys.redo</a></h3>
+<h3>Table <a id="ele.keys.save" href="#ele.keys.save">ele.keys.save</a></h3>
+<h3>Table <a id="ele.keys.searchBindings" href="#ele.keys.searchBindings">ele.keys.searchBindings</a></h3>
+<h3>Table <a id="ele.keys.searchBufNext" href="#ele.keys.searchBufNext">ele.keys.searchBufNext</a></h3>
+<h3>Table <a id="ele.keys.searchBufPrev" href="#ele.keys.searchBufPrev">ele.keys.searchBufPrev</a></h3>
+<h3>Table <a id="ele.keys.searchBufSub" href="#ele.keys.searchBufSub">ele.keys.searchBufSub</a></h3>
+<h3>Table <a id="ele.keys.splitHDown" href="#ele.keys.splitHDown">ele.keys.splitHDown</a></h3>
+<h3>Table <a id="ele.keys.splitHUp" href="#ele.keys.splitHUp">ele.keys.splitHUp</a></h3>
+<h3>Table <a id="ele.keys.splitVLeft" href="#ele.keys.splitVLeft">ele.keys.splitVLeft</a></h3>
+<h3>Table <a id="ele.keys.splitVRight" href="#ele.keys.splitVRight">ele.keys.splitVRight</a></h3>
+<h3>Table <a id="ele.keys.system" href="#ele.keys.system">ele.keys.system</a> (<a href=".civ/lua/ele/bindings.lua:469"><i>src</i></a>)</h3>
+System mode: view and control system-related resources such as
+files and directories. Run single line or block commands (lua,
+shell) directly in a buffer.<div class=code-block>M.system = M.KeyBindings {<br>
+&nbsp; name = 'system',<br>
+&nbsp; doc = 'system mode: filesystem, commands, shell, etc',<br>
+}
+</div>
+<h3>Table <a id="ele.keys.systemMode" href="#ele.keys.systemMode">ele.keys.systemMode</a></h3>
+<h3>Table <a id="ele.keys.undo" href="#ele.keys.undo">ele.keys.undo</a></h3>
+<h3>Table <a id="ele.keys.windowClose" href="#ele.keys.windowClose">ele.keys.windowClose</a></h3>
+<h3>Table <a id="ele.keys.windowDown" href="#ele.keys.windowDown">ele.keys.windowDown</a></h3>
+<h3>Table <a id="ele.keys.windowLeft" href="#ele.keys.windowLeft">ele.keys.windowLeft</a></h3>
+<h3>Table <a id="ele.keys.windowRight" href="#ele.keys.windowRight">ele.keys.windowRight</a></h3>
+<h3>Table <a id="ele.keys.windowUp" href="#ele.keys.windowUp">ele.keys.windowUp</a></h3>
+<h3>Record <a id="ele.keys.KeyBindings" href="#ele.keys.KeyBindings">ele.keys.KeyBindings</a> (<a href=".civ/lua/ele/bindings.lua:77"><i>src</i></a>)</h3>
+A map of key -> binding.
+The name and doc can be provided for the user.
+<p>
+Other "fields" must be valid chords. They will be automatically
+split (by whitespace) to create sub-KeyBindings as-needed.
+<p>
+The value must be one of: <ul>
+  <li>KeyBindings instance to explicitly create chorded bindings.</li>
+  <li>plain event table to fire off a simple event</li>
+  <li>callable <span class=code>event(ev, keySt)</span> for more complex bindings.</li>
+</ul>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>name</span></td>
+    <td>[string] 
+    the name of the group for documentation</td>
+  </tr>
+  <tr>
+    <td><span class=code>doc</span></td>
+    <td>[string] 
+    documentation to display to the user</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__index</span></td>
+    <td>[Ty<KeyBindings>] (<a href=".civ/lua/ele/bindings.lua:77">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeyBindings.getBinding</span></td>
+    <td>[function] (<a href=".civ/lua/pegl.lua:143">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="ele.keys.KeySt" href="#ele.keys.KeySt">ele.keys.KeySt</a> (<a href=".civ/lua/ele/bindings.lua:53"><i>src</i></a>)</h3>
+The state of the keyboard input (chord).
+Some bindings are a simple action to perform, whereas callable bindings
+can update the KeySt to affect future ones, such as decimals causing
+later actions to be repeated a <span class=code>num</span> of times.
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>chord</span></td>
+    <td>[table] 
+    list of keys which led to this binding, i.e. {'space', 'a'}</td>
+  </tr>
+  <tr>
+    <td><span class=code>event</span></td>
+    <td>[table] 
+    table to use when returning (emitting) an event.</td>
+  </tr>
+  <tr>
+    <td><span class=code>next</span></td>
+    <td>[table</td>
+    <td>string] 
+    the binding which will be used for the next key</td>
+  </tr>
+  <tr>
+    <td><span class=code>keep</span></td>
+    <td>[boolean] 
+    if true the above fields will be preserved in next call</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__index</span></td>
+    <td>[Ty<KeySt>] (<a href=".civ/lua/ele/bindings.lua:53">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.keys.KeySt.check</span></td>
+    <td>[<span class=code>(k, ele) -&gt; errstring?</span>] (<a href=".civ/lua/ele/bindings.lua:61">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="ele.keys.backword" href="#ele.keys.backword">ele.keys.backword</a> (<a href=".civ/lua/ele/bindings.lua:167"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.change" href="#ele.keys.change">ele.keys.change</a> (<a href=".civ/lua/ele/bindings.lua:238"><i>src</i></a>)</h3>
+Delete <move> then enter insert.
+<h3>Function <a id="ele.keys.changeEol" href="#ele.keys.changeEol">ele.keys.changeEol</a> (<a href=".civ/lua/ele/bindings.lua:245"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.chord" href="#ele.keys.chord">ele.keys.chord</a><span class=code>(str) -&gt; keylist</span> (<a href=".civ/lua/ele/bindings.lua:29"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.chordstr" href="#ele.keys.chordstr">ele.keys.chordstr</a> (<a href=".civ/lua/ele/bindings.lua:39"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.delete" href="#ele.keys.delete">ele.keys.delete</a> (<a href=".civ/lua/ele/bindings.lua:225"><i>src</i></a>)</h3>
+delete until a movement command (or similar)
+<h3>Function <a id="ele.keys.deleteEol" href="#ele.keys.deleteEol">ele.keys.deleteEol</a> (<a href=".civ/lua/ele/bindings.lua:231"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.down" href="#ele.keys.down">ele.keys.down</a> (<a href=".civ/lua/ele/bindings.lua:169"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.downScreen" href="#ele.keys.downScreen">ele.keys.downScreen</a> (<a href=".civ/lua/ele/bindings.lua:175"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.eof" href="#ele.keys.eof">ele.keys.eof</a> (<a href=".civ/lua/ele/bindings.lua:173"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.eol" href="#ele.keys.eol">ele.keys.eol</a> (<a href=".civ/lua/ele/bindings.lua:172"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.eot" href="#ele.keys.eot">ele.keys.eot</a> (<a href=".civ/lua/ele/bindings.lua:172"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.find" href="#ele.keys.find">ele.keys.find</a> (<a href=".civ/lua/ele/bindings.lua:195"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.findback" href="#ele.keys.findback">ele.keys.findback</a> (<a href=".civ/lua/ele/bindings.lua:206"><i>src</i></a>)</h3>
+go back to the character
+<h3>Function <a id="ele.keys.forword" href="#ele.keys.forword">ele.keys.forword</a> (<a href=".civ/lua/ele/bindings.lua:167"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.insertChord" href="#ele.keys.insertChord">ele.keys.insertChord</a> (<a href=".civ/lua/ele/bindings.lua:135"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.install" href="#ele.keys.install">ele.keys.install</a> (<a href=".civ/lua/ele/bindings.lua:351"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.keyactions" href="#ele.keys.keyactions">ele.keys.keyactions</a> (<a href=".civ/lua/ele/bindings.lua:378"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.left" href="#ele.keys.left">ele.keys.left</a> (<a href=".civ/lua/ele/bindings.lua:166"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.literal" href="#ele.keys.literal">ele.keys.literal</a> (<a href=".civ/lua/ele/bindings.lua:34"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.moveAction" href="#ele.keys.moveAction">ele.keys.moveAction</a> (<a href=".civ/lua/ele/bindings.lua:164"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.moveG" href="#ele.keys.moveG">ele.keys.moveG</a> (<a href=".civ/lua/ele/bindings.lua:181"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.movekey" href="#ele.keys.movekey">ele.keys.movekey</a> (<a href=".civ/lua/ele/bindings.lua:187"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.right" href="#ele.keys.right">ele.keys.right</a> (<a href=".civ/lua/ele/bindings.lua:166"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.searchBuf" href="#ele.keys.searchBuf">ele.keys.searchBuf</a> (<a href=".civ/lua/ele/bindings.lua:304"><i>src</i></a>)</h3>
+Interactively search the buffer.
+<p>
+This holds onto keySt (sets .keep), effectively owning all keyboard
+inputs.
+<h3>Function <a id="ele.keys.sof" href="#ele.keys.sof">ele.keys.sof</a> (<a href=".civ/lua/ele/bindings.lua:173"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.sol" href="#ele.keys.sol">ele.keys.sol</a> (<a href=".civ/lua/ele/bindings.lua:171"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.sot" href="#ele.keys.sot">ele.keys.sot</a> (<a href=".civ/lua/ele/bindings.lua:171"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.till" href="#ele.keys.till">ele.keys.till</a> (<a href=".civ/lua/ele/bindings.lua:200"><i>src</i></a>)</h3>
+go to the column before the character
+<h3>Function <a id="ele.keys.tillback" href="#ele.keys.tillback">ele.keys.tillback</a> (<a href=".civ/lua/ele/bindings.lua:211"><i>src</i></a>)</h3>
+go back to the column after the character
+<h3>Function <a id="ele.keys.times" href="#ele.keys.times">ele.keys.times</a> (<a href=".civ/lua/ele/bindings.lua:253"><i>src</i></a>)</h3>
+used for setting the number of times to do an action.
+1 0 d t x: delete till the 10th x
+<h3>Function <a id="ele.keys.unboundChord" href="#ele.keys.unboundChord">ele.keys.unboundChord</a> (<a href=".civ/lua/ele/bindings.lua:138"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.up" href="#ele.keys.up">ele.keys.up</a> (<a href=".civ/lua/ele/bindings.lua:168"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.upScreen" href="#ele.keys.upScreen">ele.keys.upScreen</a> (<a href=".civ/lua/ele/bindings.lua:174"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.keys.zero" href="#ele.keys.zero">ele.keys.zero</a> (<a href=".civ/lua/ele/bindings.lua:259"><i>src</i></a>)</h3>
+<h2>Module <a id="ele.edit" href="#ele.edit">ele.edit</a> (<a href=".civ/lua/ele/edit.lua:1"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="ele.edit.__name" href="#ele.edit.__name">ele.edit.__name</a></h4>
+<h3>Record <a id="ele.edit.Edit" href="#ele.edit.Edit">ele.edit.Edit</a> (<a href=".civ/lua/ele/edit.lua:36"><i>src</i></a>)</h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>id</span></td>
+    <td>[int] </td>
+  </tr>
+  <tr>
+    <td><span class=code>container</span></td>
+    <td>  </td>
+  </tr>
+  <tr>
+    <td><span class=code>buf</span></td>
+    <td>[Buffer] </td>
+  </tr>
+  <tr>
+    <td><span class=code>l</span></td>
+    <td>[int] = <span class=code>1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>c</span></td>
+    <td>[int] = <span class=code>1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>vl</span></td>
+    <td>[int] = <span class=code>1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>vc</span></td>
+    <td>[int] = <span class=code>1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tl</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tc</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>th</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>tw</span></td>
+    <td>[int] = <span class=code>-1</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>fh</span></td>
+    <td>[int] = <span class=code>0</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>fw</span></td>
+    <td>[int] = <span class=code>0</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>closed</span></td>
+    <td>[bool] </td>
+  </tr>
+  <tr>
+    <td><span class=code>modes</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>drawBars</span></td>
+    <td>[fn[Edit] -> botHeight,leftWidth] = <span class=code>fn"Edit.drawBars"[/home/rett/projects/civlua/.civ/lua/ele/edit.lua:255]</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>lineStyle</span></td>
+    <td>[str] = <span class=code>"bar:line"</span>
+    asciicolor style</td>
+  </tr>
+</table></div>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__docs</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__fieldIds</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__fields</span></td>
+    <td>[table] </td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__index</span></td>
+    <td>[Ty<Edit>] (<a href=".civ/lua/ele/edit.lua:36">src</a>)</td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__len</span></td>
+    <td>[<span class=code>(e) -&gt; #e.buf</span>] (<a href=".civ/lua/ele/edit.lua:81">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.append</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:143">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.barDims</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:221">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.boundC</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:95">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.boundCol</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:108">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.boundLC</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:103">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.changeStart</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:126">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.changeUpdate2</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:136">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.clear</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:185">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.close</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:56">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.colEnd</span></td>
+    <td>[<span class=code>(e) -&gt; #(e:curLine() or '') + 1</span>] (<a href=".civ/lua/ele/edit.lua:87">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.curLine</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:86">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.draw</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:216">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.drawCursor</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:262">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.forceHeight</span></td>
+    <td>[<span class=code>(e) -&gt; e.fh</span>] (<a href=".civ/lua/ele/edit.lua:83">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.forceWidth</span></td>
+    <td>[<span class=code>(e) -&gt; e.fw</span>] (<a href=".civ/lua/ele/edit.lua:84">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.insert</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:155">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.lastLine</span></td>
+    <td>[<span class=code>(e) -&gt; e.buf[#e]</span>] (<a href=".civ/lua/ele/edit.lua:88">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.offset</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:91">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.path</span></td>
+    <td>[<span class=code>(e) -&gt; path?</span>] (<a href=".civ/lua/ele/edit.lua:281">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.redo</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:200">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.remove</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:160">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.removeOff</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:168">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.replace</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:178">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.save</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:75">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.split</span></td>
+    <td>[<span class=code>(e, S) -&gt; split</span>] (<a href=".civ/lua/ele/edit.lua:279">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.undo</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:194">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.edit.Edit.viewCursor</span></td>
+    <td>[function] (<a href=".civ/lua/ele/edit.lua:119">src</a>)</td>
+  </tr>
+</table></div>
+<h2>Module <a id="ele.actions" href="#ele.actions">ele.actions</a> (<a href=".civ/lua/ele/actions.lua:2"><i>src</i></a>)</h2>
+<p>
+<h3>Table <a id="ele.actions.DO_NAV" href="#ele.actions.DO_NAV">ele.actions.DO_NAV</a></h3>
+<h3>Table <a id="ele.actions.SPLIT" href="#ele.actions.SPLIT">ele.actions.SPLIT</a></h3>
+<h4>Value <a id="ele.actions.__name" href="#ele.actions.__name">ele.actions.__name</a></h4>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.actions.keyinput</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:82">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Function <a id="ele.actions.buf" href="#ele.actions.buf">ele.actions.buf</a> (<a href=".civ/lua/ele/actions.lua:531"><i>src</i></a>)</h3>
+Directly modify a buffer by name. This is most commonly
+used for the overlay.
+<h3>Function <a id="ele.actions.chain" href="#ele.actions.chain">ele.actions.chain</a> (<a href=".civ/lua/ele/actions.lua:100"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.edit" href="#ele.actions.edit">ele.actions.edit</a> (<a href=".civ/lua/ele/actions.lua:513"><i>src</i></a>)</h3>
+Do something with the edit view, in this order: <ul>
+  <li>save=true: save the current edit view.</li>
+  <li>focus: focus the buffer, typically 'b#named'.</li>
+  <li>clear: clear the current edit view.</li>
+</ul>
+<h3>Function <a id="ele.actions.hotkey" href="#ele.actions.hotkey">ele.actions.hotkey</a> (<a href=".civ/lua/ele/actions.lua:82"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.insert" href="#ele.actions.insert">ele.actions.insert</a> (<a href=".civ/lua/ele/actions.lua:188"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.insertTab" href="#ele.actions.insertTab">ele.actions.insertTab</a> (<a href=".civ/lua/ele/actions.lua:195"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.merge" href="#ele.actions.merge">ele.actions.merge</a> (<a href=".civ/lua/ele/actions.lua:92"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.move" href="#ele.actions.move">ele.actions.move</a> (<a href=".civ/lua/ele/actions.lua:173"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.path" href="#ele.actions.path">ele.actions.path</a> (<a href=".civ/lua/ele/actions.lua:488"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.remove" href="#ele.actions.remove">ele.actions.remove</a> (<a href=".civ/lua/ele/actions.lua:228"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.searchBuf" href="#ele.actions.searchBuf">ele.actions.searchBuf</a> (<a href=".civ/lua/ele/actions.lua:257"><i>src</i></a>)</h3>
+<h3>Function <a id="ele.actions.window" href="#ele.actions.window">ele.actions.window</a> (<a href=".civ/lua/ele/actions.lua:579"><i>src</i></a>)</h3>
+Window operations like split and close
+<p>
+<h2>Module <a id="ele.actions.nav" href="#ele.actions.nav">ele.actions.nav</a> (<a href=".civ/lua/ele/actions.lua:262"><i>src</i></a>)</h2>
+<p>
+<b>Values: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.actions.nav.__name</span></td>
+    <td>[string] </td>
+  </tr>
+</table></div>
+<b>Functions: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ele.actions.nav.backEntry</span></td>
+    <td>[<span class=code>(b, l) -&gt; ln</span>] (<a href=".civ/lua/ele/actions.lua:410">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.backFocus</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:392">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.doBack</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:430">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.doEntry</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:474">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.doExpand</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:442">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.expandEntry</span></td>
+    <td>[<span class=code>(b, l, ls) -&gt; numEntries</span>] (<a href=".civ/lua/ele/actions.lua:423">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.findEnd</span></td>
+    <td>[<span class=code>(b, l) -&gt; linenum</span>] (<a href=".civ/lua/ele/actions.lua:342">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.findEntryEnd</span></td>
+    <td>[<span class=code>(b, l) -&gt; linenum</span>] (<a href=".civ/lua/ele/actions.lua:382">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.findFocus</span></td>
+    <td>[<span class=code>(b, l) -&gt; linenum, line</span>] (<a href=".civ/lua/ele/actions.lua:332">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.findParent</span></td>
+    <td>[<span class=code>(b, l) -&gt; linenum, line</span>] (<a href=".civ/lua/ele/actions.lua:323">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.findView</span></td>
+    <td>[<span class=code>(b, l) -&gt; (fln, eln, fline)</span>] (<a href=".civ/lua/ele/actions.lua:348">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.getEntry</span></td>
+    <td>[<span class=code>(line) -&gt; (indent, kind, entry)</span>] (<a href=".civ/lua/ele/actions.lua:307">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.getFocus</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:302">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.getPath</span></td>
+    <td>[<span class=code>(b, l,c) -&gt; string</span>] (<a href=".civ/lua/ele/actions.lua:373">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>ele.actions.nav.goPath</span></td>
+    <td>[function] (<a href=".civ/lua/ele/actions.lua:457">src</a>)</td>
+  </tr>
+</table></div>
+<h3>Record <a id="Editor" href="#Editor">Editor</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>s</span></td>
+    <td>[EdSettings] </td>
+  </tr>
+  <tr>
+    <td><span class=code>mode</span></td>
+    <td>[string] 
+    current editor mode</td>
+  </tr>
+  <tr>
+    <td><span class=code>modes</span></td>
+    <td>[table] 
+    keyboard bindings per mode (see: bindings.lua)</td>
+  </tr>
+  <tr>
+    <td><span class=code>actions</span></td>
+    <td>[table] 
+    actions which events can trigger (see: actions.lua)</td>
+  </tr>
+  <tr>
+    <td><span class=code>resources</span></td>
+    <td>[table] 
+    resources to close when shutting down</td>
+  </tr>
+  <tr>
+    <td><span class=code>buffers</span></td>
+    <td>[list[Buffer]] </td>
+  </tr>
+  <tr>
+    <td><span class=code>bufferId</span></td>
+    <td>[map[Buffer, id]] </td>
+  </tr>
+  <tr>
+    <td><span class=code>namedBuffers</span></td>
+    <td>[map[string,Buffer]] </td>
+  </tr>
+  <tr>
+    <td><span class=code>overlay</span></td>
+    <td>[Buffer] 
+    the overlay buffer</td>
+  </tr>
+  <tr>
+    <td><span class=code>edit</span></td>
+    <td>[Buffer] 
+    the current edit buffer. Also in namedBuffers.overlay</td>
+  </tr>
+  <tr>
+    <td><span class=code>view</span></td>
+    <td>[RootView] 
+    the root view</td>
+  </tr>
+  <tr>
+    <td><span class=code>display</span></td>
+    <td>[Term</td>
+    <td>other] 
+    display/terminal to write+paint text</td>
+  </tr>
+  <tr>
+    <td><span class=code>run</span></td>
+    <td>[boolean] = <span class=code>true</span>
+    set to false to stop the app</td>
+  </tr>
+  <tr>
+    <td><span class=code>ext</span></td>
+    <td>[table] 
+    table for extensions to store data</td>
+  </tr>
+  <tr>
+    <td><span class=code>search</span></td>
+    <td>[str] 
+    search pattern for searchBuf, etc</td>
+  </tr>
+  <tr>
+    <td><span class=code>lastEvent</span></td>
+    <td>[table] 
+    the last event executed.</td>
+  </tr>
+  <tr>
+    <td><span class=code>error</span></td>
+    <td>[callable] 
+    error handler (ds.log.logfmt sig)</td>
+  </tr>
+  <tr>
+    <td><span class=code>warn</span></td>
+    <td>[callable] 
+    warn handler</td>
+  </tr>
+  <tr>
+    <td><span class=code>newDat</span></td>
+    <td>[callable(text)] = <span class=code>fn"function"[/home/rett/projects/civlua/.civ/lua/ele/Editor.lua:46]</span>
+    function to create new buffer</td>
+  </tr>
+  <tr>
+    <td><span class=code>redraw</span></td>
+    <td>[boolean] 
+    set to true to force a redraw</td>
+  </tr>
+</table></div>
+<h3>Table <a id="Editor.__docs" href="#Editor.__docs">Editor.__docs</a></h3>
+<h3>Table <a id="Editor.__fieldIds" href="#Editor.__fieldIds">Editor.__fieldIds</a></h3>
+<h3>Table <a id="Editor.__fields" href="#Editor.__fields">Editor.__fields</a></h3>
+<h4>Value <a id="Editor.__name" href="#Editor.__name">Editor.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Editor.__index</span></td>
+    <td>[Ty<Editor>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Editor.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Editor.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="Editor._drawOverlay" href="#Editor._drawOverlay">Editor._drawOverlay</a> (<a href=".civ/lua/ele/Editor.lua:165"><i>src</i></a>)</h4>
+<h4>Function <a id="Editor.buffer" href="#Editor.buffer">Editor.buffer</a><span class=code>(ed, idOrPath) -&gt; Buffer</span> (<a href=".civ/lua/ele/Editor.lua:117"><i>src</i></a>)</h4>
+<h4>Function <a id="Editor.draw" href="#Editor.draw">Editor.draw</a> (<a href=".civ/lua/ele/Editor.lua:143"><i>src</i></a>)</h4>
+<h4>Function <a id="Editor.focus" href="#Editor.focus">Editor.focus</a><span class=code>(ed, b) -&gt; Edit</span> (<a href=".civ/lua/ele/Editor.lua:229"><i>src</i></a>)</h4>
+Replace the current edit view with the new <span class=code>ed:buffer(b)</span>.
+Return the new edit view being focused.
+<h4>Function <a id="Editor.focusFirst" href="#Editor.focusFirst">Editor.focusFirst</a> (<a href=".civ/lua/ele/Editor.lua:217"><i>src</i></a>)</h4>
+Focus the first edit view in container c (default ed.view)
+<h4>Function <a id="Editor.getBuffer" href="#Editor.getBuffer">Editor.getBuffer</a><span class=code>(ed, v) -&gt; Buffer?</span> (<a href=".civ/lua/ele/Editor.lua:100"><i>src</i></a>)</h4>
+Get an existing buffer if it exists.
+Else return false if the buffer is path-like and should be
+created, else nil.
+<h4>Function <a id="Editor.handleStandard" href="#Editor.handleStandard">Editor.handleStandard</a> (<a href=".civ/lua/ele/Editor.lua:184"><i>src</i></a>)</h4>
+Handle standard event fields.
+Currently this only handles the <span class=code>mode</span> field.
+<h4>Function <a id="Editor.init" href="#Editor.init">Editor.init</a> (<a href=".civ/lua/ele/Editor.lua:76"><i>src</i></a>)</h4>
+<h4>Function <a id="Editor.namedBuffer" href="#Editor.namedBuffer">Editor.namedBuffer</a> (<a href=".civ/lua/ele/Editor.lua:128"><i>src</i></a>)</h4>
+Get or create a named buffer (NOT a path).
+<h4>Function <a id="Editor.open" href="#Editor.open">Editor.open</a><span class=code>(ed, path) -&gt; edit</span> (<a href=".civ/lua/ele/Editor.lua:134"><i>src</i></a>)</h4>
+<h4>Function <a id="Editor.remove" href="#Editor.remove">Editor.remove</a><span class=code>(ed, v) -&gt; v</span> (<a href=".civ/lua/ele/Editor.lua:208"><i>src</i></a>)</h4>
+Remove a view and remove self as it's container.
+This does NOT close the view.
+<h4>Function <a id="Editor.replace" href="#Editor.replace">Editor.replace</a><span class=code>(ed, from, to) -&gt; from</span> (<a href=".civ/lua/ele/Editor.lua:197"><i>src</i></a>)</h4>
+Replace the view/edit from with to.
+Since Editor supports only <span class=code>ed.view</span> this means
+it must be that value.
+<h3>Record <a id="Session" href="#Session">Session</a></h3>
+<p>
+<b>Fields: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>ed</span></td>
+    <td>[Editor] </td>
+  </tr>
+  <tr>
+    <td><span class=code>events</span></td>
+    <td>[Recv] </td>
+  </tr>
+  <tr>
+    <td><span class=code>evsend</span></td>
+    <td>[Send] </td>
+  </tr>
+  <tr>
+    <td><span class=code>keys</span></td>
+    <td>[Recv] </td>
+  </tr>
+  <tr>
+    <td><span class=code>keysend</span></td>
+    <td>[Send] </td>
+  </tr>
+  <tr>
+    <td><span class=code>logf</span></td>
+    <td>[File] </td>
+  </tr>
+  <tr>
+    <td><span class=code>running</span></td>
+    <td>[bool] </td>
+  </tr>
+</table></div>
+<h3>Table <a id="Session.__docs" href="#Session.__docs">Session.__docs</a></h3>
+<h3>Table <a id="Session.__fieldIds" href="#Session.__fieldIds">Session.__fieldIds</a></h3>
+<h3>Table <a id="Session.__fields" href="#Session.__fields">Session.__fields</a></h3>
+<h4>Value <a id="Session.__name" href="#Session.__name">Session.__name</a></h4>
+<b>Records: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Session.__index</span></td>
+    <td>[Ty<Session>] </td>
+  </tr>
+</table></div>
+<b>Methods: </b> <div class=table><table>
+  <tr>
+    <td><span class=code>Session.__fmt</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Session.__newindex</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
+  </tr>
+  <tr>
+    <td><span class=code>Session.__tostring</span></td>
+    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
+  </tr>
+</table></div>
+<h4>Function <a id="Session.draw" href="#Session.draw">Session.draw</a> (<a href=".civ/lua/ele/Session.lua:134"><i>src</i></a>)</h4>
+<h4>Function <a id="Session.handleEvents" href="#Session.handleEvents">Session.handleEvents</a> (<a href=".civ/lua/ele/Session.lua:121"><i>src</i></a>)</h4>
+<h4>Function <a id="Session.play" href="#Session.play">Session.play</a> (<a href=".civ/lua/ele/Session.lua:102"><i>src</i></a>)</h4>
+<h4>Function <a id="Session.run" href="#Session.run">Session.run</a> (<a href=".civ/lua/ele/Session.lua:89"><i>src</i></a>)</h4>
+<h4>Function <a id="Session.test" href="#Session.test">Session.test</a> (<a href=".civ/lua/ele/Session.lua:42"><i>src</i></a>)</h4>
+<h4>Function <a id="Session.user" href="#Session.user">Session.user</a> (<a href=".civ/lua/ele/Session.lua:52"><i>src</i></a>)</h4>
+<h2>Module <a id="ele.testing" href="#ele.testing">ele.testing</a> (<a href=".civ/lua/ele/testing.lua:2"><i>src</i></a>)</h2>
+<p>
+<h4>Value <a id="ele.testing.SLEEP" href="#ele.testing.SLEEP">ele.testing.SLEEP</a></h4>
+<h4>Value <a id="ele.testing.__name" href="#ele.testing.__name">ele.testing.__name</a></h4>
+<h3>Function <a id="ele.testing.newSession" href="#ele.testing.newSession">ele.testing.newSession</a> (<a href=".civ/lua/ele/testing.lua:18"><i>src</i></a>)</h3>
+</div></body>
+</html>
