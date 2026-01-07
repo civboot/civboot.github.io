@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,405 +11,117 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
-<h2>Module <a id="vcds" href="#vcds">vcds</a> (<a href=".civ/lua/vcds.lua:2"><i>src</i></a>)</h2>
+<h1><a id=""vcds"" href="#"vcds"">vcds</h1></a>
 vsds: version control data structures (and algorithms)
 <p>
-<h4>Value <a id="vcds.ADD" href="#vcds.ADD">vcds.ADD</a></h4>
-<h3>Table <a id="vcds.DiffEoF" href="#vcds.DiffEoF">vcds.DiffEoF</a> (<a href=".civ/lua/vcds.lua:104"><i>src</i></a>)</h3>
-<h3>Table <a id="vcds.DiffSoF" href="#vcds.DiffSoF">vcds.DiffSoF</a> (<a href=".civ/lua/vcds.lua:103"><i>src</i></a>)</h3>
-<h4>Value <a id="vcds.REM" href="#vcds.REM">vcds.REM</a></h4>
-<h4>Value <a id="vcds.__name" href="#vcds.__name">vcds.__name</a></h4>
-<h3>Record <a id="vcds.Change" href="#vcds.Change">vcds.Change</a> (<a href=".civ/lua/vcds.lua:55"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>vcds.Diff</b></li>
+  <li><b>vcds.Keep</b></li>
+  <li><b>vcds.Change</b></li>
+  <li><b>vcds.DiffsExtender</b></li>
+  <li><b>vcds.Picks</b></li>
+  <li><b>vcds.Patch</b></li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>rem</span></td>
-    <td>[int</td>
-    <td>table] 
-    removed lines</td>
-  </tr>
-  <tr>
-    <td><span class=code>add</span></td>
-    <td>[string] 
-    text to add</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Change.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Change.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Change.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Change.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Change.__index</span></td>
-    <td>[Ty<Change>] (<a href=".civ/lua/vcds.lua:55">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Change.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Change.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Change.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Change.len</span></td>
-    <td>[function] (<a href=".civ/lua/vcds.lua:58">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="vcds.Diff" href="#vcds.Diff">vcds.Diff</a> (<a href=".civ/lua/vcds.lua:29"><i>src</i></a>)</h3>
+<b>Functions</b> <ul>
+  <li><span class=code>normalize(s) -&gt; ds.squash(ds.trimEnd(s))</span>
+  normalize a line for comparing (anchoring).
+  This just squashes and trims the end.</li>
+  <li><span class=code>apply(base, changes, out--[[{}]]) -&gt; out</span>
+  Apply changes to base (TableLines), push to <span class=code>out</span></li>
+  <li><span class=code>toChanges(diffs, full)</span></li>
+  <li><span class=code>toDiffs(base, changes) -&gt; diffs</span>
+  Convert Changes to Diffs with full context</li>
+  <li><span class=code>createAnchorTop(base, l, aLen)</span></li>
+  <li><span class=code>createAnchorBot(base, l, aLen)</span></li>
+  <li><span class=code>findAnchor(base, baseMap, anchors, above--[[false]]) -&gt; (l, c)</span>
+  Find the actual anchor by searching for uniqueness in the anchors <ul>
+    <li>above=true:  find above (search up)</li>
+    <li>above=false: find below (search down)</li>
+  </ul></li>
+  <li><span class=code>pickAnchorsTop(pick) -&gt; isStartOfFile, anchors</span></li>
+  <li><span class=code>pickAnchorsBot(base, pick) -&gt; isEndOfFile, anchors</span></li>
+  <li><span class=code>createPatch(base, baseMap, pick)</span>
+  Create a patch item from a pick
+  
+  At it's most basic it would just be: <ul>
+    <li>find line position via top and/or bottom anchor. We want at least 2 lines</li>
+    <li>convert pick to change. Walk the text applying the change.</li>
+  </ul>
+  
+  There are some strategies to fix common anchor misses: <ul>
+    <li>If an anchor is missing, the nearby change can be used instead. Use either
+    the removed or added lines. For instance, if we are supposed to remove lines
+    then try and find them. Conversely if the patch was already applied then the
+    supposed-to-be added lines will already be there!</li>
+    <li>When adding, existing identical text is okay.</li>
+    <li>When removing, missing text is okay as long as it's followed by an anchor of
+    some kind</li>
+    <li>Keep lines act as an anchor (for above) but are otherwise not required - they
+    are "free" to change or be removed. If they are missing then the algorithm will
+    try to continue the change with or without them (dynamic programming)</li>
+    <li>empty lines are entirely ignored and are not considered an anchor</li>
+  </ul></li>
+</ul>
+<p>
+<h2><a id=""vcds.Diff"" href="#"vcds.Diff"">Record Diff</h2></a>
+<ul>
+  <li><b>b</b> :
+  (base)   orig file.  '+'=added</li>
+  <li><b>c</b> :
+  (change) new file.   '-'=removed</li>
+  <li><b>text</b> </li>
+</ul>
 Single Line Diff
 This type is good for displaying differences to a user.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>b</span></td>
-    <td>  
-    (base)   orig file.  '+'=added</td>
-  </tr>
-  <tr>
-    <td><span class=code>c</span></td>
-    <td>  
-    (change) new file.   '-'=removed</td>
-  </tr>
-  <tr>
-    <td><span class=code>text</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Diff.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Diff.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Diff.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Diff.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Diff.__index</span></td>
-    <td>[Ty<Diff>] (<a href=".civ/lua/vcds.lua:29">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Diff.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Diff.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Diff.isKeep</span></td>
-    <td>[function] (<a href=".civ/lua/vcds.lua:39">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="vcds.DiffsExtender" href="#vcds.DiffsExtender">vcds.DiffsExtender</a> (<a href=".civ/lua/vcds.lua:111"><i>src</i></a>)</h3>
+<h2><a id=""vcds.Keep"" href="#"vcds.Keep"">Record Keep</h2></a>
+<ul>
+  <li><b>num</b> </li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>diffs</span></td>
-    <td>[list] </td>
-  </tr>
-  <tr>
-    <td><span class=code>base</span></td>
-    <td>  </td>
-  </tr>
-  <tr>
-    <td><span class=code>bl</span></td>
-    <td>[int] 
-    base line</td>
-  </tr>
-  <tr>
-    <td><span class=code>cl</span></td>
-    <td>[int] 
-    change line</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__index</span></td>
-    <td>[Ty<DiffsExtender>] (<a href=".civ/lua/vcds.lua:111">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__call</span></td>
-    <td>[function] (<a href=".civ/lua/vcds.lua:132">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.DiffsExtender.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="vcds.Keep" href="#vcds.Keep">vcds.Keep</a> (<a href=".civ/lua/vcds.lua:49"><i>src</i></a>)</h3>
+<h2><a id=""vcds.Change"" href="#"vcds.Change"">Record Change</h2></a>
+<ul>
+  <li><b>rem</b> :
+  removed lines</li>
+  <li><b>add</b> :
+  text to add</li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>num</span></td>
-    <td>[int] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Keep.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Keep.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Keep.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Keep.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Keep.__index</span></td>
-    <td>[Ty<Keep>] (<a href=".civ/lua/vcds.lua:49">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Keep.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Keep.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Keep.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Keep.len</span></td>
-    <td>[<span class=code>(k) -&gt; k.num and k.num or #k</span>] (<a href=".civ/lua/vcds.lua:50">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="vcds.Patch" href="#vcds.Patch">vcds.Patch</a> (<a href=".civ/lua/vcds.lua:253"><i>src</i></a>)</h3>
+<h2><a id=""vcds.DiffsExtender"" href="#"vcds.DiffsExtender"">Record DiffsExtender</h2></a>
+<ul>
+  <li><b>diffs</b> </li>
+  <li><b>base</b> </li>
+  <li><b>bl</b> :
+  base line</li>
+  <li><b>cl</b> :
+  change line</li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>conflict</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>bl</span></td>
-    <td>[number] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Patch.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Patch.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Patch.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Patch.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Patch.__index</span></td>
-    <td>[Ty<Patch>] (<a href=".civ/lua/vcds.lua:253">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Patch.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Patch.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Patch.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="vcds.Picks" href="#vcds.Picks">vcds.Picks</a> (<a href=".civ/lua/vcds.lua:171"><i>src</i></a>)</h3>
+<h2><a id=""vcds.Picks"" href="#"vcds.Picks"">Record Picks</h2></a>
+<ul>
+  <li><b>changes</b> :
+  list of changes</li>
+  <li><b>ci</b> :
+  for iterating</li>
+  <li><b>de</b> </li>
+  <li><b>set</b> :
+  settings (need refactor)</li>
+</ul>
 Create picks (aka cherry picks) iterator from changes.
 These can then be applied to a new base using vcds.patch(base, picks)
 <p>
 Each "pick" is a list of Diffs which are anchored by the lines
 above and below (unless they are start/end of file).
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>changes</span></td>
-    <td>[list] 
-    list of changes</td>
-  </tr>
-  <tr>
-    <td><span class=code>ci</span></td>
-    <td>[int] 
-    for iterating</td>
-  </tr>
-  <tr>
-    <td><span class=code>de</span></td>
-    <td>[DiffsExtender] </td>
-  </tr>
-  <tr>
-    <td><span class=code>set</span></td>
-    <td>[table] 
-    settings (need refactor)</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Picks.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Picks.__index</span></td>
-    <td>[Ty<Picks>] (<a href=".civ/lua/vcds.lua:171">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vcds.Picks.__call</span></td>
-    <td>[<span class=code>(p) -&gt; iterator</span>] (<a href=".civ/lua/vcds.lua:193">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vcds.Picks.groupChanges</span></td>
-    <td>[function] (<a href=".civ/lua/vcds.lua:212">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="vcds.apply" href="#vcds.apply">vcds.apply</a><span class=code>(base, changes, out--[[{}]]) -&gt; out</span> (<a href=".civ/lua/vcds.lua:75"><i>src</i></a>)</h3>
-Apply changes to base (TableLines), push to <span class=code>out</span>
-<h3>Function <a id="vcds.createAnchorBot" href="#vcds.createAnchorBot">vcds.createAnchorBot</a> (<a href=".civ/lua/vcds.lua:159"><i>src</i></a>)</h3>
-<h3>Function <a id="vcds.createAnchorTop" href="#vcds.createAnchorTop">vcds.createAnchorTop</a> (<a href=".civ/lua/vcds.lua:150"><i>src</i></a>)</h3>
-<h3>Function <a id="vcds.createPatch" href="#vcds.createPatch">vcds.createPatch</a> (<a href=".civ/lua/vcds.lua:350"><i>src</i></a>)</h3>
-Create a patch item from a pick
-<p>
-At it's most basic it would just be: <ul>
-  <li>find line position via top and/or bottom anchor. We want at least 2 lines</li>
-  <li>convert pick to change. Walk the text applying the change.</li>
+<h2><a id=""vcds.Patch"" href="#"vcds.Patch"">Record Patch</h2></a>
+<ul>
+  <li><b>conflict</b> </li>
+  <li><b>bl</b> </li>
 </ul>
 <p>
-There are some strategies to fix common anchor misses: <ul>
-  <li>If an anchor is missing, the nearby change can be used instead. Use either
-  the removed or added lines. For instance, if we are supposed to remove lines
-  then try and find them. Conversely if the patch was already applied then the
-  supposed-to-be added lines will already be there!</li>
-  <li>When adding, existing identical text is okay.</li>
-  <li>When removing, missing text is okay as long as it's followed by an anchor of
-  some kind</li>
-  <li>Keep lines act as an anchor (for above) but are otherwise not required - they
-  are "free" to change or be removed. If they are missing then the algorithm will
-  try to continue the change with or without them (dynamic programming)</li>
-  <li>empty lines are entirely ignored and are not considered an anchor</li>
-</ul>
-<h3>Function <a id="vcds.findAnchor" href="#vcds.findAnchor">vcds.findAnchor</a><span class=code>(base, baseMap, anchors, above--[[false]]) -&gt; (l, c)</span> (<a href=".civ/lua/vcds.lua:249"><i>src</i></a>)</h3>
-Find the actual anchor by searching for uniqueness in the anchors <ul>
-  <li>above=true:  find above (search up)</li>
-  <li>above=false: find below (search down)</li>
-</ul>
-<h3>Function <a id="vcds.normalize" href="#vcds.normalize">vcds.normalize</a><span class=code>(s) -&gt; ds.squash(ds.trimEnd(s))</span> (<a href=".civ/lua/vcds.lua:21"><i>src</i></a>)</h3>
-normalize a line for comparing (anchoring).
-This just squashes and trims the end.
-<h3>Function <a id="vcds.pickAnchorsBot" href="#vcds.pickAnchorsBot">vcds.pickAnchorsBot</a><span class=code>(base, pick) -&gt; isEndOfFile, anchors</span> (<a href=".civ/lua/vcds.lua:267"><i>src</i></a>)</h3>
-<h3>Function <a id="vcds.pickAnchorsTop" href="#vcds.pickAnchorsTop">vcds.pickAnchorsTop</a><span class=code>(pick) -&gt; isStartOfFile, anchors</span> (<a href=".civ/lua/vcds.lua:260"><i>src</i></a>)</h3>
-<h3>Function <a id="vcds.toChanges" href="#vcds.toChanges">vcds.toChanges</a> (<a href=".civ/lua/vcds.lua:101"><i>src</i></a>)</h3>
-<h3>Function <a id="vcds.toDiffs" href="#vcds.toDiffs">vcds.toDiffs</a><span class=code>(base, changes) -&gt; diffs</span> (<a href=".civ/lua/vcds.lua:140"><i>src</i></a>)</h3>
-Convert Changes to Diffs with full context
 </div></body>
 </html>

@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 <h1>fmt module: format and style anything</h1>
 <p>
@@ -50,13 +50,56 @@ to the terminal, web-pages and the civlua editor.
 </ul>
 <p>
 See the documentation of each function for more details.
-<h2>Module <a id="fmt" href="#fmt">fmt</a> (<a href=".civ/lua/fmt.lua:4"><i>src</i></a>)</h2>
+<p>
+<h1><a id=""fmt"" href="#"fmt"">fmt</h1></a>
 format module: format any type into a readable string
 <p>
-<h3>Table <a id="fmt.KEYWORD" href="#fmt.KEYWORD">fmt.KEYWORD</a></h3>
-<h3>Table <a id="fmt.TTY" href="#fmt.TTY">fmt.TTY</a></h3>
-<h4>Value <a id="fmt.__name" href="#fmt.__name">fmt.__name</a></h4>
-<h3>Record <a id="fmt.Fmt" href="#fmt.Fmt">fmt.Fmt</a> (<a href=".civ/lua/fmt.lua:81"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>fmt.Fmt</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>cmpDuck(a, b)</span>
+  Compares two values of any type.
+  
+  Note: <span class=code>nil &lt; bool &lt; number &lt; string &lt; table</span></li>
+  <li><span class=code>sortKeys(t) -&gt; list</span>
+  Return a list of the table's keys sorted using <span class=code>cmpDuck</span></li>
+  <li><span class=code>tostring(v, fmt)</span></li>
+  <li><span class=code>format(fmt, ...)</span></li>
+  <li><span class=code>errorf(...)</span></li>
+  <li><span class=code>assertf(a, ...) -&gt; a or error(format(...), 2)</span></li>
+  <li><span class=code>fprint(f, ...)</span></li>
+  <li><span class=code>print(...) -&gt; fprint(io.fmt, ...)</span>
+  <span class=code>print(...)</span> but using <span class=code>io.fmt</span></li>
+  <li><span class=code>pprint(...)</span>
+  pretty print</li>
+  <li><span class=code>pretty(v) -&gt; string</span>
+  pretty format the value</li>
+  <li><span class=code>table(tbl, f) -&gt; f:rawtable(tbl)</span>
+  Set to __fmt to format a type like a table.</li>
+</ul>
+<p>
+<h2><a id=""fmt.Fmt"" href="#"fmt.Fmt"">Record Fmt</h2></a>
+<ul>
+  <li><b>style</b> :
+  enable styling. If true, set <span class=code>to=Styler</span></li>
+  <li><b>to</b> :
+  if set calls write</li>
+  <li><b>keyEnd</b> </li>
+  <li><b>keySet</b> </li>
+  <li><b>indexEnd</b> </li>
+  <li><b>tableStart</b> </li>
+  <li><b>tableEnd</b> </li>
+  <li><b>listEnd</b> :
+  separator between list/map</li>
+  <li><b>indent</b> </li>
+  <li><b>maxIndent</b> </li>
+  <li><b>numfmt</b> </li>
+  <li><b>strfmt</b> </li>
+  <li><b>table</b> </li>
+  <li><b>string</b> </li>
+</ul>
 The Fmt formatter object.
 <p>
 This is the main API of this module. It enables formatting any
@@ -66,304 +109,35 @@ self) or (if present) writing the result to <span class=code>f.to</span>.
 If <span class=code>f.to</span> is not provided, you can get the resulting string by calling
 <span class=code>tostring(f)</span>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>style</span></td>
-    <td>[bool] 
-    enable styling. If true, set <span class=code>to=Styler</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>to</span></td>
-    <td>[file?] 
-    if set calls write</td>
-  </tr>
-  <tr>
-    <td><span class=code>keyEnd</span></td>
-    <td>[string] = <span class=code>", "</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>keySet</span></td>
-    <td>[string] = <span class=code>"="</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>indexEnd</span></td>
-    <td>[string] = <span class=code>", "</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>tableStart</span></td>
-    <td>[string] = <span class=code>"{"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>tableEnd</span></td>
-    <td>[string] = <span class=code>"}"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>listEnd</span></td>
-    <td>[string] = <span class=code>""</span>
-    separator between list/map</td>
-  </tr>
-  <tr>
-    <td><span class=code>indent</span></td>
-    <td>[string] = <span class=code>" &nbsp;"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>maxIndent</span></td>
-    <td>[int] = <span class=code>20</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>numfmt</span></td>
-    <td>[string] = <span class=code>"%q"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>strfmt</span></td>
-    <td>[string] = <span class=code>"%q"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>_level</span></td>
-    <td>[int] = <span class=code>0</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>_nl</span></td>
-    <td>[string] = <span class=code>"\<br>
-&nbsp; "
-</span>
-    (default='\n') newline, indent is added/removed</td>
-  </tr>
-  <tr>
-    <td><span class=code>table</span></td>
-    <td>[function] = <span class=code>fn"Fmt.table"[/home/rett/projects/civlua/.civ/lua/fmt.lua:244]</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>string</span></td>
-    <td>[function] = <span class=code>fn"Fmt.string"[/home/rett/projects/civlua/.civ/lua/fmt.lua:173]</span></td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fmt.Fmt.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fmt.Fmt.__index</span></td>
-    <td>[Ty<Fmt>] (<a href=".civ/lua/fmt.lua:81">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fmt.Fmt.__call</span></td>
-    <td>[<span class=code>(f, v) -&gt; f</span>] (<a href=".civ/lua/fmt.lua:245">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:281">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt._write</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:112">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.boolean</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.close</span></td>
-    <td>[<span class=code>(f) -&gt; true</span>] (<a href=".civ/lua/fmt.lua:109">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.concat</span></td>
-    <td>[<span class=code>(f, sep, ...) -&gt; f</span>] (<a href=".civ/lua/fmt.lua:270">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.flush</span></td>
-    <td>[<span class=code>(f) -&gt; true</span>] (<a href=".civ/lua/fmt.lua:108">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.format</span></td>
-    <td>[<span class=code>(f, fmt, ...) -&gt; varargsUsed</span>] (<a href=".civ/lua/fmt.lua:261">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.function</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:185">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.items</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.keyvals</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:206">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.level</span></td>
-    <td>[<span class=code>(f, add) -&gt; int: current level</span>] (<a href=".civ/lua/fmt.lua:106">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.lined</span></td>
-    <td>[<span class=code>(f, ...) -&gt; f:concat('\n', ...)</span>] (<a href=".civ/lua/fmt.lua:275">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.list</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:216">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.nil</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:161">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.number</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:169">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.pretty</span></td>
-    <td>[<span class=code>(F, t) -&gt; F(t):toPretty()</span>] (<a href=".civ/lua/fmt.lua:95">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.rawtable</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:227">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.styled</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:139">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.tableKey</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:156">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.tabulated</span></td>
-    <td>[<span class=code>(f, ...) -&gt; f:concat('\t', ...)</span>] (<a href=".civ/lua/fmt.lua:272">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.thread</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:177">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.toPretty</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:91">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.tostring</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:281">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.userdata</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:181">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.Fmt.write</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:122">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="fmt.assertf" href="#fmt.assertf">fmt.assertf</a><span class=code>(a, ...) -&gt; a or error(format(...), 2)</span> (<a href=".civ/lua/fmt.lua:297"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.cmpDuck" href="#fmt.cmpDuck">fmt.cmpDuck</a> (<a href=".civ/lua/fmt.lua:31"><i>src</i></a>)</h3>
-Compares two values of any type.
-<p>
-Note: <span class=code>nil &lt; bool &lt; number &lt; string &lt; table</span>
-<h3>Function <a id="fmt.errorf" href="#fmt.errorf">fmt.errorf</a> (<a href=".civ/lua/fmt.lua:296"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.format" href="#fmt.format">fmt.format</a> (<a href=".civ/lua/fmt.lua:293"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.fprint" href="#fmt.fprint">fmt.fprint</a> (<a href=".civ/lua/fmt.lua:307"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.pprint" href="#fmt.pprint">fmt.pprint</a> (<a href=".civ/lua/fmt.lua:322"><i>src</i></a>)</h3>
-pretty print
-<h3>Function <a id="fmt.pretty" href="#fmt.pretty">fmt.pretty</a><span class=code>(v) -&gt; string</span> (<a href=".civ/lua/fmt.lua:325"><i>src</i></a>)</h3>
-pretty format the value
-<h3>Function <a id="fmt.print" href="#fmt.print">fmt.print</a><span class=code>(...) -&gt; fprint(io.fmt, ...)</span> (<a href=".civ/lua/fmt.lua:311"><i>src</i></a>)</h3>
-<span class=code>print(...)</span> but using <span class=code>io.fmt</span>
-<h3>Function <a id="fmt.sortKeys" href="#fmt.sortKeys">fmt.sortKeys</a><span class=code>(t) -&gt; list</span> (<a href=".civ/lua/fmt.lua:52"><i>src</i></a>)</h3>
-Return a list of the table's keys sorted using <span class=code>cmpDuck</span>
-<h3>Function <a id="fmt.table" href="#fmt.table">fmt.table</a><span class=code>(tbl, f) -&gt; f:rawtable(tbl)</span> (<a href=".civ/lua/fmt.lua:328"><i>src</i></a>)</h3>
-Set to __fmt to format a type like a table.
-<h3>Function <a id="fmt.tostring" href="#fmt.tostring">fmt.tostring</a> (<a href=".civ/lua/fmt.lua:286"><i>src</i></a>)</h3>
-<h2>Module <a id="fmt.binary" href="#fmt.binary">fmt.binary</a> (<a href=".civ/lua/fmt/binary.lua:6"><i>src</i></a>)</h2>
+<h1><a id=""fmt.binary"" href="#"fmt.binary"">fmt.binary</h1></a>
 format binary text
 When called directly returns the result of
 <span class=code>binary.columns(fmt.Fmt{}, ...)</span>
 <p>
-<h4>Value <a id="fmt.binary.__name" href="#fmt.binary.__name">fmt.binary.__name</a></h4>
-<h3>Record <a id="fmt.binary.Args" href="#fmt.binary.Args">fmt.binary.Args</a> (<a href=".civ/lua/fmt/binary.lua:26"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>fmt.binary.Args</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>format(f, str, fmt)</span></li>
+  <li><span class=code>ascii(f, str)</span></li>
+  <li><span class=code>columns(f, str, width, si, fmt)</span></li>
+  <li><span class=code>main(args)</span></li>
+</ul>
+<p>
+<h2><a id=""fmt.binary.Args"" href="#"fmt.binary.Args"">Record Args</h2></a>
+<ul>
+  <li><b>width</b> :
+  column width in bytes</li>
+  <li><b>fmt</b> :
+  format string for hex</li>
+  <li><b>to</b> :
+  (lua only) file to output to (default=stdout)</li>
+  <li><b>i</b> :
+  starting index to use</li>
+</ul>
 Command: <span class=code>{'path.bin', width=16, '--', 'literal binary'}</span>
 Use <span class=code>-</span> to format stdin
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>width</span></td>
-    <td>[int] = <span class=code>16</span>
-    column width in bytes</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt</span></td>
-    <td>[string] = <span class=code>"%.2x "</span>
-    format string for hex</td>
-  </tr>
-  <tr>
-    <td><span class=code>to</span></td>
-    <td>[file] 
-    (lua only) file to output to (default=stdout)</td>
-  </tr>
-  <tr>
-    <td><span class=code>i</span></td>
-    <td>[int] = <span class=code>0</span>
-    starting index to use</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__index</span></td>
-    <td>[Ty<Args>] (<a href=".civ/lua/fmt/binary.lua:26">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>fmt.binary.Args.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="fmt.binary.ascii" href="#fmt.binary.ascii">fmt.binary.ascii</a> (<a href=".civ/lua/fmt/binary.lua:46"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.binary.columns" href="#fmt.binary.columns">fmt.binary.columns</a> (<a href=".civ/lua/fmt/binary.lua:77"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.binary.format" href="#fmt.binary.format">fmt.binary.format</a> (<a href=".civ/lua/fmt/binary.lua:37"><i>src</i></a>)</h3>
-<h3>Function <a id="fmt.binary.main" href="#fmt.binary.main">fmt.binary.main</a> (<a href=".civ/lua/fmt/binary.lua:96"><i>src</i></a>)</h3>
 </div></body>
 </html>

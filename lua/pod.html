@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 <h1>pod: plain-old-data library and serialization</h1>
 <p>
@@ -101,379 +101,87 @@ pod is meant to mimick protobuf as much as possible so that such a goal can be
 met in the future. Work on supporting multiple languages will likely not be
 part of the civlua project but the civlua project will support such work.
 <p>
-<h2>Module <a id="pod" href="#pod">pod</a> (<a href=".civ/lua/pod.lua:3"><i>src</i></a>)</h2>
+<p>
+<h1><a id=""pod"" href="#"pod"">pod</h1></a>
 pod: plain old data
 <p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.integer</span></td>
-    <td>[Podder] (<a href=".civ/lua/pod.lua:105">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.string</span></td>
-    <td>[Podder] (<a href=".civ/lua/pod.lua:105">src</a>)</td>
-  </tr>
-</table></div>
-<h4>Value <a id="pod.__name" href="#pod.__name">pod.__name</a></h4>
-<h3>Table <a id="pod.boolean" href="#pod.boolean">pod.boolean</a> (<a href=".civ/lua/pod.lua:105"><i>src</i></a>)</h3>
-<h3>Table <a id="pod.int" href="#pod.int">pod.int</a> (<a href=".civ/lua/pod.lua:105"><i>src</i></a>)</h3>
-<h3>Table <a id="pod.nil_" href="#pod.nil_">pod.nil_</a> (<a href=".civ/lua/pod.lua:105"><i>src</i></a>)</h3>
-<h3>Table <a id="pod.number" href="#pod.number">pod.number</a> (<a href=".civ/lua/pod.lua:105"><i>src</i></a>)</h3>
-<h3>Table <a id="pod.str" href="#pod.str">pod.str</a> (<a href=".civ/lua/pod.lua:105"><i>src</i></a>)</h3>
-<h3>Table <a id="pod.table" href="#pod.table">pod.table</a> (<a href=".civ/lua/pod.lua:105"><i>src</i></a>)</h3>
-<h3>Record <a id="pod.List" href="#pod.List">pod.List</a> (<a href=".civ/lua/pod.lua:137"><i>src</i></a>)</h3>
-Poder for a list of items with a type.
+<b>Types</b> <ul>
+  <li><b>pod.Pod</b></li>
+  <li><b>pod.Podder</b></li>
+  <li><b>pod.key</b></li>
+  <li><b>pod.builtin</b></li>
+  <li><b>pod.List</b></li>
+  <li><b>pod.Map</b></li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>I</span></td>
-    <td>[Podder] 
-    the type of each list item</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.List.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.List.__index</span></td>
-    <td>[Ty<List>] (<a href=".civ/lua/pod.lua:137">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.List.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__fromPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:147">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__toPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:142">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.List.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="pod.Map" href="#pod.Map">pod.Map</a> (<a href=".civ/lua/pod.lua:153"><i>src</i></a>)</h3>
-Poder for a map of key/value pairs.
+<b>Functions</b> <ul>
+  <li><span class=code>isConcrete(v) -&gt; CONCRETE[type(v)]</span></li>
+  <li><span class=code>isBuiltin(obj)</span></li>
+  <li><span class=code>serRaw()</span></li>
+  <li><span class=code>deserRaw()</span></li>
+  <li><span class=code>isPod()</span></li>
+  <li><span class=code>isPodder(P) -&gt; isPodder, whyNot?</span></li>
+  <li><span class=code>toPod(v, podder, pod)</span></li>
+  <li><span class=code>fromPod(v, poder, pod)</span></li>
+  <li><span class=code>mty_toPod(T, pod, t)</span>
+  Default __toPod for metatype records</li>
+  <li><span class=code>mty_fromPod(T, pod, p)</span>
+  Default __fromPod for metatype records</li>
+  <li><span class=code>implPod(T, tys)</span>
+  Make metaty type convertable to/from plain-old-data
+  
+  Typically this is called by calling the module itself,
+  i.e. <span class=code>pod(mty'myType'{'field [int]#1'})</span></li>
+  <li><span class=code>ser(value) -&gt; string</span>
+  Serialize value, converting it to a compact string.
+  Note: this function first calls toPod on the value.</li>
+  <li><span class=code>deser(str, P, index) -&gt; value, lenUsed</span>
+  Deserialize value from a compact string (and call fromPod on it)
+  <span class=code>index</span> (default=1) is where to start in <span class=code>str</span></li>
+  <li><span class=code>dump(f, ...)</span>
+  dump ser(...) to f, which can be a path or file.</li>
+  <li><span class=code>load(f, ...)</span>
+  load <span class=code>deser(f:read'a', ...)</span>, f can be a path or file.</li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>K</span></td>
-    <td>[Podder] = <span class=code>key</span>
-    keys type</td>
-  </tr>
-  <tr>
-    <td><span class=code>V</span></td>
-    <td>[Podder] 
-    values type</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Map.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Map.__index</span></td>
-    <td>[Ty<Map>] (<a href=".civ/lua/pod.lua:153">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Map.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__fromPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:167">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__toPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:160">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Map.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="pod.Pod" href="#pod.Pod">pod.Pod</a> (<a href=".civ/lua/pod.lua:28"><i>src</i></a>)</h3>
+<h2><a id=""pod.Pod"" href="#"pod.Pod"">Record Pod</h2></a>
+<ul>
+  <li><b>fieldIds</b> :
+  if true use the fieldIds when possible</li>
+  <li><b>mtPodFn</b> :
+  function to classify if mt is pod</li>
+  <li><b>enumIds</b> :
+  if true use enum id variants, else name variants</li>
+</ul>
 Pod: configuration for converting values to/from POD.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fieldIds</span></td>
-    <td>[boolean] 
-    if true use the fieldIds when possible</td>
-  </tr>
-  <tr>
-    <td><span class=code>mtPodFn</span></td>
-    <td>[(mt) -> boolean] = <span class=code>fn"function"[/home/rett/projects/civlua/.civ/lua/pod.lua:26]</span>
-    function to classify if mt is pod</td>
-  </tr>
-  <tr>
-    <td><span class=code>enumIds</span></td>
-    <td>[boolean] 
-    if true use enum id variants, else name variants</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Pod.DEFAULT</span></td>
-    <td>[Pod] (<a href=".civ/lua/pod.lua:30">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Pod.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Pod.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Pod.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Pod.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Pod.__index</span></td>
-    <td>[Ty<Pod>] (<a href=".civ/lua/pod.lua:28">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Pod.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Pod.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Pod.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="pod.Podder" href="#pod.Podder">pod.Podder</a> (<a href=".civ/lua/pod.lua:60"><i>src</i></a>)</h3>
+<h2><a id=""pod.Podder"" href="#"pod.Podder"">Record Podder</h2></a>
+<ul>
+  <li><b>name</b> </li>
+</ul>
 A type who's sole job is converting values to/from POD.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>name</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>__toPod</span></td>
-    <td>[(self, pset, v) -> p] </td>
-  </tr>
-  <tr>
-    <td><span class=code>__fromPod</span></td>
-    <td>[(self, pset, p) -> v] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Podder.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Podder.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Podder.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Podder.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Podder.__index</span></td>
-    <td>[Ty<Podder>] (<a href=".civ/lua/pod.lua:60">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.Podder.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.Podder.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="pod.builtin" href="#pod.builtin">pod.builtin</a> (<a href=".civ/lua/pod.lua:118"><i>src</i></a>)</h3>
-Handles all native types (nil, boolean, number, string, table)
-<p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.builtin.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.builtin.__index</span></td>
-    <td>[Ty<builtin>] (<a href=".civ/lua/pod.lua:118">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.builtin.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__fromPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:133">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__toPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:129">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.builtin.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="pod.key" href="#pod.key">pod.key</a> (<a href=".civ/lua/pod.lua:109"><i>src</i></a>)</h3>
+<h2><a id=""pod.key"" href="#"pod.key"">Record key</h2></a>
 Handles concrete non-nil types (boolean, number, string)
 <p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.key.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.key.__index</span></td>
-    <td>[Ty<key>] (<a href=".civ/lua/pod.lua:109">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>pod.key.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__fromPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:113">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__toPod</span></td>
-    <td>[function] (<a href=".civ/lua/pod.lua:113">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pod.key.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="pod.deser" href="#pod.deser">pod.deser</a><span class=code>(str, P, index) -&gt; value, lenUsed</span> (<a href=".civ/lua/pod.lua:271"><i>src</i></a>)</h3>
-Deserialize value from a compact string (and call fromPod on it)
-<span class=code>index</span> (default=1) is where to start in <span class=code>str</span>
-<h3>Function <a id="pod.deserRaw" href="#pod.deserRaw">pod.deserRaw</a> (<a href=".civ/lua/pod.lua:19"><i>src</i></a>)</h3>
-<h3>Function <a id="pod.dump" href="#pod.dump">pod.dump</a> (<a href=".civ/lua/pod.lua:281"><i>src</i></a>)</h3>
-dump ser(...) to f, which can be a path or file.
-<h3>Function <a id="pod.fromPod" href="#pod.fromPod">pod.fromPod</a> (<a href=".civ/lua/pod.lua:183"><i>src</i></a>)</h3>
-<h3>Function <a id="pod.implPod" href="#pod.implPod">pod.implPod</a> (<a href=".civ/lua/pod.lua:258"><i>src</i></a>)</h3>
-Make metaty type convertable to/from plain-old-data
+<h2><a id=""pod.builtin"" href="#"pod.builtin"">Record builtin</h2></a>
+Handles all native types (nil, boolean, number, string, table)
 <p>
-Typically this is called by calling the module itself,
-i.e. <span class=code>pod(mty'myType'{'field [int]#1'})</span>
-<h3>Function <a id="pod.isConcrete" href="#pod.isConcrete">pod.isConcrete</a><span class=code>(v) -&gt; CONCRETE[type(v)]</span> (<a href=".civ/lua/pod.lua:35"><i>src</i></a>)</h3>
-<h3>Function <a id="pod.isPod" href="#pod.isPod">pod.isPod</a> (<a href=".civ/lua/pod.lua:53"><i>src</i></a>)</h3>
-<h3>Function <a id="pod.isPodder" href="#pod.isPodder">pod.isPodder</a><span class=code>(P) -&gt; isPodder, whyNot?</span> (<a href=".civ/lua/pod.lua:68"><i>src</i></a>)</h3>
-<h3>Function <a id="pod.load" href="#pod.load">pod.load</a> (<a href=".civ/lua/pod.lua:291"><i>src</i></a>)</h3>
-load <span class=code>deser(f:read'a', ...)</span>, f can be a path or file.
-<h3>Function <a id="pod.mty_fromPod" href="#pod.mty_fromPod">pod.mty_fromPod</a> (<a href=".civ/lua/pod.lua:214"><i>src</i></a>)</h3>
-Default __fromPod for metatype records
-<h3>Function <a id="pod.mty_toPod" href="#pod.mty_toPod">pod.mty_toPod</a> (<a href=".civ/lua/pod.lua:204"><i>src</i></a>)</h3>
-Default __toPod for metatype records
-<h3>Function <a id="pod.ser" href="#pod.ser">pod.ser</a><span class=code>(value) -&gt; string</span> (<a href=".civ/lua/pod.lua:264"><i>src</i></a>)</h3>
-Serialize value, converting it to a compact string.
-Note: this function first calls toPod on the value.
-<h3>Function <a id="pod.serRaw" href="#pod.serRaw">pod.serRaw</a> (<a href=".civ/lua/pod.lua:16"><i>src</i></a>)</h3>
-<h3>Function <a id="pod.toPod" href="#pod.toPod">pod.toPod</a> (<a href=".civ/lua/pod.lua:180"><i>src</i></a>)</h3>
+<h2><a id=""pod.List"" href="#"pod.List"">Record List</h2></a>
+<ul>
+  <li><b>I</b> :
+  the type of each list item</li>
+</ul>
+Poder for a list of items with a type.
+<p>
+<h2><a id=""pod.Map"" href="#"pod.Map"">Record Map</h2></a>
+<ul>
+  <li><b>K</b> :
+  keys type</li>
+  <li><b>V</b> :
+  values type</li>
+</ul>
+Poder for a map of key/value pairs.
+<p>
 </div></body>
 </html>

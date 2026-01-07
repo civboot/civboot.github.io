@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 JSON+ de/serializer in pure lua
 <p>
@@ -44,524 +44,96 @@ versa. The difference is: <ul>
   Other "escapes" are preserved, i.e. <span class=code>\d -&gt; \d</span>. This makes encoding binary
   data in LSON MUCH more compact (and possible) than JSON.</li>
 </ul>
-<h2>Module <a id="lson" href="#lson">lson</a> (<a href=".civ/lua/lson.lua:2"><i>src</i></a>)</h2>
 <p>
-<h4>Value <a id="lson.__name" href="#lson.__name">lson.__name</a></h4>
-<h3>Record <a id="lson.De" href="#lson.De">lson.De</a> (<a href=".civ/lua/lson.lua:225"><i>src</i></a>)</h3>
-<span class=code>De(string or lines) -&gt; value-iter</span>
-<span class=code>for val in De'["my", "lson"]' do ... end</span>
+<h1><a id=""lson"" href="#"lson"">lson</h1></a>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>dat</span></td>
-    <td>[lines] 
-    lines-like data to parse</td>
-  </tr>
-  <tr>
-    <td><span class=code>null</span></td>
-    <td>[any] = <span class=code>none</span>
-    value to use for null</td>
-  </tr>
-  <tr>
-    <td><span class=code>l</span></td>
-    <td>[int] </td>
-  </tr>
-  <tr>
-    <td><span class=code>c</span></td>
-    <td>[int] </td>
-  </tr>
-  <tr>
-    <td><span class=code>line</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.De.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.De.__index</span></td>
-    <td>[Ty<De>] (<a href=".civ/lua/lson.lua:225">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.De.__call</span></td>
-    <td>[function] (<a href=".civ/lua/lson.lua:268">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.assert</span></td>
-    <td>[function] (<a href=".civ/lua/lson.lua:233">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.consume</span></td>
-    <td>[function] (<a href=".civ/lua/lson.lua:260">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.De.skipWs</span></td>
-    <td>[function] (<a href=".civ/lua/lson.lua:249">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="lson.Json" href="#lson.Json">lson.Json</a> (<a href=".civ/lua/lson.lua:52"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>lson.Json</b></li>
+  <li><b>lson.Lson</b></li>
+  <li><b>lson.De</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>json(v, pretty) -&gt; string</span>
+  Encode lua value to JSON string</li>
+  <li><span class=code>lson(v, pretty) -&gt; string</span>
+  Encode lua value to LSON string</li>
+  <li><span class=code>decode(s, podder, pset) -&gt; obj</span></li>
+  <li><span class=code>bytes(f, s)</span></li>
+  <li><span class=code>deNull(de) -&gt; de.null</span></li>
+  <li><span class=code>deTrue(de) -&gt; true</span></li>
+  <li><span class=code>deFalse(de) -&gt; false</span></li>
+  <li><span class=code>deNumber(de)</span></li>
+  <li><span class=code>deString(de)</span></li>
+  <li><span class=code>deBytes(de)</span></li>
+  <li><span class=code>deArray(de)</span></li>
+  <li><span class=code>deObject(de)</span></li>
+</ul>
+<p>
+<h2><a id=""lson.Json"" href="#"lson.Json"">Record Json</h2></a>
+<ul>
+  <li><b>style</b> :
+  enable styling. If true, set <span class=code>to=Styler</span></li>
+  <li><b>to</b> :
+  if set calls write</li>
+  <li><b>keyEnd</b> </li>
+  <li><b>keySet</b> </li>
+  <li><b>indexEnd</b> </li>
+  <li><b>tableStart</b> </li>
+  <li><b>tableEnd</b> </li>
+  <li><b>listEnd</b> </li>
+  <li><b>indent</b> </li>
+  <li><b>maxIndent</b> </li>
+  <li><b>numfmt</b> </li>
+  <li><b>strfmt</b> </li>
+  <li><b>table</b> </li>
+  <li><b>string</b> </li>
+  <li><b>null</b> :
+  value to use for null</li>
+  <li><b>listStart</b> </li>
+  <li><b>listEnd</b> </li>
+</ul>
 Json Encoder (via fmt.Fmt)
 This works identically to metaty.Fmt except it overrides
 how tables are formatted to use JSON instead of printing them.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>style</span></td>
-    <td>[bool] 
-    enable styling. If true, set <span class=code>to=Styler</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>to</span></td>
-    <td>[file?] 
-    if set calls write</td>
-  </tr>
-  <tr>
-    <td><span class=code>keyEnd</span></td>
-    <td>[string] = <span class=code>","</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>keySet</span></td>
-    <td>[string] = <span class=code>":"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>indexEnd</span></td>
-    <td>[string] = <span class=code>","</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>tableStart</span></td>
-    <td>[string] = <span class=code>"{"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>tableEnd</span></td>
-    <td>[string] = <span class=code>"}"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>listEnd</span></td>
-    <td>= <span class=code>]"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>indent</span></td>
-    <td>[string] = <span class=code>" &nbsp;"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>maxIndent</span></td>
-    <td>[int] = <span class=code>20</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>numfmt</span></td>
-    <td>[string] = <span class=code>"%q"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>strfmt</span></td>
-    <td>[string] = <span class=code>"%q"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>_level</span></td>
-    <td>[int] = <span class=code>0</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>_nl</span></td>
-    <td>[string] = <span class=code>"\<br>
-&nbsp; "
-</span>
-    (default='\n') newline, indent is added/removed</td>
-  </tr>
-  <tr>
-    <td><span class=code>table</span></td>
-    <td>[function] = <span class=code>fn"function"[/home/rett/projects/civlua/.civ/lua/lson.lua:69]</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>string</span></td>
-    <td>[function] = <span class=code>fn"function"[/home/rett/projects/civlua/.civ/lua/lson.lua:66]</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>null</span></td>
-    <td>[any] = <span class=code>none</span>
-    value to use for null</td>
-  </tr>
-  <tr>
-    <td><span class=code>listStart</span></td>
-    <td>[string] = <span class=code>["</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>listEnd</span></td>
-    <td>= <span class=code>]"</span></td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.Json.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.Json.__index</span></td>
-    <td>[Ty<Json>] (<a href=".civ/lua/lson.lua:52">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.Json.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:281">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json._write</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:112">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.boolean</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.close</span></td>
-    <td>[<span class=code>(f) -&gt; true</span>] (<a href=".civ/lua/fmt.lua:109">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.concat</span></td>
-    <td>[<span class=code>(f, sep, ...) -&gt; f</span>] (<a href=".civ/lua/fmt.lua:270">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.flush</span></td>
-    <td>[<span class=code>(f) -&gt; true</span>] (<a href=".civ/lua/fmt.lua:108">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.format</span></td>
-    <td>[<span class=code>(f, fmt, ...) -&gt; varargsUsed</span>] (<a href=".civ/lua/fmt.lua:261">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.function</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:185">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.items</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.keyvals</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:206">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.level</span></td>
-    <td>[<span class=code>(f, add) -&gt; int: current level</span>] (<a href=".civ/lua/fmt.lua:106">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.lined</span></td>
-    <td>[<span class=code>(f, ...) -&gt; f:concat('\n', ...)</span>] (<a href=".civ/lua/fmt.lua:275">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.list</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:216">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.nil</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:161">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.number</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:169">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.rawtable</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:227">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.styled</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:139">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.tabulated</span></td>
-    <td>[<span class=code>(f, ...) -&gt; f:concat('\t', ...)</span>] (<a href=".civ/lua/fmt.lua:272">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.thread</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:177">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.toPretty</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:91">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.tostring</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:281">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.userdata</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:181">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Json.write</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:122">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="lson.Lson" href="#lson.Lson">lson.Lson</a> (<a href=".civ/lua/lson.lua:116"><i>src</i></a>)</h3>
+<h2><a id=""lson.Lson"" href="#"lson.Lson"">Record Lson</h2></a>
+<ul>
+  <li><b>style</b> :
+  enable styling. If true, set <span class=code>to=Styler</span></li>
+  <li><b>to</b> :
+  if set calls write</li>
+  <li><b>keyEnd</b> </li>
+  <li><b>keySet</b> </li>
+  <li><b>indexEnd</b> </li>
+  <li><b>tableStart</b> </li>
+  <li><b>tableEnd</b> </li>
+  <li><b>listEnd</b> </li>
+  <li><b>indent</b> </li>
+  <li><b>maxIndent</b> </li>
+  <li><b>numfmt</b> </li>
+  <li><b>strfmt</b> </li>
+  <li><b>table</b> </li>
+  <li><b>string</b> </li>
+  <li><b>null</b> :
+  value to use for null</li>
+  <li><b>listStart</b> </li>
+  <li><b>listEnd</b> </li>
+</ul>
 Similar to JSON but no commas and strings are encoded as <span class=code>|bytes|</span>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>style</span></td>
-    <td>[bool] 
-    enable styling. If true, set <span class=code>to=Styler</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>to</span></td>
-    <td>[file?] 
-    if set calls write</td>
-  </tr>
-  <tr>
-    <td><span class=code>keyEnd</span></td>
-    <td>[string] = <span class=code>" "</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>keySet</span></td>
-    <td>[string] = <span class=code>":"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>indexEnd</span></td>
-    <td>[string] = <span class=code>" "</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>tableStart</span></td>
-    <td>[string] = <span class=code>"{"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>tableEnd</span></td>
-    <td>[string] = <span class=code>"}"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>listEnd</span></td>
-    <td>= <span class=code>]"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>indent</span></td>
-    <td>[string] = <span class=code>" &nbsp;"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>maxIndent</span></td>
-    <td>[int] = <span class=code>20</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>numfmt</span></td>
-    <td>[string] = <span class=code>"%q"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>strfmt</span></td>
-    <td>[string] = <span class=code>"%q"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>_level</span></td>
-    <td>[int] = <span class=code>0</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>_nl</span></td>
-    <td>[string] = <span class=code>"\<br>
-&nbsp; "
-</span>
-    (default='\n') newline, indent is added/removed</td>
-  </tr>
-  <tr>
-    <td><span class=code>table</span></td>
-    <td>[function] = <span class=code>fn"function"[/home/rett/projects/civlua/.civ/lua/lson.lua:69]</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>string</span></td>
-    <td>[function] = <span class=code>fn"lson.bytes"[/home/rett/projects/civlua/.civ/lua/lson.lua:111]</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>null</span></td>
-    <td>[any] = <span class=code>none</span>
-    value to use for null</td>
-  </tr>
-  <tr>
-    <td><span class=code>listStart</span></td>
-    <td>[string] = <span class=code>["</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>listEnd</span></td>
-    <td>= <span class=code>]"</span></td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.Lson.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.Lson.__index</span></td>
-    <td>[Ty<Lson>] (<a href=".civ/lua/lson.lua:116">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lson.Lson.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:281">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson._write</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:112">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.boolean</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.close</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:109">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.concat</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:270">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.flush</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:108">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.format</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:261">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.function</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:185">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.items</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.keyvals</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:206">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.level</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:106">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.lined</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:275">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.list</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:216">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.nil</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:161">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.number</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:169">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.rawtable</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:227">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.styled</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:139">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.tabulated</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:272">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.thread</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:177">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.toPretty</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:91">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.tostring</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:281">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.userdata</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:181">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lson.Lson.write</span></td>
-    <td>[function] (<a href=".civ/lua/fmt.lua:122">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="lson.bytes" href="#lson.bytes">lson.bytes</a> (<a href=".civ/lua/lson.lua:111"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deArray" href="#lson.deArray">lson.deArray</a> (<a href=".civ/lua/lson.lua:190"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deBytes" href="#lson.deBytes">lson.deBytes</a> (<a href=".civ/lua/lson.lua:178"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deFalse" href="#lson.deFalse">lson.deFalse</a><span class=code>(de) -&gt; false</span> (<a href=".civ/lua/lson.lua:133"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deNull" href="#lson.deNull">lson.deNull</a><span class=code>(de) -&gt; de.null</span> (<a href=".civ/lua/lson.lua:131"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deNumber" href="#lson.deNumber">lson.deNumber</a> (<a href=".civ/lua/lson.lua:139"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deObject" href="#lson.deObject">lson.deObject</a> (<a href=".civ/lua/lson.lua:206"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deString" href="#lson.deString">lson.deString</a> (<a href=".civ/lua/lson.lua:151"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.deTrue" href="#lson.deTrue">lson.deTrue</a><span class=code>(de) -&gt; true</span> (<a href=".civ/lua/lson.lua:132"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.decode" href="#lson.decode">lson.decode</a><span class=code>(s, podder, pset) -&gt; obj</span> (<a href=".civ/lua/lson.lua:38"><i>src</i></a>)</h3>
-<h3>Function <a id="lson.json" href="#lson.json">lson.json</a><span class=code>(v, pretty) -&gt; string</span> (<a href=".civ/lua/lson.lua:29"><i>src</i></a>)</h3>
-Encode lua value to JSON string
-<h3>Function <a id="lson.lson" href="#lson.lson">lson.lson</a><span class=code>(v, pretty) -&gt; string</span> (<a href=".civ/lua/lson.lua:35"><i>src</i></a>)</h3>
-Encode lua value to LSON string
+<h2><a id=""lson.De"" href="#"lson.De"">Record De</h2></a>
+<ul>
+  <li><b>dat</b> :
+  lines-like data to parse</li>
+  <li><b>null</b> :
+  value to use for null</li>
+  <li><b>l</b> </li>
+  <li><b>c</b> </li>
+  <li><b>line</b> </li>
+</ul>
+<span class=code>De(string or lines) -&gt; value-iter</span>
+<span class=code>for val in De'["my", "lson"]' do ... end</span>
+<p>
 </div></body>
 </html>

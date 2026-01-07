@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 simple but effective Lua type system using metatables
 <p>
@@ -134,40 +134,98 @@ semantic meanings: <ul>
   similar.</li>
 </ul>
 <p>
-<h2>Module <a id="metaty" href="#metaty">metaty</a> (<a href=".civ/lua/metaty.lua:70"><i>src</i></a>)</h2>
+<p>
+<h1><a id=""metaty"" href="#"metaty"">metaty</h1></a>
 metaty: simple but effective Lua type system using metatable
 <p>
-<h4>Value <a id="metaty.DEPTH_ERROR" href="#metaty.DEPTH_ERROR">metaty.DEPTH_ERROR</a></h4>
-<h3>Table <a id="metaty.G" href="#metaty.G">metaty.G</a> (<a href=".civ/lua/metaty.lua:75"><i>src</i></a>)</h3>
-G allows assignment to globals and returns nil if a variable is missing.
-<p>
-Calling <span class=code>metaty.setup()</span> makes non-G globals typosafe.
-<h3>Table <a id="metaty.KEYWORD" href="#metaty.KEYWORD">metaty.KEYWORD</a></h3>
-<h4>Value <a id="metaty.__name" href="#metaty.__name">metaty.__name</a></h4>
-<h3>Table <a id="metaty.mod" href="#metaty.mod">metaty.mod</a> (<a href=".civ/lua/metaty.lua:80"><i>src</i></a>)</h3>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>metaty.constructChecked</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:316">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="metaty.callable" href="#metaty.callable">metaty.callable</a><span class=code>(obj) -&gt; bool: return if obj is callable</span> (<a href=".civ/lua/metaty.lua:166"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.construct" href="#metaty.construct">metaty.construct</a> (<a href=".civ/lua/metaty.lua:316"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.constructUnchecked" href="#metaty.constructUnchecked">metaty.constructUnchecked</a> (<a href=".civ/lua/metaty.lua:319"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.enum" href="#metaty.enum">metaty.enum</a> (<a href=".civ/lua/metaty.lua:521"><i>src</i></a>)</h3>
-Create an enum type which can convert between string and integers.
-<p>
-This "type" is mainly to allow typosafe enums, both when creating the variant
-(i.e. <span class=code>v = MyEnum.VARIANT</span>) and when matching using the <span class=code>matcher</span> method below.
-It also allows using checked enums in <span class=code>ds.pod</span>.
-<p>
-One of the main benefits of using an enum is to ensure that when you are
-matching you don't make a typo mistake (i.e. WOKER instead of WORKER). In
-lua there is no native <span class=code>switch</span> statement (or similar), but table lookup
-on functions can be equally as good -- see the example below.
-<p>
-<h2>Example</h2>
-<div class=code-block>M.Job = enum'Job' {<br>
+<b>Functions</b> <ul>
+  <li><span class=code>isMod(t) -&gt; boolean</span></li>
+  <li><span class=code>setup()</span>
+  Setup lua's global environment to meet metaty protocol.
+  
+  Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
+  not previously set).</li>
+  <li><span class=code>isConcrete(v) -&gt; CONCRETE[type(v)]</span></li>
+  <li><span class=code>isBuiltin(obj)</span></li>
+  <li><span class=code>isEnv(var)</span>
+  isEnv: returns boolean for below values, else nil</li>
+  <li><span class=code>isEnvG(var)</span></li>
+  <li><span class=code>getmethod(t, method)</span>
+  get method of table if it exists.
+  This first looks for the item directly on the table, then the item
+  in the table's metatable. It does NOT use the table's normal <span class=code>__index</span>.</li>
+  <li><span class=code>ty(v) -&gt; type: string or metatable</span>
+  Get the type of the value.</li>
+  <li><span class=code>tyName(T, default) -&gt; string</span>
+  Given a type return it's name</li>
+  <li><span class=code>name(o)</span>
+  Given an object (function, table, userdata) return its name.
+  return nil if it's not one of the above types</li>
+  <li><span class=code>callable(obj) -&gt; bool: return if obj is callable</span></li>
+  <li><span class=code>metaget(t, k) -&gt; rawget(getmt(t), k)</span></li>
+  <li><span class=code>validKey(s) -&gt; boolean: s=value is valid syntax</span></li>
+  <li><span class=code>fninfo(fn) -&gt; name, loc</span>
+  Extract name,loc from function value.</li>
+  <li><span class=code>anyinfo(v) -&gt; name, loc</span>
+  Extract name,loc from any value (typically mod/type/function).</li>
+  <li><span class=code>rawsplit(subj, ctx) -&gt; (state, splitstr)</span>
+  You probably want split instead.
+  Usage: <span class=code>for ctx, line in rawsplit, text, {'\n', 1} do</span></li>
+  <li><span class=code>split(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span>
+  split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
+  <span class=code>ei</span> (end index)
+  <div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
+&nbsp; ... do something with line<br>
+end
+</div></li>
+  <li><span class=code>fmt(self, f)</span>
+  The default __fmt method.</li>
+  <li><span class=code>doc(R, d)</span>
+  The default __doc method.
+  
+  <div class=info>d is of type <span class=code>doc.Documenter</span>.
+  Tests are in cmd/doc/test.lua </div></li>
+  <li><span class=code>tostring(self)</span>
+  The default __tostring method.</li>
+  <li><span class=code>nativeEq(a, b) -&gt; a == b</span></li>
+  <li><span class=code>eqDeep(a, b)</span></li>
+  <li><span class=code>eq(a, b) -&gt; bool</span>
+  compare tables or anything else</li>
+  <li><span class=code>indexError(R, k, lvl)</span></li>
+  <li><span class=code>index(R, k)</span></li>
+  <li><span class=code>hardIndex(R, k)</span></li>
+  <li><span class=code>newindex(r, k, v)</span></li>
+  <li><span class=code>hardNewindex(r, k, v)</span></li>
+  <li><span class=code>fieldsCheck(T, fields, t)</span></li>
+  <li><span class=code>construct(T, t)</span></li>
+  <li><span class=code>constructUnchecked(T, t)</span></li>
+  <li><span class=code>construct(T, t)</span></li>
+  <li><span class=code>extendFields(fields, ids, docs, R)</span></li>
+  <li><span class=code>namedRecord(name, R, loc)</span></li>
+  <li><span class=code>record(name)</span></li>
+  <li><span class=code>isRecord(t)</span></li>
+  <li><span class=code>extend(Type, name, fields)</span>
+  Extend the Type with (optional) new name and (optional) additional fields.</li>
+  <li><span class=code>enum_tostring(E) -&gt; E.__name</span></li>
+  <li><span class=code>enum_toPod(E, pset, e)</span></li>
+  <li><span class=code>enum_fromPod(E, pset, e) -&gt; E.name(e)</span></li>
+  <li><span class=code>enum_partialMatcher(E, fnMap)</span></li>
+  <li><span class=code>enum_matcher(E, fnMap)</span></li>
+  <li><span class=code>namedEnum(ename, nameIds)</span></li>
+  <li><span class=code>enum(name)</span>
+  Create an enum type which can convert between string and integers.
+  
+  This "type" is mainly to allow typosafe enums, both when creating the variant
+  (i.e. <span class=code>v = MyEnum.VARIANT</span>) and when matching using the <span class=code>matcher</span> method below.
+  It also allows using checked enums in <span class=code>ds.pod</span>.
+  
+  One of the main benefits of using an enum is to ensure that when you are
+  matching you don't make a typo mistake (i.e. WOKER instead of WORKER). In
+  lua there is no native <span class=code>switch</span> statement (or similar), but table lookup
+  on functions can be equally as good -- see the example below.
+  
+  <h2>Example</h2>
+  <div class=code-block>M.Job = enum'Job' {<br>
 &nbsp; OWNER &nbsp; = 1,<br>
 &nbsp; MANAGER = 2,<br>
 &nbsp; COOK &nbsp; &nbsp;= 3,<br>
@@ -201,66 +259,8 @@ local doJob = M.Job:matcher {<br>
 <br>
 -- call in your own function like:<br>
 doJob[job](my, args)
-</div>
+</div></li>
+</ul>
 <p>
-<h3>Function <a id="metaty.enum_fromPod" href="#metaty.enum_fromPod">metaty.enum_fromPod</a><span class=code>(E, pset, e) -&gt; E.name(e)</span> (<a href=".civ/lua/metaty.lua:411"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.enum_matcher" href="#metaty.enum_matcher">metaty.enum_matcher</a> (<a href=".civ/lua/metaty.lua:432"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.enum_partialMatcher" href="#metaty.enum_partialMatcher">metaty.enum_partialMatcher</a> (<a href=".civ/lua/metaty.lua:421"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.enum_toPod" href="#metaty.enum_toPod">metaty.enum_toPod</a> (<a href=".civ/lua/metaty.lua:410"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.enum_tostring" href="#metaty.enum_tostring">metaty.enum_tostring</a><span class=code>(E) -&gt; E.__name</span> (<a href=".civ/lua/metaty.lua:407"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.eq" href="#metaty.eq">metaty.eq</a><span class=code>(a, b) -&gt; bool</span> (<a href=".civ/lua/metaty.lua:274"><i>src</i></a>)</h3>
-compare tables or anything else
-<h3>Function <a id="metaty.eqDeep" href="#metaty.eqDeep">metaty.eqDeep</a> (<a href=".civ/lua/metaty.lua:271"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.extend" href="#metaty.extend">metaty.extend</a> (<a href=".civ/lua/metaty.lua:405"><i>src</i></a>)</h3>
-Extend the Type with (optional) new name and (optional) additional fields.
-<h3>Function <a id="metaty.extendFields" href="#metaty.extendFields">metaty.extendFields</a> (<a href=".civ/lua/metaty.lua:348"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.fieldsCheck" href="#metaty.fieldsCheck">metaty.fieldsCheck</a> (<a href=".civ/lua/metaty.lua:312"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.fmt" href="#metaty.fmt">metaty.fmt</a> (<a href=".civ/lua/metaty.lua:234"><i>src</i></a>)</h3>
-The default __fmt method.
-<h3>Function <a id="metaty.fninfo" href="#metaty.fninfo">metaty.fninfo</a> (<a href=".civ/lua/metaty.lua:196"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.getmethod" href="#metaty.getmethod">metaty.getmethod</a> (<a href=".civ/lua/metaty.lua:132"><i>src</i></a>)</h3>
-get method of table if it exists.
-This first looks for the item directly on the table, then the item
-in the table's metatable. It does NOT use the table's normal <span class=code>__index</span>.
-<h3>Function <a id="metaty.hardIndex" href="#metaty.hardIndex">metaty.hardIndex</a> (<a href=".civ/lua/metaty.lua:291"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.hardNewindex" href="#metaty.hardNewindex">metaty.hardNewindex</a> (<a href=".civ/lua/metaty.lua:303"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.index" href="#metaty.index">metaty.index</a> (<a href=".civ/lua/metaty.lua:286"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.indexError" href="#metaty.indexError">metaty.indexError</a> (<a href=".civ/lua/metaty.lua:280"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.isEnv" href="#metaty.isEnv">metaty.isEnv</a> (<a href=".civ/lua/metaty.lua:121"><i>src</i></a>)</h3>
-isEnv: returns boolean for below values, else nil
-<h3>Function <a id="metaty.isEnvG" href="#metaty.isEnvG">metaty.isEnvG</a> (<a href=".civ/lua/metaty.lua:125"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.isMod" href="#metaty.isMod">metaty.isMod</a><span class=code>(t) -&gt; boolean</span> (<a href=".civ/lua/metaty.lua:86"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.isRecord" href="#metaty.isRecord">metaty.isRecord</a> (<a href=".civ/lua/metaty.lua:385"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.metaget" href="#metaty.metaget">metaty.metaget</a><span class=code>(t, k) -&gt; rawget(getmt(t), k)</span> (<a href=".civ/lua/metaty.lua:167"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.name" href="#metaty.name">metaty.name</a> (<a href=".civ/lua/metaty.lua:160"><i>src</i></a>)</h3>
-Given an object (function, table, userdata) return its name.
-return nil if it's not one of the above types
-<h3>Function <a id="metaty.namedEnum" href="#metaty.namedEnum">metaty.namedEnum</a> (<a href=".civ/lua/metaty.lua:466"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.namedRecord" href="#metaty.namedRecord">metaty.namedRecord</a> (<a href=".civ/lua/metaty.lua:373"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.nativeEq" href="#metaty.nativeEq">metaty.nativeEq</a><span class=code>(a, b) -&gt; a == b</span> (<a href=".civ/lua/metaty.lua:244"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.newindex" href="#metaty.newindex">metaty.newindex</a> (<a href=".civ/lua/metaty.lua:297"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.rawsplit" href="#metaty.rawsplit">metaty.rawsplit</a><span class=code>(subj, ctx) -&gt; (state, splitstr)</span> (<a href=".civ/lua/metaty.lua:210"><i>src</i></a>)</h3>
-You probably want split instead.
-Usage: <span class=code>for ctx, line in rawsplit, text, {'\n', 1} do</span>
-<h3>Function <a id="metaty.record" href="#metaty.record">metaty.record</a> (<a href=".civ/lua/metaty.lua:379"><i>src</i></a>)</h3>
-<h3>Function <a id="metaty.setup" href="#metaty.setup">metaty.setup</a> (<a href=".civ/lua/metaty.lua:106"><i>src</i></a>)</h3>
-Setup lua's global environment to meet metaty protocol.
-<p>
-Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
-not previously set).
-<h3>Function <a id="metaty.split" href="#metaty.split">metaty.split</a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span> (<a href=".civ/lua/metaty.lua:221"><i>src</i></a>)</h3>
-split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
-<span class=code>ei</span> (end index)
-<div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
-&nbsp; ... do something with line<br>
-end
-</div>
-<h3>Function <a id="metaty.tostring" href="#metaty.tostring">metaty.tostring</a> (<a href=".civ/lua/metaty.lua:240"><i>src</i></a>)</h3>
-The default __tostring method.
-<h3>Function <a id="metaty.ty" href="#metaty.ty">metaty.ty</a><span class=code>(v) -&gt; type: string or metatable</span> (<a href=".civ/lua/metaty.lua:142"><i>src</i></a>)</h3>
-Get the type of the value.
-<h3>Function <a id="metaty.tyName" href="#metaty.tyName">metaty.tyName</a><span class=code>(T, default) -&gt; string</span> (<a href=".civ/lua/metaty.lua:150"><i>src</i></a>)</h3>
-Given a type return it's name
-<h3>Function <a id="metaty.validKey" href="#metaty.validKey">metaty.validKey</a><span class=code>(s) -&gt; boolean: s=value is valid syntax</span> (<a href=".civ/lua/metaty.lua:181"><i>src</i></a>)</h3>
 </div></body>
 </html>

@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 This is Civboot's VT100 terminal interface library. It implements (and also
 defines) the API that civboot terminal emulators must implement to be
@@ -43,7 +43,8 @@ To be civboot compliant the <span class=code>Term</span> type exported must have
   coroutines (best effort)</li>
 </ul>
 <p>
-<h2>Module <a id="vt100" href="#vt100">vt100</a> (<a href=".civ/lua/vt100.lua:9"><i>src</i></a>)</h2>
+<p>
+<h1><a id=""vt100"" href="#"vt100"">vt100</h1></a>
 Civboot vt100 Terminal library that supports LAP protocol.
 Module for interacting with the vt100 via keys and AsciiColors.
 <div class=code-block>License CC0 / UNLICENSE<br>
@@ -51,20 +52,95 @@ Originally written 2022 Phil Leblanc, modified 2023 Rett Berg (Civboot.org)<br>
 Authorized for relicense in: http://github.com/philanc/plterm/issues/4
 </div>
 <p>
-<h3>Table <a id="vt100.Bg" href="#vt100.Bg">vt100.Bg</a> (<a href=".civ/lua/vt100.lua:242"><i>src</i></a>)</h3>
-asciicolor code -> vt100 code
-<h3>Table <a id="vt100.BgColor" href="#vt100.BgColor">vt100.BgColor</a></h3>
-<h3>Table <a id="vt100.CMD" href="#vt100.CMD">vt100.CMD</a></h3>
-<h3>Table <a id="vt100.Fg" href="#vt100.Fg">vt100.Fg</a> (<a href=".civ/lua/vt100.lua:242"><i>src</i></a>)</h3>
-asciicolor code -> vt100 code
-<h3>Table <a id="vt100.FgColor" href="#vt100.FgColor">vt100.FgColor</a></h3>
-<h3>Table <a id="vt100.INP_SEQ" href="#vt100.INP_SEQ">vt100.INP_SEQ</a></h3>
-<h3>Table <a id="vt100.INP_SEQO" href="#vt100.INP_SEQO">vt100.INP_SEQO</a></h3>
-<h3>Table <a id="vt100.LITERALS" href="#vt100.LITERALS">vt100.LITERALS</a></h3>
-<h3>Table <a id="vt100.Style" href="#vt100.Style">vt100.Style</a></h3>
-<h3>Table <a id="vt100.VALID_KEY" href="#vt100.VALID_KEY">vt100.VALID_KEY</a></h3>
-<h4>Value <a id="vt100.__name" href="#vt100.__name">vt100.__name</a></h4>
-<h3>Record <a id="vt100.Term" href="#vt100.Term">vt100.Term</a> (<a href=".civ/lua/vt100.lua:57"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>vt100.ctrl</b></li>
+  <li><b>vt100.Term</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>key()</span></li>
+  <li><span class=code>ctrlChar()</span></li>
+  <li><span class=code>literal(key) -&gt; literalstring?</span>
+  Convert any key to it's literal form <div class=code-block>&nbsp; &nbsp; literal'a' &nbsp; &nbsp; &nbsp; -&gt; 'a'<br>
+&nbsp; &nbsp; literal'enter' &nbsp; -&gt; '\n'<br>
+&nbsp; &nbsp; literal'esc' &nbsp; &nbsp; -&gt; nil<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>keyError(key) -&gt; errstring?</span>
+  Check that a key is valid. Return errstring if not.</li>
+  <li><span class=code>checkKey(key) -&gt; key?, errstring?</span></li>
+  <li><span class=code>colorFB(f, fg, bg, fg0, bg0)</span>
+  Set the color, taking into account the previous color</li>
+  <li><span class=code>acwrite(f, colorFB, fg, bg, fgstr, bgstr, str, ...)</span>
+  write to the terminal-like file f using colors fgstr and bgstr
+  accounting for previous color codes fg, bg
+  
+  Additional strings (...) are written using plain color.
+  
+  Return: <span class=code>fg, bg, write(str, ...)</span>
+  <div class=info> Note: fg and bg are the updated color codes</div></li>
+  <li><span class=code>setrawmode()</span></li>
+  <li><span class=code>setsanemode() -&gt; os.execute'stty sane'</span></li>
+  <li><span class=code>savemode() -&gt; mode?, errmsg?</span></li>
+  <li><span class=code>restoremode(mode) -&gt; os.execute('stty '..mode)</span></li>
+  <li><span class=code>start() -&gt; savedmode</span></li>
+  <li><span class=code>stop(fd, savedmode)</span></li>
+  <li><span class=code>Fmt(t)</span>
+  create a Fmt with sensible defaults from the config</li>
+  <li><span class=code>main(args)</span>
+  Listens to keyboard inputs and echoes them.</li>
+  <li><span class=code>setup(args)</span>
+  The recommended setup function, enables color in the terminal in civstack
+  libraries (and those that adhere to them).</li>
+</ul>
+<p>
+<h2><a id=""vt100.ctrl"" href="#"vt100.ctrl"">vt100.ctrl</h2></a>
+Direct terminal control functions
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>getlc(name, fmt)</span></li>
+  <li><span class=code>colorFB(name, fmt)</span></li>
+  <li><span class=code>cleareol(name, fmt)</span></li>
+  <li><span class=code>golc(name, fmt)</span></li>
+  <li><span class=code>left(name, fmt)</span></li>
+  <li><span class=code>hide(name, fmt)</span></li>
+  <li><span class=code>clear(name, fmt)</span></li>
+  <li><span class=code>save(name, fmt)</span></li>
+  <li><span class=code>reset(name, fmt)</span></li>
+  <li><span class=code>right(name, fmt)</span></li>
+  <li><span class=code>show(name, fmt)</span></li>
+  <li><span class=code>restore(name, fmt)</span></li>
+  <li><span class=code>nextline(name, fmt)</span></li>
+  <li><span class=code>up(name, fmt)</span></li>
+  <li><span class=code>color(name, fmt)</span></li>
+  <li><span class=code>down(name, fmt)</span></li>
+  <li><span class=code>size(f)</span>
+  causes terminal to send size as (escaped) cursor position</li>
+</ul>
+<p>
+<h2><a id=""vt100.Term"" href="#"vt100.Term"">Record Term</h2></a>
+<ul>
+  <li><b>fd</b> :
+  file to write output to in draw()</li>
+  <li><b>l</b> :
+  cursor line</li>
+  <li><b>c</b> :
+  cursor column</li>
+  <li><b>h</b> :
+  height</li>
+  <li><b>w</b> :
+  width</li>
+  <li><b>text</b> :
+  the text to display</li>
+  <li><b>fg</b> :
+  foreground color (ASCII coded)</li>
+  <li><b>bg</b> :
+  background color (ASCII coded)</li>
+  <li><b>run</b> :
+  set to false to stop coroutines</li>
+  <li><b>styler</b> :
+  optional styler</li>
+</ul>
 VT100 Terminal Emulator <ul>
   <li>Write the text to display</li>
   <li>Write the foreground/background colors to fg/bg</li>
@@ -73,407 +149,53 @@ VT100 Terminal Emulator <ul>
 <p>
 Requires <span class=code>vt100.start()</span> have been called to initiate raw mode.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fd</span></td>
-    <td>[file] 
-    file to write output to in draw()</td>
-  </tr>
-  <tr>
-    <td><span class=code>l</span></td>
-    <td>[int] = <span class=code>1</span>
-    cursor line</td>
-  </tr>
-  <tr>
-    <td><span class=code>c</span></td>
-    <td>[int] = <span class=code>1</span>
-    cursor column</td>
-  </tr>
-  <tr>
-    <td><span class=code>h</span></td>
-    <td>[int] = <span class=code>40</span>
-    height</td>
-  </tr>
-  <tr>
-    <td><span class=code>w</span></td>
-    <td>[int] = <span class=code>80</span>
-    width</td>
-  </tr>
-  <tr>
-    <td><span class=code>text</span></td>
-    <td>[ds.Grid] 
-    the text to display</td>
-  </tr>
-  <tr>
-    <td><span class=code>fg</span></td>
-    <td>[ds.Grid] 
-    foreground color (ASCII coded)</td>
-  </tr>
-  <tr>
-    <td><span class=code>bg</span></td>
-    <td>[ds.Grid] 
-    background color (ASCII coded)</td>
-  </tr>
-  <tr>
-    <td><span class=code>_waiting</span></td>
-    <td>[thread] 
-    the thread waiting on update (i.e. size)</td>
-  </tr>
-  <tr>
-    <td><span class=code>run</span></td>
-    <td>[boolean] = <span class=code>true</span>
-    set to false to stop coroutines</td>
-  </tr>
-  <tr>
-    <td><span class=code>styler</span></td>
-    <td>[asciicolor.Styler] 
-    optional styler</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.Term.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.Term.__index</span></td>
-    <td>[Ty<Term>] (<a href=".civ/lua/vt100.lua:57">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.Term.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term._ready</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:310">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term._requestSize</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:306">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term._updateChildren</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:70">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.clear</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:74">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.draw</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:334">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.input</span></td>
-    <td>[<span class=code>(tm, send) -&gt; infinite loop (run in coroutine)</span>] (<a href=".civ/lua/vt100.lua:390">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.Term.resize</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:318">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="vt100.Fmt" href="#vt100.Fmt">vt100.Fmt</a> (<a href=".civ/lua/vt100.lua:429"><i>src</i></a>)</h3>
-create a Fmt with sensible defaults from the config
-<h3>Function <a id="vt100.acwrite" href="#vt100.acwrite">vt100.acwrite</a> (<a href=".civ/lua/vt100.lua:292"><i>src</i></a>)</h3>
-write to the terminal-like file f using colors fgstr and bgstr
-accounting for previous color codes fg, bg
+<h1><a id=""Ty<vt100.AcWriter>"" href="#"Ty<vt100.AcWriter>"">Record vt100.AcWriter</h1></a>
+<ul>
+  <li><b>f</b> </li>
+  <li><b>fg</b> :
+  current foreground ac letter</li>
+  <li><b>bg</b> :
+  current background ac letter</li>
+</ul>
 <p>
-Additional strings (...) are written using plain color.
-<p>
-Return: <span class=code>fg, bg, write(str, ...)</span>
-<div class=info> Note: fg and bg are the updated color codes</div>
-<h3>Function <a id="vt100.checkKey" href="#vt100.checkKey">vt100.checkKey</a><span class=code>(key) -&gt; key?, errstring?</span> (<a href=".civ/lua/vt100.lua:175"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.colorFB" href="#vt100.colorFB">vt100.colorFB</a> (<a href=".civ/lua/vt100.lua:262"><i>src</i></a>)</h3>
-Set the color, taking into account the previous color
-<h3>Function <a id="vt100.ctrlChar" href="#vt100.ctrlChar">vt100.ctrlChar</a> (<a href=".civ/lua/vt100.lua:121"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.key" href="#vt100.key">vt100.key</a> (<a href=".civ/lua/vt100.lua:121"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.keyError" href="#vt100.keyError">vt100.keyError</a><span class=code>(key) -&gt; errstring?</span> (<a href=".civ/lua/vt100.lua:171"><i>src</i></a>)</h3>
-Check that a key is valid. Return errstring if not.
-<h3>Function <a id="vt100.literal" href="#vt100.literal">vt100.literal</a><span class=code>(key) -&gt; literalstring?</span> (<a href=".civ/lua/vt100.lua:143"><i>src</i></a>)</h3>
-Convert any key to it's literal form <div class=code-block>&nbsp; literal'a' &nbsp; &nbsp; &nbsp; -&gt; 'a'<br>
-&nbsp; literal'enter' &nbsp; -&gt; '\n'<br>
-&nbsp; literal'esc' &nbsp; &nbsp; -&gt; nil
-</div>
-<h3>Function <a id="vt100.main" href="#vt100.main">vt100.main</a> (<a href=".civ/lua/vt100.lua:447"><i>src</i></a>)</h3>
-Listens to keyboard inputs and echoes them.
-<h3>Function <a id="vt100.restoremode" href="#vt100.restoremode">vt100.restoremode</a><span class=code>(mode) -&gt; os.execute('stty '..mode)</span> (<a href=".civ/lua/vt100.lua:404"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.savemode" href="#vt100.savemode">vt100.savemode</a><span class=code>() -&gt; mode?, errmsg?</span> (<a href=".civ/lua/vt100.lua:403"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.setrawmode" href="#vt100.setrawmode">vt100.setrawmode</a> (<a href=".civ/lua/vt100.lua:397"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.setsanemode" href="#vt100.setsanemode">vt100.setsanemode</a><span class=code>() -&gt; os.execute'stty sane'</span> (<a href=".civ/lua/vt100.lua:398"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.setup" href="#vt100.setup">vt100.setup</a> (<a href=".civ/lua/vt100.lua:460"><i>src</i></a>)</h3>
-The recommended setup function, enables color in the terminal in civstack
-libraries (and those that adhere to them).
-<h3>Function <a id="vt100.start" href="#vt100.start">vt100.start</a><span class=code>() -&gt; savedmode</span> (<a href=".civ/lua/vt100.lua:410"><i>src</i></a>)</h3>
-<h3>Function <a id="vt100.stop" href="#vt100.stop">vt100.stop</a> (<a href=".civ/lua/vt100.lua:416"><i>src</i></a>)</h3>
-<p>
-<h2>Module <a id="vt100.ctrl" href="#vt100.ctrl">vt100.ctrl</a> (<a href=".civ/lua/vt100.lua:34"><i>src</i></a>)</h2>
-Direct terminal control functions
-<p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.ctrl.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.ctrl.clear</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.cleareol</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.color</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.colorFB</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.down</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.getlc</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.golc</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.hide</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.left</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.nextline</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.reset</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.restore</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.right</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.save</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.show</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.size</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:204">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.ctrl.up</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:194">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="vt100.AcWriter" href="#vt100.AcWriter">vt100.AcWriter</a></h3>
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>f</span></td>
-    <td>[file] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fg</span></td>
-    <td>[string] = <span class=code>"z"</span>
-    current foreground ac letter</td>
-  </tr>
-  <tr>
-    <td><span class=code>bg</span></td>
-    <td>[string] = <span class=code>"z"</span>
-    current background ac letter</td>
-  </tr>
-</table></div>
-<h3>Table <a id="vt100.AcWriter.__docs" href="#vt100.AcWriter.__docs">vt100.AcWriter.__docs</a></h3>
-<h3>Table <a id="vt100.AcWriter.__fieldIds" href="#vt100.AcWriter.__fieldIds">vt100.AcWriter.__fieldIds</a></h3>
-<h3>Table <a id="vt100.AcWriter.__fields" href="#vt100.AcWriter.__fields">vt100.AcWriter.__fields</a></h3>
-<h4>Value <a id="vt100.AcWriter.__name" href="#vt100.AcWriter.__name">vt100.AcWriter.__name</a></h4>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.AcWriter.__index</span></td>
-    <td>[Ty<vt100.AcWriter>] </td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.AcWriter.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.AcWriter.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h4>Function <a id="vt100.AcWriter.__fmt" href="#vt100.AcWriter.__fmt">vt100.AcWriter.__fmt</a> (<a href=".civ/lua/metaty.lua:234"><i>src</i></a>)</h4>
-The default __fmt method.
-<h4>Function <a id="vt100.AcWriter.acwrite" href="#vt100.AcWriter.acwrite">vt100.AcWriter.acwrite</a><span class=code>(aw, fgstr, bgstr, ...) -&gt; write(...)</span> (<a href=".civ/lua/vt100/AcWriter.lua:22"><i>src</i></a>)</h4>
-<span class=code>:acwrite(fgstr, bgstr, str, ...)</span>: writes str with style of fg/bg str
-<h4>Function <a id="vt100.AcWriter.flush" href="#vt100.AcWriter.flush">vt100.AcWriter.flush</a><span class=code>(aw) -&gt; aw.f:flush()</span> (<a href=".civ/lua/vt100/AcWriter.lua:14"><i>src</i></a>)</h4>
-<h4>Function <a id="vt100.AcWriter.write" href="#vt100.AcWriter.write">vt100.AcWriter.write</a><span class=code>(aw, ...) -&gt; aw:acwrite(nil, nil, ...)</span> (<a href=".civ/lua/vt100/AcWriter.lua:24"><i>src</i></a>)</h4>
-write plain
-<h2>Module <a id="vt100.testing" href="#vt100.testing">vt100.testing</a> (<a href=".civ/lua/vt100/testing.lua:2"><i>src</i></a>)</h2>
+<h1><a id=""vt100.testing"" href="#"vt100.testing"">vt100.testing</h1></a>
 helpers for testing/demoing vt100
 <p>
-<h4>Value <a id="vt100.testing.__name" href="#vt100.testing.__name">vt100.testing.__name</a></h4>
-<h3>Record <a id="vt100.testing.Fake" href="#vt100.testing.Fake">vt100.testing.Fake</a> (<a href=".civ/lua/vt100/testing.lua:11"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>vt100.testing.Fake</b></li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>fd</span></td>
-    <td>[file] 
-    file to write output to in draw()</td>
-  </tr>
-  <tr>
-    <td><span class=code>l</span></td>
-    <td>[int] = <span class=code>1</span>
-    cursor line</td>
-  </tr>
-  <tr>
-    <td><span class=code>c</span></td>
-    <td>[int] = <span class=code>1</span>
-    cursor column</td>
-  </tr>
-  <tr>
-    <td><span class=code>h</span></td>
-    <td>[int] = <span class=code>40</span>
-    height</td>
-  </tr>
-  <tr>
-    <td><span class=code>w</span></td>
-    <td>[int] = <span class=code>80</span>
-    width</td>
-  </tr>
-  <tr>
-    <td><span class=code>text</span></td>
-    <td>[ds.Grid] 
-    the text to display</td>
-  </tr>
-  <tr>
-    <td><span class=code>fg</span></td>
-    <td>[ds.Grid] 
-    foreground color (ASCII coded)</td>
-  </tr>
-  <tr>
-    <td><span class=code>bg</span></td>
-    <td>[ds.Grid] 
-    background color (ASCII coded)</td>
-  </tr>
-  <tr>
-    <td><span class=code>_waiting</span></td>
-    <td>[thread] 
-    the thread waiting on update (i.e. size)</td>
-  </tr>
-  <tr>
-    <td><span class=code>run</span></td>
-    <td>[boolean] = <span class=code>true</span>
-    set to false to stop coroutines</td>
-  </tr>
-  <tr>
-    <td><span class=code>styler</span></td>
-    <td>[asciicolor.Styler] 
-    optional styler</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__index</span></td>
-    <td>[Ty<Fake>] (<a href=".civ/lua/vt100/testing.lua:11">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake._ready</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:310">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake._requestSize</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:306">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake._updateChildren</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:70">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.clear</span></td>
-    <td>[function] (<a href=".civ/lua/vt100.lua:74">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.draw</span></td>
-    <td>[function] (<a href=".civ/lua/ds.lua:149">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>vt100.testing.Fake.input</span></td>
-    <td>[function] (<a href=".civ/lua/ds.lua:149">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="vt100.testing.run" href="#vt100.testing.run">vt100.testing.run</a><span class=code>() -&gt; out, err</span> (<a href=".civ/lua/vt100/testing.lua:31"><i>src</i></a>)</h3>
-start rawmode using tmpfiles
-<h3>Function <a id="vt100.testing.startTmp" href="#vt100.testing.startTmp">vt100.testing.startTmp</a><span class=code>() -&gt; out, err</span> (<a href=".civ/lua/vt100/testing.lua:27"><i>src</i></a>)</h3>
-start rawmode using tmpfiles
+<b>Functions</b> <ul>
+  <li><span class=code>startTmp() -&gt; out, err</span>
+  start rawmode using tmpfiles</li>
+  <li><span class=code>run(fn)</span>
+  Run function in a LAP environment with terminal started
+  and std in/out set correctly.</li>
+</ul>
+<p>
+<h2><a id=""vt100.testing.Fake"" href="#"vt100.testing.Fake"">Record Fake</h2></a>
+<ul>
+  <li><b>fd</b> :
+  file to write output to in draw()</li>
+  <li><b>l</b> :
+  cursor line</li>
+  <li><b>c</b> :
+  cursor column</li>
+  <li><b>h</b> :
+  height</li>
+  <li><b>w</b> :
+  width</li>
+  <li><b>text</b> :
+  the text to display</li>
+  <li><b>fg</b> :
+  foreground color (ASCII coded)</li>
+  <li><b>bg</b> :
+  background color (ASCII coded)</li>
+  <li><b>run</b> :
+  set to false to stop coroutines</li>
+  <li><b>styler</b> :
+  optional styler</li>
+</ul>
+<p>
 </div></body>
 </html>

@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 Get documentation on any Lua object. Includes documentation for several items
 in the lua stdlibrary.
@@ -37,1342 +37,518 @@ See Package_pkg and Package_cxt for more details.
   <li>Lua API reference: <a href="https://www.lua.org/manual">https://www.lua.org/manual</a></li>
   <li>Tutorial style documentation: <a href="https://www.lua.org/pil/contents.html">https://www.lua.org/pil/contents.html</a></li>
 </ul>
-<h2>Module <a id="doc" href="#doc">doc</a> (<a href=".civ/lua/doc.lua:11"><i>src</i></a>)</h2>
-Get documentation for lua types and syntax.
 <p>
-Examples: <div class=code-block>doc{string.find}<br>
-doc'for'<br>
-doc'myMod.myFunction'
-</div>
+<h1><a id=""doc"" href="#"doc"">doc</h1></a>
+Builds on metaty to add the ability to extract and format documentation.
 <p>
-<h4>Value <a id="doc.__name" href="#doc.__name">doc.__name</a></h4>
-<h3>Record <a id="doc.Doc" href="#doc.Doc">doc.Doc</a> (<a href=".civ/lua/doc.lua:112"><i>src</i></a>)</h3>
-Documentation on a single type
-These pull together the various sources of documentation
-from the PKG and META_TY specs into a single object.
+Also offers the Cmd and Cmds types for documenting shell commands.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>obj</span></td>
-    <td>[any] 
-    the object being documented</td>
-  </tr>
-  <tr>
-    <td><span class=code>name</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>ty</span></td>
-    <td>[Type] 
-    type, can be string</td>
-  </tr>
-  <tr>
-    <td><span class=code>docTy</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>path</span></td>
-    <td>[str] </td>
-  </tr>
-  <tr>
-    <td><span class=code>main</span></td>
-    <td>[Doc] 
-    main Args, mostly used for PKG</td>
-  </tr>
-  <tr>
-    <td><span class=code>meta</span></td>
-    <td>[table] 
-    metadata, mostly used for PKG</td>
-  </tr>
-  <tr>
-    <td><span class=code>comments</span></td>
-    <td>[lines] 
-    comments above item</td>
-  </tr>
-  <tr>
-    <td><span class=code>fnsig</span></td>
-    <td>[string] 
-    function signature</td>
-  </tr>
-  <tr>
-    <td><span class=code>code</span></td>
-    <td>[lines] 
-    code which defines the item</td>
-  </tr>
-  <tr>
-    <td><span class=code>call</span></td>
-    <td>[function] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fields</span></td>
-    <td>[table{name=DocItem}] 
-    (for metatys)</td>
-  </tr>
-  <tr>
-    <td><span class=code>values</span></td>
-    <td>[table] 
-    raw values that are not the other types</td>
-  </tr>
-  <tr>
-    <td><span class=code>tys</span></td>
-    <td>[table] 
-    table of values</td>
-  </tr>
-  <tr>
-    <td><span class=code>fns</span></td>
-    <td>[table] 
-    methods or functions</td>
-  </tr>
-  <tr>
-    <td><span class=code>mods</span></td>
-    <td>[table] 
-    sub modules (for PKG)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lvl</span></td>
-    <td>[int] 
-    level inside another type (nil or 1)</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.Doc.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.Doc.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.Doc.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.Doc.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.Doc.__index</span></td>
-    <td>[Ty<Doc>] (<a href=".civ/lua/doc.lua:112">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.Doc.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.Doc.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="doc.DocItem" href="#doc.DocItem">doc.DocItem</a> (<a href=".civ/lua/doc.lua:123"><i>src</i></a>)</h3>
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>parent</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>obj</span></td>
-    <td>[any] </td>
-  </tr>
-  <tr>
-    <td><span class=code>name</span></td>
-    <td>  </td>
-  </tr>
-  <tr>
-    <td><span class=code>ty</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>docTy</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>path</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fnsig</span></td>
-    <td>[string] 
-    function signature</td>
-  </tr>
-  <tr>
-    <td><span class=code>default</span></td>
-    <td>[any] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.DocItem.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.DocItem.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.DocItem.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.DocItem.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.DocItem.__index</span></td>
-    <td>[Ty<DocItem>] (<a href=".civ/lua/doc.lua:123">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.DocItem.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.DocItem.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-</table></div>
-<h2>Command <a id="doc.Main" href="#doc.Main">doc.Main</a> (<a href=".civ/lua/doc.lua:26"><i>src</i></a>)</h2>
-Compile documentation for one or more lua objects.
-<p>
-Usage: <div class=code-block>&nbsp;doc{'path.of.object'}</div>
-<p>
-<p>
-<b>Named Args: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cmd</span></td>
-    <td>[symbol] 
-    symbol to document as the command. Command documentation is first</td>
-  </tr>
-  <tr>
-    <td><span class=code>raw</span></td>
-    <td>[{path}] 
-    any number of (raw cxt) paths to put before API documentation</td>
-  </tr>
-  <tr>
-    <td><span class=code>expand</span></td>
-    <td>[int</td>
-    <td>bool] = <span class=code>1</span>
-    expand to depth (expand=true means expand=10)</td>
-  </tr>
-  <tr>
-    <td><span class=code>to</span></td>
-    <td>[path] 
-    the output. If this ends in .html then</td>
-  </tr>
-  <tr>
-    <td><span class=code>html</span></td>
-    <td>[cxt.HtmlConfig] 
-    html configuration.</td>
-  </tr>
-</table></div>
-<h3>Record <a id="doc._Construct" href="#doc._Construct">doc._Construct</a> (<a href=".civ/lua/doc.lua:144"><i>src</i></a>)</h3>
-internal type to construct Doc and DocItems
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>done</span></td>
-    <td>[table] 
-    objects already documented</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc._Construct.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc._Construct.__index</span></td>
-    <td>[Ty<_Construct>] (<a href=".civ/lua/doc.lua:144">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc._Construct.__call</span></td>
-    <td>[<span class=code>(c, obj, key, expand, lvl) -&gt; Doc | DocItem</span>] (<a href=".civ/lua/doc.lua:237">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.main</span></td>
-    <td>[<span class=code>(c, obj) -&gt; Doc</span>] (<a href=".civ/lua/doc.lua:253">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc._Construct.write</span></td>
-    <td>[function] (<a href=".civ/lua/doc.lua:149">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="doc.cleanFieldTy" href="#doc.cleanFieldTy">doc.cleanFieldTy</a> (<a href=".civ/lua/doc.lua:301"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.construct" href="#doc.construct">doc.construct</a><span class=code>(obj, key, expand, lvl) -&gt; M._Construct{}(obj, key, expand, lvl)</span> (<a href=".civ/lua/doc.lua:139"><i>src</i></a>)</h3>
-get a Doc or DocItem. If expand is true then recurse.
-<h3>Function <a id="doc.docHeader" href="#doc.docHeader">doc.docHeader</a> (<a href=".civ/lua/doc.lua:374"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.find" href="#doc.find">doc.find</a> (<a href=".civ/lua/doc.lua:62"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.findcode" href="#doc.findcode">doc.findcode</a><span class=code>(loc) -&gt; (commentLines, codeLines)</span> (<a href=".civ/lua/doc.lua:297"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.fmt" href="#doc.fmt">doc.fmt</a> (<a href=".civ/lua/doc.lua:436"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.fmtAttr" href="#doc.fmtAttr">doc.fmtAttr</a> (<a href=".civ/lua/doc.lua:365"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.fmtDoc" href="#doc.fmtDoc">doc.fmtDoc</a> (<a href=".civ/lua/doc.lua:429"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.fmtDocItem" href="#doc.fmtDocItem">doc.fmtDocItem</a> (<a href=".civ/lua/doc.lua:341"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.fmtMeta" href="#doc.fmtMeta">doc.fmtMeta</a> (<a href=".civ/lua/doc.lua:383"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.getpath" href="#doc.getpath">doc.getpath</a> (<a href=".civ/lua/doc.lua:321"><i>src</i></a>)</h3>
-get any path with <span class=code>.</span> in it. This is mostly used by help/etc functions
-<h3>Function <a id="doc.modinfo" href="#doc.modinfo">doc.modinfo</a><span class=code>(obj) -&gt; (name, loc)</span> (<a href=".civ/lua/doc.lua:267"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.stripComments" href="#doc.stripComments">doc.stripComments</a> (<a href=".civ/lua/doc.lua:308"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.tryfind" href="#doc.tryfind">doc.tryfind</a><span class=code>(obj) -&gt; any?</span> (<a href=".civ/lua/doc.lua:58"><i>src</i></a>)</h3>
-Find the object or name
-<h3>Function <a id="doc.type" href="#doc.type">doc.type</a> (<a href=".civ/lua/doc.lua:136"><i>src</i></a>)</h3>
-return the object's "document type"
-<h2>Module <a id="doc.lua" href="#doc.lua">doc.lua</a> (<a href=".civ/lua/doc/lua.lua:15"><i>src</i></a>)</h2>
-<p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.io.stderr</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.stdout</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-</table></div>
-<h4>Value <a id="doc.lua.__name" href="#doc.lua.__name">doc.lua.__name</a></h4>
-<h3>Table <a id="doc.lua.false" href="#doc.lua.false">doc.lua.false</a> (<a href=".civ/lua/doc/lua.lua:546"><i>src</i></a>)</h3>
-<h4>Value <a id="doc.lua.io._stderr" href="#doc.lua.io._stderr">doc.lua.io._stderr</a> (<a href=".civ/lua/doc/lua.lua:396"><i>src</i></a>)</h4>
-not documented: see <span class=code>io</span> module
-<h4>Value <a id="doc.lua.io._stdout" href="#doc.lua.io._stdout">doc.lua.io._stdout</a> (<a href=".civ/lua/doc/lua.lua:396"><i>src</i></a>)</h4>
-not documented: see <span class=code>io</span> module
-<h3>Table <a id="doc.lua.io.fmt" href="#doc.lua.io.fmt">doc.lua.io.fmt</a> (<a href=".civ/lua/doc/lua.lua:396"><i>src</i></a>)</h3>
-not documented: see <span class=code>io</span> module
-<h4>Value <a id="doc.lua.io.stdin" href="#doc.lua.io.stdin">doc.lua.io.stdin</a> (<a href=".civ/lua/doc/lua.lua:396"><i>src</i></a>)</h4>
-not documented: see <span class=code>io</span> module
-<h3>Table <a id="doc.lua.io.user" href="#doc.lua.io.user">doc.lua.io.user</a> (<a href=".civ/lua/doc/lua.lua:396"><i>src</i></a>)</h3>
-not documented: see <span class=code>io</span> module
-<h3>Table <a id="doc.lua.local" href="#doc.lua.local">doc.lua.local</a> (<a href=".civ/lua/doc/lua.lua:538"><i>src</i></a>)</h3>
-<span class=code>local x = (expression)</span>
-<p>
-Define a local (instead of a global) variable. Prefer local variables for
-most things unless you are: <ul>
-  <li>modifying the fundamentals of the language (i.e. replacing 'require')</li>
-  <li>implementing a "protocol" for libraries to communicate global state</li>
-  <li>managing true physical state (i.e. robotics, terminal output, etc)</li>
-  <li>you are the top-level application (i.e. a game, CLI, etc) and global state
-  is the best solution.</li>
-</ul>
-<h4>Value <a id="doc.lua.math.huge" href="#doc.lua.math.huge">doc.lua.math.huge</a></h4>
-<h4>Value <a id="doc.lua.math.maxinteger" href="#doc.lua.math.maxinteger">doc.lua.math.maxinteger</a></h4>
-<h4>Value <a id="doc.lua.math.mininteger" href="#doc.lua.math.mininteger">doc.lua.math.mininteger</a></h4>
-<h4>Value <a id="doc.lua.math.pi" href="#doc.lua.math.pi">doc.lua.math.pi</a></h4>
-<h3>Table <a id="doc.lua.nil" href="#doc.lua.nil">doc.lua.nil</a> (<a href=".civ/lua/doc/lua.lua:553"><i>src</i></a>)</h3>
-<span class=code>nil</span> value, the the absense of a value. Used for: <ul>
-  <li>a variable is not set or has been set to <span class=code>nil</span></li>
-  <li>a table key is not set or has been set to <span class=code>nil</span></li>
-</ul>
-<h3>Table <a id="doc.lua.true" href="#doc.lua.true">doc.lua.true</a> (<a href=".civ/lua/doc/lua.lua:542"><i>src</i></a>)</h3>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.io.close</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.flush</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.input</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.lines</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.open</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.output</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.popen</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:393">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.read</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.tmpfile</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.type</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.write</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.abs</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.acos</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:451">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.asin</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:452">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.atan</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:453">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.atan2</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:453">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.ceil</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.cos</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:448">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.cosh</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.deg</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.exp</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:454">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.floor</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.fmod</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.frexp</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.ldexp</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.log</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.log10</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.max</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:446">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.min</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:447">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.modf</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.pow</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.rad</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.random</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.randomseed</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.sin</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:449">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.sinh</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.sqrt</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.tan</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:450">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.tanh</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.tointeger</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.type</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:445">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.ult</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.clock</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.date</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.difftime</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.execute</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:435">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.exit</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.getenv</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.remove</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:172">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.rename</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.setlocale</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.time</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.tmpname</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.byte</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:229">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.char</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:232">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.concat</span></td>
-    <td>[function] (<a href=".civ/lua/ds.lua:67">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.dump</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.find</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:159">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.format</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:224">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.gmatch</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:172">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.gsub</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:192">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.len</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.lower</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.match</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.pack</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:258">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.packsize</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:264">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.rep</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:235">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.reverse</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.sub</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:178">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.unpack</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:261">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.upper</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.concat</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:305">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.insert</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:330">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.move</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:342">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.remove</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:309">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.sort</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:313">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.update</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:296">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="doc.lua.for" href="#doc.lua.for">doc.lua.for</a> (<a href=".civ/lua/doc/lua.lua:525"><i>src</i></a>)</h3>
-for is a looping construct with two forms:
-<p>
-Numeric: <div class=code-block>&nbsp; for i=si,ei,period do -- period=1 by default<br>
-&nbsp; &nbsp; ... do something with i<br>
-&nbsp; end<br>
-<br>
-&nbsp; -- is basically the same as<br>
-&nbsp; local i = si<br>
-&nbsp; while i &lt;= ei do i = i + si<br>
-&nbsp; &nbsp; ... do something with i<br>
-&nbsp; end
-</div>
-<p>
-Generic: <div class=code-block>&nbsp; for i, v, etc in (nextfn, state, _index) do<br>
-&nbsp; &nbsp; .. do something with i, v, ...<br>
-&nbsp; end<br>
-<br>
-&nbsp; -- is almost the same as<br>
-&nbsp; while true do<br>
-&nbsp; &nbsp; local i, v, etc = nextfn(state, _index)<br>
-&nbsp; &nbsp; if i == nil then break end<br>
-&nbsp; &nbsp; _index = i -- note: C internal, _index from lua doesn't change<br>
-&nbsp; &nbsp; ... code using i, v, etc here<br>
-&nbsp; end
-</div>
-<p>
-The goal in writing a stateless iterator function is to match this
-loop's API as much as possible.
-<p>
-Example rewriting ipairs: <div class=code-block>&nbsp; local function rawipairs(t, i)<br>
-&nbsp; &nbsp; i = i + 1<br>
-&nbsp; &nbsp; if i &gt; #t then return nil end<br>
-&nbsp; &nbsp; return i, t[i]<br>
-&nbsp; end<br>
-&nbsp; local function myipairs_(t)<br>
-&nbsp; &nbsp; return rawipairs, t, 0<br>
-&nbsp; end<br>
-&nbsp; for i, v in myipairs{5, 6, 7} do<br>
-&nbsp; &nbsp; iterates through (1, 5) -&gt; (2, 6) -&gt; (3, 7)<br>
-&nbsp; end
-</div>
-<p>
-Example rewriting pairs using <span class=code>next(t, key)</span>: <div class=code-block>&nbsp; function mypairs(t)<br>
-&nbsp; &nbsp; return next, t, nil<br>
-&nbsp; end<br>
-&nbsp; for k, v in mypairs{a=1, b=2, c=3} do<br>
-&nbsp; &nbsp; iterates through ('a', 1) -&gt; ('b', 2) -&gt; ('c', 3)<br>
-&nbsp; end
-</div>
-<p>
-See also: metaty.split is a more complex example.
-<h3>Function <a id="doc.lua.getmetatable" href="#doc.lua.getmetatable">doc.lua.getmetatable</a><span class=code>(t) -&gt; mt</span> (<a href=".civ/lua/doc/lua.lua:98"><i>src</i></a>)</h3>
-See setmetatable.
-<h3>Function <a id="doc.lua.keyword" href="#doc.lua.keyword">doc.lua.keyword</a><span class=code>() -&gt; setmetatable({}, Keyword)</span> (<a href=".civ/lua/doc/lua.lua:20"><i>src</i></a>)</h3>
-<h3>Function <a id="doc.lua.next" href="#doc.lua.next">doc.lua.next</a><span class=code>(tbl, key) -&gt; nextKey</span> (<a href=".civ/lua/doc/lua.lua:53"><i>src</i></a>)</h3>
-Get the next key in the table. Used for iterating through tables.
-If <span class=code>key=nil</span> returns the first key. Returns <span class=code>nil</span> when <span class=code>key</span> is
-the last key.
-<h3>Function <a id="doc.lua.pcall" href="#doc.lua.pcall">doc.lua.pcall</a><span class=code>(fn, ...) -&gt; ok, fn(...)</span> (<a href=".civ/lua/doc/lua.lua:57"><i>src</i></a>)</h3>
-call a function but catch errors. Returns <span class=code>ok</span> followed by the function
-results. If not ok, returns the error.
-<h3>Function <a id="doc.lua.select" href="#doc.lua.select">doc.lua.select</a> (<a href=".civ/lua/doc/lua.lua:62"><i>src</i></a>)</h3>
-select elements in varargs <span class=code>...</span> at and after index.
-<p>
-Special value: if <span class=code>index='#'</span> then returns length of <span class=code>...</span>
-<h3>Function <a id="doc.lua.setmetatable" href="#doc.lua.setmetatable">doc.lua.setmetatable</a> (<a href=".civ/lua/doc/lua.lua:95"><i>src</i></a>)</h3>
-Sets the metatable on the table which can get gotten with
-<span class=code>getmetatable</span> and affects the behavior of operators.
-<p>
-All metamethods: <div class=code-block>__index &nbsp; &nbsp;(i.e. t[k]) &nbsp; &nbsp; NOTE: these are only called<br>
-__newindex (i.e. t[k] = v) &nbsp; &nbsp; &nbsp; when key is missing!<br>
-<br>
-__call &nbsp; &nbsp; (i.e. t())<br>
-__tostring (i.e. tostring(t))<br>
-<br>
-+ &nbsp; &nbsp; &nbsp; &nbsp; - &nbsp; &nbsp; &nbsp; &nbsp;* &nbsp; &nbsp; &nbsp; &nbsp;/ &nbsp; &nbsp; &nbsp; // &nbsp; &nbsp; &nbsp; &nbsp;%<br>
-__add &nbsp; &nbsp; __sub &nbsp; &nbsp;__mul &nbsp; &nbsp;__div &nbsp; __idiv &nbsp; &nbsp;__mod<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; __unm<br>
-<br>
-&amp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp;~ &nbsp; &nbsp; &nbsp; &nbsp;&lt;&lt; &nbsp; &nbsp; &nbsp;&gt;&gt; &nbsp; &nbsp; &nbsp; &nbsp;^<br>
-__band &nbsp; &nbsp;__bor &nbsp; &nbsp;__bnot &nbsp; __shl &nbsp; __shr &nbsp; &nbsp; __pow<br>
-<br>
-== &nbsp; &nbsp; &nbsp; &nbsp;&lt; &nbsp; &nbsp; &nbsp; &nbsp;&lt;= &nbsp; &nbsp; &nbsp; # &nbsp; &nbsp; &nbsp; &nbsp;..<br>
-__eq &nbsp; &nbsp; &nbsp;__lt &nbsp; &nbsp; __le &nbsp; &nbsp; __len &nbsp; &nbsp;__concat<br>
-<br>
-__name
-</div>
-<p>
-<div class=info> See also metaty metamethods: __fields   __fmt</div>
-<h3>Function <a id="doc.lua.tostring" href="#doc.lua.tostring">doc.lua.tostring</a><span class=code>(v) -&gt; string</span> (<a href=".civ/lua/doc/lua.lua:101"><i>src</i></a>)</h3>
-Convert any value to a string by calling __tostring or using lua's default.
-<h3>Function <a id="doc.lua.type" href="#doc.lua.type">doc.lua.type</a><span class=code>(val) -&gt; string</span> (<a href=".civ/lua/doc/lua.lua:69"><i>src</i></a>)</h3>
-Get the type of <span class=code>val</span>. Possible return values are: <ul>
-  <li>data: nil number string boolean table</li>
-  <li>other: function thread userdata</li>
-</ul>
-<div class=info> See also: metaty.ty(v) for metatypes</div>
-<p>
-<h2>Module <a id="doc.lua.io" href="#doc.lua.io">doc.lua.io</a> (<a href=".civ/lua/doc/lua.lua:385"><i>src</i></a>)</h2>
-the builtin lua io (input/output) module
-<p>
-Module Functions: <div class=table><table>
-  <tr>
-    <td><span class=code>&nbsp;input(file=nil) &nbsp;-&gt; &nbsp;file &nbsp;</span></td>
-    <td>get/set stdin</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;output(file=nil) -&gt; &nbsp;file &nbsp;</span></td>
-    <td>get/set stdout</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;tmpfile() -&gt; file &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></td>
-    <td>note: removed on program exit</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;popen() &nbsp; -&gt; file &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></td>
-    <td>see io.popen</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;lines(path or file) -&gt; iter</span></td>
-    <td>close when done, fail=error</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;type(f) -&gt; "[closed ]file" </span></td>
-    <td>get whether f is a file</td>
-  </tr>
-</table></div>
-<p>
-File Methods: <div class=table><table>
-  <tr>
-    <td><span class=code>&nbsp;read(format="l") &nbsp;</span></td>
-    <td>read a file according to format</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;lines(format="l") </span></td>
-    <td>get iterator for reading format</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;write(a, b, ...) &nbsp;</span></td>
-    <td>write strings a, b, ... in order</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;flush() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span></td>
-    <td>flush (save) all writes</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;seek(whence, offset)</span></td>
-    <td>see seek section below</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;setvbuf("no|full|line", sizeHint=appropriateSize)</span> see function</td>
-  </tr>
-</table></div>
-<p>
-Format paramater used in read/etc <div class=table><table>
-  <tr>
-    <td>format</td>
-    <td>behavior</td>
-    <td>(in Lua<=5.2)</td>
-  </tr>
-  <tr>
-    <td>a</td>
-    <td>read all text                        *a</td>
-  </tr>
-  <tr>
-    <td>l</td>
-    <td>read next line, skip EOL             *l</td>
-  </tr>
-  <tr>
-    <td>L</td>
-    <td>read next line, keep EOL             *L</td>
-  </tr>
-  <tr>
-    <td>n</td>
-    <td>read and return a number             *n</td>
-  </tr>
-  <tr>
-    <td>number</td>
-    <td>read an exact number of bytes, EOF=nil</td>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>EOF=nil, notEOF=''</td>
-  </tr>
-</table></div>
-<p>
-seek <div class=table><table>
-  <tr>
-    <td><span class=code>&nbsp;whence="set" </span></td>
-    <td>offset from beginning of file (0)</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;whence="cur" </span></td>
-    <td>offset from current position</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;whence="end" </span></td>
-    <td>offset from end of file (use negative)</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;seek() &nbsp; &nbsp; &nbsp; </span></td>
-    <td>get current position</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;seek'set' &nbsp; &nbsp;</span></td>
-    <td>set to beginning</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;seek'end' &nbsp; &nbsp;</span></td>
-    <td>set to end</td>
-  </tr>
-</table></div>
-<p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.io._stderr</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io._stdout</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.fmt</span></td>
-    <td>[Fmt] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.stderr</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.stdin</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.stdout</span></td>
-    <td>[userdata] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.user</span></td>
-    <td>[Fmt] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-</table></div>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.io.close</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.flush</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.input</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.lines</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.open</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.output</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.popen</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:393">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.read</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.tmpfile</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.type</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.io.write</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:396">src</a>)</td>
-  </tr>
-</table></div>
-<h2>Module <a id="doc.lua.math" href="#doc.lua.math">doc.lua.math</a> (<a href=".civ/lua/doc/lua.lua:443"><i>src</i></a>)</h2>
-The builtin lua math module.
-<p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.math.huge</span></td>
-    <td>[number] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.maxinteger</span></td>
-    <td>[number] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.mininteger</span></td>
-    <td>[number] </td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.pi</span></td>
-    <td>[number] </td>
-  </tr>
-</table></div>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.math.abs</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.acos</span></td>
-    <td>[<span class=code>(x) -&gt; arccos(x) in radians</span>] (<a href=".civ/lua/doc/lua.lua:451">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.asin</span></td>
-    <td>[<span class=code>(x) -&gt; arcsin(x) in radians</span>] (<a href=".civ/lua/doc/lua.lua:452">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.atan</span></td>
-    <td>[<span class=code>(n, d) -&gt; arctan(n / d) in radians</span>] (<a href=".civ/lua/doc/lua.lua:453">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.atan2</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:453">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.ceil</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.cos</span></td>
-    <td>[<span class=code>(x) -&gt; cos(x) in radians</span>] (<a href=".civ/lua/doc/lua.lua:448">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.cosh</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.deg</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.exp</span></td>
-    <td>[<span class=code>(x) -&gt; e^x (where e is the natural log base)</span>] (<a href=".civ/lua/doc/lua.lua:454">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.floor</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.fmod</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.frexp</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.ldexp</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.log</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.log10</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.max</span></td>
-    <td>[<span class=code>(x, ...) -&gt; max according to [$&lt;]</span>] (<a href=".civ/lua/doc/lua.lua:446">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.min</span></td>
-    <td>[<span class=code>(x, ...) -&gt; min according to [$&lt;]</span>] (<a href=".civ/lua/doc/lua.lua:447">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.modf</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.pow</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.rad</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.random</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.randomseed</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.sin</span></td>
-    <td>[<span class=code>(x) -&gt; sin(x) in radians</span>] (<a href=".civ/lua/doc/lua.lua:449">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.sinh</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.sqrt</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.tan</span></td>
-    <td>[<span class=code>(x) -&gt; tan(x) in radians</span>] (<a href=".civ/lua/doc/lua.lua:450">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.tanh</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.tointeger</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.type</span></td>
-    <td>[<span class=code>(v) -&gt; ("float" | "integer" | nil)</span>] (<a href=".civ/lua/doc/lua.lua:445">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.math.ult</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:461">src</a>)</td>
-  </tr>
-</table></div>
-<h2>Module <a id="doc.lua.os" href="#doc.lua.os">doc.lua.os</a> (<a href=".civ/lua/doc/lua.lua:417"><i>src</i></a>)</h2>
-the builtin lua os module
-<p>
-Useful functions: <div class=table><table>
-  <tr>
-    <td><span class=code>exit(rc=0, close=false)</span></td>
-    <td>exit program with return code</td>
-  </tr>
-  <tr>
-    <td><span class=code>date()</span></td>
-    <td>get the date. See os.date</td>
-  </tr>
-  <tr>
-    <td><span class=code>execute'command'</span></td>
-    <td>execute command, see os.execute</td>
-  </tr>
-  <tr>
-    <td><span class=code>getenv(varname)</span></td>
-    <td>get environment variable</td>
-  </tr>
-  <tr>
-    <td><span class=code>remove(path)</span></td>
-    <td>rm path</td>
-  </tr>
-  <tr>
-    <td><span class=code>rename(old, new)</span></td>
-    <td>mv old new</td>
-  </tr>
-  <tr>
-    <td><span class=code>tmpname() -&gt; path</span></td>
-    <td>create temporary file</td>
-  </tr>
-  <tr>
-    <td><span class=code>clock()</span></td>
-    <td>seconds used by process (performance)</td>
-  </tr>
-</table></div>
-<p>
-Recommendations: <ul>
-  <li>use civix.epoch() (nanosec precision) vs os.time() (sec precision)</li>
+<b>Types</b> <ul>
+  <li><b>doc.Doc</b></li>
+  <li><b>doc.Main</b></li>
 </ul>
 <p>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.os.clock</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.date</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.difftime</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.execute</span></td>
-    <td>[<span class=code>(string) -&gt; (ok, "exit", rc)</span>] (<a href=".civ/lua/doc/lua.lua:435">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.exit</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.getenv</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.remove</span></td>
-    <td>[<span class=code>(path) -&gt; nil</span>] (<a href=".civ/lua/civix.lua:172">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.rename</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.setlocale</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.time</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.os.tmpname</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:438">src</a>)</td>
-  </tr>
-</table></div>
-<h2>Module <a id="doc.lua.string" href="#doc.lua.string">doc.lua.string</a> (<a href=".civ/lua/doc/lua.lua:116"><i>src</i></a>)</h2>
-the builtin lua string module.
-<p>
-string literal values can use <ul>
-  <li><span class=code>'single quotes'</span></li>
-  <li><span class=code>"double quotes"</span></li>
-  <li><span class=code>[==[raw string with any number of = symbols ]==]</span></li>
+<b>Functions</b> <ul>
+  <li><span class=code>tryfind(obj) -&gt; any?</span>
+  Find the object/name or return nil.</li>
+  <li><span class=code>find(obj) -&gt; any</span>
+  Find the object/name.</li>
 </ul>
 <p>
-<span class=code>\</span> characters can be used to escape special characters,
-except in raw bracketed strings. Common escaped characters
-are <span class=code>\'</span> (literal <span class=code>'</span>), <span class=code>\n</span> (newline) and <span class=code>\t</span> (tab).
+<h2><a id=""doc.Doc"" href="#"doc.Doc"">Record Doc</h2></a>
+<ul>
+  <li><b>to</b> :
+  file to write to.</li>
+  <li><b>indent</b> </li>
+</ul>
+Object passed to __doc methods.
+Aids in writing cxt.
 <p>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.string.byte</span></td>
-    <td>[<span class=code>(str, si=1, ei=si) -&gt; ...ints</span>] (<a href=".civ/lua/doc/lua.lua:229">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.char</span></td>
-    <td>[<span class=code>(c1, c2, ...) -&gt; string</span>] (<a href=".civ/lua/doc/lua.lua:232">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.concat</span></td>
-    <td>[<span class=code>(sep, ...) -&gt; string</span>] (<a href=".civ/lua/ds.lua:67">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.dump</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.find</span></td>
-    <td>[<span class=code>(subj, pat, index=1) -&gt; (si, ei, ...matches)</span>] (<a href=".civ/lua/doc/lua.lua:159">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.format</span></td>
-    <td>[<span class=code>(fmt: str, ...) -&gt; str</span>] (<a href=".civ/lua/doc/lua.lua:224">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.gmatch</span></td>
-    <td>[<span class=code>(subj, pat, index=1) -&gt; iterator()</span>] (<a href=".civ/lua/doc/lua.lua:172">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.gsub</span></td>
-    <td>[<span class=code>(subj, pat, repl, index=1) -&gt; string</span>] (<a href=".civ/lua/doc/lua.lua:192">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.len</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.lower</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.match</span></td>
-    <td>[<span class=code>(subj, pat, index=1) -&gt; ...groups</span>] (<a href=".civ/lua/doc/lua.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.pack</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:258">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.packsize</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:264">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.rep</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:235">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.reverse</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.sub</span></td>
-    <td>[<span class=code>(subj, si, ei) -&gt; str[si:ei]</span>] (<a href=".civ/lua/doc/lua.lua:178">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.unpack</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:261">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.string.upper</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:267">src</a>)</td>
-  </tr>
-</table></div>
-<h2>Module <a id="doc.lua.table" href="#doc.lua.table">doc.lua.table</a> (<a href=".civ/lua/doc/lua.lua:291"><i>src</i></a>)</h2>
-the builtin lua table module
+<h2><a id=""doc.Main"" href="#"doc.Main"">Record Main</h2></a>
+<ul>
+  <li><b>to</b> :
+  where to write output.</li>
+</ul>
+Get cxt documentation for symbol.
 <p>
-Tables act as BOTH a map (of keys -> values) and a list (ordered values
-starting at index=1).
+<h1><a id=""doc.lua"" href="#"doc.lua"">doc.lua</h1></a>
 <p>
-You can access the keys with <span class=code>t[key]</span> or if they are a string without
-special characters with <span class=code>t.key</span>.
-<p>
-Examples: <div class=code-block>t = {'first', 'second', 'third', key='hi'}<br>
-T.eq('first', t[1])<br>
-T.eq('third', t[3])<br>
-T.eq('hi', &nbsp; &nbsp;t.key)<br>
-T.eq(#t, 3) -- the length of the "list" part
+<b>Functions</b> <ul>
+  <li><span class=code>keyword() -&gt; setmetatable({}, Keyword)</span></li>
+  <li><span class=code>next(tbl, key) -&gt; nextKey</span>
+  Get the next key in the table. Used for iterating through tables.
+  If <span class=code>key=nil</span> returns the first key. Returns <span class=code>nil</span> when <span class=code>key</span> is
+  the last key.</li>
+  <li><span class=code>pcall(fn, ...) -&gt; ok, fn(...)</span>
+  call a function but catch errors. Returns <span class=code>ok</span> followed by the function
+  results. If not ok, returns the error.</li>
+  <li><span class=code>select()</span>
+  select elements in varargs <span class=code>...</span> at and after index.
+  
+  Special value: if <span class=code>index='#'</span> then returns length of <span class=code>...</span></li>
+  <li><span class=code>type(val) -&gt; string</span>
+  Get the type of <span class=code>val</span>. Possible return values are: <ul>
+    <li>data: nil number string boolean table</li>
+    <li>other: function thread userdata</li>
+  </ul>
+  <div class=info> See also: metaty.ty(v) for metatypes</div></li>
+  <li><span class=code>setmetatable()</span>
+  Sets the metatable on the table which can get gotten with
+  <span class=code>getmetatable</span> and affects the behavior of operators.
+  
+  All metamethods: <div class=code-block>&nbsp; __index &nbsp; &nbsp;(i.e. t[k]) &nbsp; &nbsp; NOTE: these are only called<br>
+&nbsp; __newindex (i.e. t[k] = v) &nbsp; &nbsp; &nbsp; when key is missing!<br>
+&nbsp; <br>
+&nbsp; __call &nbsp; &nbsp; (i.e. t())<br>
+&nbsp; __tostring (i.e. tostring(t))<br>
+&nbsp; <br>
+&nbsp; + &nbsp; &nbsp; &nbsp; &nbsp; - &nbsp; &nbsp; &nbsp; &nbsp;* &nbsp; &nbsp; &nbsp; &nbsp;/ &nbsp; &nbsp; &nbsp; // &nbsp; &nbsp; &nbsp; &nbsp;%<br>
+&nbsp; __add &nbsp; &nbsp; __sub &nbsp; &nbsp;__mul &nbsp; &nbsp;__div &nbsp; __idiv &nbsp; &nbsp;__mod<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; __unm<br>
+&nbsp; <br>
+&nbsp; &amp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp; &nbsp;~ &nbsp; &nbsp; &nbsp; &nbsp;&lt;&lt; &nbsp; &nbsp; &nbsp;&gt;&gt; &nbsp; &nbsp; &nbsp; &nbsp;^<br>
+&nbsp; __band &nbsp; &nbsp;__bor &nbsp; &nbsp;__bnot &nbsp; __shl &nbsp; __shr &nbsp; &nbsp; __pow<br>
+&nbsp; <br>
+&nbsp; == &nbsp; &nbsp; &nbsp; &nbsp;&lt; &nbsp; &nbsp; &nbsp; &nbsp;&lt;= &nbsp; &nbsp; &nbsp; # &nbsp; &nbsp; &nbsp; &nbsp;..<br>
+&nbsp; __eq &nbsp; &nbsp; &nbsp;__lt &nbsp; &nbsp; __le &nbsp; &nbsp; __len &nbsp; &nbsp;__concat<br>
+&nbsp; <br>
+&nbsp; __name<br>
+&nbsp; 
 </div>
-<p>
-<div class=info> WARNING: A table's length is defined as ANY index who's next value
-is <span class=code>nil`</span>. That means using a table as a list with "holes" likely
-won't work for you.
+  
+  <div class=info> See also metaty metamethods: __fields   __fmt</div></li>
+  <li><span class=code>getmetatable(t) -&gt; mt</span>
+  See setmetatable.</li>
+  <li><span class=code>tostring(v) -&gt; string</span>
+  Convert any value to a string by calling __tostring or using lua's default.</li>
+  <li><span class=code>string.concat(sep, ...) -&gt; string</span>
+  concatenate the string arguments.</li>
+  <li><span class=code>string.find(subj, pat, index=1) -&gt; (si, ei, ...matches)</span>
+  Find the pattern in the subj (subject) string, starting at the index.
+  returns the si (start index), ei (end index) and match groups
+  (see <a href="#string.match">#string.match</a>).
+  
+  <div class=code-block>T.eq({2, 4}, &nbsp; &nbsp; &nbsp; {find('%w+', ' bob is nice')})<br>
+T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
 </div>
+  
+  Character classes for matching specific sets: <div class=code-block>&nbsp; &nbsp; . &nbsp; all characters<br>
+&nbsp; &nbsp; %a &nbsp;letters<br>
+&nbsp; &nbsp; %c &nbsp;control characters<br>
+&nbsp; &nbsp; %d &nbsp;digits<br>
+&nbsp; &nbsp; %l &nbsp;lower case letters<br>
+&nbsp; &nbsp; %p &nbsp;punctuation characters<br>
+&nbsp; &nbsp; %s &nbsp;space characters<br>
+&nbsp; &nbsp; %u &nbsp;upper case letters<br>
+&nbsp; &nbsp; %w &nbsp;alphanumeric characters<br>
+&nbsp; &nbsp; %x &nbsp;hexadecimal digits<br>
+&nbsp; &nbsp; %z &nbsp;the character with representation 0<br>
+&nbsp; 
+</div>
+  
+  Magic characters, <span class=code>.</span> indicates one character, more indicates many
+  <div class=code-block>&nbsp; %. &nbsp; &nbsp; selects a character class or escapes a magic char<br>
+&nbsp; (...) &nbsp;create a group<br>
+&nbsp; [...] &nbsp;create your own character class<br>
+&nbsp; [^..] &nbsp;inversion of [...]<br>
+&nbsp; +. &nbsp; &nbsp; match one or more of previous class &nbsp;(NOT group)<br>
+&nbsp; *. &nbsp; &nbsp; match zero or more of previous class (NOT group)<br>
+&nbsp; ? &nbsp; &nbsp; &nbsp;match zero or one of previous class &nbsp;(NOT group)<br>
+&nbsp; ^... &nbsp; if at pat[1], match only beggining of text<br>
+&nbsp; ...$ &nbsp; if at pat[#pat], match only end of text<br>
+&nbsp; %1-9 &nbsp; matches the previously matched group index EXACTLY
+</div></li>
+  <li><span class=code>string.match(subj, pat, index=1) -&gt; ...groups</span>
+  Return the capture groups of pat or the whole match if no capture groups.
+  index: where to start the search and can be negative.
+  
+  See also: string.find.</li>
+  <li><span class=code>string.gmatch(subj, pat, index=1) -&gt; iterator()</span>
+  Return an iterator function that when called returns the next capture group.
+  index: where to start the search and can be negative.
+  
+  See also: string.find.</li>
+  <li><span class=code>string.sub(subj, si, ei) -&gt; str[si:ei]</span>
+  Return substring by index. <span class=code>("1234"):sub(3,4) == "34"</span>
+  
+  <div class=info>Note: This is confusingly named considering string.gsub uses pattern
+  matching. Such is life.</div></li>
+  <li><span class=code>string.gsub(subj, pat, repl, index=1) -&gt; string</span>
+  Substittue all matches of pattern with repl, returning the new string.
+  
+  <span class=code>repl</span> can be a: <ul>
+    <li>string: replace with the string except <span class=code>%1-9</span> will be
+    a matched group from <span class=code>pat</span> and <span class=code>%%</span> is a literal <span class=code>%</span>.</li>
+    <li>table: the table will be queried for every match using
+    the first capture as key.</li>
+    <li><span class=code>function(...matches) -&gt; string</span>: the function will be called
+    with all match groups for each match.</li>
+  </ul>
+  
+  See also: string.find for pattern documentation.</li>
+  <li><span class=code>string.format(fmt: str, ...) -&gt; str</span>
+  Format values into a fmt string, i.e: <span class=code>format('%s: %i', 'age', 42)</span>
+  
+  Directives: <div class=table><table>
+    <tr>
+      <td><span class=code>%%</span></td>
+      <td>literal % char</td>
+    </tr>
+    <tr>
+      <td><span class=code>%d</span></td>
+      <td>decimal</td>
+    </tr>
+    <tr>
+      <td><span class=code>%o</span></td>
+      <td>octal</td>
+    </tr>
+    <tr>
+      <td><span class=code>%x</span></td>
+      <td>hexidecimal (%X uppercase)</td>
+    </tr>
+    <tr>
+      <td><span class=code>%f</span></td>
+      <td>floating point</td>
+    </tr>
+    <tr>
+      <td><span class=code>%s</span></td>
+      <td>string</td>
+    </tr>
+  </table></div>
+  
+  Directive control structure (ignore spaces): <div class=code-block>&nbsp; &nbsp; % (specifier width)? directive<br>
+&nbsp; 
+</div>
+  
+  Where <span class=code>width</span> is an integer and <span class=code>specifier</span> can be one of <div class=table><table>
+    <tr>
+      <td><span class=code>+</span></td>
+      <td>right justify to width (the default)</td>
+    </tr>
+    <tr>
+      <td><span class=code>-</span></td>
+      <td>left justify to width</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;</span></td>
+      <td>prefix a positive number with a space</td>
+    </tr>
+    <tr>
+      <td><span class=code>#</span></td>
+      <td>prefix o, x or X directives with 0, 0x and 0X respectively</td>
+    </tr>
+    <tr>
+      <td><span class=code>0</span></td>
+      <td>left-pad a number with zeros</td>
+    </tr>
+  </table></div>
+  
+  Examples: <div class=code-block>&nbsp; &nbsp; sfmt = string.format<br>
+&nbsp; &nbsp; T.eq('age: 42', &nbsp; &nbsp;sfmt('%s: %i', &nbsp; 'age', 42))<br>
+&nbsp; &nbsp; T.eq('age: &nbsp; &nbsp;42', sfmt('%s: %5i', &nbsp;'age', 42))<br>
+&nbsp; &nbsp; T.eq('age: 42 &nbsp; ', &nbsp; &nbsp; sfmt('%s: %-5i', 'age', 42))<br>
+&nbsp; &nbsp; T.eq('age: 00042', sfmt('%s: %05i', 'age', 42)<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>string.byte(str, si=1, ei=si) -&gt; ...ints</span>
+  Get ASCII (integer) codes for <span class=code>s[si:ei]</span>
+  
+  Example: <span class=code>T.eq({98, 99}, {string.byte('abcd', 2, 3)})</span></li>
+  <li><span class=code>string.char(c1, c2, ...) -&gt; string</span>
+  convert character codes to string and concatenate</li>
+  <li><span class=code>string.rep()</span>
+  repeat str n times with separator</li>
+  <li><span class=code>string.pack()</span>
+  pack the values as bytes into the string using the strtys.
+  
+  strtys is a string of the form: <div class=table><table>
+    <tr>
+      <td><span class=code>&nbsp;&lt; &nbsp;&gt; &nbsp;=</span></td>
+      <td>(start only) little / big / native endian</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;!# &nbsp; &nbsp; </span></td>
+      <td>(start only) max alignment = <span class=code>#</span> bytes</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;b B &nbsp; &nbsp;</span></td>
+      <td>signed / unsigned byte</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;h H l L</span></td>
+      <td>native short(h) and long(l) + unsigned vers</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;i# I# &nbsp;</span></td>
+      <td>signed/unsigned int with <span class=code>#</span> bytes</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;f d &nbsp; &nbsp;</span></td>
+      <td>native float / double</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;T &nbsp; &nbsp; &nbsp;</span></td>
+      <td>size_t</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;c# &nbsp; &nbsp; </span></td>
+      <td>fixed-sized string of <span class=code>#</span> bytes (unaligned)</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;z &nbsp; &nbsp; &nbsp;</span></td>
+      <td>zero-terminated string        (unaligned)</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;s# &nbsp; &nbsp; </span></td>
+      <td>counted string of size <span class=code>#</span> bytes</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;x &nbsp; &nbsp; &nbsp;</span></td>
+      <td>one byte of padding</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;Xo &nbsp; &nbsp; </span></td>
+      <td>align to option <span class=code>o</span>, i.e. <span class=code>Xi4</span></td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;j J n &nbsp;</span></td>
+      <td>lua Integer / Unsigned / Number</td>
+    </tr>
+  </table></div>
+  
+  Example: <div class=code-block>&nbsp; T.eq(string.pack('&gt;i2i2', 0x1234, 0x5678) == '\x12\x34\x56\x78')]<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>string.unpack()</span>
+  See string.pack for the fmt</li>
+  <li><span class=code>string.packsize()</span>
+  Get the size which is used by strtys.</li>
+  <li><span class=code>string.lower()</span>
+  not documented: see <span class=code>string</span> module</li>
+  <li><span class=code>string.upper()</span>
+  not documented: see <span class=code>string</span> module</li>
+  <li><span class=code>string.dump()</span>
+  not documented: see <span class=code>string</span> module</li>
+  <li><span class=code>string.reverse()</span>
+  not documented: see <span class=code>string</span> module</li>
+  <li><span class=code>string.len()</span>
+  not documented: see <span class=code>string</span> module</li>
+  <li><span class=code>table.update(to, from) -&gt; to</span>
+  update to with from, return to.
+  
+  Note: this is an addon from metaty.</li>
+  <li><span class=code>table.concat(t, sep='') -&gt; string</span>
+  concatenate a table of strings with optional separator.
+  
+  Examples: <div class=code-block>&nbsp; concat = table.concat<br>
+&nbsp; T.eq(1..' = '..3, concat{1, ' = ', 3})<br>
+&nbsp; T.eq('1, 2, 3', &nbsp; concat({1, 2, 3}, ', ')<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>table.remove(t, index=#table) -&gt; t[index]</span>
+  remove an item from a table, returning it.
+  The table is shifted if index < #table which may cost up to O(n)</li>
+  <li><span class=code>table.sort(list, cmp=lt) -&gt; nil</span>
+  sort a table in place using a comparison function <span class=code>cmp</span> who's behavior
+  must be: <span class=code>cmp(a, b) --&gt; makeAFirst</span></li>
+  <li><span class=code>table.insert()</span>
+  insert or push to table (list-like)
+  
+  Example: <div class=code-block>&nbsp; local push = table.insert<br>
+&nbsp; local t = {}<br>
+&nbsp; <br>
+&nbsp; -- push/append behavior<br>
+&nbsp; push(t, 'd') &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-- {'d'<br>
+&nbsp; push(t, 'e') &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-- {'d', 'e'}<br>
+&nbsp; <br>
+&nbsp; -- insert behavior<br>
+&nbsp; table.insert(t, 'b', 1) -- {'b', 'd', 'e'}<br>
+&nbsp; table.insert(t, 'c', 2) -- {'b', 'c', 'd', 'e'}<br>
+&nbsp; T.eq({'b', 'c', 'd', 'e'}, t)<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>table.move()</span>
+  Move values from one list to another.
+  Note that <span class=code>si=startIndex</span> and <span class=code>ei=endIndex</span> (inclusive).
+  
+  Equivalent to the following, though done in a way
+  that will properly handle overlapping data: <div class=code-block>&nbsp; ti = siTo<br>
+&nbsp; for fi=siFrom,eiFrom do<br>
+&nbsp; &nbsp; to[ti] = from[fi]; ti = ti + 1<br>
+&nbsp; end<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>io.popen()</span>
+  Execute shell command in separate process.
+  
+  See also: <ul>
+    <li><span class=code>os.execute()</span>: docs on file:close()</li>
+    <li><a href="lib/civix">lib/civix</a><span class=code>.sh()</span>: ergonomic blocking shell.</li>
+  </ul></li>
+  <li><span class=code>io.open()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.type()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.lines()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.read()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.input()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.write()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.flush()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.output()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.tmpfile()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.close()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>os.execute(string) -&gt; (ok, "exit", rc)</span>
+  Execute shell command via C's `system` API. Returns: <ul>
+    <li>ok:      true on command success, false if rc>0</li>
+    <li>"exit":  always literal "exit" if command completed</li>
+    <li>rc:      the return code of the command</li>
+  </ul>
+  <div class=code-block>&nbsp; os.execute'shell command' -&gt; (ok, "exit", rc)<br>
+&nbsp; os.execute() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-&gt; isShellAvailable
+</div>
+  
+  Prints whatever was executed. There are no ways to
+  redirect the output besides piping in the command
+  string itself.
+  
+  Recommendation:
+  For all but the simplest cases use io.popen instead</li>
+  <li><span class=code>os.setlocale()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.date()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.clock()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.time()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.remove(path) -&gt; nil</span>
+  remove file.</li>
+  <li><span class=code>os.getenv()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.rename()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.tmpname()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.exit()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.difftime()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>math.type(v) -&gt; ("float" | "integer" | nil)</span></li>
+  <li><span class=code>math.max(x, ...) -&gt; max according to [$&lt;]</span></li>
+  <li><span class=code>math.min(x, ...) -&gt; min according to [$&lt;]</span></li>
+  <li><span class=code>math.cos(x) -&gt; cos(x) in radians</span></li>
+  <li><span class=code>math.sin(x) -&gt; sin(x) in radians</span></li>
+  <li><span class=code>math.tan(x) -&gt; tan(x) in radians</span></li>
+  <li><span class=code>math.acos(x) -&gt; arccos(x) in radians</span></li>
+  <li><span class=code>math.asin(x) -&gt; arcsin(x) in radians</span></li>
+  <li><span class=code>math.atan2(n, d) -&gt; arctan(n / d) in radians</span></li>
+  <li><span class=code>math.exp(x) -&gt; e^x (where e is the natural log base)</span></li>
+  <li><span class=code>math.log()</span>
+  currently not documented</li>
+  <li><span class=code>math.random()</span>
+  currently not documented</li>
+  <li><span class=code>math.frexp()</span>
+  currently not documented</li>
+  <li><span class=code>math.log10()</span>
+  currently not documented</li>
+  <li><span class=code>math.modf()</span>
+  currently not documented</li>
+  <li><span class=code>math.fmod()</span>
+  currently not documented</li>
+  <li><span class=code>math.atan2(n, d) -&gt; arctan(n / d) in radians</span></li>
+  <li><span class=code>math.abs()</span>
+  currently not documented</li>
+  <li><span class=code>math.floor()</span>
+  currently not documented</li>
+  <li><span class=code>math.pow()</span>
+  currently not documented</li>
+  <li><span class=code>math.rad()</span>
+  currently not documented</li>
+  <li><span class=code>math.sinh()</span>
+  currently not documented</li>
+  <li><span class=code>math.tanh()</span>
+  currently not documented</li>
+  <li><span class=code>math.tointeger()</span>
+  currently not documented</li>
+  <li><span class=code>math.sqrt()</span>
+  currently not documented</li>
+  <li><span class=code>math.randomseed()</span>
+  currently not documented</li>
+  <li><span class=code>math.ldexp()</span>
+  currently not documented</li>
+  <li><span class=code>math.cosh()</span>
+  currently not documented</li>
+  <li><span class=code>math.ceil()</span>
+  currently not documented</li>
+  <li><span class=code>math.deg()</span>
+  currently not documented</li>
+  <li><span class=code>math.ult()</span>
+  currently not documented</li>
+  <li><span class=code>for()</span>
+  for is a looping construct with two forms:
+  
+  Numeric: <div class=code-block>&nbsp; &nbsp; for i=si,ei,period do -- period=1 by default<br>
+&nbsp; &nbsp; &nbsp; ... do something with i<br>
+&nbsp; &nbsp; end<br>
+&nbsp; <br>
+&nbsp; &nbsp; -- is basically the same as<br>
+&nbsp; &nbsp; local i = si<br>
+&nbsp; &nbsp; while i &lt;= ei do i = i + si<br>
+&nbsp; &nbsp; &nbsp; ... do something with i<br>
+&nbsp; &nbsp; end<br>
+&nbsp; 
+</div>
+  
+  Generic: <div class=code-block>&nbsp; &nbsp; for i, v, etc in (nextfn, state, _index) do<br>
+&nbsp; &nbsp; &nbsp; .. do something with i, v, ...<br>
+&nbsp; &nbsp; end<br>
+&nbsp; <br>
+&nbsp; &nbsp; -- is almost the same as<br>
+&nbsp; &nbsp; while true do<br>
+&nbsp; &nbsp; &nbsp; local i, v, etc = nextfn(state, _index)<br>
+&nbsp; &nbsp; &nbsp; if i == nil then break end<br>
+&nbsp; &nbsp; &nbsp; _index = i -- note: C internal, _index from lua doesn't change<br>
+&nbsp; &nbsp; &nbsp; ... code using i, v, etc here<br>
+&nbsp; &nbsp; end<br>
+&nbsp; 
+</div>
+  
+  The goal in writing a stateless iterator function is to match this
+  loop's API as much as possible.
+  
+  Example rewriting ipairs: <div class=code-block>&nbsp; &nbsp; local function rawipairs(t, i)<br>
+&nbsp; &nbsp; &nbsp; i = i + 1<br>
+&nbsp; &nbsp; &nbsp; if i &gt; #t then return nil end<br>
+&nbsp; &nbsp; &nbsp; return i, t[i]<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; local function myipairs_(t)<br>
+&nbsp; &nbsp; &nbsp; return rawipairs, t, 0<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; for i, v in myipairs{5, 6, 7} do<br>
+&nbsp; &nbsp; &nbsp; iterates through (1, 5) -&gt; (2, 6) -&gt; (3, 7)<br>
+&nbsp; &nbsp; end<br>
+&nbsp; 
+</div>
+  
+  Example rewriting pairs using <span class=code>next(t, key)</span>: <div class=code-block>&nbsp; &nbsp; function mypairs(t)<br>
+&nbsp; &nbsp; &nbsp; return next, t, nil<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; for k, v in mypairs{a=1, b=2, c=3} do<br>
+&nbsp; &nbsp; &nbsp; iterates through ('a', 1) -&gt; ('b', 2) -&gt; ('c', 3)<br>
+&nbsp; &nbsp; end<br>
+&nbsp; 
+</div>
+  
+  See also: metaty.split is a more complex example.</li>
+</ul>
 <p>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>doc.lua.table.concat</span></td>
-    <td>[<span class=code>(t, sep='') -&gt; string</span>] (<a href=".civ/lua/doc/lua.lua:305">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.insert</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:330">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.move</span></td>
-    <td>[function] (<a href=".civ/lua/doc/lua.lua:342">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.push</span></td>
-    <td>[<span class=code>(t, v) -&gt; index</span>] (<a href=".civ/lua/ds.lua:70">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.remove</span></td>
-    <td>[<span class=code>(t, index=#table) -&gt; t[index]</span>] (<a href=".civ/lua/doc/lua.lua:309">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.sort</span></td>
-    <td>[<span class=code>(list, cmp=lt) -&gt; nil</span>] (<a href=".civ/lua/doc/lua.lua:313">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>doc.lua.table.update</span></td>
-    <td>[<span class=code>(to, from) -&gt; to</span>] (<a href=".civ/lua/doc/lua.lua:296">src</a>)</td>
-  </tr>
-</table></div>
 </div></body>
 </html>

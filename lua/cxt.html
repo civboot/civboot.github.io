@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 <h1>cxt: text markup for civilization</h1>
 <p>
@@ -313,72 +313,44 @@ You can also escape '\\'.
 Cxt is in the the public domain, see the <a href="../UNLICENSE">UNLICENSE</a> for details.
 <p>
 It was originally created by Rett Berg as part of the <a href="http://civboot.org">Civboot</a> project.
-<h2>Module <a id="cxt" href="#cxt">cxt</a> (<a href=".civ/lua/cxt.lua:2"><i>src</i></a>)</h2>
 <p>
-<h4>Value <a id="cxt.__name" href="#cxt.__name">cxt.__name</a></h4>
-<h3>Table <a id="cxt.attr" href="#cxt.attr">cxt.attr</a> (<a href=".civ/lua/cxt.lua:68"><i>src</i></a>)</h3>
-<h3>Table <a id="cxt.attrSym" href="#cxt.attrSym">cxt.attrSym</a> (<a href=".civ/lua/cxt.lua:63"><i>src</i></a>)</h3><div class=code-block>M.attrSym = Key{kind='attrSym', {<br>
-&nbsp; '!', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -- hidden<br>
-&nbsp; '*', '/', '_', &nbsp; -- bold, italic, underline<br>
-&nbsp; ':', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -- define node name<br>
-}}
-</div>
-<h3>Table <a id="cxt.attrs" href="#cxt.attrs">cxt.attrs</a></h3>
-<h3>Table <a id="cxt.fmtAttr" href="#cxt.fmtAttr">cxt.fmtAttr</a></h3>
-<h3>Table <a id="cxt.htmlFmt" href="#cxt.htmlFmt">cxt.htmlFmt</a> (<a href=".civ/lua/cxt.lua:446"><i>src</i></a>)</h3>
-<h3>Table <a id="cxt.keyval" href="#cxt.keyval">cxt.keyval</a></h3>
-<h3>Record <a id="cxt.Config" href="#cxt.Config">cxt.Config</a> (<a href=".civ/lua/cxt.lua:451"><i>src</i></a>)</h3>
+<h1><a id=""cxt"" href="#"cxt"">cxt</h1></a>
+TODO: see TODO.cxt
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>header</span></td>
-    <td>[string] 
-    typically used for html header</td>
-  </tr>
-  <tr>
-    <td><span class=code>pathUrl</span></td>
-    <td>[function(path) -> url] = <span class=code>fn"ds.iden"[/home/rett/projects/civlua/.civ/lua/ds.lua:150]</span></td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.Config.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Config.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Config.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Config.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.Config.__index</span></td>
-    <td>[Ty<Config>] (<a href=".civ/lua/cxt.lua:451">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.Config.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Config.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Config.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="cxt.Writer" href="#cxt.Writer">cxt.Writer</a> (<a href=".civ/lua/cxt.lua:462"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>cxt.Config</b></li>
+  <li><b>cxt.Writer</b></li>
+  <li><b>cxt.Html</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>escape(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span>
+  escape the string so it renders literally</li>
+  <li><span class=code>codeblock(str, lang)</span>
+  create a <span class=code>[##code block]##</span></li>
+  <li><span class=code>code(str, lang)</span>
+  create <span class=code>[$inline code]</span></li>
+  <li><span class=code>content(p, node, isRoot, altEnd)</span>
+  parse normal content, adding to node</li>
+  <li><span class=code>parse(dat, dbg)</span></li>
+  <li><span class=code>checkParse(dat, context) -&gt; dat</span></li>
+  <li><span class=code>parsedStrings(p, node)</span></li>
+  <li><span class=code>assertParse(dat, expected, dbg) -&gt; node</span></li>
+</ul>
+<p>
+<h2><a id=""cxt.Config"" href="#"cxt.Config"">Record Config</h2></a>
+<ul>
+  <li><b>header</b> :
+  typically used for html header</li>
+  <li><b>pathUrl</b> </li>
+</ul>
+<p>
+<h2><a id=""cxt.Writer"" href="#"cxt.Writer"">Record Writer</h2></a>
+<ul>
+  <li><b>src</b> </li>
+  <li><b>to</b> </li>
+  <li><b>config</b> </li>
+</ul>
 A Writer for cxt serializers (terminal, http, etc) to use.
 <p>
 The writer contains: <ul>
@@ -386,158 +358,48 @@ The writer contains: <ul>
   <li>The destination lines and current indent level.</li>
 </ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>src</span></td>
-    <td>  </td>
-  </tr>
-  <tr>
-    <td><span class=code>to</span></td>
-    <td>  </td>
-  </tr>
-  <tr>
-    <td><span class=code>config</span></td>
-    <td>[Config] = <span class=code>Config{header=nil, pathUrl=fn"ds.iden"[/home/rett/projects/civlua/.civ/lua/ds.lua:150]}</span></td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.Writer.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.Writer.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.__len</span></td>
-    <td>[function] (<a href=".civ/lua/cxt.lua:483">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.eqStr</span></td>
-    <td>[function] (<a href=".civ/lua/cxt.lua:472">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.fromParser</span></td>
-    <td>[function] (<a href=".civ/lua/cxt.lua:465">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.level</span></td>
-    <td>[<span class=code>(w, add) -&gt; w.to:level(add)</span>] (<a href=".civ/lua/cxt.lua:484">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.Writer.tokenStr</span></td>
-    <td>[function] (<a href=".civ/lua/cxt.lua:468">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="cxt._codeHashes" href="#cxt._codeHashes">cxt._codeHashes</a> (<a href=".civ/lua/cxt.lua:37"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt._hasUnbalancedBrackets" href="#cxt._hasUnbalancedBrackets">cxt._hasUnbalancedBrackets</a> (<a href=".civ/lua/cxt.lua:33"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.assertParse" href="#cxt.assertParse">cxt.assertParse</a><span class=code>(dat, expected, dbg) -&gt; node</span> (<a href=".civ/lua/cxt.lua:443"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.checkParse" href="#cxt.checkParse">cxt.checkParse</a><span class=code>(dat, context) -&gt; dat</span> (<a href=".civ/lua/cxt.lua:419"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.code" href="#cxt.code">cxt.code</a> (<a href=".civ/lua/cxt.lua:51"><i>src</i></a>)</h3>
-create <span class=code>[$inline code]</span>
-<h3>Function <a id="cxt.codeblock" href="#cxt.codeblock">cxt.codeblock</a> (<a href=".civ/lua/cxt.lua:44"><i>src</i></a>)</h3>
-create a <span class=code>[##code block]##</span>
-<h3>Function <a id="cxt.content" href="#cxt.content">cxt.content</a> (<a href=".civ/lua/cxt.lua:350"><i>src</i></a>)</h3>
-parse normal content, adding to node
-<h3>Function <a id="cxt.escape" href="#cxt.escape">cxt.escape</a><span class=code>(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span> (<a href=".civ/lua/cxt.lua:24"><i>src</i></a>)</h3>
-escape the string so it renders literally
-<h3>Function <a id="cxt.parse" href="#cxt.parse">cxt.parse</a> (<a href=".civ/lua/cxt.lua:407"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.parsedStrings" href="#cxt.parsedStrings">cxt.parsedStrings</a> (<a href=".civ/lua/cxt.lua:436"><i>src</i></a>)</h3>
-<h2>Module <a id="cxt.term" href="#cxt.term">cxt.term</a> (<a href=".civ/lua/cxt/term.lua:3"><i>src</i></a>)</h2>
+<h2><a id=""cxt.Html"" href="#"cxt.Html"">Record Html</h2></a>
+<ul>
+  <li><b>to</b> :
+  where to write output.</li>
+</ul>
+Convert cxt to HTML.
+<p>
+<h1><a id=""cxt.term"" href="#"cxt.term"">cxt.term</h1></a>
 cxt for the terminal, either plain text or vt100/etc
 <p>
-<h3>Table <a id="cxt.term.HEADER" href="#cxt.term.HEADER">cxt.term.HEADER</a></h3>
-<h3>Table <a id="cxt.term.STYLES" href="#cxt.term.STYLES">cxt.term.STYLES</a></h3>
-<h4>Value <a id="cxt.term.__name" href="#cxt.term.__name">cxt.term.__name</a></h4>
-<h3>Record <a id="cxt.term.Args" href="#cxt.term.Args">cxt.term.Args</a> (<a href=".civ/lua/cxt/term.lua:25"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>cxt.term.Args</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>serialize(w, node)</span></li>
+  <li><span class=code>convert(dat, to)</span></li>
+  <li><span class=code>main(args)</span></li>
+</ul>
+<p>
+<h2><a id=""cxt.term.Args"" href="#"cxt.term.Args"">Record Args</h2></a>
+<ul>
+  <li><b>inp</b> :
+  input file</li>
+  <li><b>out</b> :
+  output file (default=stdout)</li>
+</ul>
 Render cxt on a terminal.
 <p>
 Will render an input string or --inp=file.
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>inp</span></td>
-    <td>[path</td>
-    <td>file] 
-    input file</td>
-  </tr>
-  <tr>
-    <td><span class=code>out</span></td>
-    <td>[path</td>
-    <td>file] 
-    output file (default=stdout)</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.term.Args.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.term.Args.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.term.Args.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.term.Args.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.term.Args.__index</span></td>
-    <td>[Ty<Args>] (<a href=".civ/lua/cxt/term.lua:25">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cxt.term.Args.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.term.Args.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>cxt.term.Args.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="cxt.term.convert" href="#cxt.term.convert">cxt.term.convert</a> (<a href=".civ/lua/cxt/term.lua:138"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.term.main" href="#cxt.term.main">cxt.term.main</a> (<a href=".civ/lua/cxt/term.lua:149"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.term.serialize" href="#cxt.term.serialize">cxt.term.serialize</a> (<a href=".civ/lua/cxt/term.lua:130"><i>src</i></a>)</h3>
-<h2>Module <a id="cxt.html" href="#cxt.html">cxt.html</a> (<a href=".civ/lua/cxt/html.lua:2"><i>src</i></a>)</h2>
+<h1><a id=""cxt.html"" href="#"cxt.html"">cxt.html</h1></a>
 Serialize cxt nodes as html
 <p>
-<h4>Value <a id="cxt.html.__name" href="#cxt.html.__name">cxt.html.__name</a></h4>
-<h3>Function <a id="cxt.html.assertHtml" href="#cxt.html.assertHtml">cxt.html.assertHtml</a> (<a href=".civ/lua/cxt/html.lua:210"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.html.convert" href="#cxt.html.convert">cxt.html.convert</a> (<a href=".civ/lua/cxt/html.lua:203"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.html.htmlEncode" href="#cxt.html.htmlEncode">cxt.html.htmlEncode</a> (<a href=".civ/lua/cxt/html.lua:107"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.html.main" href="#cxt.html.main">cxt.html.main</a> (<a href=".civ/lua/cxt/html.lua:227"><i>src</i></a>)</h3>
-<h3>Function <a id="cxt.html.serialize" href="#cxt.html.serialize">cxt.html.serialize</a> (<a href=".civ/lua/cxt/html.lua:188"><i>src</i></a>)</h3>
-serialize the node to the writer.
-<h3>Function <a id="cxt.html.serializeDoc" href="#cxt.html.serializeDoc">cxt.html.serializeDoc</a> (<a href=".civ/lua/cxt/html.lua:195"><i>src</i></a>)</h3>
+<b>Functions</b> <ul>
+  <li><span class=code>htmlEncode(s)</span></li>
+  <li><span class=code>serialize(w, node)</span>
+  serialize the node to the writer.</li>
+  <li><span class=code>serializeDoc(w, node, head)</span></li>
+  <li><span class=code>convert(dat, to, config)</span></li>
+  <li><span class=code>assertHtml(expectedHtml, cxtDat, dbg)</span></li>
+</ul>
+<p>
 </div></body>
 </html>

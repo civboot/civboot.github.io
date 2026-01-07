@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 Civboot's unix system library
 <p>
@@ -31,23 +31,194 @@ synchronously or asynchronously using the LAP protocol (see <a href="#Package_la
 <p>
 <div class=info>Civix depends on the <a href="#Package_fd">#Package_fd</a> library for async file descriptors and
 other filedescriptor functionality.</div>
-<h2>Module <a id="civix" href="#civix">civix</a> (<a href=".civ/lua/civix.lua:4"><i>src</i></a>)</h2>
+<p>
+<h1><a id=""civix"" href="#"civix"">civix</h1></a>
 civix: unix-like OS utilities.
 <p>
-<h4>Value <a id="civix.BLK" href="#civix.BLK">civix.BLK</a></h4>
-<h4>Value <a id="civix.BLOCK_SZ" href="#civix.BLOCK_SZ">civix.BLOCK_SZ</a></h4>
-<h4>Value <a id="civix.CHR" href="#civix.CHR">civix.CHR</a></h4>
-<h4>Value <a id="civix.DIR" href="#civix.DIR">civix.DIR</a></h4>
-<h4>Value <a id="civix.EEXIST" href="#civix.EEXIST">civix.EEXIST</a></h4>
-<h4>Value <a id="civix.FIFO" href="#civix.FIFO">civix.FIFO</a></h4>
-<h4>Value <a id="civix.FILE" href="#civix.FILE">civix.FILE</a></h4>
-<h4>Value <a id="civix.LINK" href="#civix.LINK">civix.LINK</a></h4>
-<h4>Value <a id="civix.OS" href="#civix.OS">civix.OS</a></h4>
-<h3>Table <a id="civix.SH_SET" href="#civix.SH_SET">civix.SH_SET</a></h3>
-<h4>Value <a id="civix.SOCK" href="#civix.SOCK">civix.SOCK</a></h4>
-<h3>Table <a id="civix.Stat" href="#civix.Stat">civix.Stat</a></h3>
-<h4>Value <a id="civix.__name" href="#civix.__name">civix.__name</a></h4>
-<h3>Record <a id="civix.Sh" href="#civix.Sh">civix.Sh</a> (<a href=".civ/lua/civix.lua:550"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>civix.B</b></li>
+  <li><b>civix.Walk</b></li>
+  <li><b>civix.Sh</b></li>
+  <li><b>civix.ShFin</b></li>
+</ul>
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>mkdir(path)</span></li>
+  <li><span class=code>dir(path)</span></li>
+  <li><span class=code>rmdir(path)</span></li>
+  <li><span class=code>exists(path)</span></li>
+  <li><span class=code>pathtype(path)</span></li>
+  <li><span class=code>rm(path) -&gt; nil</span>
+  remove file.</li>
+  <li><span class=code>statModifiedEq(fs1, fs2) -&gt; boolean</span>
+  return whether two Stat's have equal modification times</li>
+  <li><span class=code>stat(v) -&gt; Stat?, errmsg?</span>
+  Given a path|File|Stat return a Stat</li>
+  <li><span class=code>modifiedEq(a, b)</span>
+  return whether two path|File|Stat have equal modification times</li>
+  <li><span class=code>getpagesize() -&gt; 4096</span></li>
+  <li><span class=code>ls(dir) -&gt; list[str]</span>
+  Return the entries in a dir as a list.
+  They are sorted to put the directories first.</li>
+  <li><span class=code>mv(old, new)</span>
+  Move path from old -> new, throwing an error on failure.</li>
+  <li><span class=code>fdWrite(to, from, sz--[[=BLOCK_SZ]]) -&gt; (to, from)</span>
+  Read data from fd <span class=code>from</span> and write to fd <span class=code>to</span>, then flush.</li>
+  <li><span class=code>cp(from, to)</span>
+  copy data from <span class=code>from</span> to <span class=code>to</span>. Their types can be either
+  a string (path) or a file descriptor.</li>
+  <li><span class=code>swap(a, b, ext)</span>
+  swap paths a <-> b</li>
+  <li><span class=code>setModified(f, sec, nsec) -&gt; ok, errmsg?</span>
+  set the modified time of the path|file</li>
+  <li><span class=code>quote(str)</span>
+  quote the str if it's possible</li>
+  <li><span class=code>sleep(d) -&gt; nil</span>
+  Sleep for the specified duration</li>
+  <li><span class=code>epoch() -&gt; ds.Epoch(lib.epoch())</span>
+  Return the Epoch/Mono time
+  Time according to realtime clock</li>
+  <li><span class=code>mono() -&gt; ds.Duration(lib.mono())</span>
+  Duration according to monotomically incrementing clock.</li>
+  <li><span class=code>monoSec() -&gt; M.mono():asSeconds()</span></li>
+  <li><span class=code>pathEq(path1, path2)</span>
+  return if the contents of the two paths are equal.
+  If both are directories return true (do not recurse).
+  If both don't exist return true</li>
+  <li><span class=code>isFile(path) -&gt; M.pathtype(path) == 'file'</span></li>
+  <li><span class=code>isDir(path) -&gt; M.pathtype(path) == 'dir'</span></li>
+  <li><span class=code>walk(paths, ftypeFns, maxDepth)</span>
+  TODO: remove this, use Walk instead.
+  walk the paths up to depth, calling <span class=code>ftypeFns[ftype]</span> for
+  each item encountered.
+  
+  If depth is nil/false then the depth is infinite.
+  
+  ftypeFns must be a table of ftypes (file, dir) and: <ul>
+    <li>default: called as fallback (if missing ftype key)</li>
+    <li>error: called if determining the type caused an error,
+    typically due to the file not existing.
+    the call is: error(path, errstr)</li>
+    <li>dirDone: called AFTER the directory has been walked</li>
+  </ul>
+  
+  The Fn signatures are: (path, ftype) -> stopWalk
+  If either return true then the walk is ended immediately
+  If dirFn returns 'skip' then the directory is skipped</li>
+  <li><span class=code>cpRecursive(from, to, except)</span>
+  recursively copy <span class=code>from/</span> to new <span class=code>to/</span> directory.</li>
+  <li><span class=code>rmRecursive(path)</span></li>
+  <li><span class=code>mkDirs(path)</span></li>
+  <li><span class=code>mkDir(path, parents)</span></li>
+  <li><span class=code>forceCp(from, to)</span>
+  copy <span class=code>from</span> to <span class=code>to</span>, creating the directory structure if necessary.</li>
+  <li><span class=code>forceWrite(path, text)</span>
+  write <span class=code>text</span> to <span class=code>path</span>, creating the directory structure if necessary.</li>
+  <li><span class=code>mkTree(dir, tree, parents)</span>
+  mkTree(tree) builds a tree of files and dirs at `dir` <ul>
+    <li>Dirs  are tables.</li>
+    <li>Files are string or fd -- which are read+closed.</li>
+  </ul>
+  Example: <div class=code-block>&nbsp; tree = {<br>
+&nbsp; &nbsp; a = {<br>
+&nbsp; &nbsp; &nbsp; ['a1.txt'] = 'stuff in a1.txt',<br>
+&nbsp; &nbsp; &nbsp; ['a2.txt'] = 'stuff in a.txt',<br>
+&nbsp; &nbsp; &nbsp; a3 = {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; ['a4.txt'] = io.open'some/file.txt',<br>
+&nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; }<br>
+&nbsp; }<br>
+&nbsp; 
+</div>
+  
+  Builds a tree like <div class=code-block>&nbsp; a/a1.txt &nbsp; &nbsp;# content: stuff in a1.txt<br>
+&nbsp; a/a2.txt &nbsp; &nbsp;# content: stuff in a2.txt<br>
+&nbsp; a/a3/a4.txt # content: stuff in a3.txt<br>
+&nbsp; 
+</div></li>
+  <li><span class=code>Lap()</span></li>
+  <li><span class=code>sh(M,'sh') -&gt; out, err, Sh</span>
+  Execute the command in another process via execvp (system shell). Throws an
+  error if the command fails.
+  
+  if cmd is a table, the following keys are treated as special. If you need any
+  of these then you must use M.Sh directly (recommendation: use Plumb) <ul>
+    <li><span class=code>stdin[string|file]</span> the process's stdin. If string it will be sent to stdin.</li>
+    <li><span class=code>stdout[file]</span> the process's stdout. out will be nil if this is set</li>
+    <li><span class=code>stderr[file]</span> the process's stderr (default=io.stderr)</li>
+    <li><span class=code>ENV [table]</span> the process's environment.</li>
+    <li><span class=code>CWD [table]</span> the process's current directory.</li>
+    <li><span class=code>rc [bool]</span> if true allow non-zero return codes (else throw error).
+    You can get the rc with <span class=code>sh:rc()</span> (method on 3rd return argument).</li>
+  </ul>
+  
+  Note: use <span class=code>Plumb{...}:run()</span> if you want to pipe multiple shells together.
+  <div class=table><table>
+    <tr>
+      <th>Command                               Bash</th>
+    </tr>
+    <tr>
+      <td><span class=code>sh'ls foo/bar'</span></td>
+      <td><span class=code>ls foo/bar</span></td>
+    </tr>
+    <tr>
+      <td><span class=code>sh{'ls', 'foo/bar', 'dir w spc/'}</span></td>
+      <td><span class=code>ls foo/bar "dir w spc/"</span></td>
+    </tr>
+    <tr>
+      <td><span class=code>sh{stdin='sent to stdin', 'cat'}</span></td>
+      <td><span class=code>echo "sent to stdin" | cat</span></td>
+    </tr>
+  </table></div></li>
+  <li><span class=code>isRoot() -&gt; os.getenv'EUID' == '0'</span></li>
+</ul>
+<p>
+<h2><a id=""civix.B"" href="#"civix.B"">civix.B</h2></a>
+Several (but not all) functions in this module are used for civ.lua.
+However, native modules especially cannot be loaded before the
+bulid system is bootstrapped (at least not easily), so there are
+a few of these checks for NOLIB in this library which will use
+civix.B (bootstrap) instead in that case.
+<p>
+Clients should typically not use civix.B.
+<p>
+<b>Functions</b> <ul>
+  <li><span class=code>sh(cmd) -&gt; stdout, stderr, fakeSh</span></li>
+  <li><span class=code>mkdir(dir)</span></li>
+  <li><span class=code>rmdir(dir)</span></li>
+  <li><span class=code>dir(dir) -&gt; iter[entry]</span></li>
+  <li><span class=code>exists(path) -&gt; bool</span></li>
+  <li><span class=code>pathtype(path)</span></li>
+</ul>
+<p>
+<h2><a id=""civix.Walk"" href="#"civix.Walk"">Record Walk</h2></a>
+<ul>
+  <li><b>maxDepth</b> :
+  maximum depth to walk (default=infinite)</li>
+  <li><b>pi</b> :
+  the current (root) path index being walked</li>
+</ul>
+Walk the directory tree as a iterator of <span class=code>path, ftype</span>. Can walk either a
+single path <span class=code>Walk'path/'</span> or a list of paths <span class=code>Walk{'a/', 'b.txt'}</span>. <ul>
+  <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
+  <li>Warning: you may want to handle <span class=code>ftype=='error'</span></li>
+</ul>
+<p>
+<h2><a id=""civix.Sh"" href="#"civix.Sh"">Record Sh</h2></a>
+<ul>
+  <li><b>args</b> :
+  arguments to pass to shell</li>
+  <li><b>stdin</b> :
+  shell's stdin to send  (default=empty)</li>
+  <li><b>stdout</b> :
+  shell's stdout              (default=empty)</li>
+  <li><b>stderr</b> :
+  shell's stderr              (default=empty)</li>
+  <li><b>env</b> :
+  shell's environment {'FOO=bar', ...}</li>
+  <li><b>cwd</b> :
+  current working directory</li>
+</ul>
 Start args on the shell
 <div class=info>Suggestion: use civix.sh instead.</div>
 <p>
@@ -74,497 +245,28 @@ Examples (see civix.sh for more examples): <div class=table><table>
   </tr>
 </table></div>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>args</span></td>
-    <td>[table] 
-    arguments to pass to shell</td>
-  </tr>
-  <tr>
-    <td><span class=code>stdin</span></td>
-    <td>[file</td>
-    <td>bool] 
-    shell's stdin to send  (default=empty)</td>
-  </tr>
-  <tr>
-    <td><span class=code>stdout</span></td>
-    <td>[file</td>
-    <td>bool] 
-    shell's stdout              (default=empty)</td>
-  </tr>
-  <tr>
-    <td><span class=code>stderr</span></td>
-    <td>[file</td>
-    <td>bool] 
-    shell's stderr              (default=empty)</td>
-  </tr>
-  <tr>
-    <td><span class=code>env</span></td>
-    <td>[list] 
-    shell's environment {'FOO=bar', ...}</td>
-  </tr>
-  <tr>
-    <td><span class=code>cwd</span></td>
-    <td>[string] 
-    current working directory</td>
-  </tr>
-  <tr>
-    <td><span class=code>_sh</span></td>
-    <td>[userdata] 
-    internal C implemented shell</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.Sh.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.Sh.__index</span></td>
-    <td>[Ty<Sh>] (<a href=".civ/lua/civix.lua:550">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.Sh.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.finish</span></td>
-    <td>[<span class=code>(sh, other) -&gt; out, err</span>] (<a href=".civ/lua/civix.lua:615">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.isDone</span></td>
-    <td>[<span class=code>(sh) -&gt; sh._sh:isDone()</span>] (<a href=".civ/lua/civix.lua:581">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.rc</span></td>
-    <td>[<span class=code>(sh) -&gt; sh._sh:rc()</span>] (<a href=".civ/lua/civix.lua:582">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.read</span></td>
-    <td>[<span class=code>(sh, ...) -&gt; sh.stdout:read(...)</span>] (<a href=".civ/lua/civix.lua:617">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.start</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:579">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.wait</span></td>
-    <td>[<span class=code>(sh) -&gt; int</span>] (<a href=".civ/lua/civix.lua:590">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Sh.write</span></td>
-    <td>[<span class=code>(sh, ...) -&gt; sh.stdin:write(...)</span>] (<a href=".civ/lua/civix.lua:616">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="civix.ShFin" href="#civix.ShFin">civix.ShFin</a> (<a href=".civ/lua/civix.lua:596"><i>src</i></a>)</h3>
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>stdin</span></td>
-    <td>[file] </td>
-  </tr>
-  <tr>
-    <td><span class=code>stdout</span></td>
-    <td>[file] </td>
-  </tr>
-  <tr>
-    <td><span class=code>stderr</span></td>
-    <td>[file] </td>
-  </tr>
-  <tr>
-    <td><span class=code>input</span></td>
-    <td>[string] 
-    write to then close stdin (either self's or shell's)</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.ShFin.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.ShFin.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.ShFin.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.ShFin.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.ShFin.__index</span></td>
-    <td>[Ty<ShFin>] (<a href=".civ/lua/civix.lua:596">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.ShFin.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.ShFin.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.ShFin.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="civix.Walk" href="#civix.Walk">civix.Walk</a> (<a href=".civ/lua/civix.lua:379"><i>src</i></a>)</h3>
-Walk the directory tree as a iterator of <span class=code>path, ftype</span>. Can walk either a
-single path <span class=code>Walk'path/'</span> or a list of paths <span class=code>Walk{'a/', 'b.txt'}</span>. <ul>
-  <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
-  <li>Warning: you may want to handle <span class=code>ftype=='error'</span></li>
+<h2><a id=""civix.ShFin"" href="#"civix.ShFin"">Record ShFin</h2></a>
+<ul>
+  <li><b>stdin</b> </li>
+  <li><b>stdout</b> </li>
+  <li><b>stderr</b> </li>
+  <li><b>input</b> :
+  write to then close stdin (either self's or shell's)</li>
 </ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>maxDepth</span></td>
-    <td>[int] 
-    maximum depth to walk (default=infinite)</td>
-  </tr>
-  <tr>
-    <td><span class=code>pi</span></td>
-    <td>[int] = <span class=code>0</span>
-    the current (root) path index being walked</td>
-  </tr>
-  <tr>
-    <td><span class=code>_dirs</span></td>
-    <td>[table] 
-    a stack of WalkDirs that are being walked</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.Walk.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.Walk.__index</span></td>
-    <td>[Ty<Walk>] (<a href=".civ/lua/civix.lua:379">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.Walk.__call</span></td>
-    <td>[<span class=code>(w) -&gt; path, ftype</span>] (<a href=".civ/lua/civix.lua:402">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk._deeper</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:408">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.depth</span></td>
-    <td>[<span class=code>(w) -&gt; #w._dirs</span>] (<a href=".civ/lua/civix.lua:386">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.Walk.skip</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:388">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="civix._WalkDir" href="#civix._WalkDir">civix._WalkDir</a> (<a href=".civ/lua/civix.lua:415"><i>src</i></a>)</h3>
-Walk a single directory
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>ftypes</span></td>
-    <td>[table] 
-    path -> ftype map</td>
-  </tr>
-  <tr>
-    <td><span class=code>_i</span></td>
-    <td>[int] 
-    current index</td>
-  </tr>
-  <tr>
-    <td><span class=code>base</span></td>
-    <td>[string] 
-    base directory</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix._WalkDir.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix._WalkDir.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix._WalkDir.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix._WalkDir.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix._WalkDir.__index</span></td>
-    <td>[Ty<_WalkDir>] (<a href=".civ/lua/civix.lua:415">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix._WalkDir.__call</span></td>
-    <td>[<span class=code>(wd, walk) -&gt; path, ftype</span>] (<a href=".civ/lua/civix.lua:434">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix._WalkDir.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix._WalkDir.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix._WalkDir.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="civix.Lap" href="#civix.Lap">civix.Lap</a> (<a href=".civ/lua/civix.lua:523"><i>src</i></a>)</h3>
-<h3>Function <a id="civix._sh" href="#civix._sh">civix._sh</a><span class=code>(cmd) -&gt; Sh</span> (<a href=".civ/lua/civix.lua:640"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.cp" href="#civix.cp">civix.cp</a> (<a href=".civ/lua/civix.lua:255"><i>src</i></a>)</h3>
-copy data from <span class=code>from</span> to <span class=code>to</span>. Their types can be either
-a string (path) or a file descriptor.
-<h3>Function <a id="civix.cpRecursive" href="#civix.cpRecursive">civix.cpRecursive</a> (<a href=".civ/lua/civix.lua:449"><i>src</i></a>)</h3>
-recursively copy <span class=code>from/</span> to new <span class=code>to/</span> directory.
-<h3>Function <a id="civix.dir" href="#civix.dir">civix.dir</a> (<a href=".civ/lua/civix.lua:152"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.epoch" href="#civix.epoch">civix.epoch</a><span class=code>() -&gt; ds.Epoch(lib.epoch())</span> (<a href=".civ/lua/civix.lua:294"><i>src</i></a>)</h3>
-Return the Epoch/Mono time
-Time according to realtime clock
-<h3>Function <a id="civix.exists" href="#civix.exists">civix.exists</a> (<a href=".civ/lua/civix.lua:158"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.fdWrite" href="#civix.fdWrite">civix.fdWrite</a><span class=code>(to, from, sz--[[=BLOCK_SZ]]) -&gt; (to, from)</span> (<a href=".civ/lua/civix.lua:238"><i>src</i></a>)</h3>
-Read data from fd <span class=code>from</span> and write to fd <span class=code>to</span>, then flush.
-<h3>Function <a id="civix.forceCp" href="#civix.forceCp">civix.forceCp</a> (<a href=".civ/lua/civix.lua:479"><i>src</i></a>)</h3>
-copy <span class=code>from</span> to <span class=code>to</span>, creating the directory structure if necessary.
-<h3>Function <a id="civix.forceWrite" href="#civix.forceWrite">civix.forceWrite</a> (<a href=".civ/lua/civix.lua:485"><i>src</i></a>)</h3>
-write <span class=code>text</span> to <span class=code>path</span>, creating the directory structure if necessary.
-<h3>Function <a id="civix.getpagesize" href="#civix.getpagesize">civix.getpagesize</a><span class=code>() -&gt; 4096</span> (<a href=".civ/lua/civix.lua:214"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.isDir" href="#civix.isDir">civix.isDir</a><span class=code>(path) -&gt; M.pathtype(path) == 'dir'</span> (<a href=".civ/lua/civix.lua:317"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.isFile" href="#civix.isFile">civix.isFile</a><span class=code>(path) -&gt; M.pathtype(path) == 'file'</span> (<a href=".civ/lua/civix.lua:316"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.isRoot" href="#civix.isRoot">civix.isRoot</a><span class=code>() -&gt; os.getenv'EUID' == '0'</span> (<a href=".civ/lua/civix.lua:674"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.ls" href="#civix.ls">civix.ls</a><span class=code>(dir) -&gt; list[str]</span> (<a href=".civ/lua/civix.lua:225"><i>src</i></a>)</h3>
-Return the entries in a dir as a list.
-They are sorted to put the directories first.
-<h3>Function <a id="civix.mkDir" href="#civix.mkDir">civix.mkDir</a> (<a href=".civ/lua/civix.lua:473"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.mkDirs" href="#civix.mkDirs">civix.mkDirs</a> (<a href=".civ/lua/civix.lua:469"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.mkTree" href="#civix.mkTree">civix.mkTree</a> (<a href=".civ/lua/civix.lua:519"><i>src</i></a>)</h3>
-mkTree(tree) builds a tree of files and dirs at `dir` <ul>
-  <li>Dirs  are tables.</li>
-  <li>Files are string or fd -- which are read+closed.</li>
-</ul>
-Example: <div class=code-block>tree = {<br>
-&nbsp; a = {<br>
-&nbsp; &nbsp; ['a1.txt'] = 'stuff in a1.txt',<br>
-&nbsp; &nbsp; ['a2.txt'] = 'stuff in a.txt',<br>
-&nbsp; &nbsp; a3 = {<br>
-&nbsp; &nbsp; &nbsp; ['a4.txt'] = io.open'some/file.txt',<br>
-&nbsp; &nbsp; }<br>
-&nbsp; }<br>
-}
-</div>
-<p>
-Builds a tree like <div class=code-block>a/a1.txt &nbsp; &nbsp;# content: stuff in a1.txt<br>
-a/a2.txt &nbsp; &nbsp;# content: stuff in a2.txt<br>
-a/a3/a4.txt # content: stuff in a3.txt
-</div>
-<h3>Function <a id="civix.mkdir" href="#civix.mkdir">civix.mkdir</a> (<a href=".civ/lua/civix.lua:143"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.modifiedEq" href="#civix.modifiedEq">civix.modifiedEq</a> (<a href=".civ/lua/civix.lua:211"><i>src</i></a>)</h3>
-return whether two path|File|Stat have equal modification times
-<h3>Function <a id="civix.mono" href="#civix.mono">civix.mono</a><span class=code>() -&gt; ds.Duration(lib.mono())</span> (<a href=".civ/lua/civix.lua:296"><i>src</i></a>)</h3>
-Duration according to monotomically incrementing clock.
-<h3>Function <a id="civix.monoSec" href="#civix.monoSec">civix.monoSec</a><span class=code>() -&gt; M.mono():asSeconds()</span> (<a href=".civ/lua/civix.lua:297"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.mv" href="#civix.mv">civix.mv</a> (<a href=".civ/lua/civix.lua:228"><i>src</i></a>)</h3>
-Move path from old -> new, throwing an error on failure.
-<h3>Function <a id="civix.pathEq" href="#civix.pathEq">civix.pathEq</a> (<a href=".civ/lua/civix.lua:314"><i>src</i></a>)</h3>
-return if the contents of the two paths are equal.
-If both are directories return true (do not recurse).
-If both don't exist return true
-<h3>Function <a id="civix.pathtype" href="#civix.pathtype">civix.pathtype</a> (<a href=".civ/lua/civix.lua:166"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.quote" href="#civix.quote">civix.quote</a> (<a href=".civ/lua/civix.lua:278"><i>src</i></a>)</h3>
-quote the str if it's possible
-<h3>Function <a id="civix.rm" href="#civix.rm">civix.rm</a><span class=code>(path) -&gt; nil</span> (<a href=".civ/lua/civix.lua:172"><i>src</i></a>)</h3>
-remove file.
-<h3>Function <a id="civix.rmRecursive" href="#civix.rmRecursive">civix.rmRecursive</a> (<a href=".civ/lua/civix.lua:459"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.rmdir" href="#civix.rmdir">civix.rmdir</a> (<a href=".civ/lua/civix.lua:155"><i>src</i></a>)</h3>
-<h3>Function <a id="civix.setModified" href="#civix.setModified">civix.setModified</a><span class=code>(f, sec, nsec) -&gt; ok, errmsg?</span> (<a href=".civ/lua/civix.lua:269"><i>src</i></a>)</h3>
-set the modified time of the path|file
-<h3>Function <a id="civix.sh" href="#civix.sh">civix.sh</a><span class=code>(M,'sh') -&gt; out, err, Sh</span> (<a href=".civ/lua/civix.lua:672"><i>src</i></a>)</h3>
-Execute the command in another process via execvp (system shell). Throws an
-error if the command fails.
-<p>
-if cmd is a table, the following keys are treated as special. If you need any
-of these then you must use M.Sh directly (recommendation: use Plumb) <ul>
-  <li><span class=code>stdin[string|file]</span> the process's stdin. If string it will be sent to stdin.</li>
-  <li><span class=code>stdout[file]</span> the process's stdout. out will be nil if this is set</li>
-  <li><span class=code>stderr[file]</span> the process's stderr (default=io.stderr)</li>
-  <li><span class=code>ENV [table]</span> the process's environment.</li>
-  <li><span class=code>CWD [table]</span> the process's current directory.</li>
-  <li><span class=code>rc [bool]</span> if true allow non-zero return codes (else throw error).
-  You can get the rc with <span class=code>sh:rc()</span> (method on 3rd return argument).</li>
-</ul>
-<p>
-Note: use <span class=code>Plumb{...}:run()</span> if you want to pipe multiple shells together.
-<div class=table><table>
-  <tr>
-    <th>Command                               Bash</th>
-  </tr>
-  <tr>
-    <td><span class=code>sh'ls foo/bar'</span></td>
-    <td><span class=code>ls foo/bar</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>sh{'ls', 'foo/bar', 'dir w spc/'}</span></td>
-    <td><span class=code>ls foo/bar "dir w spc/"</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>sh{stdin='sent to stdin', 'cat'}</span></td>
-    <td><span class=code>echo "sent to stdin" | cat</span></td>
-  </tr>
-</table></div>
-<h3>Function <a id="civix.sleep" href="#civix.sleep">civix.sleep</a><span class=code>(d) -&gt; nil</span> (<a href=".civ/lua/civix.lua:290"><i>src</i></a>)</h3>
-Sleep for the specified duration
-<h3>Function <a id="civix.stat" href="#civix.stat">civix.stat</a><span class=code>(v) -&gt; Stat?, errmsg?</span> (<a href=".civ/lua/civix.lua:199"><i>src</i></a>)</h3>
-Given a path|File|Stat return a Stat
-<h3>Function <a id="civix.swap" href="#civix.swap">civix.swap</a> (<a href=".civ/lua/civix.lua:261"><i>src</i></a>)</h3>
-swap paths a <-> b
-<h3>Function <a id="civix.walk" href="#civix.walk">civix.walk</a> (<a href=".civ/lua/civix.lua:368"><i>src</i></a>)</h3>
-TODO: remove this, use Walk instead.
-walk the paths up to depth, calling <span class=code>ftypeFns[ftype]</span> for
-each item encountered.
-<p>
-If depth is nil/false then the depth is infinite.
-<p>
-ftypeFns must be a table of ftypes (file, dir) and: <ul>
-  <li>default: called as fallback (if missing ftype key)</li>
-  <li>error: called if determining the type caused an error,
-  typically due to the file not existing.
-  the call is: error(path, errstr)</li>
-  <li>dirDone: called AFTER the directory has been walked</li>
-</ul>
-<p>
-The Fn signatures are: (path, ftype) -> stopWalk
-If either return true then the walk is ended immediately
-If dirFn returns 'skip' then the directory is skipped
-<p>
-<h2>Module <a id="civix.B" href="#civix.B">civix.B</a> (<a href=".civ/lua/civix.lua:36"><i>src</i></a>)</h2>
-Several (but not all) functions in this module are used for civ.lua.
-However, native modules especially cannot be loaded before the
-bulid system is bootstrapped (at least not easily), so there are
-a few of these checks for NOLIB in this library which will use
-civix.B (bootstrap) instead in that case.
-<p>
-Clients should typically not use civix.B.
-<p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.B.EEXIST</span></td>
-    <td>[number] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.SH_UNSUPPORTED</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Functions: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>civix.B.dir</span></td>
-    <td>[<span class=code>(dir) -&gt; iter[entry]</span>] (<a href=".civ/lua/civix.lua:112">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.exists</span></td>
-    <td>[<span class=code>(path) -&gt; bool</span>] (<a href=".civ/lua/civix.lua:117">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.mkdir</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:92">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.pathtype</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:123">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.rmdir</span></td>
-    <td>[function] (<a href=".civ/lua/civix.lua:98">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>civix.B.sh</span></td>
-    <td>[<span class=code>(cmd) -&gt; stdout, stderr, fakeSh</span>] (<a href=".civ/lua/civix.lua:79">src</a>)</td>
-  </tr>
-</table></div>
-<h2>Module <a id="civix.testing" href="#civix.testing">civix.testing</a> (<a href=".civ/lua/civix/testing.lua:4"><i>src</i></a>)</h2>
+<h1><a id=""civix.testing"" href="#"civix.testing"">civix.testing</h1></a>
 test runners and helpers for civix
 <p>
-<h4>Value <a id="civix.testing.__name" href="#civix.testing.__name">civix.testing.__name</a></h4>
-<h3>Function <a id="civix.testing.runAsyncTest" href="#civix.testing.runAsyncTest">civix.testing.runAsyncTest</a> (<a href=".civ/lua/civix/testing.lua:30"><i>src</i></a>)</h3>
-Typically an entire test file is wrapped in a function,
-then passed to this -- which runs all tests sequentially
-inside the lap environment.
+<b>Functions</b> <ul>
+  <li><span class=code>runAsyncTest(fn)</span>
+  Typically an entire test file is wrapped in a function,
+  then passed to this -- which runs all tests sequentially
+  inside the lap environment.
+  
+  <div class=info>This does not print test names/etc. Use civtest or
+  equivalent for that.
+  </div></li>
+</ul>
 <p>
-<div class=info>This does not print test names/etc. Use civtest or
-equivalent for that.
-</div>
 </div></body>
 </html>

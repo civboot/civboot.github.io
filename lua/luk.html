@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,147 +11,40 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
-<h2>Module <a id="luk" href="#luk">luk</a> (<a href=".civ/lua/luk.lua:4"><i>src</i></a>)</h2>
+<h1><a id=""luk"" href="#"luk"">luk</h1></a>
 luk: lua config language.
 <p>
-<h3>Table <a id="luk.ENV" href="#luk.ENV">luk.ENV</a> (<a href=".civ/lua/ds/load.lua:53"><i>src</i></a>)</h3>
-Default environment for sandboxed loading.<div class=code-block>M.ENV = {<br>
-&nbsp; __name = 'ds.load.ENV',<br>
-&nbsp; format=fmt.format,<br>
-&nbsp; insert=table.insert, push=ds.push,<br>
-&nbsp; sort=ds.sort,<br>
-&nbsp; extend=ds.extend, update=ds.update, merge=ds.merge,<br>
-&nbsp; concat=table.concat,<br>
-&nbsp; tostring=tostring, tointeger=math.tointeger,<br>
-&nbsp; tonumber=tonumber,<br>
-&nbsp; pairs=pairs, &nbsp; ipairs=ipairs,<br>
-&nbsp; isEmpty = ds.isEmpty,<br>
-&nbsp; error=error, &nbsp; assert=fmt.assertf,<br>
-<br>
-&nbsp; record = mty.record, enum = mty.enum,<br>
-&nbsp; type = mty.ty,<br>
-}; M.ENV.__index = M.ENV
-</div>
-<h4>Value <a id="luk.__name" href="#luk.__name">luk.__name</a></h4>
-<h3>Record <a id="luk.Luk" href="#luk.Luk">luk.Luk</a> (<a href=".civ/lua/luk.lua:60"><i>src</i></a>)</h3>
-The luk loader.
+<b>Types</b> <ul>
+  <li><b>luk.Table</b></li>
+  <li><b>luk.Luk</b></li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>imported</span></td>
-    <td>[{string: pod}] 
-    table of ipath -> imported luk</td>
-  </tr>
-  <tr>
-    <td><span class=code>imports</span></td>
-    <td>[{string: {string}}] 
-    table of ipath to its imports for dependency analysis.</td>
-  </tr>
-  <tr>
-    <td><span class=code>pathFn</span></td>
-    <td>[fn(string) -> string] = <span class=code>fn"ds.iden"[/home/rett/projects/civlua/.civ/lua/ds.lua:150]</span>
-    a function that given a non-relative import path
-    returns the path to the file to import.</td>
-  </tr>
-  <tr>
-    <td><span class=code>envMeta</span></td>
-    <td>= <span class=code>{__index=self, __name="ds.load.ENV", assert=fn"fmt.assertf"[/home/rett/projects/civlua/.civ/lua/fmt.lua:297], concat=fn"table.concat"[/home/rett/projects/civlua/.civ/lua/doc/lua.lua:305], enum=fn"metaty.enum"[/home/rett/projects/civlua/.civ/lua/metaty.lua:521], error=fn"function"[nil], extend=fn"ds.extend"[/home/rett/projects/civlua/.civ/lua/ds.lua:452], format=fn"fmt.format"[/home/rett/projects/civlua/.civ/lua/fmt.lua:293], insert=fn"table.insert"[/home/rett/projects/civlua/.civ/lua/doc/lua.lua:330], ipairs=fn"ds.IFile.__pairs"[/home/rett/projects/civlua/.civ/lua/ds/IFile.lua:58], isEmpty=fn"ds.isEmpty"[/home/rett/projects/civlua/.civ/lua/ds.lua:340], merge=fn"ds.merge"[/home/rett/projects/civlua/.civ/lua/ds.lua:516], pairs=fn"function"[nil], push=fn"ds.push"[/home/rett/projects/civlua/.civ/lua/ds.lua:70], record=fn"metaty.record"[/home/rett/projects/civlua/.civ/lua/metaty.lua:379], sort=fn"ds.sort"[/home/rett/projects/civlua/.civ/lua/ds.lua:350], tointeger=fn"math.tointeger"[/home/rett/projects/civlua/.civ/lua/doc/lua.lua:461], tonumber=fn"function"[nil], tostring=fn"tostring"[/home/rett/projects/civlua/.civ/lua/doc/lua.lua:101], type=fn"metaty.ty"[/home/rett/projects/civlua/.civ/lua/metaty.lua:142], update=fn"M.B.update"[/home/rett/projects/civlua/.civ/lua/ds.lua:49]}</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>cycle</span></td>
-    <td>[{path}] 
-    used to detect cycles</td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>luk.Luk.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>luk.Luk.__index</span></td>
-    <td>[Ty<Luk>] (<a href=".civ/lua/luk.lua:60">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>luk.Luk.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.import</span></td>
-    <td>[function] (<a href=".civ/lua/luk.lua:77">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Luk.resolve</span></td>
-    <td>[function] (<a href=".civ/lua/luk.lua:69">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="luk.Table" href="#luk.Table">luk.Table</a> (<a href=".civ/lua/luk.lua:27"><i>src</i></a>)</h3>
+<b>Functions</b> <ul>
+  <li><span class=code>checkCycle(cycle, path)</span></li>
+  <li><span class=code>value(v)</span>
+  Convert value to luk-value</li>
+</ul>
+<p>
+<h2><a id=""luk.Table"" href="#"luk.Table"">Record Table</h2></a>
 A luk table object
 <p>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>luk.Table.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Table.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Table.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Table.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>luk.Table.__index</span></td>
-    <td>[Ty<Table>] (<a href=".civ/lua/luk.lua:27">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>luk.Table.__call</span></td>
-    <td>[function] (<a href=".civ/lua/luk.lua:37">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Table.__fmt</span></td>
-    <td>[<span class=code>(tbl, f) -&gt; f:rawtable(tbl)</span>] (<a href=".civ/lua/fmt.lua:328">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>luk.Table.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="luk.checkCycle" href="#luk.checkCycle">luk.checkCycle</a> (<a href=".civ/lua/luk.lua:18"><i>src</i></a>)</h3>
-<h3>Function <a id="luk.value" href="#luk.value">luk.value</a> (<a href=".civ/lua/luk.lua:46"><i>src</i></a>)</h3>
+<h2><a id=""luk.Luk"" href="#"luk.Luk"">Record Luk</h2></a>
+<ul>
+  <li><b>imported</b> :
+  table of ipath -> imported luk</li>
+  <li><b>imports</b> :
+  table of ipath to its imports for dependency analysis.</li>
+  <li><b>pathFn</b> :
+  a function that given a non-relative import path
+  returns the path to the file to import.</li>
+  <li><b>envMeta</b> </li>
+  <li><b>cycle</b> :
+  used to detect cycles</li>
+</ul>
+The luk loader.
+<p>
 </div></body>
 </html>

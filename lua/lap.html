@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8">
   <title>Civboot</title>
@@ -13,6 +11,8 @@
   </ul>
 </nav>
 
+<!DOCTYPE html>
+<html>
 <body><div class=doc>
 LAP: Lua Asynchronous Protocol
 <p>
@@ -125,84 +125,79 @@ The (pure lua) <a href="#lap">#lap</a> library implements: <ul>
   async/sync mode (just calls every function in <a href="#lap.LAP_FNS_SYNC">#lap.LAP_FNS_SYNC</a> or
   <a href="#LAP_FNS_ASYNC">#LAP_FNS_ASYNC</a>)</li>
 </ul>
-<h2>Module <a id="lap" href="#lap">lap</a> (<a href=".civ/lua/lap.lua:4"><i>src</i></a>)</h2>
+<p>
+<h1><a id=""lap"" href="#"lap"">lap</h1></a>
 superpower your libraries run either sync or async
 <p>
-<h3>Table <a id="lap.LAP_UPDATE" href="#lap.LAP_UPDATE">lap.LAP_UPDATE</a></h3>
-<h4>Value <a id="lap.__name" href="#lap.__name">lap.__name</a></h4>
-<h3>Table <a id="lap._async" href="#lap._async">lap._async</a></h3>
-<h3>Table <a id="lap._sync" href="#lap._sync">lap._sync</a></h3>
-<h3>Record <a id="lap.Any" href="#lap.Any">lap.Any</a> (<a href=".civ/lua/lap.lua:229"><i>src</i></a>)</h3>
+<b>Types</b> <ul>
+  <li><b>lap.Recv</b></li>
+  <li><b>lap.Send</b></li>
+  <li><b>lap.Any</b></li>
+  <li><b>lap.Lap</b></li>
+</ul>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>cor</span></td>
-    <td>[thread] </td>
-  </tr>
-  <tr>
-    <td><span class=code>fns</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>done</span></td>
-    <td>[table] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Any.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Any.__index</span></td>
-    <td>[Ty<Any>] (<a href=".civ/lua/lap.lua:229">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Any.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.ignore</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:244">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.restart</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:260">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.schedule</span></td>
-    <td>[<span class=code>(self) -&gt; self</span>] (<a href=".civ/lua/lap.lua:249">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Any.yield</span></td>
-    <td>[<span class=code>(self) -&gt; fnIndex</span>] (<a href=".civ/lua/lap.lua:255">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="lap.Lap" href="#lap.Lap">lap.Lap</a> (<a href=".civ/lua/lap.lua:330"><i>src</i></a>)</h3>
+<b>Functions</b> <ul>
+  <li><span class=code>reset()</span>
+  Clear all lap globals.</li>
+  <li><span class=code>formatCorErrors(corErrors)</span></li>
+  <li><span class=code>sync()</span>
+  Switch lua to synchronous mode</li>
+  <li><span class=code>async()</span>
+  Switch lua to asynchronous (yielding) mode</li>
+  <li><span class=code>lt1(a, b) -&gt; a[1] &lt; b[1]</span></li>
+  <li><span class=code>yield(lap, fns, setup, teardown)</span></li>
+  <li><span class=code>schedule(lap, fns, setup, teardown)</span></li>
+  <li><span class=code>all(lap, fns, setup, teardown)</span></li>
+</ul>
+<p>
+<h2><a id=""lap.Recv"" href="#"lap.Recv"">Record Recv</h2></a>
+<ul>
+  <li><b>deq</b> </li>
+  <li><b>cor</b> </li>
+</ul>
+<span class=code>Recv() -&gt; recv</span> the receive side of channel.
+<p>
+Is considered closed when all senders are closed.
+<p>
+Notes: <ul>
+  <li>Use <span class=code>recv:sender()</span> to create a sender. You can create
+  multiple senders.</li>
+  <li>Use <span class=code>recv:recv()</span> or simply <span class=code>recv()</span> to receive a value
+  (or block)</li>
+  <li>User <span class=code>sender:send(v)</span> or simply <span class=code>sender(v)</span> to send a value.</li>
+  <li><span class=code>recv:close()</span> when done. Also closes all senders.</li>
+  <li><span class=code>#recv</span> gets number of items buffered.</li>
+  <li><span class=code>recv:isDone()</span> returns true when either recv is closed
+  OR all senders are closed and <span class=code>#recv == 0</span></li>
+</ul>
+<p>
+<h2><a id=""lap.Send"" href="#"lap.Send"">Record Send</h2></a>
+Sender, created through <span class=code>recv:sender()</span>
+Is considered closed if the receiver is closed.  The receiver will
+automatically close if it is garbage collected.
+<p>
+<h2><a id=""lap.Any"" href="#"lap.Any"">Record Any</h2></a>
+<ul>
+  <li><b>cor</b> </li>
+  <li><b>fns</b> </li>
+  <li><b>done</b> </li>
+</ul>
+<p>
+<h2><a id=""lap.Lap"" href="#"lap.Lap"">Record Lap</h2></a>
+<ul>
+  <li><b>sleepFn</b> </li>
+  <li><b>monoFn</b> </li>
+  <li><b>monoHeap</b> </li>
+  <li><b>defaultSleep</b> </li>
+  <li><b>pollMap</b> </li>
+  <li><b>pollList</b> :
+  Poll list data structure. Required methods:</li>
+  <li>__len                   to get length with `#`</li>
+  <li>insert(fileno, events)  insert the fileno+events into the poll list</li>
+  <li>remove(fileno)          remove the fileno from poll list</li>
+  <li>ready(self, durationSec) -> {filenos}
+  poll for durationSec (float), return any ready filenos.</li>
+</ul>
 A single lap of the executor loop
 <p>
 Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedule other fns<br>
@@ -222,309 +217,5 @@ Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedul
 &nbsp; end
 </div>
 <p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>sleepFn</span></td>
-    <td>[function] </td>
-  </tr>
-  <tr>
-    <td><span class=code>monoFn</span></td>
-    <td>[function] </td>
-  </tr>
-  <tr>
-    <td><span class=code>monoHeap</span></td>
-    <td>[Heap] </td>
-  </tr>
-  <tr>
-    <td><span class=code>defaultSleep</span></td>
-    <td>[float] = <span class=code>0x1.47ae147ae147bp-7</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>pollMap</span></td>
-    <td>[table[fileno,coroutine]] </td>
-  </tr>
-  <tr>
-    <td><span class=code>pollList</span></td>
-    <td>[PollList] 
-    Poll list data structure. Required methods:
-    * __len                   to get length with `#`
-    * insert(fileno, events)  insert the fileno+events into the poll list
-    * remove(fileno)          remove the fileno from poll list
-    * ready(self, durationSec) -> {filenos}
-    poll for durationSec (float), return any ready filenos.
-    </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Lap.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Lap.__index</span></td>
-    <td>[Ty<Lap>] (<a href=".civ/lua/lap.lua:330">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Lap.__call</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:394">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.__fmt</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:234">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.execute</span></td>
-    <td>[<span class=code>(lap, cor, note) -&gt; errstr?</span>] (<a href=".civ/lua/lap.lua:351">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.isDone</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:397">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.poll</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:339">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.run</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:427">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.sleep</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:338">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Lap.stop</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:337">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="lap.Recv" href="#lap.Recv">lap.Recv</a> (<a href=".civ/lua/lap.lua:105"><i>src</i></a>)</h3>
-<span class=code>Recv() -&gt; recv</span> the receive side of channel.
-<p>
-Is considered closed when all senders are closed.
-<p>
-Notes: <ul>
-  <li>Use <span class=code>recv:sender()</span> to create a sender. You can create
-  multiple senders.</li>
-  <li>Use <span class=code>recv:recv()</span> or simply <span class=code>recv()</span> to receive a value
-  (or block)</li>
-  <li>User <span class=code>sender:send(v)</span> or simply <span class=code>sender(v)</span> to send a value.</li>
-  <li><span class=code>recv:close()</span> when done. Also closes all senders.</li>
-  <li><span class=code>#recv</span> gets number of items buffered.</li>
-  <li><span class=code>recv:isDone()</span> returns true when either recv is closed
-  OR all senders are closed and <span class=code>#recv == 0</span></li>
-</ul>
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>deq</span></td>
-    <td>[Deq] </td>
-  </tr>
-  <tr>
-    <td><span class=code>_sends</span></td>
-    <td>[WeakKV] </td>
-  </tr>
-  <tr>
-    <td><span class=code>cor</span></td>
-    <td>[thread] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Recv.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Recv.__index</span></td>
-    <td>[Ty<Recv>] (<a href=".civ/lua/lap.lua:105">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Recv.__call</span></td>
-    <td>[<span class=code>(r) -&gt; r.deq()</span>] (<a href=".civ/lua/lap.lua:136">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__close</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:115">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__len</span></td>
-    <td>[<span class=code>(r) -&gt; #r.deq</span>] (<a href=".civ/lua/lap.lua:117">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.close</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:115">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.drain</span></td>
-    <td>[<span class=code>(r) -&gt; r.deq:drain()</span>] (<a href=".civ/lua/lap.lua:139">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.hasSender</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:130">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.isClosed</span></td>
-    <td>[<span class=code>(r) -&gt; r._s</span>] (<a href=".civ/lua/lap.lua:118">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.isDone</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:122">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.recv</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:136">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.sender</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:127">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Recv.wait</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:135">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Record <a id="lap.Send" href="#lap.Send">lap.Send</a> (<a href=".civ/lua/lap.lua:152"><i>src</i></a>)</h3>
-Sender, created through <span class=code>recv:sender()</span>
-Is considered closed if the receiver is closed.  The receiver will
-automatically close if it is garbage collected.
-<p>
-<b>Fields: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>_recv</span></td>
-    <td>[Recv] </td>
-  </tr>
-</table></div>
-<b>Values: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Send.__docs</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__fieldIds</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__fields</span></td>
-    <td>[table] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__mode</span></td>
-    <td>[string] </td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__name</span></td>
-    <td>[string] </td>
-  </tr>
-</table></div>
-<b>Records: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Send.__index</span></td>
-    <td>[Ty<Send>] (<a href=".civ/lua/lap.lua:152">src</a>)</td>
-  </tr>
-</table></div>
-<b>Methods: </b> <div class=table><table>
-  <tr>
-    <td><span class=code>lap.Send.__call</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:171">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__close</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__len</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:189">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__newindex</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:297">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.__tostring</span></td>
-    <td>[function] (<a href=".civ/lua/metaty.lua:240">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.close</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:165">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.extend</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:175">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.extendLeft</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:185">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.isClosed</span></td>
-    <td>[<span class=code>(s) -&gt; s._recv == nil</span>] (<a href=".civ/lua/lap.lua:167">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.push</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:171">src</a>)</td>
-  </tr>
-  <tr>
-    <td><span class=code>lap.Send.pushLeft</span></td>
-    <td>[function] (<a href=".civ/lua/lap.lua:180">src</a>)</td>
-  </tr>
-</table></div>
-<h3>Function <a id="lap.all" href="#lap.all">lap.all</a> (<a href=".civ/lua/lap.lua:438"><i>src</i></a>)</h3>
-<h3>Function <a id="lap.async" href="#lap.async">lap.async</a> (<a href=".civ/lua/lap.lua:59"><i>src</i></a>)</h3>
-Switch lua to asynchronous (yielding) mode
-<h3>Function <a id="lap.formatCorErrors" href="#lap.formatCorErrors">lap.formatCorErrors</a> (<a href=".civ/lua/lap.lua:45"><i>src</i></a>)</h3>
-<h3>Function <a id="lap.lt1" href="#lap.lt1">lap.lt1</a><span class=code>(a, b) -&gt; a[1] &lt; b[1]</span> (<a href=".civ/lua/lap.lua:264"><i>src</i></a>)</h3>
-<h3>Function <a id="lap.reset" href="#lap.reset">lap.reset</a> (<a href=".civ/lua/lap.lua:36"><i>src</i></a>)</h3>
-Clear all lap globals.
-<h3>Function <a id="lap.schedule" href="#lap.schedule">lap.schedule</a> (<a href=".civ/lua/lap.lua:438"><i>src</i></a>)</h3>
-<h3>Function <a id="lap.sync" href="#lap.sync">lap.sync</a> (<a href=".civ/lua/lap.lua:52"><i>src</i></a>)</h3>
-Switch lua to synchronous mode
-<h3>Function <a id="lap.yield" href="#lap.yield">lap.yield</a> (<a href=".civ/lua/lap.lua:438"><i>src</i></a>)</h3>
 </div></body>
 </html>
