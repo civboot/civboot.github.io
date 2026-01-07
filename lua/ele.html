@@ -132,13 +132,13 @@ They are free to use any lua API to do so, but should avoid large amounts
 of work as much as possible.
 <p>
 <p>
-<h1><a id=""ele"" href="#"ele"">ele</h1></a>
+<h1><a id=""ele"" href="#"ele"">Mod ele</h1></a>
 <p>
 <b>Functions</b> <ul>
   <li><span class=code>main(args)</span></li>
 </ul>
 <p>
-<h1><a id=""ele.types"" href="#"ele.types"">ele.types</h1></a>
+<h1><a id=""ele.types"" href="#"ele.types"">Mod ele.types</h1></a>
 <p>
 <b>Types</b> <ul>
   <li><b>ele.types.term</b></li>
@@ -154,7 +154,7 @@ of work as much as possible.
   <li><span class=code>checkAction(data, action) -&gt; errstring</span></li>
 </ul>
 <p>
-<h2><a id=""vt100"" href="#"vt100"">vt100</h2></a>
+<h2><a id=""vt100"" href="#"vt100"">Mod vt100</h2></a>
 Civboot vt100 Terminal library that supports LAP protocol.
 Module for interacting with the vt100 via keys and AsciiColors.
 <div class=code-block>License CC0 / UNLICENSE<br>
@@ -204,26 +204,26 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4
   libraries (and those that adhere to them).</li>
 </ul>
 <p>
-<h3><a id=""vt100.ctrl"" href="#"vt100.ctrl"">vt100.ctrl</h3></a>
+<h3><a id=""vt100.ctrl"" href="#"vt100.ctrl"">Mod vt100.ctrl</h3></a>
 Direct terminal control functions
 <p>
 <b>Functions</b> <ul>
-  <li><span class=code>color(name, fmt)</span></li>
-  <li><span class=code>show(name, fmt)</span></li>
-  <li><span class=code>clear(name, fmt)</span></li>
+  <li><span class=code>hide(name, fmt)</span></li>
+  <li><span class=code>save(name, fmt)</span></li>
   <li><span class=code>nextline(name, fmt)</span></li>
-  <li><span class=code>colorFB(name, fmt)</span></li>
-  <li><span class=code>restore(name, fmt)</span></li>
-  <li><span class=code>golc(name, fmt)</span></li>
   <li><span class=code>reset(name, fmt)</span></li>
   <li><span class=code>getlc(name, fmt)</span></li>
-  <li><span class=code>save(name, fmt)</span></li>
+  <li><span class=code>color(name, fmt)</span></li>
+  <li><span class=code>down(name, fmt)</span></li>
+  <li><span class=code>show(name, fmt)</span></li>
+  <li><span class=code>colorFB(name, fmt)</span></li>
+  <li><span class=code>right(name, fmt)</span></li>
+  <li><span class=code>left(name, fmt)</span></li>
+  <li><span class=code>restore(name, fmt)</span></li>
   <li><span class=code>cleareol(name, fmt)</span></li>
   <li><span class=code>up(name, fmt)</span></li>
-  <li><span class=code>right(name, fmt)</span></li>
-  <li><span class=code>down(name, fmt)</span></li>
-  <li><span class=code>left(name, fmt)</span></li>
-  <li><span class=code>hide(name, fmt)</span></li>
+  <li><span class=code>golc(name, fmt)</span></li>
+  <li><span class=code>clear(name, fmt)</span></li>
   <li><span class=code>size(f)</span>
   causes terminal to send size as (escaped) cursor position</li>
 </ul>
@@ -281,7 +281,7 @@ A container with windows split vertically (i.e. tall windows)
 </ul>
 A container with windows split horizontally (i.e. wide windows)
 <p>
-<h1><a id=""ele.keys"" href="#"ele.keys"">ele.keys</h1></a>
+<h1><a id=""ele.keys"" href="#"ele.keys"">Mod ele.keys</h1></a>
 <p>
 <b>Types</b> <ul>
   <li><b>ele.keys.KeySt</b></li>
@@ -372,7 +372,7 @@ The value must be one of: <ul>
   <li>callable <span class=code>event(ev, keySt)</span> for more complex bindings.</li>
 </ul>
 <p>
-<h1><a id=""ele.edit"" href="#"ele.edit"">ele.edit</h1></a>
+<h1><a id=""ele.edit"" href="#"ele.edit"">Mod ele.edit</h1></a>
 <p>
 <b>Types</b> <ul>
   <li><b>ele.edit.Edit</b></li>
@@ -400,7 +400,7 @@ The value must be one of: <ul>
   asciicolor style</li>
 </ul>
 <p>
-<h1><a id=""ele.actions"" href="#"ele.actions"">ele.actions</h1></a>
+<h1><a id=""ele.actions"" href="#"ele.actions"">Mod ele.actions</h1></a>
 <p>
 <b>Types</b> <ul>
   <li><b>ele.actions.nav</b></li>
@@ -430,7 +430,7 @@ The value must be one of: <ul>
   Window operations like split and close</li>
 </ul>
 <p>
-<h2><a id=""ele.actions.nav"" href="#"ele.actions.nav"">ele.actions.nav</h2></a>
+<h2><a id=""ele.actions.nav"" href="#"ele.actions.nav"">Mod ele.actions.nav</h2></a>
 <p>
 <b>Functions</b> <ul>
   <li><span class=code>getFocus(line)</span></li>
@@ -514,7 +514,7 @@ The value must be one of: <ul>
   <li><b>running</b> </li>
 </ul>
 <p>
-<h1><a id=""ele.testing"" href="#"ele.testing"">ele.testing</h1></a>
+<h1><a id=""ele.testing"" href="#"ele.testing"">Mod ele.testing</h1></a>
 <p>
 <b>Functions</b> <ul>
   <li><span class=code>newSession(text)</span></li>

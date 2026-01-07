@@ -38,7 +38,7 @@ It interacts (but does not set) the <b>globals</b> <span class=code>CWD</span> a
 "current working directory" and "home directory", respectively.
 <p>
 <p>
-<h1><a id=""ds"" href="#"ds"">ds</h1></a>
+<h1><a id=""ds"" href="#"ds"">Mod ds</h1></a>
 ds: data structures and algorithms.
 <p>
 <b>Types</b> <ul>
@@ -316,7 +316,7 @@ end
   Print to io.sderr</li>
 </ul>
 <p>
-<h2><a id=""M.B"" href="#"M.B"">M.B</h2></a>
+<h2><a id=""M.B"" href="#"M.B"">Mod M.B</h2></a>
 pure-lua bootstrapped library (mainly for bootstrap.lua)
 <p>
 <b>Functions</b> <ul>
@@ -367,7 +367,7 @@ Immutable table
 <p>
 <h2><a id=""ds.Set"" href="#"ds.Set"">Record Set</h2></a>
 <p>
-<h2><a id=""bt"" href="#"bt"">bt</h2></a>
+<h2><a id=""bt"" href="#"bt"">Mod bt</h2></a>
 indexed table as Binary Tree.
 These functions treat an indexed table as a binary tree
 where root is at <span class=code>index=1</span>
@@ -424,7 +424,7 @@ NOTE: you should only use this for printing/logging/etc.
   value</li>
 </ul>
 <p>
-<h1><a id=""ds.path"" href="#"ds.path"">ds.path</h1></a>
+<h1><a id=""ds.path"" href="#"ds.path"">Mod ds.path</h1></a>
 working with paths
 Call directly to convert a list|str to a list of path components.
 <p>
@@ -494,7 +494,7 @@ Call directly to convert a list|str to a list of path components.
   dirs last, else alphabetically.</li>
 </ul>
 <p>
-<h1><a id=""ds.utf8"" href="#"ds.utf8"">ds.utf8</h1></a>
+<h1><a id=""ds.utf8"" href="#"ds.utf8"">Mod ds.utf8</h1></a>
 utf8 stream decoding.
 Get the length by decodelen(firstbyte), then decode the whole character
 with decode(dat)
@@ -507,7 +507,7 @@ with decode(dat)
   Use <span class=code>utf8.char</span> (from lua's stdlib) to turn into a string.</li>
 </ul>
 <p>
-<h1><a id=""ds.heap"" href="#"ds.heap"">ds.heap</h1></a>
+<h1><a id=""ds.heap"" href="#"ds.heap"">Mod ds.heap</h1></a>
 Binary Heap implementation
 <p>
 <b>Types</b> <ul>
@@ -528,7 +528,7 @@ Max Heap: cmp = function(p, c) return p > c end
 add and push take only O(log n), making it very useful for
 priority queues and similar problems.
 <p>
-<h1><a id=""ds.log"" href="#"ds.log"">ds.log</h1></a>
+<h1><a id=""ds.log"" href="#"ds.log"">Mod ds.log</h1></a>
 Simple logging library, set i.e. LOGLEVEL=TRACE to enable logging.
 <p>
 This module has the functions <span class=code>trace info warn err crit</span> with the signature:
@@ -578,7 +578,7 @@ used in tests
   width</li>
 </ul>
 <p>
-<h1><a id=""ds.load"" href="#"ds.load"">ds.load</h1></a>
+<h1><a id=""ds.load"" href="#"ds.load"">Mod ds.load</h1></a>
 load lua modules with custom or default environment in a sandboxed
 environment. This is extremely useful for configurations written in lua or
 writing your own config-like language.

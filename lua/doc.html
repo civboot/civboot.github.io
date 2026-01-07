@@ -38,7 +38,7 @@ See Package_pkg and Package_cxt for more details.
   <li>Tutorial style documentation: <a href="https://www.lua.org/pil/contents.html">https://www.lua.org/pil/contents.html</a></li>
 </ul>
 <p>
-<h1><a id=""doc"" href="#"doc"">doc</h1></a>
+<h1><a id=""doc"" href="#"doc"">Mod doc</h1></a>
 Builds on metaty to add the ability to extract and format documentation.
 <p>
 Also offers the Cmd and Cmds types for documenting shell commands.
@@ -71,7 +71,7 @@ Aids in writing cxt.
 </ul>
 Get cxt documentation for symbol.
 <p>
-<h1><a id=""doc.lua"" href="#"doc.lua"">doc.lua</h1></a>
+<h1><a id=""doc.lua"" href="#"doc.lua"">Mod doc.lua</h1></a>
 <p>
 <b>Functions</b> <ul>
   <li><span class=code>keyword() -&gt; setmetatable({}, Keyword)</span></li>
@@ -325,11 +325,11 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   Get the size which is used by strtys.</li>
   <li><span class=code>string.lower()</span>
   not documented: see <span class=code>string</span> module</li>
-  <li><span class=code>string.upper()</span>
+  <li><span class=code>string.reverse()</span>
   not documented: see <span class=code>string</span> module</li>
   <li><span class=code>string.dump()</span>
   not documented: see <span class=code>string</span> module</li>
-  <li><span class=code>string.reverse()</span>
+  <li><span class=code>string.upper()</span>
   not documented: see <span class=code>string</span> module</li>
   <li><span class=code>string.len()</span>
   not documented: see <span class=code>string</span> module</li>
@@ -385,25 +385,25 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
     <li><span class=code>os.execute()</span>: docs on file:close()</li>
     <li><a href="lib/civix">lib/civix</a><span class=code>.sh()</span>: ergonomic blocking shell.</li>
   </ul></li>
-  <li><span class=code>io.open()</span>
-  not documented: see <span class=code>io</span> module</li>
   <li><span class=code>io.type()</span>
   not documented: see <span class=code>io</span> module</li>
-  <li><span class=code>io.lines()</span>
-  not documented: see <span class=code>io</span> module</li>
-  <li><span class=code>io.read()</span>
+  <li><span class=code>io.open()</span>
   not documented: see <span class=code>io</span> module</li>
   <li><span class=code>io.input()</span>
   not documented: see <span class=code>io</span> module</li>
-  <li><span class=code>io.write()</span>
+  <li><span class=code>io.close()</span>
   not documented: see <span class=code>io</span> module</li>
-  <li><span class=code>io.flush()</span>
+  <li><span class=code>io.lines()</span>
   not documented: see <span class=code>io</span> module</li>
   <li><span class=code>io.output()</span>
   not documented: see <span class=code>io</span> module</li>
-  <li><span class=code>io.tmpfile()</span>
+  <li><span class=code>io.flush()</span>
   not documented: see <span class=code>io</span> module</li>
-  <li><span class=code>io.close()</span>
+  <li><span class=code>io.write()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.read()</span>
+  not documented: see <span class=code>io</span> module</li>
+  <li><span class=code>io.tmpfile()</span>
   not documented: see <span class=code>io</span> module</li>
   <li><span class=code>os.execute(string) -&gt; (ok, "exit", rc)</span>
   Execute shell command via C's `system` API. Returns: <ul>
@@ -421,25 +421,25 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   
   Recommendation:
   For all but the simplest cases use io.popen instead</li>
-  <li><span class=code>os.setlocale()</span>
-  not documented: see <span class=code>os</span> module</li>
-  <li><span class=code>os.date()</span>
-  not documented: see <span class=code>os</span> module</li>
   <li><span class=code>os.clock()</span>
   not documented: see <span class=code>os</span> module</li>
-  <li><span class=code>os.time()</span>
+  <li><span class=code>os.exit()</span>
   not documented: see <span class=code>os</span> module</li>
   <li><span class=code>os.remove(path) -&gt; nil</span>
   remove file.</li>
   <li><span class=code>os.getenv()</span>
   not documented: see <span class=code>os</span> module</li>
-  <li><span class=code>os.rename()</span>
-  not documented: see <span class=code>os</span> module</li>
   <li><span class=code>os.tmpname()</span>
   not documented: see <span class=code>os</span> module</li>
-  <li><span class=code>os.exit()</span>
+  <li><span class=code>os.rename()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.time()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.date()</span>
   not documented: see <span class=code>os</span> module</li>
   <li><span class=code>os.difftime()</span>
+  not documented: see <span class=code>os</span> module</li>
+  <li><span class=code>os.setlocale()</span>
   not documented: see <span class=code>os</span> module</li>
   <li><span class=code>math.type(v) -&gt; ("float" | "integer" | nil)</span></li>
   <li><span class=code>math.max(x, ...) -&gt; max according to [$&lt;]</span></li>
@@ -451,46 +451,46 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   <li><span class=code>math.asin(x) -&gt; arcsin(x) in radians</span></li>
   <li><span class=code>math.atan2(n, d) -&gt; arctan(n / d) in radians</span></li>
   <li><span class=code>math.exp(x) -&gt; e^x (where e is the natural log base)</span></li>
-  <li><span class=code>math.log()</span>
+  <li><span class=code>math.ceil()</span>
   currently not documented</li>
-  <li><span class=code>math.random()</span>
+  <li><span class=code>math.atan2(n, d) -&gt; arctan(n / d) in radians</span></li>
+  <li><span class=code>math.tointeger()</span>
   currently not documented</li>
-  <li><span class=code>math.frexp()</span>
+  <li><span class=code>math.ult()</span>
   currently not documented</li>
   <li><span class=code>math.log10()</span>
   currently not documented</li>
-  <li><span class=code>math.modf()</span>
-  currently not documented</li>
-  <li><span class=code>math.fmod()</span>
-  currently not documented</li>
-  <li><span class=code>math.atan2(n, d) -&gt; arctan(n / d) in radians</span></li>
-  <li><span class=code>math.abs()</span>
-  currently not documented</li>
-  <li><span class=code>math.floor()</span>
-  currently not documented</li>
-  <li><span class=code>math.pow()</span>
-  currently not documented</li>
-  <li><span class=code>math.rad()</span>
+  <li><span class=code>math.random()</span>
   currently not documented</li>
   <li><span class=code>math.sinh()</span>
   currently not documented</li>
+  <li><span class=code>math.cosh()</span>
+  currently not documented</li>
   <li><span class=code>math.tanh()</span>
   currently not documented</li>
-  <li><span class=code>math.tointeger()</span>
+  <li><span class=code>math.modf()</span>
   currently not documented</li>
-  <li><span class=code>math.sqrt()</span>
+  <li><span class=code>math.frexp()</span>
+  currently not documented</li>
+  <li><span class=code>math.floor()</span>
   currently not documented</li>
   <li><span class=code>math.randomseed()</span>
   currently not documented</li>
-  <li><span class=code>math.ldexp()</span>
-  currently not documented</li>
-  <li><span class=code>math.cosh()</span>
-  currently not documented</li>
-  <li><span class=code>math.ceil()</span>
+  <li><span class=code>math.rad()</span>
   currently not documented</li>
   <li><span class=code>math.deg()</span>
   currently not documented</li>
-  <li><span class=code>math.ult()</span>
+  <li><span class=code>math.fmod()</span>
+  currently not documented</li>
+  <li><span class=code>math.ldexp()</span>
+  currently not documented</li>
+  <li><span class=code>math.log()</span>
+  currently not documented</li>
+  <li><span class=code>math.pow()</span>
+  currently not documented</li>
+  <li><span class=code>math.sqrt()</span>
+  currently not documented</li>
+  <li><span class=code>math.abs()</span>
   currently not documented</li>
   <li><span class=code>for()</span>
   for is a looping construct with two forms:

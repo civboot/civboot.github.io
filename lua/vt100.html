@@ -44,7 +44,7 @@ To be civboot compliant the <span class=code>Term</span> type exported must have
 </ul>
 <p>
 <p>
-<h1><a id=""vt100"" href="#"vt100"">vt100</h1></a>
+<h1><a id=""vt100"" href="#"vt100"">Mod vt100</h1></a>
 Civboot vt100 Terminal library that supports LAP protocol.
 Module for interacting with the vt100 via keys and AsciiColors.
 <div class=code-block>License CC0 / UNLICENSE<br>
@@ -94,26 +94,26 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4
   libraries (and those that adhere to them).</li>
 </ul>
 <p>
-<h2><a id=""vt100.ctrl"" href="#"vt100.ctrl"">vt100.ctrl</h2></a>
+<h2><a id=""vt100.ctrl"" href="#"vt100.ctrl"">Mod vt100.ctrl</h2></a>
 Direct terminal control functions
 <p>
 <b>Functions</b> <ul>
   <li><span class=code>getlc(name, fmt)</span></li>
-  <li><span class=code>colorFB(name, fmt)</span></li>
-  <li><span class=code>cleareol(name, fmt)</span></li>
-  <li><span class=code>golc(name, fmt)</span></li>
-  <li><span class=code>left(name, fmt)</span></li>
-  <li><span class=code>hide(name, fmt)</span></li>
-  <li><span class=code>clear(name, fmt)</span></li>
-  <li><span class=code>save(name, fmt)</span></li>
-  <li><span class=code>reset(name, fmt)</span></li>
-  <li><span class=code>right(name, fmt)</span></li>
-  <li><span class=code>show(name, fmt)</span></li>
-  <li><span class=code>restore(name, fmt)</span></li>
-  <li><span class=code>nextline(name, fmt)</span></li>
-  <li><span class=code>up(name, fmt)</span></li>
   <li><span class=code>color(name, fmt)</span></li>
+  <li><span class=code>left(name, fmt)</span></li>
+  <li><span class=code>clear(name, fmt)</span></li>
+  <li><span class=code>reset(name, fmt)</span></li>
+  <li><span class=code>restore(name, fmt)</span></li>
+  <li><span class=code>right(name, fmt)</span></li>
+  <li><span class=code>up(name, fmt)</span></li>
+  <li><span class=code>save(name, fmt)</span></li>
+  <li><span class=code>colorFB(name, fmt)</span></li>
+  <li><span class=code>nextline(name, fmt)</span></li>
   <li><span class=code>down(name, fmt)</span></li>
+  <li><span class=code>hide(name, fmt)</span></li>
+  <li><span class=code>golc(name, fmt)</span></li>
+  <li><span class=code>cleareol(name, fmt)</span></li>
+  <li><span class=code>show(name, fmt)</span></li>
   <li><span class=code>size(f)</span>
   causes terminal to send size as (escaped) cursor position</li>
 </ul>
@@ -158,7 +158,7 @@ Requires <span class=code>vt100.start()</span> have been called to initiate raw 
   current background ac letter</li>
 </ul>
 <p>
-<h1><a id=""vt100.testing"" href="#"vt100.testing"">vt100.testing</h1></a>
+<h1><a id=""vt100.testing"" href="#"vt100.testing"">Mod vt100.testing</h1></a>
 helpers for testing/demoing vt100
 <p>
 <b>Types</b> <ul>
