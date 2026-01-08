@@ -18,9 +18,11 @@
 Civstack is a full developer tech stack, and the bedrock of that is the build
 system -- which is this package (<span class=code>civ</span>).
 <br>
+<br>
 A "build system" is fundamentally a mechanism to convert a set of files and
 configuration (a package) into a runnable (and testable) software. A package
 manager is then a way to upload and depend on other packages.
+<br>
 <br>
 A <i>good</i> build system has two other primary features: <ul>
   <li>ergonomics: package specification is complete and easy to both read and write.</li>
@@ -28,24 +30,25 @@ A <i>good</i> build system has two other primary features: <ul>
   and deterministically built.</li>
 </ul>
 <br>
-<h3><a id="PKG.lua" href="#PKG.lua" class=anchor>PKG.lua</h3></a>
-The <span class=code>PKG.lua</span> file is is how you specify how to build a package and what is
+<h3><a id="PKG.luk" href="#PKG.luk" class=anchor>PKG.luk</h3></a>
+The <span class=code>PKG.luk</span> file is is how you specify how to build a package and what is
 exported from that package. Below is an example one which we will walk though.
 Before we do, a few notes:
 <ul>
-  <li>This file is 100% pure lua except with different builtin globals.</li>
-  <li>Noteablly none of lua's builtins are available, and instead there are several
-  functions for importing luk files (which we will get to).</li>
+  <li>This file is 100% pure lua except with different builtin globals, hence the
+  different file extension (<span class=code>.luk</span>)</li>
+  <li>Noteablly very few of lua's builtin functions or modules are available.
+  Instead there are several functions for importing non-PKG luk files.</li>
 </ul>
 <br>
-Example <span class=code>PKG.lua</span>:
+Example <span class=code>PKG.luk</span>:
 <div class=code-block>local P = { summary = "Does foo and some bar" }<br>
 <br>
 --- Imports a function to help us create Target<br>
 local cc &nbsp;= import'sys:cc.luk' &nbsp;-- C build targets<br>
 local lua = import'sys:lua.luk' -- Lua build targets<br>
 <br>
--- Set up metadata for this PKG.lua file, this must be<br>
+-- Set up metadata for this PKG.luk file, this must be<br>
 -- returned at the end with the targets and PoD to provide<br>
 -- clients.<br>
 --<br>
@@ -53,9 +56,10 @@ local lua = import'sys:lua.luk' -- Lua build targets<br>
 -- (build information) exported by this file.<br>
 P.foo = lua {<br>
 &nbsp; mod = 'foo',<br>
+&nbsp; src = { 'foo.lua' },<br>
 &nbsp; dep = {<br>
-&nbsp; &nbsp; 'civ:lib',<br>
-&nbsp; &nbsp; 'myhub:foo#libfoo', &nbsp;-- the next target<br>
+&nbsp; &nbsp; 'civ:lib', &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -- depend on entire civ lib<br>
+&nbsp; &nbsp; 'myhub:foo#libfoo', &nbsp;-- depend on next target<br>
 &nbsp; },<br>
 }<br>
 <br>
@@ -67,10 +71,10 @@ P.test = lua.test {<br>
 <br>
 -- C build target<br>
 P.libfoo = cc {<br>
-&nbsp; hdr = { 'foo.h' },<br>
-&nbsp; src = { 'foo.c' },<br>
+&nbsp; hdr = { 'foo.h' }, &nbsp;-- C headers<br>
+&nbsp; src = { 'foo.c' }, &nbsp;-- C source files<br>
 &nbsp; dep = {<br>
-&nbsp; &nbsp; 'myhub:bar#libbar',<br>
+&nbsp; &nbsp; 'myhub:bar#libbar', -- depend on another target<br>
 &nbsp; },<br>
 }<br>
 <br>
@@ -78,7 +82,7 @@ return P
 </div>
 <br>
 <div class=info>Every value assigned to <span class=code>P</span> must be either a concrete type or a
-<a href="#pvc.Target">#pvc.Target</a>.
+<a href="#civ.Target">#civ.Target</a>.
 </div>
 <br>
 <h3><a id="civ-out" href="#civ-out" class=anchor>civ output directory</h3></a>
