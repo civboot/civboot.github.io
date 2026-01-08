@@ -15,47 +15,57 @@
 <html>
 <body><div class=doc>
 encode text color and style with a two ascii characters.
-<p>
+<br>
 asciicolor is a protocol which encodes text color in terminals and (in future)
 elsewhere using only a single ascii character: i.e. <span class=code>b</span> for black, <span class=code>w</span> for
 white and <span class=code>n</span> for navy blue, etc. Capitalizing the character encodes a style
 (bold for foreground, underlined for background).
-<p>
+<br>
 See <a href="#asciicolor.Color">#asciicolor.Color</a> for all codes.
-<p>
+<br>
 The color codes are used by <a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a> to style text
 using an <span class=code>AcWriter</span>. See <a href="#vt100.AcWriter">#vt100.AcWriter</a> for the reference spec.
-<p>
-<p>
-<h1><a id=""asciicolor"" href="#"asciicolor"">Mod asciicolor</h1></a>
-<p>
-<b>Types</b> <ul>
-  <li><b>asciicolor.Ascii</b></li>
-  <li><b>asciicolor.Styler</b></li>
-</ul>
-<p>
+<br>
+<br>
+<h1><a id="asciicolor" href="#asciicolor" class=anchor>Mod asciicolor</h1></a>
+<br>
+<b>Types: </b><a href="#asciicolor.Ascii">Ascii</a> <a href="#asciicolor.Styler">Styler</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>assertcode(ac) -&gt; single leter (or error)</span></li>
-  <li><span class=code>mode() -&gt; G.CLIMODE or os.getenv'CLIMODE'</span></li>
-  <li><span class=code>stylePath() -&gt; pth.concat{pth.home(), CONFIG_PATH}</span></li>
-  <li><span class=code>loadStyle(mode, path)</span></li>
-  <li><span class=code>setup(to, user)</span>
+  <li><a id="asciicolor.assertcode" href="#asciicolor.assertcode" class=anchor><b>fn assertcode</b></a><span class=code>(ac) -&gt; single leter (or error)</span></li>
+  <li><a id="asciicolor.mode" href="#asciicolor.mode" class=anchor><b>fn mode</b></a><span class=code>() -&gt; G.CLIMODE or os.getenv'CLIMODE'</span></li>
+  <li><a id="asciicolor.stylePath" href="#asciicolor.stylePath" class=anchor><b>fn stylePath</b></a><span class=code>() -&gt; pth.concat{pth.home(), CONFIG_PATH}</span></li>
+  <li><a id="asciicolor.loadStyle" href="#asciicolor.loadStyle" class=anchor><b>fn loadStyle</b></a><span class=code>(mode, path)</span></li>
+  <li><a id="asciicolor.setup" href="#asciicolor.setup" class=anchor><b>fn setup</b></a><span class=code>(to, user)</span><br>
+  
   Setup standard formatters (io.fmt and io.user).</li>
 </ul>
-<p>
-<h2><a id=""Ascii"" href="#"Ascii"">Mod Ascii</h2></a>
+<br>
+<h2><a id="Ascii" href="#Ascii" class=anchor>Mod Ascii</h2></a>
 typosafe mapping of fullname -> asciichar
-<p>
-<h2><a id=""asciicolor.Styler"" href="#"asciicolor.Styler"">Record Styler</h2></a>
-<ul>
-  <li><b>acwriter</b> </li>
-  <li><b>style</b> :
-  default=loadStyle() in Fmt</li>
-</ul>
+<br>
+<h2><a id="asciicolor.Styler" href="#asciicolor.Styler" class=anchor>Record Styler</h2></a>
 Create a styler
-<p>
+<br>
 Note: pass f (file) to create the default AcWriter with the file.
 Note: pass mode, stylepath to control loadStyle
-<p>
+<b>Fields:</b><ul>
+  <li><a id="asciicolor.Styler.acwriter" href="#asciicolor.Styler.acwriter" class=anchor><b>.acwriter</b></a></li>
+  <li><a id="asciicolor.Styler.style" href="#asciicolor.Styler.style" class=anchor><b>.style</b></a> <span class=code>=asciicolor.dark</span>default=loadStyle() in Fmt</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Styler.level" href="#Styler.level" class=anchor><b>fn level</b></a><span class=code>(st, add) -&gt; st.acwriter.f:level(add)</span></li>
+  <li><a id="Styler.flush" href="#Styler.flush" class=anchor><b>fn flush</b></a><span class=code>(st) -&gt; st.acwriter:flush()</span></li>
+  <li><a id="Styler.getFB" href="#Styler.getFB" class=anchor><b>fn getFB</b></a><span class=code>(st, style) -&gt; fb</span><br>
+  
+  Get the style's fb (foreground + background asciicolor bytes)</li>
+  <li><a id="Styler.styled" href="#Styler.styled" class=anchor><b>fn styled</b></a><span class=code>(st, style, str, ...)</span><br>
+  
+  Example: st:styled('path', 'path/to/foo.txt', '\n')</li>
+  <li><a id="Styler.write" href="#Styler.write" class=anchor><b>fn write</b></a><span class=code>(st, ...)</span><br>
+  
+  write as plain</li>
+</ul>
+<br>
 </div></body>
 </html>

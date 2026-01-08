@@ -15,9 +15,9 @@
 <html>
 <body><div class=doc>
 <h1>Ele: Extendable Lua Editor</h1>
-<p>
+<br>
 Ele is an (**In Development**) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor.
-<p>
+<br>
 Ele's primary goals are: <ul>
   <li>Implemented in a minimal amount of understandable code. It is the main editor
   for Civboot</li>
@@ -29,19 +29,19 @@ Ele's primary goals are: <ul>
   <li>Can handle any size text file</li>
   <li>Cross platform (currently vt100-only protocol, which should run anywhere)</li>
 </ul>
-<p>
+<br>
 Non-goals of Ele are: <ul>
   <li>Focusing on performance against the other goals. It should be fast enough
   to be an editor and should not choke on large files -- otherwise performance
   is not important.</li>
 </ul>
-<p>
+<br>
 <h1>Architecture</h1>
-<p>
+<br>
 Ele is architected using the MVI (model-view-intent) architecture, also
 known as the "React architecture" from the web library of the same
 name.
-<p>
+<br>
 <div class=code-block>&nbsp; &nbsp;,_____________________________________________<br>
 &nbsp; &nbsp;| intent(): keyboard, timer, executor, etc &nbsp; &nbsp;|<br>
 &nbsp; &nbsp;`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'<br>
@@ -51,7 +51,7 @@ name.
 &nbsp; | view(): paint &nbsp; &nbsp;| &lt;================ | model(): keybind, actions &nbsp;|<br>
 &nbsp; `~~~~~~~~~~~~~~~~~~' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 </div>
-<p>
+<br>
 In practice, this is accomplished in four coroutines spawned
 by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
   <li>A coroutine that listens to stdin for vt100 key sequences
@@ -68,11 +68,11 @@ by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
   having them write the relevant text to a vt100.Term object,
   which gets flushed to the display at the end.</li>
 </ul>
-<p>
+<br>
 This roughly implements the MVI architecture because ALL actions
 are performed sequentially based on the ordering in the <span class=code>events</span>
 channel.
-<p>
+<br>
 Actions or plugins have the option to spawn their own coroutine. However,
 this behavior should be extremely rare, and reserved mostly for things that
 really can happen concurrently with no user feedback needed, such as saving a
@@ -82,7 +82,7 @@ then they should consider not being included as an editor operation. Some
 exceptions such as searching for patterns in a recursive tree should be
 spawned as a coroutine but be cancelled if the user modifies the buffer
 that the results are being written to in any way.
-<p>
+<br>
 <h1>Adding Bindings</h1>
 Adding simple bindings is easy. Simply insert the space-separated chord
 of keys you want to go to your binding to one of ele's default modes, or
@@ -90,435 +90,24 @@ create your own.  ele.bindings's <span class=code>command</span>, <span class=co
 entries are where you will find the default modes. For instance,
 the following will insert the expected text at the cursor position
 from command mode:
-<p>
+<br>
 <div class=code-block>local B = require'ele.bindings'<br>
 B.command['y y'] = {action='insert', 'Why oh why did I bind this?\n'},
 </div>
-<p>
+<br>
 To write your own action you must: <ul>
   <li>Add a callable to ele.actions which implements the intended behavior. The
-  signature is: <span class=code>fn(Editor, event, Channel[event])</span>. You may modify the Editor
-  in the appropriate way for your action.  You are recommended to handle
-  <span class=code>event.times</span> to do your action multiple times (if that makes sense for your
-  action). Note that you are free to throw errors -- any errors will be caught
-  and logged.</li>
-  <li>Add a binding to an editor mode. The binding can either be a plain table,
-  which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
-  Using the callable API is slightly complex but allows for complex key
-  interactions where you build-up a command with a chaing (aka "chord") of
-  multiple key inputs. Refer to the ele.bindings documentation.</li>
-</ul>
-<p>
-<h1>Editor API</h1>
-ele.Editor is the main object most custom actions or Ele scripts will
-interact with. It has several fields, but the fields and methods that most
-folks will care about are: <ul>
-  <li><span class=code>edit</span>: this is the current edit buffer and is typically where the
-  user wants to insert or otherwise interact with text. It is
-  typically a ele.edit.Edit instance, though plugins may
-  eventually allow other types to be used.</li>
-  <li><span class=code>view</span> this is the "root" view, which contains a tree who's
-  leaves are the visible Edit views.</li>
-  <li><span class=code>ext</span> a plain table that extensions can set Edit-local values
-  too. Very useful for plugins.</li>
-  <li><span class=code>:buffer(idOrPath) --&gt; Buffer</span> this will get or create a buffer.</li>
-  <li><span class=code>:focus(idOrPath) --&gt; Edit</span> focus on a buffer, replacing
-  the current one.</li>
-</ul>
-<p>
-Most plugins will simply get <span class=code>edit</span> and then insert/remove/search
-its <span class=code>buf</span> data using its APIs and/or change its <span class=code>l,c</span> (line,column) values.
-They are free to use any lua API to do so, but should avoid large amounts
-of work as much as possible.
-<p>
-<p>
-<h1><a id=""ele"" href="#"ele"">Mod ele</h1></a>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>main(args)</span></li>
-</ul>
-<p>
-<h1><a id=""ele.types"" href="#"ele.types"">Mod ele.types</h1></a>
-<p>
-<b>Types</b> <ul>
-  <li><b>ele.types.term</b></li>
-  <li><b>ele.types.VSplit</b></li>
-  <li><b>ele.types.HSplit</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>uniqueId()</span></li>
-  <li><span class=code>checkBinding(b)</span></li>
-  <li><span class=code>checkBindings(btable, path)</span></li>
-  <li><span class=code>checkMode(data, mode) -&gt; errstring</span></li>
-  <li><span class=code>checkAction(data, action) -&gt; errstring</span></li>
-</ul>
-<p>
-<h2><a id=""vt100"" href="#"vt100"">Mod vt100</h2></a>
-Civboot vt100 Terminal library that supports LAP protocol.
-Module for interacting with the vt100 via keys and AsciiColors.
-<div class=code-block>License CC0 / UNLICENSE<br>
-Originally written 2022 Phil Leblanc, modified 2023 Rett Berg (Civboot.org)<br>
-Authorized for relicense in: http://github.com/philanc/plterm/issues/4
-</div>
-<p>
-<b>Types</b> <ul>
-  <li><b>vt100.ctrl</b></li>
-  <li><b>vt100.Term</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>key()</span></li>
-  <li><span class=code>ctrlChar()</span></li>
-  <li><span class=code>literal(key) -&gt; literalstring?</span>
-  Convert any key to it's literal form <div class=code-block>&nbsp; &nbsp; literal'a' &nbsp; &nbsp; &nbsp; -&gt; 'a'<br>
-&nbsp; &nbsp; literal'enter' &nbsp; -&gt; '\n'<br>
-&nbsp; &nbsp; literal'esc' &nbsp; &nbsp; -&gt; nil<br>
-&nbsp; 
-</div></li>
-  <li><span class=code>keyError(key) -&gt; errstring?</span>
-  Check that a key is valid. Return errstring if not.</li>
-  <li><span class=code>checkKey(key) -&gt; key?, errstring?</span></li>
-  <li><span class=code>colorFB(f, fg, bg, fg0, bg0)</span>
-  Set the color, taking into account the previous color</li>
-  <li><span class=code>acwrite(f, colorFB, fg, bg, fgstr, bgstr, str, ...)</span>
-  write to the terminal-like file f using colors fgstr and bgstr
-  accounting for previous color codes fg, bg
-  
-  Additional strings (...) are written using plain color.
-  
-  Return: <span class=code>fg, bg, write(str, ...)</span>
-  <div class=info> Note: fg and bg are the updated color codes</div></li>
-  <li><span class=code>setrawmode()</span></li>
-  <li><span class=code>setsanemode() -&gt; os.execute'stty sane'</span></li>
-  <li><span class=code>savemode() -&gt; mode?, errmsg?</span></li>
-  <li><span class=code>restoremode(mode) -&gt; os.execute('stty '..mode)</span></li>
-  <li><span class=code>start() -&gt; savedmode</span></li>
-  <li><span class=code>stop(fd, savedmode)</span></li>
-  <li><span class=code>Fmt(t)</span>
-  create a Fmt with sensible defaults from the config</li>
-  <li><span class=code>main(args)</span>
-  Listens to keyboard inputs and echoes them.</li>
-  <li><span class=code>setup(args)</span>
-  The recommended setup function, enables color in the terminal in civstack
-  libraries (and those that adhere to them).</li>
-</ul>
-<p>
-<h3><a id=""vt100.ctrl"" href="#"vt100.ctrl"">Mod vt100.ctrl</h3></a>
-Direct terminal control functions
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>hide(name, fmt)</span></li>
-  <li><span class=code>save(name, fmt)</span></li>
-  <li><span class=code>nextline(name, fmt)</span></li>
-  <li><span class=code>reset(name, fmt)</span></li>
-  <li><span class=code>getlc(name, fmt)</span></li>
-  <li><span class=code>color(name, fmt)</span></li>
-  <li><span class=code>down(name, fmt)</span></li>
-  <li><span class=code>show(name, fmt)</span></li>
-  <li><span class=code>colorFB(name, fmt)</span></li>
-  <li><span class=code>right(name, fmt)</span></li>
-  <li><span class=code>left(name, fmt)</span></li>
-  <li><span class=code>restore(name, fmt)</span></li>
-  <li><span class=code>cleareol(name, fmt)</span></li>
-  <li><span class=code>up(name, fmt)</span></li>
-  <li><span class=code>golc(name, fmt)</span></li>
-  <li><span class=code>clear(name, fmt)</span></li>
-  <li><span class=code>size(f)</span>
-  causes terminal to send size as (escaped) cursor position</li>
-</ul>
-<p>
-<h3><a id=""vt100.Term"" href="#"vt100.Term"">Record Term</h3></a>
-<ul>
-  <li><b>fd</b> :
-  file to write output to in draw()</li>
-  <li><b>l</b> :
-  cursor line</li>
-  <li><b>c</b> :
-  cursor column</li>
-  <li><b>h</b> :
-  height</li>
-  <li><b>w</b> :
-  width</li>
-  <li><b>text</b> :
-  the text to display</li>
-  <li><b>fg</b> :
-  foreground color (ASCII coded)</li>
-  <li><b>bg</b> :
-  background color (ASCII coded)</li>
-  <li><b>run</b> :
-  set to false to stop coroutines</li>
-  <li><b>styler</b> :
-  optional styler</li>
-</ul>
-VT100 Terminal Emulator <ul>
-  <li>Write the text to display</li>
-  <li>Write the foreground/background colors to fg/bg</li>
-  <li>Then call :draw() to draw to terminal.</li>
-</ul>
-<p>
-Requires <span class=code>vt100.start()</span> have been called to initiate raw mode.
-<p>
-<h2><a id=""ele.types.VSplit"" href="#"ele.types.VSplit"">Record VSplit</h2></a>
-<ul>
-  <li><b>container</b> :
-  parent container</li>
-  <li><b>tl</b> </li>
-  <li><b>tc</b> </li>
-  <li><b>th</b> </li>
-  <li><b>tw</b> </li>
-</ul>
-A container with windows split vertically (i.e. tall windows)
-<p>
-<h2><a id=""ele.types.HSplit"" href="#"ele.types.HSplit"">Record HSplit</h2></a>
-<ul>
-  <li><b>container</b> :
-  parent container</li>
-  <li><b>tl</b> </li>
-  <li><b>tc</b> </li>
-  <li><b>th</b> </li>
-  <li><b>tw</b> </li>
-</ul>
-A container with windows split horizontally (i.e. wide windows)
-<p>
-<h1><a id=""ele.keys"" href="#"ele.keys"">Mod ele.keys</h1></a>
-<p>
-<b>Types</b> <ul>
-  <li><b>ele.keys.KeySt</b></li>
-  <li><b>ele.keys.KeyBindings</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>chord(str) -&gt; keylist</span></li>
-  <li><span class=code>literal(key)</span></li>
-  <li><span class=code>chordstr(chord)</span></li>
-  <li><span class=code>insertChord(keys)</span></li>
-  <li><span class=code>unboundChord(keys)</span></li>
-  <li><span class=code>moveAction(event)</span></li>
-  <li><span class=code>left()</span></li>
-  <li><span class=code>right()</span></li>
-  <li><span class=code>backword()</span></li>
-  <li><span class=code>forword()</span></li>
-  <li><span class=code>up()</span></li>
-  <li><span class=code>down()</span></li>
-  <li><span class=code>sot()</span></li>
-  <li><span class=code>sol()</span></li>
-  <li><span class=code>eot()</span></li>
-  <li><span class=code>eol()</span></li>
-  <li><span class=code>eof()</span></li>
-  <li><span class=code>sof()</span></li>
-  <li><span class=code>upScreen()</span></li>
-  <li><span class=code>downScreen()</span></li>
-  <li><span class=code>moveG(keySt)</span></li>
-  <li><span class=code>movekey(keys)</span></li>
-  <li><span class=code>find(keys)</span></li>
-  <li><span class=code>till(keys)</span>
-  go to the column before the character</li>
-  <li><span class=code>findback(keys)</span>
-  go back to the character</li>
-  <li><span class=code>tillback(keys)</span>
-  go back to the column after the character</li>
-  <li><span class=code>delete(keySt)</span>
-  delete until a movement command (or similar)</li>
-  <li><span class=code>deleteEol(keySt)</span></li>
-  <li><span class=code>change(keySt)</span>
-  Delete <move> then enter insert.</li>
-  <li><span class=code>changeEol(keySt, evsend)</span></li>
-  <li><span class=code>times(keys)</span>
-  used for setting the number of times to do an action.
-  1 0 d t x: delete till the 10th x</li>
-  <li><span class=code>zero(keys)</span></li>
-  <li><span class=code>searchBuf(keySt)</span>
-  Interactively search the buffer.
-  
-  This holds onto keySt (sets .keep), effectively owning all keyboard
-  inputs.</li>
-  <li><span class=code>install(ed)</span></li>
-  <li><span class=code>keyactions(ed, keyrecv, evsend)</span></li>
-</ul>
-<p>
-<h2><a id=""ele.keys.KeySt"" href="#"ele.keys.KeySt"">Record KeySt</h2></a>
-<ul>
-  <li><b>chord</b> :
-  list of keys which led to this binding, i.e. {'space', 'a'}</li>
-  <li><b>event</b> :
-  table to use when returning (emitting) an event.</li>
-  <li><b>next</b> :
-  the binding which will be used for the next key</li>
-  <li><b>keep</b> :
-  if true the above fields will be preserved in next call</li>
-</ul>
-The state of the keyboard input (chord).
-Some bindings are a simple action to perform, whereas callable bindings
-can update the KeySt to affect future ones, such as decimals causing
-later actions to be repeated a <span class=code>num</span> of times.
-<p>
-<h2><a id=""ele.keys.KeyBindings"" href="#"ele.keys.KeyBindings"">Record KeyBindings</h2></a>
-<ul>
-  <li><b>name</b> :
-  the name of the group for documentation</li>
-  <li><b>doc</b> :
-  documentation to display to the user</li>
-</ul>
-A map of key -> binding.
-The name and doc can be provided for the user.
-<p>
-Other "fields" must be valid chords. They will be automatically
-split (by whitespace) to create sub-KeyBindings as-needed.
-<p>
-The value must be one of: <ul>
-  <li>KeyBindings instance to explicitly create chorded bindings.</li>
-  <li>plain event table to fire off a simple event</li>
-  <li>callable <span class=code>event(ev, keySt)</span> for more complex bindings.</li>
-</ul>
-<p>
-<h1><a id=""ele.edit"" href="#"ele.edit"">Mod ele.edit</h1></a>
-<p>
-<b>Types</b> <ul>
-  <li><b>ele.edit.Edit</b></li>
-</ul>
-<p>
-<h2><a id=""ele.edit.Edit"" href="#"ele.edit.Edit"">Record Edit</h2></a>
-<ul>
-  <li><b>id</b> </li>
-  <li><b>container</b> </li>
-  <li><b>buf</b> </li>
-  <li><b>l</b> </li>
-  <li><b>c</b> </li>
-  <li><b>vl</b> </li>
-  <li><b>vc</b> </li>
-  <li><b>tl</b> </li>
-  <li><b>tc</b> </li>
-  <li><b>th</b> </li>
-  <li><b>tw</b> </li>
-  <li><b>fh</b> </li>
-  <li><b>fw</b> </li>
-  <li><b>closed</b> </li>
-  <li><b>modes</b> </li>
-  <li><b>drawBars</b> </li>
-  <li><b>lineStyle</b> :
-  asciicolor style</li>
-</ul>
-<p>
-<h1><a id=""ele.actions"" href="#"ele.actions"">Mod ele.actions</h1></a>
-<p>
-<b>Types</b> <ul>
-  <li><b>ele.actions.nav</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>hotkey(ed, ev, evsend)</span></li>
-  <li><span class=code>hotkey(ed, ev, evsend)</span></li>
-  <li><span class=code>merge(ed, ev)</span></li>
-  <li><span class=code>chain(ed, ev, evsend)</span></li>
-  <li><span class=code>move(ed, ev)</span></li>
-  <li><span class=code>insert(ed, ev, evsend)</span></li>
-  <li><span class=code>insertTab(ed, ev)</span></li>
-  <li><span class=code>remove(ed, ev)</span></li>
-  <li><span class=code>searchBuf(ed, ev)</span></li>
-  <li><span class=code>path(ed, ev, evsend)</span></li>
-  <li><span class=code>edit(ed, ev)</span>
-  Do something with the edit view, in this order: <ul>
-    <li>save=true: save the current edit view.</li>
-    <li>focus: focus the buffer, typically 'b#named'.</li>
-    <li>clear: clear the current edit view.</li>
-  </ul></li>
-  <li><span class=code>buf(ed, ev)</span>
-  Directly modify a buffer by name. This is most commonly
-  used for the overlay.</li>
-  <li><span class=code>window(ed, ev)</span>
-  Window operations like split and close</li>
-</ul>
-<p>
-<h2><a id=""ele.actions.nav"" href="#"ele.actions.nav"">Mod ele.actions.nav</h2></a>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>getFocus(line)</span></li>
-  <li><span class=code>getEntry(line) -&gt; (indent, kind, entry)</span></li>
-  <li><span class=code>findParent(b, l) -&gt; linenum, line</span>
-  Find the parent of current path entry
-  if isFocus the entry will be the focus (and ind will be 0)</li>
-  <li><span class=code>findFocus(b, l) -&gt; linenum, line</span>
-  Find the focus path line num (i.e. the starting directory)</li>
-  <li><span class=code>findEnd(b, l) -&gt; linenum</span>
-  Find the last line of the focus's entities (or itself).
-  invariant: line l is an entry or focus.</li>
-  <li><span class=code>findView(b, l) -&gt; (fln, eln, fline)</span>
-  Find the view (focusLineNum, endLineNum, focusLine)</li>
-  <li><span class=code>getPath(b, l,c) -&gt; string</span>
-  Walk up the parents, getting the full path.
-  If not an entry, try to find the path from the column.</li>
-  <li><span class=code>findEntryEnd(b, l) -&gt; linenum</span></li>
-  <li><span class=code>backFocus(b, l)</span></li>
-  <li><span class=code>backEntry(b, l) -&gt; ln</span>
-  Go backwards on the entry, returning the new line
-  For focus, this will go back one component.
-  For entry, this will collapse parent (and move to it).</li>
-  <li><span class=code>expandEntry(b, l, ls) -&gt; numEntries</span></li>
-  <li><span class=code>doBack(b, l, times)</span></li>
-  <li><span class=code>doExpand(b, l, times, ls)</span></li>
-  <li><span class=code>goPath(ed, create)</span>
-  go to path at l,c. If op=='create' then create the path</li>
-  <li><span class=code>doEntry(ed, op, times, ls)</span>
-  perform the entry operation</li>
-</ul>
-<p>
-<h1><a id=""Ty<Editor>"" href="#"Ty<Editor>"">Record Editor</h1></a>
-<ul>
-  <li><b>s</b> </li>
-  <li><b>mode</b> :
-  current editor mode</li>
-  <li><b>modes</b> :
-  keyboard bindings per mode (see: bindings.lua)</li>
-  <li><b>actions</b> :
-  actions which events can trigger (see: actions.lua)</li>
-  <li><b>resources</b> :
-  resources to close when shutting down</li>
-  <li><b>buffers</b> </li>
-  <li><b>bufferId</b> </li>
-  <li><b>namedBuffers</b> </li>
-  <li><b>overlay</b> :
-  the overlay buffer</li>
-  <li><b>edit</b> :
-  the current edit buffer. Also in namedBuffers.overlay</li>
-  <li><b>view</b> :
-  the root view</li>
-  <li><b>display</b> :
-  display/terminal to write+paint text</li>
-  <li><b>run</b> :
-  set to false to stop the app</li>
-  <li><b>ext</b> :
-  table for extensions to store data</li>
-  <li><b>search</b> :
-  search pattern for searchBuf, etc</li>
-  <li><b>lastEvent</b> :
-  the last event executed.</li>
-  <li><b>error</b> :
-  error handler (ds.log.logfmt sig)</li>
-  <li><b>warn</b> :
-  warn handler</li>
-  <li><b>newDat</b> :
-  function to create new buffer</li>
-  <li><b>redraw</b> :
-  set to true to force a redraw</li>
-</ul>
-<p>
-<h1><a id=""Ty<Session>"" href="#"Ty<Session>"">Record Session</h1></a>
-<ul>
-  <li><b>ed</b> </li>
-  <li><b>events</b> </li>
-  <li><b>evsend</b> </li>
-  <li><b>keys</b> </li>
-  <li><b>keysend</b> </li>
-  <li><b>logf</b> </li>
-  <li><b>running</b> </li>
-</ul>
-<p>
-<h1><a id=""ele.testing"" href="#"ele.testing"">Mod ele.testing</h1></a>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>newSession(text)</span></li>
-</ul>
-<p>
+  signature is: <span class=code>fn(Editor, event, Channel[event</span>)</li>
+</ul>. You may modify the Editor
+in the appropriate way for your action.  You are recommended to handle
+<span class=code>event.times</span> to do your action multiple times (if that makes sense for your
+action). Note that you are free to throw errors -- any errors will be caught
+and logged.
+<br>
+* Add a binding to an editor mode. The binding can either be a plain table,
+which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
+Using the callable API is slightly complex but allows for complex key
+interactions where you build-up a command with a chaing (aka "chord") of
+multiple key inputs. Refer to the ele.bindings documentation.
 </div></body>
 </html>

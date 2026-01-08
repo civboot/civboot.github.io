@@ -14,37 +14,35 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h1><a id=""vcds"" href="#"vcds"">Mod vcds</h1></a>
+<h1><a id="vcds" href="#vcds" class=anchor>Mod vcds</h1></a>
 vsds: version control data structures (and algorithms)
-<p>
-<b>Types</b> <ul>
-  <li><b>vcds.Diff</b></li>
-  <li><b>vcds.Keep</b></li>
-  <li><b>vcds.Change</b></li>
-  <li><b>vcds.DiffsExtender</b></li>
-  <li><b>vcds.Picks</b></li>
-  <li><b>vcds.Patch</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#vcds.Diff">Diff</a> <a href="#vcds.Keep">Keep</a> <a href="#vcds.Change">Change</a> <a href="#vcds.DiffsExtender">DiffsExtender</a> <a href="#vcds.Picks">Picks</a> <a href="#vcds.Patch">Patch</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>normalize(s) -&gt; ds.squash(ds.trimEnd(s))</span>
+  <li><a id="vcds.normalize" href="#vcds.normalize" class=anchor><b>fn normalize</b></a><span class=code>(s) -&gt; ds.squash(ds.trimEnd(s))</span><br>
+  
   normalize a line for comparing (anchoring).
   This just squashes and trims the end.</li>
-  <li><span class=code>apply(base, changes, out--[[{}]]) -&gt; out</span>
+  <li><a id="vcds.apply" href="#vcds.apply" class=anchor><b>fn apply</b></a><span class=code>(base, changes, out--[[{}]]) -&gt; out</span><br>
+  
   Apply changes to base (TableLines), push to <span class=code>out</span></li>
-  <li><span class=code>toChanges(diffs, full)</span></li>
-  <li><span class=code>toDiffs(base, changes) -&gt; diffs</span>
+  <li><a id="vcds.toChanges" href="#vcds.toChanges" class=anchor><b>fn toChanges</b></a><span class=code>(diffs, full)</span></li>
+  <li><a id="vcds.toDiffs" href="#vcds.toDiffs" class=anchor><b>fn toDiffs</b></a><span class=code>(base, changes) -&gt; diffs</span><br>
+  
   Convert Changes to Diffs with full context</li>
-  <li><span class=code>createAnchorTop(base, l, aLen)</span></li>
-  <li><span class=code>createAnchorBot(base, l, aLen)</span></li>
-  <li><span class=code>findAnchor(base, baseMap, anchors, above--[[false]]) -&gt; (l, c)</span>
+  <li><a id="vcds.createAnchorTop" href="#vcds.createAnchorTop" class=anchor><b>fn createAnchorTop</b></a><span class=code>(base, l, aLen)</span></li>
+  <li><a id="vcds.createAnchorBot" href="#vcds.createAnchorBot" class=anchor><b>fn createAnchorBot</b></a><span class=code>(base, l, aLen)</span></li>
+  <li><a id="vcds.findAnchor" href="#vcds.findAnchor" class=anchor><b>fn findAnchor</b></a><span class=code>(base, baseMap, anchors, above--[[false]]) -&gt; (l, c)</span><br>
+  
   Find the actual anchor by searching for uniqueness in the anchors <ul>
     <li>above=true:  find above (search up)</li>
     <li>above=false: find below (search down)</li>
   </ul></li>
-  <li><span class=code>pickAnchorsTop(pick) -&gt; isStartOfFile, anchors</span></li>
-  <li><span class=code>pickAnchorsBot(base, pick) -&gt; isEndOfFile, anchors</span></li>
-  <li><span class=code>createPatch(base, baseMap, pick)</span>
+  <li><a id="vcds.pickAnchorsTop" href="#vcds.pickAnchorsTop" class=anchor><b>fn pickAnchorsTop</b></a><span class=code>(pick) -&gt; isStartOfFile, anchors</span></li>
+  <li><a id="vcds.pickAnchorsBot" href="#vcds.pickAnchorsBot" class=anchor><b>fn pickAnchorsBot</b></a><span class=code>(base, pick) -&gt; isEndOfFile, anchors</span></li>
+  <li><a id="vcds.createPatch" href="#vcds.createPatch" class=anchor><b>fn createPatch</b></a><span class=code>(base, baseMap, pick)</span><br>
+  
   Create a patch item from a pick
   
   At it's most basic it would just be: <ul>
@@ -66,62 +64,69 @@ vsds: version control data structures (and algorithms)
     <li>empty lines are entirely ignored and are not considered an anchor</li>
   </ul></li>
 </ul>
-<p>
-<h2><a id=""vcds.Diff"" href="#"vcds.Diff"">Record Diff</h2></a>
-<ul>
-  <li><b>b</b> :
-  (base)   orig file.  '+'=added</li>
-  <li><b>c</b> :
-  (change) new file.   '-'=removed</li>
-  <li><b>text</b> </li>
-</ul>
+<br>
+<h2><a id="vcds.Diff" href="#vcds.Diff" class=anchor>Record Diff</h2></a>
 Single Line Diff
 This type is good for displaying differences to a user.
-<p>
-<h2><a id=""vcds.Keep"" href="#"vcds.Keep"">Record Keep</h2></a>
-<ul>
-  <li><b>num</b> </li>
+<b>Fields:</b><ul>
+  <li><a id="vcds.Diff.b" href="#vcds.Diff.b" class=anchor><b>.b</b></a>(base)   orig file.  '+'=added</li>
+  <li><a id="vcds.Diff.c" href="#vcds.Diff.c" class=anchor><b>.c</b></a>(change) new file.   '-'=removed</li>
+  <li><a id="vcds.Diff.text" href="#vcds.Diff.text" class=anchor><b>.text</b></a></li>
 </ul>
-<p>
-<h2><a id=""vcds.Change"" href="#"vcds.Change"">Record Change</h2></a>
-<ul>
-  <li><b>rem</b> :
-  removed lines</li>
-  <li><b>add</b> :
-  text to add</li>
+<b>Methods</b> <ul>
+  <li><a id="Diff.isKeep" href="#Diff.isKeep" class=anchor><b>fn isKeep</b></a><span class=code>(d)</span></li>
 </ul>
-<p>
-<h2><a id=""vcds.DiffsExtender"" href="#"vcds.DiffsExtender"">Record DiffsExtender</h2></a>
-<ul>
-  <li><b>diffs</b> </li>
-  <li><b>base</b> </li>
-  <li><b>bl</b> :
-  base line</li>
-  <li><b>cl</b> :
-  change line</li>
+<br>
+<h2><a id="vcds.Keep" href="#vcds.Keep" class=anchor>Record Keep</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="vcds.Keep.num" href="#vcds.Keep.num" class=anchor><b>.num</b></a></li>
 </ul>
-<p>
-<h2><a id=""vcds.Picks"" href="#"vcds.Picks"">Record Picks</h2></a>
-<ul>
-  <li><b>changes</b> :
-  list of changes</li>
-  <li><b>ci</b> :
-  for iterating</li>
-  <li><b>de</b> </li>
-  <li><b>set</b> :
-  settings (need refactor)</li>
+<b>Methods</b> <ul>
+  <li><a id="Keep.len" href="#Keep.len" class=anchor><b>fn len</b></a><span class=code>(k) -&gt; k.num and k.num or #k</span></li>
 </ul>
+<br>
+<h2><a id="vcds.Change" href="#vcds.Change" class=anchor>Record Change</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="vcds.Change.rem" href="#vcds.Change.rem" class=anchor><b>.rem</b></a>removed lines</li>
+  <li><a id="vcds.Change.add" href="#vcds.Change.add" class=anchor><b>.add</b></a>text to add</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Change.len" href="#Change.len" class=anchor><b>fn len</b></a><span class=code>(ch)</span></li>
+</ul>
+<br>
+<h2><a id="vcds.DiffsExtender" href="#vcds.DiffsExtender" class=anchor>Record DiffsExtender</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="vcds.DiffsExtender.diffs" href="#vcds.DiffsExtender.diffs" class=anchor><b>.diffs</b></a></li>
+  <li><a id="vcds.DiffsExtender.base" href="#vcds.DiffsExtender.base" class=anchor><b>.base</b></a></li>
+  <li><a id="vcds.DiffsExtender.bl" href="#vcds.DiffsExtender.bl" class=anchor><b>.bl</b></a>base line</li>
+  <li><a id="vcds.DiffsExtender.cl" href="#vcds.DiffsExtender.cl" class=anchor><b>.cl</b></a>change line</li>
+</ul>
+<br>
+<h2><a id="vcds.Picks" href="#vcds.Picks" class=anchor>Record Picks</h2></a>
 Create picks (aka cherry picks) iterator from changes.
 These can then be applied to a new base using vcds.patch(base, picks)
-<p>
+<br>
 Each "pick" is a list of Diffs which are anchored by the lines
 above and below (unless they are start/end of file).
-<p>
-<h2><a id=""vcds.Patch"" href="#"vcds.Patch"">Record Patch</h2></a>
-<ul>
-  <li><b>conflict</b> </li>
-  <li><b>bl</b> </li>
+<b>Fields:</b><ul>
+  <li><a id="vcds.Picks.changes" href="#vcds.Picks.changes" class=anchor><b>.changes</b></a>list of changes</li>
+  <li><a id="vcds.Picks.ci" href="#vcds.Picks.ci" class=anchor><b>.ci</b></a>for iterating</li>
+  <li><a id="vcds.Picks.de" href="#vcds.Picks.de" class=anchor><b>.de</b></a></li>
+  <li><a id="vcds.Picks.set" href="#vcds.Picks.set" class=anchor><b>.set</b></a>settings (need refactor)</li>
 </ul>
-<p>
+<b>Methods</b> <ul>
+  <li><a id="Picks.groupChanges" href="#Picks.groupChanges" class=anchor><b>fn groupChanges</b></a><span class=code>(p, ci)</span><br>
+  
+  Get which changes to include in a patch group.
+  A group is a series of patches with Keep:len() < anchorLen (default=3)
+  between them.</li>
+</ul>
+<br>
+<h2><a id="vcds.Patch" href="#vcds.Patch" class=anchor>Record Patch</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="vcds.Patch.conflict" href="#vcds.Patch.conflict" class=anchor><b>.conflict</b></a></li>
+  <li><a id="vcds.Patch.bl" href="#vcds.Patch.bl" class=anchor><b>.bl</b></a></li>
+</ul>
+<br>
 </div></body>
 </html>

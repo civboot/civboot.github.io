@@ -15,610 +15,134 @@
 <html>
 <body><div class=doc>
 <b>ds</b>: absurdly necessary data structures and algorithms
-<p>
+<br>
 ds is a small-ish lua library which fills many of the data structure and method
 gaps (needed "batteries") in Lua's standard library. It's only dependency is
 <a href="lib/metaty">lib/metaty</a> which it uses for defining it's records and <a href="lib/fmt">lib/fmt</a> which it
 uses to define the logging interface.
-<p>
+<br>
 <h3>none: "set but none" vs nil's simply "unset"</h3>
 In Lua <span class=code>nil</span> always means "unset". Certain APIs (like JSON) might distinguish
 between unset vs null/empty/none. For such APIs <span class=code>none</span> can be used to mean "set
 as none" instead of simply "unset" (which is what <span class=code>nil</span> means).
-<p>
+<br>
 <span class=code>none</span> overrides <span class=code>__metatable='none'</span> so that <span class=code>getmetatable(none)=='none'</span> and
 <span class=code>metaty.ty(none) == 'none'</span>.
-<p>
+<br>
 <div class=info>WARNING: <span class=code>assert(none)</span> will pass.  Use <span class=code>ds.bool</span> to make <span class=code>none</span> falsy.</div>
-<p>
+<br>
 <h3>path</h3>
 <span class=code>ds.path</span> has some functions for working with paths.
-<p>
+<br>
 It interacts (but does not set) the <b>globals</b> <span class=code>CWD</span> and <span class=code>HOME</span> to get the
 "current working directory" and "home directory", respectively.
-<p>
-<p>
-<h1><a id=""ds"" href="#"ds"">Mod ds</h1></a>
+<br>
+<br>
+<h1><a id="ds" href="#ds" class=anchor>Mod ds</h1></a>
 ds: data structures and algorithms.
-<p>
-<b>Types</b> <ul>
-  <li><b>ds.B</b></li>
-  <li><b>ds.PlainStyler</b></li>
-  <li><b>ds.TypoSafe</b></li>
-  <li><b>ds.Slc</b></li>
-  <li><b>ds.Imm</b></li>
-  <li><b>ds.Duration</b></li>
-  <li><b>ds.Epoch</b></li>
-  <li><b>ds.Set</b></li>
-  <li><b>ds.bt</b></li>
-  <li><b>ds.BiMap</b></li>
-  <li><b>ds.Deq</b></li>
-  <li><b>ds.TWriter</b></li>
-  <li><b>ds.Error</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#ds.B">B</a> <a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>setup(args)</span>
+  <li><a id="ds.setup" href="#ds.setup" class=anchor><b>fn setup</b></a><span class=code>(args)</span><br>
+  
   Default LUA_SETUP, though vt100 is recommended for most users.</li>
-  <li><span class=code>concat(sep, ...) -&gt; string</span>
+  <li><a id="ds.concat" href="#ds.concat" class=anchor><b>fn concat</b></a><span class=code>(sep, ...) -&gt; string</span><br>
+  
   concatenate the string arguments.</li>
-  <li><span class=code>push(t, v) -&gt; index</span>
+  <li><a id="ds.push" href="#ds.push" class=anchor><b>fn push</b></a><span class=code>(t, v) -&gt; index</span><br>
+  
   push the value onto the end of the table, return the index.</li>
-  <li><span class=code>name(t) -&gt; string</span>
+  <li><a id="ds.name" href="#ds.name" class=anchor><b>fn name</b></a><span class=code>(t) -&gt; string</span><br>
+  
   if t is a table returns t.__name or '?'</li>
-  <li><span class=code>inset(t, i, values, rmlen) -&gt; nil</span>
+  <li><a id="ds.inset" href="#ds.inset" class=anchor><b>fn inset</b></a><span class=code>(t, i, values, rmlen) -&gt; nil</span><br>
+  
   insert values into list at index i.
   Uses <span class=code>inset</span> method if available.
-  rmlen, if provided, will cause <span class=code>t[i:i+rmlen]</span> to be removed first
-  
-  inset is like an extend but the items are insert at any place in the array.
-  The rmlen will also remove a certain number of items.</li>
-  <li><span class=code>isPod()</span></li>
-  <li><span class=code>noop()</span></li>
-  <li><span class=code>nosupport()</span></li>
-  <li><span class=code>iden(...) -&gt; ...</span></li>
-  <li><span class=code>retTrue() -&gt; true</span></li>
-  <li><span class=code>retFalse() -&gt; false</span></li>
-  <li><span class=code>newTable() -&gt; {}</span></li>
-  <li><span class=code>eq(a, b) -&gt; a == b</span></li>
-  <li><span class=code>srcloc(level) -&gt; "/path/to/dir/file.lua:10"</span></li>
-  <li><span class=code>shortloc(level) -&gt; "dir/file.lua:10"</span></li>
-  <li><span class=code>srcdir(level) -&gt; "/path/to/dir/"</span></li>
-  <li><span class=code>coroutineErrorMessage(cor, err) -&gt; string</span></li>
-  <li><span class=code>isWithin(v, min, max) -&gt; bool</span></li>
-  <li><span class=code>lt(a, b) -&gt; a &lt; b</span></li>
-  <li><span class=code>gt(a, b) -&gt; a &gt; b</span></li>
-  <li><span class=code>lte(a, b) -&gt; a &lt;= b</span></li>
-  <li><span class=code>bound(v, min, max) -&gt; value within [min,max]</span></li>
-  <li><span class=code>sort2(a, b) -&gt; (small, large)</span></li>
-  <li><span class=code>repr(v) -&gt; sfmt('%q', v)</span></li>
-  <li><span class=code>isEven(a) -&gt; bool</span></li>
-  <li><span class=code>isOdd(a) -&gt; bool</span></li>
-  <li><span class=code>decAbs(v) -&gt; number</span></li>
-  <li><span class=code>concat(sep, ...) -&gt; string</span>
-  concatenate the string arguments.</li>
-  <li><span class=code>isupper(c) -&gt; string?</span>
-  return the string if it is only uppercase letters</li>
-  <li><span class=code>islower(c) -&gt; string?</span>
-  return the string if it is only lowercase letters</li>
-  <li><span class=code>trim(subj, pat, index) -&gt; string</span></li>
-  <li><span class=code>find(subj, pats, si, plain) -&gt; (ms, me, pi, pat)</span>
-  find any of a list of patterns. Return the match <span class=code>start, end</span> as well as
-  the <span class=code>index, pat</span> of the pattern matched.</li>
-  <li><span class=code>split(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span>
-  split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
-  <span class=code>ei</span> (end index)
-  <div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
+  rmlen, if provided, will cause <span class=code>t[i:i+rmlen</span></li>
+</ul> to be removed first
+
+inset is like an extend but the items are insert at any place in the array.
+The rmlen will also remove a certain number of items.
+* <a id="ds.isPod" href="#ds.isPod" class=anchor><b>fn isPod</b></a>
+* <a id="ds.noop" href="#ds.noop" class=anchor><b>fn noop</b></a><span class=code>()</span>
+* <a id="ds.nosupport" href="#ds.nosupport" class=anchor><b>fn nosupport</b></a><span class=code>()</span>
+* <a id="ds.iden" href="#ds.iden" class=anchor><b>fn iden</b></a><span class=code>(...) -&gt; ...</span>
+* <a id="ds.retTrue" href="#ds.retTrue" class=anchor><b>fn retTrue</b></a><span class=code>() -&gt; true</span>
+* <a id="ds.retFalse" href="#ds.retFalse" class=anchor><b>fn retFalse</b></a><span class=code>() -&gt; false</span>
+* <a id="ds.newTable" href="#ds.newTable" class=anchor><b>fn newTable</b></a><span class=code>() -&gt; {}</span>
+* <a id="ds.eq" href="#ds.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b) -&gt; a == b</span>
+* <a id="ds.srcloc" href="#ds.srcloc" class=anchor><b>fn srcloc</b></a><span class=code>(level) -&gt; "/path/to/dir/file.lua:10"</span>
+* <a id="ds.shortloc" href="#ds.shortloc" class=anchor><b>fn shortloc</b></a><span class=code>(level) -&gt; "dir/file.lua:10"</span>
+* <a id="ds.srcdir" href="#ds.srcdir" class=anchor><b>fn srcdir</b></a><span class=code>(level) -&gt; "/path/to/dir/"</span>
+* <a id="ds.coroutineErrorMessage" href="#ds.coroutineErrorMessage" class=anchor><b>fn coroutineErrorMessage</b></a><span class=code>(cor, err) -&gt; string</span>
+* <a id="ds.isWithin" href="#ds.isWithin" class=anchor><b>fn isWithin</b></a><span class=code>(v, min, max) -&gt; bool</span>
+* <a id="ds.lt" href="#ds.lt" class=anchor><b>fn lt</b></a><span class=code>(a, b) -&gt; a &lt; b</span>
+* <a id="ds.gt" href="#ds.gt" class=anchor><b>fn gt</b></a><span class=code>(a, b) -&gt; a &gt; b</span>
+* <a id="ds.lte" href="#ds.lte" class=anchor><b>fn lte</b></a><span class=code>(a, b) -&gt; a &lt;= b</span>
+* <a id="ds.bound" href="#ds.bound" class=anchor><b>fn bound</b></a><span class=code>(v, min, max) -&gt; value within [min,max]</span>
+* <a id="ds.sort2" href="#ds.sort2" class=anchor><b>fn sort2</b></a><span class=code>(a, b) -&gt; (small, large)</span>
+* <a id="ds.repr" href="#ds.repr" class=anchor><b>fn repr</b></a><span class=code>(v) -&gt; sfmt('%q', v)</span>
+* <a id="ds.isEven" href="#ds.isEven" class=anchor><b>fn isEven</b></a><span class=code>(a) -&gt; bool</span>
+* <a id="ds.isOdd" href="#ds.isOdd" class=anchor><b>fn isOdd</b></a><span class=code>(a) -&gt; bool</span>
+* <a id="ds.decAbs" href="#ds.decAbs" class=anchor><b>fn decAbs</b></a><span class=code>(v) -&gt; number</span>
+* <a id="ds.concat" href="#ds.concat" class=anchor><b>fn concat</b></a><span class=code>(sep, ...) -&gt; string</span><br>
+
+concatenate the string arguments.
+* <a id="ds.isupper" href="#ds.isupper" class=anchor><b>fn isupper</b></a><span class=code>(c) -&gt; string?</span><br>
+
+return the string if it is only uppercase letters
+* <a id="ds.islower" href="#ds.islower" class=anchor><b>fn islower</b></a><span class=code>(c) -&gt; string?</span><br>
+
+return the string if it is only lowercase letters
+* <a id="ds.trim" href="#ds.trim" class=anchor><b>fn trim</b></a><span class=code>(subj, pat, index) -&gt; string</span>
+* <a id="ds.find" href="#ds.find" class=anchor><b>fn find</b></a><span class=code>(subj, pats, si, plain) -&gt; (ms, me, pi, pat)</span><br>
+
+find any of a list of patterns. Return the match <span class=code>start, end</span> as well as
+the <span class=code>index, pat</span> of the pattern matched.
+* <a id="ds.split" href="#ds.split" class=anchor><b>fn split</b></a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span><br>
+
+split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
+<span class=code>ei</span> (end index)
+<div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
 &nbsp; ... do something with line<br>
 end
-</div></li>
-  <li><span class=code>splitList(...) -&gt; list</span></li>
-  <li><span class=code>trimEnd(subj, pat, index) -&gt; string</span>
-  trim the end of the string by removing pat (default='%s')</li>
-  <li><span class=code>squash(s, repl) -&gt; string</span>
-  Squash a string: convert all whitespace to repl (default=' ').</li>
-  <li><span class=code>usub(s, si, ei, len)</span>
-  utf8 sub. If len is pre-computed you can pass it in for better performance.</li>
-  <li><span class=code>simplestr(s)</span>
-  A way to declare simpler mulitline strings which: <ul>
-    <li>ignores the first/last newline if empty</li>
-    <li>removes leading whitespace equal to the first
-    line (or second line if first line has no indent)</li>
-  </ul>
-  Example: <div class=code-block>&nbsp; local s = require'ds'.simplestr<br>
+</div>
+* <a id="ds.splitList" href="#ds.splitList" class=anchor><b>fn splitList</b></a><span class=code>(...) -&gt; list</span>
+* <a id="ds.trimEnd" href="#ds.trimEnd" class=anchor><b>fn trimEnd</b></a><span class=code>(subj, pat, index) -&gt; string</span><br>
+
+trim the end of the string by removing pat (default='%s')
+* <a id="ds.squash" href="#ds.squash" class=anchor><b>fn squash</b></a><span class=code>(s, repl) -&gt; string</span><br>
+
+Squash a string: convert all whitespace to repl (default=' ').
+* <a id="ds.usub" href="#ds.usub" class=anchor><b>fn usub</b></a><span class=code>(s, si, ei, len)</span><br>
+
+utf8 sub. If len is pre-computed you can pass it in for better performance.
+* <a id="ds.simplestr" href="#ds.simplestr" class=anchor><b>fn simplestr</b></a><span class=code>(s)</span><br>
+
+A way to declare simpler mulitline strings which: <ul>
+  <li>ignores the first/last newline if empty</li>
+  <li>removes leading whitespace equal to the first
+  line (or second line if first line has no indent)</li>
+</ul>
+Example: <div class=code-block>&nbsp; local s = require'ds'.simplestr<br>
 &nbsp; local mystr = s[[<br>
 &nbsp; &nbsp; this is<br>
 &nbsp; &nbsp; &nbsp; a string.<br>
 &nbsp; ]]<br>
 &nbsp; T.eq('this is\n &nbsp;a string.', mystr)<br>
 &nbsp; 
-</div></li>
-  <li><span class=code>bin(uint, width--[[8]], sep4--[['_']]) -&gt; str</span>
-  Convert integer to binary representation (0's and 1's) <ul>
-    <li>width will be the number of bits.</li>
-    <li>sep4 will be used to separate every 4 bits, set to
-    nil to disable.</li>
-  </ul></li>
-  <li><span class=code>get(t, k) -&gt; value</span>
-  <span class=code>t[k]</span> if t is a raw table, else <span class=code>getmetatable(t).get(t, k)</span>
-  
-  This lets many types be substitutable for raw-tables in some APIs (i.e. lines).</li>
-  <li><span class=code>set(t, k, v)</span>
-  <span class=code>t[k] = v</span> if t is a raw table, else <span class=code>getmetatable(t).set(t, k, v)</span>
-  
-  This lets many types be substitutable for raw-tables in some APIs (i.e. lines).</li>
-  <li><span class=code>isEmpty(t) -&gt; t == nil or next(t) == nil</span></li>
-  <li><span class=code>pairlen(t) -&gt; int</span>
-  the full length of all pairs
-  <div class=info>WARNING: very slow, requires iterating the whole table</div></li>
-  <li><span class=code>sort(t, fn) -&gt; t</span>
-  sort table and return it.
-  Eventually this may use the <span class=code>__sort</span> metamethod</li>
-  <li><span class=code>sortUnique(t, sortFn, rmFn) -&gt; t</span>
-  sort t and remove anything where <span class=code>rmFn(v1, v2)</span>
-  (normally rmFn is <span class=code>ds.eq</span>)</li>
-  <li><span class=code>geti(t, i) -&gt; t[i]</span>
-  get index, handling negatives</li>
-  <li><span class=code>last(t) -&gt; t[#t]</span></li>
-  <li><span class=code>only(t) -&gt; t[1]</span>
-  get the first (and assert only) element of the list</li>
-  <li><span class=code>values(t) -&gt; list</span>
-  get only the values of pairs(t) as a list</li>
-  <li><span class=code>keys(t) -&gt; list</span></li>
-  <li><span class=code>inext(t, i) -&gt; (i+1, v)</span>
-  next(t, key) but with indexes</li>
-  <li><span class=code>iprev(t, i) -&gt; (i-1, v)</span>
-  inext but reversed.</li>
-  <li><span class=code>ireverse(t) -&gt; iter</span>
-  ipairs reversed</li>
-  <li><span class=code>rawislice(state, i) -&gt; (i+1, v)</span></li>
-  <li><span class=code>islice(t, starti, endi) -&gt; iter[starti:endi]</span></li>
-  <li><span class=code>slice(t, starti, endi) -&gt; list[starti:endi]</span></li>
-  <li><span class=code>ilast(t, starti, endi) -&gt; iter[starti:endi]</span>
-  iend(t, starti, endi=-1): get islice from the end.
-  starti and endi must be negative.
-  
-  Example: <span class=code>iend({1, 2, 3, 4, 5}, -3, -2) -&gt; 3, 4</span></li>
-  <li><span class=code>ieq(a, b)</span>
-  Return true if two list-like tables are equal.</li>
-  <li><span class=code>reverse(t) -&gt; t (reversed)</span>
-  reverse a list-like table in-place</li>
-  <li><span class=code>extend(t, l) -&gt; t: move vals to end of t</span></li>
-  <li><span class=code>defaultExtend(r, l) -&gt; r</span></li>
-  <li><span class=code>clear(t, si, len) -&gt; t</span></li>
-  <li><span class=code>add(t, ...) -&gt; t</span></li>
-  <li><span class=code>replace(t, r) -&gt; t</span></li>
-  <li><span class=code>update(t, add) -&gt; t</span>
-  return t with the key/vals of add inserted</li>
-  <li><span class=code>flatten(...)</span>
-  return new list which contains all elements inserted in order</li>
-  <li><span class=code>updateKeys(t, add, keys) -&gt; t</span>
-  like update but only for specified keys</li>
-  <li><span class=code>orderedKeys(t, cmpFn) -&gt; keys</span></li>
-  <li><span class=code>pushSortedKeys(t, cmpFn) -&gt; t</span>
-  adds all <span class=code>key=index</span> to the table so the keys can
-  be iterated using <span class=code>for _, k in ipairs(t)</span></li>
-  <li><span class=code>merge(t, add) -&gt; t</span>
-  recursively update t with add. This will call update on inner tables as
-  well.
-  <div class=info>Note: treats list indexes as normal keys (does not append)</div></li>
-  <li><span class=code>popk(t, key) -&gt; t[k]: pop key</span></li>
-  <li><span class=code>drain(t, len--[[#t]]) -&gt; table</span>
-  return len items from the end of <span class=code>t</span>, removing them from <span class=code>t</span></li>
-  <li><span class=code>getOrSet(t, k, newFn) -&gt; t[k] or newFn()</span></li>
-  <li><span class=code>setIfNil(t, k, v) -&gt; nil</span></li>
-  <li><span class=code>emptyTable() -&gt; {}</span></li>
-  <li><span class=code>rmleft(t, rm, eq--[[ds.eq]]) -&gt; t (mutated)</span>
-  remove (mutate) the left side of the table (list).
-  noop if rm is not exactly equal to the left side.</li>
-  <li><span class=code>dotpath(dots) -&gt; list split by '.'</span>
-  used with ds.getp and ds.setp. Example <div class=code-block>&nbsp; &nbsp; local dp = require'ds'.dotpath<br>
-&nbsp; &nbsp; ds.getp(t, dp'a.b.c')<br>
-&nbsp; 
-</div></li>
-  <li><span class=code>getp(t, path) -&gt; value? at path</span>
-  get the value at the path or nil if the value or any
-  intermediate table is missing.
-  <div class=code-block>&nbsp; get(t, {'a', 2, 'c'}) &nbsp;-&gt; t.a?[2]?.c?<br>
-&nbsp; get(t, dotpath'a.b.c') -&gt; t.a?.b?.c?
-</div></li>
-  <li><span class=code>rawgetp(t, path) -&gt; value? at path</span>
-  same as ds.getp but uses <span class=code>rawget</span></li>
-  <li><span class=code>setp(d, path, value, newFn) -&gt; nil</span>
-  set the value at path using newFn (default=ds.newTable) to create
-  missing intermediate tables.
-  <div class=code-block>set(t, dotpath'a.b.c', 2) -- t.a?.b?.c = 2</div></li>
-  <li><span class=code>indexOf(t, find) -&gt; int</span></li>
-  <li><span class=code>indexOfPat(strs, pat) -&gt; int</span></li>
-  <li><span class=code>popit(t, i) -&gt; t[i] and length of t is reduced by 1</span>
-  popit (aka pop-index-top) will return the value at <span class=code>t[i]</span>, replacing it
-  with the value at the end (aka top) of the list.
-  
-  if <span class=code>i &gt; #t</span> returns nil and doesn't affect the size of the list.</li>
-  <li><span class=code>walk(t, fieldFn, tableFn, maxDepth, state) -&gt; nil</span>
-  Walk the table up to depth maxDepth (or infinite if nil) <ul>
-    <li><span class=code>fieldFn(key, value, state) &nbsp; &nbsp;-&gt; stop</span> is called for every non-table value.</li>
-    <li><span class=code>tableFn(key, tblValue, state) -&gt; stop</span> is called for every table value</li>
-  </ul>
-  
-  If tableFn <span class=code>stop==ds.SKIP</span> (i.e. 'skip') then that table is not recursed.
-  Else if stop then the walk is halted immediately</li>
-  <li><span class=code>icopy(t) -&gt; list</span>
-  Copy list-elements only</li>
-  <li><span class=code>defaultICopy(r)</span></li>
-  <li><span class=code>copy(t, add) -&gt; new t</span>
-  Copy and update full table</li>
-  <li><span class=code>deepcopy(t) -&gt; table</span></li>
-  <li><span class=code>readPath(path)</span></li>
-  <li><span class=code>writePath(path, text)</span></li>
-  <li><span class=code>lineschunk(dat) -&gt; iter()</span>
-  convert lines-like table into chunk for eval</li>
-  <li><span class=code>eval(chunk, env, name) -&gt; (ok, ...)</span>
-  evaluate lua code</li>
-  <li><span class=code>sentinel(name, mt) -&gt; NewType</span>
-  <span class=code>sentinel(name, metatable)</span>
-  Use to create a "sentinel type". Return the (singular) instance.
-  
-  Sentinels are "single values" commonly used for things like: none, empty, EOF, etc.
-  They have most metatable methods disallowed and are immutable down. Methods can
-  only be set by the provided metatable value.</li>
-  <li><span class=code>bool(v) -&gt; bool</span>
-  convert to boolean (none aware)</li>
-  <li><span class=code>binarySearch(t, v, cmp, si--[[1]], ei--[[#t]]) -&gt; index</span>
-  Search the sorted table, return i such that: <ul>
-    <li><span class=code>cmp(t[i], v)</span> returns true  for indexes <= i</li>
-    <li><span class=code>cmp(t[i], v)</span> returns false for indexes >  i</li>
-  </ul>
-  If you want a value perfectly equal then check equality
-  on the resulting index.</li>
-  <li><span class=code>dagSort(ids, parentMap) -&gt; sorted?, cycle?</span>
-  Sort the directed acyclic graph of ids + parentMap
-  to put children before the parents.
-  
-  returns <span class=code>nil, cycle</span> in the case of a cycle</li>
-  <li><span class=code>check(i, ...)</span>
-  Throw an error if <span class=code>select(i, ...)</span> is truthy, else return ...
-  
-  For example, <span class=code>file:read'L'</span> returns <span class=code>line?, errmsg?</span>.
-  However, the absence of line doesn't necessarily
-  indicate the presence of errmsg: EOF is just <span class=code>nil</span>.
-  
-  Therefore you can use <span class=code>line = check(2, f:read'L')</span>
-  to only assert on the presence of errmsg.</li>
-  <li><span class=code>tracelist(tbstr, level) -&gt; {traceback}</span>
-  convert the string traceback into a list</li>
-  <li><span class=code>traceback(level) -&gt; string</span></li>
-  <li><span class=code>try(fn, ...) -&gt; (ok, ...)</span>
-  try to run the fn. Similar to pcall. Return one of: <ul>
-    <li>successs: <span class=code>(true, ...)</span></li>
-    <li>failure: <span class=code>(false, ds.Error{...})</span></li>
-  </ul></li>
-  <li><span class=code>main(fn, ...) -&gt; errno?</span>
-  Helper function for running commands as "main".</li>
-  <li><span class=code>resume(th) -&gt; (ok, err, b, c)</span>
-  Same as coroutine.resume except uses a ds.Error object for errors
-  (has traceback)</li>
-  <li><span class=code>auto(mod, i) -&gt; (mod, i)</span>
-  auto-set nil locals using require(mod)
-  <span class=code>local x, y, z; ds.auto'mm' -- sets x=mm.x; y=mm.y; z=mm.z</span></li>
-  <li><span class=code>want(mod) -&gt; module?</span>
-  like require but returns nil</li>
-  <li><span class=code>wantpath(path) -&gt; value?</span>
-  Try to get any <span class=code>string.to.path</span> by trying all possible combinations of
-  requiring the prefixes and getting the postfixes.</li>
-  <li><span class=code>resource(relpath)</span>
-  Include a resource (raw data) relative to the current file.
-  
-  Example: <span class=code>M.myData = ds.resource'data/myData.csv'</span></li>
-  <li><span class=code>yeet(fmt, ...)</span>
-  exit immediately with message and errorcode = 99</li>
-  <li><span class=code>eprint(...)</span>
-  Print to io.sderr</li>
-</ul>
-<p>
-<h2><a id=""M.B"" href="#"M.B"">Mod M.B</h2></a>
-pure-lua bootstrapped library (mainly for bootstrap.lua)
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>string_concat(sep, ...) -&gt; string</span>
-  concatenate varargs.</li>
-  <li><span class=code>push(t, v) -&gt; index</span>
-  push v onto table, returning index.</li>
-  <li><span class=code>update(t, add) -&gt; t</span>
-  return t with the key/vals of add inserted</li>
-</ul>
-<p>
-<h2><a id=""ds.PlainStyler"" href="#"ds.PlainStyler"">Record PlainStyler</h2></a>
-<p>
-<h2><a id=""ds.TypoSafe"" href="#"ds.TypoSafe"">Record TypoSafe</h2></a>
-A typo-safe table, typically used in libraries for storing constants.
-<p>
-Adding keys is always allowed but getting non-existant keys is an error.
-<p>
-<h2><a id=""ds.Slc"" href="#"ds.Slc"">Record Slc</h2></a>
-<ul>
-  <li><b>si</b> :
-  start index</li>
-  <li><b>ei</b> :
-  end index</li>
-</ul>
-A slice of anything with start and end indexes.
-<div class=info>Note: This object does not hold a reference to the object being
-sliced.</div>
-<p>
-<h2><a id=""ds.Imm"" href="#"ds.Imm"">Record Imm</h2></a>
-Immutable table
-<p>
-<h2><a id=""ds.Duration"" href="#"ds.Duration"">Record Duration</h2></a>
-<ul>
-  <li><b>s</b> :
-  seconds</li>
-  <li><b>ns</b> :
-  nanoseconds</li>
-</ul>
-<p>
-<h2><a id=""ds.Epoch"" href="#"ds.Epoch"">Record Epoch</h2></a>
-<ul>
-  <li><b>s</b> :
-  seconds</li>
-  <li><b>ns</b> :
-  nanoseconds</li>
-</ul>
-<p>
-<h2><a id=""ds.Set"" href="#"ds.Set"">Record Set</h2></a>
-<p>
-<h2><a id=""bt"" href="#"bt"">Mod bt</h2></a>
-indexed table as Binary Tree.
-These functions treat an indexed table as a binary tree
-where root is at <span class=code>index=1</span>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>left(t, i) -&gt; t[i * 2]</span></li>
-  <li><span class=code>right(t, i) -&gt; t[i * 2 + 1]</span></li>
-  <li><span class=code>parent(t, i) -&gt; t[i // 2]</span></li>
-  <li><span class=code>lefti(t, i) -&gt; i * 2</span></li>
-  <li><span class=code>righti(t, i) -&gt; i * 2 + 1</span></li>
-  <li><span class=code>parenti(t, i) -&gt; i // 2</span></li>
-</ul>
-<p>
-<h2><a id=""ds.BiMap"" href="#"ds.BiMap"">Record BiMap</h2></a>
-Bidirectional Map.
-Maps both <span class=code>key -&gt; value</span> and <span class=code>value -&gt; key</span>.
-Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = nil</span> to handle deletions.
-<p>
-Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
-<p>
-<h2><a id=""ds.Deq"" href="#"ds.Deq"">Record Deq</h2></a>
-<ul>
-  <li><b>right</b> </li>
-  <li><b>left</b> </li>
-</ul>
-<span class=code>Deq() -&gt; Deq</span>, a deque
-Use as a first in/out with <span class=code>deq:push(v)/deq()</span>
-<p>
-Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp;pushRight()<br>
-&nbsp; popLeft() &nbsp; popRight()
 </div>
-Calling it is the same as popLeft (use as iterator)
-<p>
-<h2><a id=""ds.TWriter"" href="#"ds.TWriter"">Record TWriter</h2></a>
-<p>
-<h2><a id=""ds.Error"" href="#"ds.Error"">Record Error</h2></a>
-<ul>
-  <li><b>msg</b> </li>
-  <li><b>traceback</b> </li>
-  <li><b>cause</b> </li>
+* <a id="ds.bin" href="#ds.bin" class=anchor><b>fn bin</b></a><span class=code>(uint, width--[[8]], sep4--[['_']]) -&gt; str</span><br>
+
+Convert integer to binary representation (0's and 1's) <ul>
+  <li>width will be the number of bits.</li>
+  <li>sep4 will be used to separate every 4 bits, set to
+  nil to disable.</li>
 </ul>
-Error message, traceback and cause
-NOTE: you should only use this for printing/logging/etc.
-<p>
-<h1><a id=""Ty<Iter>"" href="#"Ty<Iter>"">Record Iter</h1></a>
-<p>
-<h1><a id=""Ty<LL>"" href="#"Ty<LL>"">Record LL</h1></a>
-<ul>
-  <li><b>l</b> :
-  left node</li>
-  <li><b>r</b> :
-  right node</li>
-  <li><b>v</b> :
-  value</li>
-</ul>
-<p>
-<h1><a id=""ds.path"" href="#"ds.path"">Mod ds.path</h1></a>
-working with paths
-Call directly to convert a list|str to a list of path components.
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>read(path)</span>
-  read file at path or throw error</li>
-  <li><span class=code>write(path, text)</span>
-  write string to file at path or throw error</li>
-  <li><span class=code>append(path, text)</span>
-  append text to path, adds a newline if text doesn't end in one.</li>
-  <li><span class=code>pathenv(var, alt)</span></li>
-  <li><span class=code>cwd(path)</span>
-  get/set current working directory</li>
-  <li><span class=code>home() -&gt; M.pathenv('HOME', 'HOMEDIR')</span>
-  get the user's home directory</li>
-  <li><span class=code>concat(t, _) -&gt; string</span>
-  join a table of path components</li>
-  <li><span class=code>hasBacktrack(path) -&gt; bool. path: [str|list]</span>
-  return whether a path has any '..' components</li>
-  <li><span class=code>ext(path) -&gt; string. path: [str|list]</span></li>
-  <li><span class=code>abs(path, wd) -&gt; /absolute/path</span>
-  Ensure the path is absolute, using the wd (default=cwd()) if necessary
-  
-  This preserves the type of the input: str -> str; table -> table</li>
-  <li><span class=code>resolve(path, wd) -&gt; list|str</span>
-  resolve any `..` or `.` path components, making the path
-  /absolute if necessary.
-  The return type is the same as the input type.</li>
-  <li><span class=code>canonical(path) -&gt; M.resolve(M.abs(path))</span>
-  Get the canonical path.
-  This is a shortcut for <span class=code>resolve(abs(path))</span>.</li>
-  <li><span class=code>itemeq(a, b) -&gt; boolean: path items are equal</span></li>
-  <li><span class=code>rmleft(path, rm)</span>
-  ds.rmleft for path components</li>
-  <li><span class=code>nice(path, wd) -&gt; string</span>
-  return a nice path (string) that is resolved and readable.
-  
-  It's 'nice' because it has no '/../' or '/./' elements
-  and has CWD stripped.</li>
-  <li><span class=code>small(path, wd)</span>
-  Return the nice path but always keep either / or ./
-  at the start.</li>
-  <li><span class=code>short(path, wd)</span>
-  Return only the parent dir and final item.
-  This is often used for documentation/etc</li>
-  <li><span class=code>first(path)</span>
-  <span class=code>first/middle/last -&gt; ("first", "middle/last")</span></li>
-  <li><span class=code>last(path)</span>
-  <span class=code>first/middle/last -&gt; ("first/middle", "last")</span></li>
-  <li><span class=code>dir(path)</span></li>
-  <li><span class=code>isDir(path) -&gt; path:sub(-1) == '/'</span>
-  return whether the path looks like a dir.
-  Note: civlua tries to make all ftype='dir' paths end in '/'
-  but other libraries or APIs may not conform to this.</li>
-  <li><span class=code>toDir(path) -&gt; path/</span></li>
-  <li><span class=code>toNonDir(path) -&gt; path (without ending /)</span></li>
-  <li><span class=code>relative(from, to, wd)</span>
-  return the relative path needed to get from <span class=code>from</span> to <span class=code>to</span>.
-  
-  Note: this ignores (pops) the last item in <span class=code>from</span> if it's not a dir/.
-  
-  For example
-  T.eq(relative('/foo/bar',  '/foo/baz/bob'), 'baz/bob')
-  T.eq(relative('/foo/bar/', '/foo/baz/bob'), '../baz/bob')</li>
-  <li><span class=code>cmpDirsLast(a, b)</span>
-  path comparison function for <span class=code>table.sort</span> that sorts
-  dirs last, else alphabetically.</li>
-</ul>
-<p>
-<h1><a id=""ds.utf8"" href="#"ds.utf8"">Mod ds.utf8</h1></a>
-utf8 stream decoding.
-Get the length by decodelen(firstbyte), then decode the whole character
-with decode(dat)
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>decodelen(firstbyte) -&gt; U8LEN[0xF8 &amp; firstbyte]</span>
-  given the first byte return the number of bytes in the utf8 char</li>
-  <li><span class=code>decode(dat) -&gt; int</span>
-  decode utf8 data (table) into an integer.
-  Use <span class=code>utf8.char</span> (from lua's stdlib) to turn into a string.</li>
-</ul>
-<p>
-<h1><a id=""ds.heap"" href="#"ds.heap"">Mod ds.heap</h1></a>
-Binary Heap implementation
-<p>
-<b>Types</b> <ul>
-  <li><b>ds.heap.Heap</b></li>
-</ul>
-<p>
-<h2><a id=""ds.heap.Heap"" href="#"ds.heap.Heap"">Record Heap</h2></a>
-<ul>
-  <li><b>cmp</b> :
-  comparison function to use</li>
-</ul>
-Heap(t, cmp) binary heap using a table.
-A binary heap is a binary tree where the value of the parent always
-satisfies `cmp(parent, child) == true`
-Min Heap: cmp = function(p, c) return p < c end (default)
-Max Heap: cmp = function(p, c) return p > c end
-<p>
-add and push take only O(log n), making it very useful for
-priority queues and similar problems.
-<p>
-<h1><a id=""ds.log"" href="#"ds.log"">Mod ds.log</h1></a>
-Simple logging library, set i.e. LOGLEVEL=TRACE to enable logging.
-<p>
-This module has the functions <span class=code>trace info warn err crit</span> with the signature:
-<span class=code>function(fmt, ... [, data])</span> <ul>
-  <li>the ... are the format args which behave like <span class=code>fmt.format</span> (aka <span class=code>%q</span>
-  formats tables/etc).</li>
-  <li>data is optional arbitrary data that can be serialized/formatted.</li>
-</ul>
-<p>
-To enable logging the user should set a global (or env var) LOGLEVEL
-to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
-<p>
-This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
-which logs to stderr. This fn is called with signature
-<span class=code>function(level, srcloc, fmt, ...)</span>
-<p>
-<b>Types</b> <ul>
-  <li><b>ds.log.LogTable</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>time() -&gt; os.date():match'%d%d:%d%d:%d%d'</span></li>
-  <li><span class=code>levelInt(lvl)</span></li>
-  <li><span class=code>levelStr(lvl)</span></li>
-  <li><span class=code>setLevel(lvl)</span>
-  set the global logging level (default=os.getenv'LOGLEVEL')</li>
-  <li><span class=code>logFn(lvl, loc, fmt, ...)</span></li>
-  <li><span class=code>crit(1, ...)</span></li>
-  <li><span class=code>err(2, ...)</span></li>
-  <li><span class=code>warn(3, ...)</span></li>
-  <li><span class=code>info(4, ...)</span></li>
-  <li><span class=code>trace(5, ...)</span></li>
-</ul>
-<p>
-<h2><a id=""ds.log.LogTable"" href="#"ds.log.LogTable"">Record LogTable</h2></a>
-<ul>
-  <li><b>tee</b> :
-  call calls will also call tee</li>
-</ul>
-used in tests
-<p>
-<h1><a id=""Ty<ds.Grid>"" href="#"Ty<ds.Grid>"">Record ds.Grid</h1></a>
-<ul>
-  <li><b>h</b> :
-  height</li>
-  <li><b>w</b> :
-  width</li>
-</ul>
-<p>
-<h1><a id=""ds.load"" href="#"ds.load"">Mod ds.load</h1></a>
-load lua modules with custom or default environment in a sandboxed
-environment. This is extremely useful for configurations written in lua or
-writing your own config-like language.
-<p>
-The default environment (ds.load.ENV) has safe default functions which
-cannot access state and missing unsafe functions like getmetatable or the
-debug module.
-<p>
-<h2><a id="loading" href="#loading">loading</h2></a>
-To perform the load, call this module with:
-<div class=code-block>&nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result</div>
-inputs: <ul>
-  <li>path: path to load (lua-syntax file).</li>
-  <li>env: global environment.</li>
-  <li>envMeta: metatable of global environment. If env
-  already has a metatable this is ignored.</li>
-</ul>
-<p>
-outputs: <ul>
-  <li>ok: boolean to indicate load success or failure of script.</li>
-  <li>result: result or loading or ds.Error.</li>
-</ul>
-<p>
-Throws an error if the path is not valid lua code.
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>loadfile(path, env, envMeta) -&gt; fn?, ds.Error?</span>
-  Similar to lua's <span class=code>loadfile</span> but follows conventions of <span class=code>ds.load(...)</span>.
-  Unlike loadfile, this throws an error if the path doesn't parse.</li>
-</ul>
-<p>
-<h1><a id=""Ty<ds.IFile>"" href="#"Ty<ds.IFile>"">Record ds.IFile</h1></a>
-<ul>
-  <li><b>f</b> </li>
-  <li><b>path</b> </li>
-  <li><b>mode</b> </li>
-  <li><b>len</b> </li>
-  <li><b>sz</b> :
-  the size of each value</li>
-</ul>
-<p>
+* <a id="ds.get" href="#ds.get" class=anchor><b>fn get</b></a><span class=code>(t, k) -&gt; value</span><br>
+
+<span class=code>t[k</span>
 </div></body>
 </html>

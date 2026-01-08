@@ -17,7 +17,7 @@
 This is Civboot's VT100 terminal interface library. It implements (and also
 defines) the API that civboot terminal emulators must implement to be
 considered Civboot compliant.
-<p>
+<br>
 It has the following core types and constants: <ul>
   <li><span class=code>Term</span> object, see below</li>
   <li><span class=code>AsciiColor</span> which is a map from single ascii lowercase characters to the
@@ -28,7 +28,7 @@ It has the following core types and constants: <ul>
   <li>Various key utility functions and maps for checking and working with the
   values sent by <span class=code>Term:input()</span></li>
 </ul>
-<p>
+<br>
 To be civboot compliant the <span class=code>Term</span> type exported must have the following API: <ul>
   <li><span class=code>ds.Grid</span> fields <span class=code>text, fg, bg</span> for terminal text, foreground color and
   background color respectively</li>
@@ -42,36 +42,37 @@ To be civboot compliant the <span class=code>Term</span> type exported must have
   <li><span class=code>run</span> boolean (default=true) which can be set to false to stop related
   coroutines (best effort)</li>
 </ul>
-<p>
-<p>
-<h1><a id=""vt100"" href="#"vt100"">Mod vt100</h1></a>
+<br>
+<br>
+<h1><a id="vt100" href="#vt100" class=anchor>Mod vt100</h1></a>
 Civboot vt100 Terminal library that supports LAP protocol.
 Module for interacting with the vt100 via keys and AsciiColors.
 <div class=code-block>License CC0 / UNLICENSE<br>
 Originally written 2022 Phil Leblanc, modified 2023 Rett Berg (Civboot.org)<br>
 Authorized for relicense in: http://github.com/philanc/plterm/issues/4
 </div>
-<p>
-<b>Types</b> <ul>
-  <li><b>vt100.ctrl</b></li>
-  <li><b>vt100.Term</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#vt100.ctrl">ctrl</a> <a href="#vt100.Term">Term</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>key()</span></li>
-  <li><span class=code>ctrlChar()</span></li>
-  <li><span class=code>literal(key) -&gt; literalstring?</span>
+  <li><a id="vt100.key" href="#vt100.key" class=anchor><b>fn key</b></a></li>
+  <li><a id="vt100.ctrlChar" href="#vt100.ctrlChar" class=anchor><b>fn ctrlChar</b></a></li>
+  <li><a id="vt100.literal" href="#vt100.literal" class=anchor><b>fn literal</b></a><span class=code>(key) -&gt; literalstring?</span><br>
+  
   Convert any key to it's literal form <div class=code-block>&nbsp; &nbsp; literal'a' &nbsp; &nbsp; &nbsp; -&gt; 'a'<br>
 &nbsp; &nbsp; literal'enter' &nbsp; -&gt; '\n'<br>
 &nbsp; &nbsp; literal'esc' &nbsp; &nbsp; -&gt; nil<br>
 &nbsp; 
 </div></li>
-  <li><span class=code>keyError(key) -&gt; errstring?</span>
+  <li><a id="vt100.keyError" href="#vt100.keyError" class=anchor><b>fn keyError</b></a><span class=code>(key) -&gt; errstring?</span><br>
+  
   Check that a key is valid. Return errstring if not.</li>
-  <li><span class=code>checkKey(key) -&gt; key?, errstring?</span></li>
-  <li><span class=code>colorFB(f, fg, bg, fg0, bg0)</span>
+  <li><a id="vt100.checkKey" href="#vt100.checkKey" class=anchor><b>fn checkKey</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.colorFB" href="#vt100.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(f, fg, bg, fg0, bg0)</span><br>
+  
   Set the color, taking into account the previous color</li>
-  <li><span class=code>acwrite(f, colorFB, fg, bg, fgstr, bgstr, str, ...)</span>
+  <li><a id="vt100.acwrite" href="#vt100.acwrite" class=anchor><b>fn acwrite</b></a><span class=code>(f, colorFB, fg, bg, fgstr, bgstr, str, ...)</span><br>
+  
   write to the terminal-like file f using colors fgstr and bgstr
   accounting for previous color codes fg, bg
   
@@ -79,123 +80,133 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4
   
   Return: <span class=code>fg, bg, write(str, ...)</span>
   <div class=info> Note: fg and bg are the updated color codes</div></li>
-  <li><span class=code>setrawmode()</span></li>
-  <li><span class=code>setsanemode() -&gt; os.execute'stty sane'</span></li>
-  <li><span class=code>savemode() -&gt; mode?, errmsg?</span></li>
-  <li><span class=code>restoremode(mode) -&gt; os.execute('stty '..mode)</span></li>
-  <li><span class=code>start() -&gt; savedmode</span></li>
-  <li><span class=code>stop(fd, savedmode)</span></li>
-  <li><span class=code>Fmt(t)</span>
+  <li><a id="vt100.setrawmode" href="#vt100.setrawmode" class=anchor><b>fn setrawmode</b></a><span class=code>()</span></li>
+  <li><a id="vt100.setsanemode" href="#vt100.setsanemode" class=anchor><b>fn setsanemode</b></a><span class=code>() -&gt; os.execute'stty sane'</span></li>
+  <li><a id="vt100.savemode" href="#vt100.savemode" class=anchor><b>fn savemode</b></a><span class=code>() -&gt; mode?, errmsg?</span></li>
+  <li><a id="vt100.restoremode" href="#vt100.restoremode" class=anchor><b>fn restoremode</b></a><span class=code>(mode) -&gt; os.execute('stty '..mode)</span></li>
+  <li><a id="vt100.start" href="#vt100.start" class=anchor><b>fn start</b></a><span class=code>() -&gt; savedmode</span></li>
+  <li><a id="vt100.stop" href="#vt100.stop" class=anchor><b>fn stop</b></a><span class=code>(fd, savedmode)</span></li>
+  <li><a id="vt100.Fmt" href="#vt100.Fmt" class=anchor><b>fn Fmt</b></a><span class=code>(t)</span><br>
+  
   create a Fmt with sensible defaults from the config</li>
-  <li><span class=code>main(args)</span>
+  <li><a id="vt100.main" href="#vt100.main" class=anchor><b>fn main</b></a><span class=code>(args)</span><br>
+  
   Listens to keyboard inputs and echoes them.</li>
-  <li><span class=code>setup(args)</span>
+  <li><a id="vt100.setup" href="#vt100.setup" class=anchor><b>fn setup</b></a><span class=code>(args)</span><br>
+  
   The recommended setup function, enables color in the terminal in civstack
   libraries (and those that adhere to them).</li>
 </ul>
-<p>
-<h2><a id=""vt100.ctrl"" href="#"vt100.ctrl"">Mod vt100.ctrl</h2></a>
+<br>
+<h2><a id="vt100.ctrl" href="#vt100.ctrl" class=anchor>Mod vt100.ctrl</h2></a>
 Direct terminal control functions
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>getlc(name, fmt)</span></li>
-  <li><span class=code>color(name, fmt)</span></li>
-  <li><span class=code>left(name, fmt)</span></li>
-  <li><span class=code>clear(name, fmt)</span></li>
-  <li><span class=code>reset(name, fmt)</span></li>
-  <li><span class=code>restore(name, fmt)</span></li>
-  <li><span class=code>right(name, fmt)</span></li>
-  <li><span class=code>up(name, fmt)</span></li>
-  <li><span class=code>save(name, fmt)</span></li>
-  <li><span class=code>colorFB(name, fmt)</span></li>
-  <li><span class=code>nextline(name, fmt)</span></li>
-  <li><span class=code>down(name, fmt)</span></li>
-  <li><span class=code>hide(name, fmt)</span></li>
-  <li><span class=code>golc(name, fmt)</span></li>
-  <li><span class=code>cleareol(name, fmt)</span></li>
-  <li><span class=code>show(name, fmt)</span></li>
-  <li><span class=code>size(f)</span>
+  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.colorFB" href="#vt100.ctrl.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.up" href="#vt100.ctrl.up" class=anchor><b>fn up</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.right" href="#vt100.ctrl.right" class=anchor><b>fn right</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.size" href="#vt100.ctrl.size" class=anchor><b>fn size</b></a><span class=code>(f)</span><br>
+  
   causes terminal to send size as (escaped) cursor position</li>
 </ul>
-<p>
-<h2><a id=""vt100.Term"" href="#"vt100.Term"">Record Term</h2></a>
-<ul>
-  <li><b>fd</b> :
-  file to write output to in draw()</li>
-  <li><b>l</b> :
-  cursor line</li>
-  <li><b>c</b> :
-  cursor column</li>
-  <li><b>h</b> :
-  height</li>
-  <li><b>w</b> :
-  width</li>
-  <li><b>text</b> :
-  the text to display</li>
-  <li><b>fg</b> :
-  foreground color (ASCII coded)</li>
-  <li><b>bg</b> :
-  background color (ASCII coded)</li>
-  <li><b>run</b> :
-  set to false to stop coroutines</li>
-  <li><b>styler</b> :
-  optional styler</li>
-</ul>
+<br>
+<h2><a id="vt100.Term" href="#vt100.Term" class=anchor>Record Term</h2></a>
 VT100 Terminal Emulator <ul>
   <li>Write the text to display</li>
   <li>Write the foreground/background colors to fg/bg</li>
   <li>Then call :draw() to draw to terminal.</li>
 </ul>
-<p>
+<br>
 Requires <span class=code>vt100.start()</span> have been called to initiate raw mode.
-<p>
-<h1><a id=""Ty<vt100.AcWriter>"" href="#"Ty<vt100.AcWriter>"">Record vt100.AcWriter</h1></a>
-<ul>
-  <li><b>f</b> </li>
-  <li><b>fg</b> :
-  current foreground ac letter</li>
-  <li><b>bg</b> :
-  current background ac letter</li>
+<b>Fields:</b><ul>
+  <li><a id="vt100.Term.fd" href="#vt100.Term.fd" class=anchor><b>.fd</b></a>file to write output to in draw()</li>
+  <li><a id="vt100.Term.l" href="#vt100.Term.l" class=anchor><b>.l</b></a> <span class=code>=1</span>cursor line</li>
+  <li><a id="vt100.Term.c" href="#vt100.Term.c" class=anchor><b>.c</b></a> <span class=code>=1</span>cursor column</li>
+  <li><a id="vt100.Term.h" href="#vt100.Term.h" class=anchor><b>.h</b></a> <span class=code>=40</span>height</li>
+  <li><a id="vt100.Term.w" href="#vt100.Term.w" class=anchor><b>.w</b></a> <span class=code>=80</span>width</li>
+  <li><a id="vt100.Term.text" href="#vt100.Term.text" class=anchor><b>.text</b></a>the text to display</li>
+  <li><a id="vt100.Term.fg" href="#vt100.Term.fg" class=anchor><b>.fg</b></a>foreground color (ASCII coded)</li>
+  <li><a id="vt100.Term.bg" href="#vt100.Term.bg" class=anchor><b>.bg</b></a>background color (ASCII coded)</li>
+  <li><a id="vt100.Term.run" href="#vt100.Term.run" class=anchor><b>.run</b></a> <span class=code>=true</span>set to false to stop coroutines</li>
+  <li><a id="vt100.Term.styler" href="#vt100.Term.styler" class=anchor><b>.styler</b></a>optional styler</li>
 </ul>
-<p>
-<h1><a id=""vt100.testing"" href="#"vt100.testing"">Mod vt100.testing</h1></a>
+<b>Methods</b> <ul>
+  <li><a id="Term.clear" href="#Term.clear" class=anchor><b>fn clear</b></a><span class=code>(tm)</span></li>
+  <li><a id="Term.resize" href="#Term.resize" class=anchor><b>fn resize</b></a><span class=code>(tm)</span><br>
+  
+  request size and clear children
+  This can only be run with an active (LAP) input coroutine</li>
+  <li><a id="Term.draw" href="#Term.draw" class=anchor><b>fn draw</b></a><span class=code>(tm)</span><br>
+  
+  draw the text and color(fg/bg) grids to the screen</li>
+  <li><a id="Term.input" href="#Term.input" class=anchor><b>fn input</b></a><span class=code>(tm, send) -&gt; infinite loop (run in coroutine)</span><br>
+  
+  function to run in a (LAP) coroutine.
+  <span class=code>send()</span> is called with each key recieved. Typically this is a lap.Send.</li>
+</ul>
+<br>
+<h1><a id="Ty<vt100.AcWriter>" href="#Ty<vt100.AcWriter>" class=anchor>Record vt100.AcWriter</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<vt100.AcWriter>.f" href="#Ty<vt100.AcWriter>.f" class=anchor><b>.f</b></a></li>
+  <li><a id="Ty<vt100.AcWriter>.fg" href="#Ty<vt100.AcWriter>.fg" class=anchor><b>.fg</b></a> <span class=code>="z"</span>current foreground ac letter</li>
+  <li><a id="Ty<vt100.AcWriter>.bg" href="#Ty<vt100.AcWriter>.bg" class=anchor><b>.bg</b></a> <span class=code>="z"</span>current background ac letter</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="vt100.AcWriter.flush" href="#vt100.AcWriter.flush" class=anchor><b>fn flush</b></a><span class=code>(aw) -&gt; aw.f:flush()</span></li>
+  <li><a id="vt100.AcWriter.acwrite" href="#vt100.AcWriter.acwrite" class=anchor><b>fn acwrite</b></a><span class=code>(aw, fgstr, bgstr, ...) -&gt; write(...)</span><br>
+  
+  <span class=code>:acwrite(fgstr, bgstr, str, ...)</span>: writes str with style of fg/bg str</li>
+  <li><a id="vt100.AcWriter.write" href="#vt100.AcWriter.write" class=anchor><b>fn write</b></a><span class=code>(aw, ...) -&gt; aw:acwrite(nil, nil, ...)</span><br>
+  
+  write plain</li>
+</ul>
+<br>
+<h1><a id="vt100.testing" href="#vt100.testing" class=anchor>Mod vt100.testing</h1></a>
 helpers for testing/demoing vt100
-<p>
-<b>Types</b> <ul>
-  <li><b>vt100.testing.Fake</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#vt100.testing.Fake">Fake</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>startTmp() -&gt; out, err</span>
+  <li><a id="vt100.testing.startTmp" href="#vt100.testing.startTmp" class=anchor><b>fn startTmp</b></a><span class=code>() -&gt; out, err</span><br>
+  
   start rawmode using tmpfiles</li>
-  <li><span class=code>run(fn)</span>
+  <li><a id="vt100.testing.run" href="#vt100.testing.run" class=anchor><b>fn run</b></a><span class=code>(fn)</span><br>
+  
   Run function in a LAP environment with terminal started
   and std in/out set correctly.</li>
 </ul>
-<p>
-<h2><a id=""vt100.testing.Fake"" href="#"vt100.testing.Fake"">Record Fake</h2></a>
-<ul>
-  <li><b>fd</b> :
-  file to write output to in draw()</li>
-  <li><b>l</b> :
-  cursor line</li>
-  <li><b>c</b> :
-  cursor column</li>
-  <li><b>h</b> :
-  height</li>
-  <li><b>w</b> :
-  width</li>
-  <li><b>text</b> :
-  the text to display</li>
-  <li><b>fg</b> :
-  foreground color (ASCII coded)</li>
-  <li><b>bg</b> :
-  background color (ASCII coded)</li>
-  <li><b>run</b> :
-  set to false to stop coroutines</li>
-  <li><b>styler</b> :
-  optional styler</li>
+<br>
+<h2><a id="vt100.testing.Fake" href="#vt100.testing.Fake" class=anchor>Record Fake</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="vt100.testing.Fake.fd" href="#vt100.testing.Fake.fd" class=anchor><b>.fd</b></a>file to write output to in draw()</li>
+  <li><a id="vt100.testing.Fake.l" href="#vt100.testing.Fake.l" class=anchor><b>.l</b></a> <span class=code>=1</span>cursor line</li>
+  <li><a id="vt100.testing.Fake.c" href="#vt100.testing.Fake.c" class=anchor><b>.c</b></a> <span class=code>=1</span>cursor column</li>
+  <li><a id="vt100.testing.Fake.h" href="#vt100.testing.Fake.h" class=anchor><b>.h</b></a> <span class=code>=40</span>height</li>
+  <li><a id="vt100.testing.Fake.w" href="#vt100.testing.Fake.w" class=anchor><b>.w</b></a> <span class=code>=80</span>width</li>
+  <li><a id="vt100.testing.Fake.text" href="#vt100.testing.Fake.text" class=anchor><b>.text</b></a>the text to display</li>
+  <li><a id="vt100.testing.Fake.fg" href="#vt100.testing.Fake.fg" class=anchor><b>.fg</b></a>foreground color (ASCII coded)</li>
+  <li><a id="vt100.testing.Fake.bg" href="#vt100.testing.Fake.bg" class=anchor><b>.bg</b></a>background color (ASCII coded)</li>
+  <li><a id="vt100.testing.Fake.run" href="#vt100.testing.Fake.run" class=anchor><b>.run</b></a> <span class=code>=true</span>set to false to stop coroutines</li>
+  <li><a id="vt100.testing.Fake.styler" href="#vt100.testing.Fake.styler" class=anchor><b>.styler</b></a>optional styler</li>
 </ul>
-<p>
+<b>Methods</b> <ul>
+  <li><a id="Fake.clear" href="#Fake.clear" class=anchor><b>fn clear</b></a><span class=code>(tm)</span></li>
+  <li><a id="Fake.resize" href="#Fake.resize" class=anchor><b>fn resize</b></a><span class=code>(tm, l, c)</span></li>
+  <li><a id="Fake.draw" href="#Fake.draw" class=anchor><b>fn draw</b></a><span class=code>()</span></li>
+  <li><a id="Fake.input" href="#Fake.input" class=anchor><b>fn input</b></a><span class=code>()</span></li>
+</ul>
+<br>
 </div></body>
 </html>

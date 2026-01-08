@@ -14,163 +14,258 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h1><a id=""lines"" href="#"lines"">Mod lines</h1></a>
+<h1><a id="lines" href="#lines" class=anchor>Mod lines</h1></a>
 lines module, when called splits a string into lines.
 <span class=code>require'lines'(text) -&gt; table of lines</span>
-<p>
+<br>
 sub-modules include several data structures with more performant
 mechanisms to insert/remove/etc based on real-world workloads
 (i.e. editor, parser, etc)
-<p>
-<h1><a id=""lines.diff"" href="#"lines.diff"">Mod lines.diff</h1></a>
+<br>
+<h1><a id="lines.diff" href="#lines.diff" class=anchor>Mod lines.diff</h1></a>
 Diffing module and command
 Example command: <span class=code>lines.diff{'file/path1.txt', 'file/path2.txt'}</span>
 Note: the arguments can be a string (path) or list of lines.
-<p>
-<b>Types</b> <ul>
-  <li><b>lines.diff.Diff</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#lines.diff.Diff">Diff</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>main(args)</span></li>
+  <li><a id="lines.diff.main" href="#lines.diff.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
 </ul>
-<p>
-<h2><a id=""lines.diff.Diff"" href="#"lines.diff.Diff"">Record Diff</h2></a>
-<ul>
-  <li><b>b</b> :
-  base, aka original lines</li>
-  <li><b>c</b> :
-  change, aka new lines</li>
-  <li><b>di</b> :
-  len of noc/rem/add</li>
-  <li><b>noc</b> :
-  nochange range (in both)</li>
-  <li><b>rem</b> :
-  removed from b</li>
-  <li><b>add</b> :
-  added from c</li>
-</ul>
+<br>
+<h2><a id="lines.diff.Diff" href="#lines.diff.Diff" class=anchor>Record Diff</h2></a>
 Line-based diff.
 The default algorithm uses patience diff. Special thanks to:
 <a href="https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm">https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm</a>
-<p>
+<br>
 The basic algorithm on before/after line lists: <ul>
   <li>skip unchanged lines on both top and bottom</li>
   <li>find unique lines in both sets and "align" them with
   using "longest increasing sequence"</li>
   <li>repeat for each aligned section</li>
 </ul>
-<p>
+<br>
 Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
-<p>
-<h1><a id=""Ty<lines.Writer>"" href="#"Ty<lines.Writer>"">Record lines.Writer</h1></a>
-<p>
-<h1><a id=""Ty<Gap>"" href="#"Ty<Gap>"">Record Gap</h1></a>
-<ul>
-  <li><b>bot</b> </li>
-  <li><b>top</b> </li>
-  <li><b>path</b> </li>
-  <li><b>readonly</b> </li>
+<b>Fields:</b><ul>
+  <li><a id="lines.diff.Diff.b" href="#lines.diff.Diff.b" class=anchor><b>.b</b></a>base, aka original lines</li>
+  <li><a id="lines.diff.Diff.c" href="#lines.diff.Diff.c" class=anchor><b>.c</b></a>change, aka new lines</li>
+  <li><a id="lines.diff.Diff.di" href="#lines.diff.Diff.di" class=anchor><b>.di</b></a>len of noc/rem/add</li>
+  <li><a id="lines.diff.Diff.noc" href="#lines.diff.Diff.noc" class=anchor><b>.noc</b></a>nochange range (in both)</li>
+  <li><a id="lines.diff.Diff.rem" href="#lines.diff.Diff.rem" class=anchor><b>.rem</b></a>removed from b</li>
+  <li><a id="lines.diff.Diff.add" href="#lines.diff.Diff.add" class=anchor><b>.add</b></a>added from c</li>
 </ul>
-<p>
-<h1><a id=""Ty<lines.U3File>"" href="#"Ty<lines.U3File>"">Record lines.U3File</h1></a>
-<ul>
-  <li><b>f</b> </li>
-  <li><b>path</b> </li>
-  <li><b>mode</b> </li>
-  <li><b>len</b> </li>
-  <li><b>sz</b> :
-  the size of each value</li>
+<b>Methods</b> <ul>
+  <li><a id="Diff.map" href="#Diff.map" class=anchor><b>fn map</b></a><span class=code>(d, nocFn, chgFn)</span><br>
+  
+  iterate through nochange and change blocks, calling the functions for each
+  <ul>
+    <li><span class=code>nocFn(baseStart, numUnchanged, changeStart, numUnchanged)</span></li>
+    <li><span class=code>chgFn(baseStart, numRemoved, &nbsp; changeStart, numAdded)</span></li>
+  </ul>
+  Note that the num removed/added will be nil if none were added/removed.</li>
 </ul>
-<p>
-<h1><a id=""Ty<File>"" href="#"Ty<File>"">Record File</h1></a>
-<ul>
-  <li><b>path</b> </li>
-  <li><b>mode</b> </li>
-  <li><b>f</b> :
-  open file</li>
-  <li><b>idx</b> :
-  line index of f</li>
-  <li><b>cache</b> :
-  cache of lines</li>
-  <li><b>loadIdxFn</b> :
-  default=lines.futils.loadIdx</li>
+<br>
+<h1><a id="Ty<lines.Writer>" href="#Ty<lines.Writer>" class=anchor>Record lines.Writer</h1></a>
+<b>Methods</b> <ul>
+  <li><a id="lines.Writer.set" href="#lines.Writer.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
+  
+  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="lines.Writer.get" href="#lines.Writer.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
+  
+  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="lines.Writer.write" href="#lines.Writer.write" class=anchor><b>fn write</b></a></li>
+  <li><a id="lines.Writer.flush" href="#lines.Writer.flush" class=anchor><b>fn flush</b></a><span class=code>()</span></li>
+  <li><a id="lines.Writer.extend" href="#lines.Writer.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span></li>
+  <li><a id="lines.Writer.icopy" href="#lines.Writer.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
 </ul>
-<p>
-<h1><a id=""Ty<EdFile>"" href="#"Ty<EdFile>"">Record EdFile</h1></a>
-<ul>
-  <li><b>lf</b> :
-  indexed file</li>
-  <li><b>dats</b> :
-  list of Slc | Gap</li>
-  <li><b>lens</b> :
-  rolling sum of dat lengths</li>
+<br>
+<h1><a id="Ty<Gap>" href="#Ty<Gap>" class=anchor>Record Gap</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<Gap>.bot" href="#Ty<Gap>.bot" class=anchor><b>.bot</b></a></li>
+  <li><a id="Ty<Gap>.top" href="#Ty<Gap>.top" class=anchor><b>.top</b></a></li>
+  <li><a id="Ty<Gap>.path" href="#Ty<Gap>.path" class=anchor><b>.path</b></a></li>
+  <li><a id="Ty<Gap>.readonly" href="#Ty<Gap>.readonly" class=anchor><b>.readonly</b></a></li>
 </ul>
-<p>
-<h1><a id=""lines.futils"" href="#"lines.futils"">Mod lines.futils</h1></a>
+<b>Methods</b> <ul>
+  <li><a id="Gap.flush" href="#Gap.flush" class=anchor><b>fn flush</b></a><span class=code>()</span></li>
+  <li><a id="Gap.close" href="#Gap.close" class=anchor><b>fn close</b></a><span class=code>()</span></li>
+  <li><a id="Gap.icopy" href="#Gap.icopy" class=anchor><b>fn icopy</b></a><span class=code>(g) -&gt; list</span></li>
+  <li><a id="Gap.load" href="#Gap.load" class=anchor><b>fn load</b></a><span class=code>(T, f, close) -&gt; Gap?, err?</span><br>
+  
+  Load gap from file, which can be a path.
+  returns nil, err on error</li>
+  <li><a id="Gap.get" href="#Gap.get" class=anchor><b>fn get</b></a><span class=code>(g, l)</span></li>
+  <li><a id="Gap.set" href="#Gap.set" class=anchor><b>fn set</b></a><span class=code>(g, i, v)</span></li>
+  <li><a id="Gap.inset" href="#Gap.inset" class=anchor><b>fn inset</b></a><span class=code>(g, i, values, rmlen) -&gt; rm?</span><br>
+  
+  See lines.inset for documentation.</li>
+  <li><a id="Gap.extend" href="#Gap.extend" class=anchor><b>fn extend</b></a><span class=code>(g, l)</span></li>
+  <li><a id="Gap.setGap" href="#Gap.setGap" class=anchor><b>fn setGap</b></a><span class=code>(g, l)</span><br>
+  
+  set the gap to the line number, making <span class=code>l == #g.bot</span>.</li>
+  <li><a id="Gap.write" href="#Gap.write" class=anchor><b>fn write</b></a><span class=code>(g, ...)</span></li>
+  <li><a id="Gap.dumpf" href="#Gap.dumpf" class=anchor><b>fn dumpf</b></a></li>
+</ul>
+<br>
+<h1><a id="Ty<lines.U3File>" href="#Ty<lines.U3File>" class=anchor>Record lines.U3File</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<lines.U3File>.f" href="#Ty<lines.U3File>.f" class=anchor><b>.f</b></a></li>
+  <li><a id="Ty<lines.U3File>.path" href="#Ty<lines.U3File>.path" class=anchor><b>.path</b></a></li>
+  <li><a id="Ty<lines.U3File>.mode" href="#Ty<lines.U3File>.mode" class=anchor><b>.mode</b></a></li>
+  <li><a id="Ty<lines.U3File>.len" href="#Ty<lines.U3File>.len" class=anchor><b>.len</b></a></li>
+  <li><a id="Ty<lines.U3File>.sz" href="#Ty<lines.U3File>.sz" class=anchor><b>.sz</b></a>the size of each value</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="lines.U3File.create" href="#lines.U3File.create" class=anchor><b>fn create</b></a><span class=code>(T, ...) -&gt; icreate(T, 3, ...)</span></li>
+  <li><a id="lines.U3File.reload" href="#lines.U3File.reload" class=anchor><b>fn reload</b></a><span class=code>(fi) -&gt; IFile?, errmsg?</span><br>
+  
+  Reload IFile from path.</li>
+  <li><a id="lines.U3File.load" href="#lines.U3File.load" class=anchor><b>fn load</b></a><span class=code>(T, ...) -&gt; iload(T, 3, ...)</span></li>
+  <li><a id="lines.U3File.flush" href="#lines.U3File.flush" class=anchor><b>fn flush</b></a><span class=code>(fi) -&gt; fi.f:flush()</span></li>
+  <li><a id="lines.U3File.close" href="#lines.U3File.close" class=anchor><b>fn close</b></a><span class=code>(fi)</span></li>
+  <li><a id="lines.U3File.closed" href="#lines.U3File.closed" class=anchor><b>fn closed</b></a><span class=code>(fi) -&gt; bool</span></li>
+  <li><a id="lines.U3File.getbytes" href="#lines.U3File.getbytes" class=anchor><b>fn getbytes</b></a><span class=code>(fi, i)</span><br>
+  
+  get bytes. If index out of bounds return nil.
+  Panic if there are read errors.</li>
+  <li><a id="lines.U3File.get" href="#lines.U3File.get" class=anchor><b>fn get</b></a><span class=code>(u3, i)</span><br>
+  
+  get value at index</li>
+  <li><a id="lines.U3File.setbytes" href="#lines.U3File.setbytes" class=anchor><b>fn setbytes</b></a><span class=code>(fi, i, v)</span></li>
+  <li><a id="lines.U3File.set" href="#lines.U3File.set" class=anchor><b>fn set</b></a><span class=code>(u3, i, v)</span><br>
+  
+  set value at index</li>
+  <li><a id="lines.U3File.move" href="#lines.U3File.move" class=anchor><b>fn move</b></a><span class=code>(fi, to, mvFn) -&gt; fi</span><br>
+  
+  Move the IFile's path to <span class=code>to</span>.
+  
+  <span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
+  <span class=code>civix.mv</span> will be used.
+  
+  This can be done on both closed and opened files.
+  
+  The IFile will re-open on the new file regardless of the
+  previous state.</li>
+  <li><a id="lines.U3File.reader" href="#lines.U3File.reader" class=anchor><b>fn reader</b></a><span class=code>(fi) -&gt; IFile?, err?</span><br>
+  
+  Get a new read-only instance with an independent file-descriptor.
+  
+  Warning: currently the reader's len will be static, so this should
+  be mostly used for temporary cases. This might be changed in
+  the future.</li>
+  <li><a id="lines.U3File.extend" href="#lines.U3File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span></li>
+  <li><a id="lines.U3File.icopy" href="#lines.U3File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+</ul>
+<br>
+<h1><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<File>.path" href="#Ty<File>.path" class=anchor><b>.path</b></a></li>
+  <li><a id="Ty<File>.mode" href="#Ty<File>.mode" class=anchor><b>.mode</b></a></li>
+  <li><a id="Ty<File>.f" href="#Ty<File>.f" class=anchor><b>.f</b></a>open file</li>
+  <li><a id="Ty<File>.idx" href="#Ty<File>.idx" class=anchor><b>.idx</b></a>line index of f</li>
+  <li><a id="Ty<File>.cache" href="#Ty<File>.cache" class=anchor><b>.cache</b></a>cache of lines</li>
+  <li><a id="Ty<File>.loadIdxFn" href="#Ty<File>.loadIdxFn" class=anchor><b>.loadIdxFn</b></a>default=lines.futils.loadIdx</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="File.close" href="#File.close" class=anchor><b>fn close</b></a><span class=code>(lf)</span></li>
+  <li><a id="File.flush" href="#File.flush" class=anchor><b>fn flush</b></a><span class=code>(lf) -&gt; ok, errmsg?</span></li>
+  <li><a id="File.write" href="#File.write" class=anchor><b>fn write</b></a><span class=code>(lf, ...) -&gt; ok, errmsg?</span><br>
+  
+  append to file</li>
+  <li><a id="File.get" href="#File.get" class=anchor><b>fn get</b></a><span class=code>(lf, i) -&gt; line</span><br>
+  
+  Get line at index</li>
+  <li><a id="File.set" href="#File.set" class=anchor><b>fn set</b></a><span class=code>(lf, i, v)</span><br>
+  
+  Set line at index</li>
+  <li><a id="File.reader" href="#File.reader" class=anchor><b>fn reader</b></a><span class=code>(lf) -&gt; lines.File?, err?</span><br>
+  
+  Get a new read-only instance with an independent file-descriptor.</li>
+  <li><a id="File.extend" href="#File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span></li>
+  <li><a id="File.icopy" href="#File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+</ul>
+<br>
+<h1><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<EdFile>.lf" href="#Ty<EdFile>.lf" class=anchor><b>.lf</b></a>indexed file</li>
+  <li><a id="Ty<EdFile>.dats" href="#Ty<EdFile>.dats" class=anchor><b>.dats</b></a>list of Slc | Gap</li>
+  <li><a id="Ty<EdFile>.lens" href="#Ty<EdFile>.lens" class=anchor><b>.lens</b></a>rolling sum of dat lengths</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="EdFile.get" href="#EdFile.get" class=anchor><b>fn get</b></a><span class=code>(ef, i) -&gt; line</span><br>
+  
+  Get line at index</li>
+  <li><a id="EdFile.write" href="#EdFile.write" class=anchor><b>fn write</b></a><span class=code>(ef, ...) -&gt; self?, errmsg?</span></li>
+  <li><a id="EdFile.set" href="#EdFile.set" class=anchor><b>fn set</b></a><span class=code>(ef, i, v)</span><br>
+  
+  Set line at index.</li>
+  <li><a id="EdFile.reader" href="#EdFile.reader" class=anchor><b>fn reader</b></a><span class=code>(ef)</span><br>
+  
+  Return a read-only view of the EdFile which shares the
+  associated data structures.</li>
+  <li><a id="EdFile.flush" href="#EdFile.flush" class=anchor><b>fn flush</b></a><span class=code>(ef) -&gt; ef.lf:flush()</span><br>
+  
+  Flush the .lf member (which can only be extended).
+  To write all data to disk use :dumpf()</li>
+  <li><a id="EdFile.close" href="#EdFile.close" class=anchor><b>fn close</b></a><span class=code>(ef) -&gt; ef.lf:close()</span><br>
+  
+  Note: this does NOT necessarily flush what you expect.</li>
+  <li><a id="EdFile.dumpf" href="#EdFile.dumpf" class=anchor><b>fn dumpf</b></a><span class=code>(ef, f)</span><br>
+  
+  Dump EdFile to file or path</li>
+  <li><a id="EdFile.extend" href="#EdFile.extend" class=anchor><b>fn extend</b></a><span class=code>(ef, values)</span><br>
+  
+  appends to lf for extend when possible.</li>
+  <li><a id="EdFile.inset" href="#EdFile.inset" class=anchor><b>fn inset</b></a><span class=code>(ef, i, values, rmlen) -&gt; rm?</span><br>
+  
+  insert into EdFile's dats.</li>
+  <li><a id="EdFile.icopy" href="#EdFile.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+</ul>
+<br>
+<h1><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h1></a>
 utilities for file loading of lines.
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>forceLoadIdx(f, idxpath)</span>
+  <li><a id="lines.futils.forceLoadIdx" href="#lines.futils.forceLoadIdx" class=anchor><b>fn forceLoadIdx</b></a><span class=code>(f, idxpath)</span><br>
+  
   Can be usd instead of loadIdx to force a reload of the index,
   ignoring modification times/etc.
   
   This is useful in some situtations where stat is not available.</li>
-  <li><span class=code>loadIdx(f, idxpath, fmode, reindex) -&gt; idxFile</span>
+  <li><a id="lines.futils.loadIdx" href="#lines.futils.loadIdx" class=anchor><b>fn loadIdx</b></a><span class=code>(f, idxpath, fmode, reindex) -&gt; idxFile</span><br>
+  
   load or reindex the file at path to/from idxpath.</li>
 </ul>
-<p>
-<h1><a id=""rebuf.motion"" href="#"rebuf.motion"">Mod rebuf.motion</h1></a>
+<br>
+<h1><a id="rebuf.motion" href="#rebuf.motion" class=anchor>Mod rebuf.motion</h1></a>
 module with helper methods for moving a cursor
 around a lines-like 2D grid.
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>decDistance(s, e) -&gt; int</span>
+  <li><a id="rebuf.motion.decDistance" href="#rebuf.motion.decDistance" class=anchor><b>fn decDistance</b></a><span class=code>(s, e) -&gt; int</span><br>
+  
   decrease distance (start -> end) by 1</li>
-  <li><span class=code>lcLe(l, c, l2, c2) -&gt; bool</span>
+  <li><a id="rebuf.motion.lcLe" href="#rebuf.motion.lcLe" class=anchor><b>fn lcLe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
+  
   return whether l.c is <= l2.c2</li>
-  <li><span class=code>lcGe(l, c, l2, c2) -&gt; bool</span>
+  <li><a id="rebuf.motion.lcGe" href="#rebuf.motion.lcGe" class=anchor><b>fn lcGe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
+  
   return whether l.c is >= l2.c2</li>
-  <li><span class=code>topLeft(l, c, l2, c2) -&gt; (l, c)</span>
+  <li><a id="rebuf.motion.topLeft" href="#rebuf.motion.topLeft" class=anchor><b>fn topLeft</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c)</span><br>
+  
   return the top-left of two points</li>
-  <li><span class=code>lcWithin(l, c, l1, c1, l2, c2) -&gt; bool</span></li>
-  <li><span class=code>wordKind(ch) -&gt; ws|sym|let</span></li>
-  <li><span class=code>pathKind(ch) -&gt; ws|sym|path</span></li>
-  <li><span class=code>forword(s, begin, getKind) -&gt; int</span>
+  <li><a id="rebuf.motion.lcWithin" href="#rebuf.motion.lcWithin" class=anchor><b>fn lcWithin</b></a><span class=code>(l, c, l1, c1, l2, c2) -&gt; bool</span></li>
+  <li><a id="rebuf.motion.wordKind" href="#rebuf.motion.wordKind" class=anchor><b>fn wordKind</b></a><span class=code>(ch) -&gt; ws|sym|let</span></li>
+  <li><a id="rebuf.motion.pathKind" href="#rebuf.motion.pathKind" class=anchor><b>fn pathKind</b></a><span class=code>(ch) -&gt; ws|sym|path</span></li>
+  <li><a id="rebuf.motion.forword" href="#rebuf.motion.forword" class=anchor><b>fn forword</b></a><span class=code>(s, begin, getKind) -&gt; int</span><br>
+  
   Go forward to find the start of the next word</li>
-  <li><span class=code>backword(s, end_, getKind) -&gt; int</span>
+  <li><a id="rebuf.motion.backword" href="#rebuf.motion.backword" class=anchor><b>fn backword</b></a><span class=code>(s, end_, getKind) -&gt; int</span><br>
+  
   Go backward to find the start of this (or previous) word</li>
-  <li><span class=code>getRange(s, i, getKind) -&gt; si,ei</span>
-  get the <span class=code>range[si,ei]</span> of whatever is at <span class=code>s[i]</span>.</li>
-  <li><span class=code>findBack(s, pat, end_, plain) -&gt; int</span>
-  find backwards
-  this searches for the pattern and returns the LAST one found.
-  This is HORRIBLY non-performant, only use for small amounts of data</li>
-</ul>
-<p>
-<b>table</b>: raw <span class=code>table</span>
-<p>
-<h1><a id=""lines.kev"" href="#"lines.kev"">Mod lines.kev</h1></a>
-kev: "Key Equal Value" serialization format.
-<p>
-This is an extremely common format in many unix utilities, "good enough"
-for a large number of configuration use cases. The format is simple: a file
-containing lines of <span class=code>key=value</span>. The input and output are a table of
-key,val strings (though tostring is called for <span class=code>to()</span>). Lines which don't
-have <span class=code>=</span> in them are ignored.
-<p>
-Nested data is absolutely not supported. Spaces are treated as literal both
-before and after <span class=code>=</span>. If you want a key containing <span class=code>=</span> or key/value
-containing newline then use a different format.
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>to(t)</span>
-  convert to a table of <span class=code>key=value</span> lines.</li>
-  <li><span class=code>from(lines, to)</span>
-  convert <span class=code>key=value</span> lines to a table.</li>
-  <li><span class=code>load(f, to) -&gt; M.from(lines.load(f), to)</span></li>
-  <li><span class=code>dump(t, f) -&gt; lines.dump(M.to(t), f)</span></li>
-</ul>
-<p>
+  <li><a id="rebuf.motion.getRange" href="#rebuf.motion.getRange" class=anchor><b>fn getRange</b></a><span class=code>(s, i, getKind) -&gt; si,ei</span><br>
+  
+  get the <span class=code>range[si,ei</span></li>
+</ul> of whatever is at <span class=code>s[i</span>
 </div></body>
 </html>

@@ -84,6 +84,9 @@ a:hover   {
   color: dimgrey; background-color:cyan;
   border-radius: 0.3em;
 }
+a.anchor {
+  color: gold;
+}
 
 /* table class */
 .table { overflow-x: auto }

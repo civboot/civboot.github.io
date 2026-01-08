@@ -14,37 +14,40 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h1><a id=""luk"" href="#"luk"">Mod luk</h1></a>
+<h1><a id="luk" href="#luk" class=anchor>Mod luk</h1></a>
 luk: lua config language.
-<p>
-<b>Types</b> <ul>
-  <li><b>luk.Table</b></li>
-  <li><b>luk.Luk</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#luk.Table">Table</a> <a href="#luk.Luk">Luk</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>checkCycle(cycle, path)</span></li>
-  <li><span class=code>value(v)</span>
+  <li><a id="luk.checkCycle" href="#luk.checkCycle" class=anchor><b>fn checkCycle</b></a><span class=code>(cycle, path)</span></li>
+  <li><a id="luk.value" href="#luk.value" class=anchor><b>fn value</b></a><span class=code>(v)</span><br>
+  
   Convert value to luk-value</li>
 </ul>
-<p>
-<h2><a id=""luk.Table"" href="#"luk.Table"">Record Table</h2></a>
+<br>
+<h2><a id="luk.Table" href="#luk.Table" class=anchor>Record Table</h2></a>
 A luk table object
-<p>
-<h2><a id=""luk.Luk"" href="#"luk.Luk"">Record Luk</h2></a>
-<ul>
-  <li><b>imported</b> :
-  table of ipath -> imported luk</li>
-  <li><b>imports</b> :
-  table of ipath to its imports for dependency analysis.</li>
-  <li><b>pathFn</b> :
-  a function that given a non-relative import path
-  returns the path to the file to import.</li>
-  <li><b>envMeta</b> </li>
-  <li><b>cycle</b> :
-  used to detect cycles</li>
-</ul>
+<br>
+<h2><a id="luk.Luk" href="#luk.Luk" class=anchor>Record Luk</h2></a>
 The luk loader.
-<p>
+<b>Fields:</b><ul>
+  <li><a id="luk.Luk.imported" href="#luk.Luk.imported" class=anchor><b>.imported</b></a>table of ipath -> imported luk</li>
+  <li><a id="luk.Luk.imports" href="#luk.Luk.imports" class=anchor><b>.imports</b></a>table of ipath to its imports for dependency analysis.</li>
+  <li><a id="luk.Luk.pathFn" href="#luk.Luk.pathFn" class=anchor><b>.pathFn</b></a> <span class=code>=ds.iden</span>a function that given a non-relative import path
+  returns the path to the file to import.</li>
+  <li><a id="luk.Luk.envMeta" href="#luk.Luk.envMeta" class=anchor><b>.envMeta</b></a> <span class=code>=ds.load.ENV</span></li>
+  <li><a id="luk.Luk.cycle" href="#luk.Luk.cycle" class=anchor><b>.cycle</b></a>used to detect cycles</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Luk.resolve" href="#Luk.resolve" class=anchor><b>fn:resolve</b></a><span class=code>(path, wd) -&gt; /abs/path</span><br>
+  
+  Resolve the path into the abspath.</li>
+  <li><a id="Luk.import" href="#Luk.import" class=anchor><b>fn:import</b></a><span class=code>(path, wd) -&gt; lukMod?, ds.Error?</span><br>
+  
+  Recursively import the luk file at path.
+  Each luk file has a sandboxed global environment.</li>
+</ul>
+<br>
 </div></body>
 </html>

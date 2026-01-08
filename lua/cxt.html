@@ -15,16 +15,16 @@
 <html>
 <body><div class=doc>
 <h1>cxt: text markup for civilization</h1>
-<p>
+<br>
 It should not take more than a few minutes to know how to read and write
 documentation.
-<p>
+<br>
 cxt is an ultra-simple markup language which is designed to be as easy as
 possible to parse (for computers <i>and</i> humans) while still using as few
 characters as possible to express format for common cases. The <span class=code>src/</span>
 dir of <a href="code.commonmark.org">CommonMark</a> contains more than 20,000 lines of
 code whereas cxt is implemented in less than 500.
-<p>
+<br>
 cxt is designed to: <ul>
   <li>Make document writing easy: use relatively few characters to express
   common formatting</li>
@@ -32,17 +32,17 @@ cxt is designed to: <ul>
   <li>Readable as raw text</li>
   <li>structured data can be consumed: supports arbitrary attributes</li>
 </ul>
-<p>
+<br>
 CXT contains only three special characters for deliniating formatting controls: <ul>
   <li>the two bracket characters <span class=code>[]</span></li>
   <li>a way to escape brackets and itself <span class=code>\\</span>, <span class=code>\[</span> and <span class=code>\]</span></li>
 </ul>
-<p>
+<br>
 There are two ways to specify attributes for a block: <ul>
   <li>short: <span class=code>[*bold text]</span> where <span class=code>*</span> can be any of the shortcuts below</li>
   <li>full: <span class=code>[{*_ attr1 attr2=value}bold underlined with attr 1 and 2]</span></li>
 </ul>
-<p>
+<br>
 The following attributes and shortcuts are supported
 <div class=code-block>&nbsp; b i u &nbsp; bold (*), italic (,) and underlined (_)<br>
 &nbsp; * , _ &nbsp; Example: [*bold] [,italic] [_underlined]<br>
@@ -50,7 +50,12 @@ The following attributes and shortcuts are supported
 <br>
 &nbsp; code &nbsp; &nbsp;inline or block code (depending on whether newlines exist)<br>
 &nbsp; &nbsp;$ &nbsp; &nbsp; &nbsp;shortcut: [$inline code]<br>
-&nbsp; &nbsp;#... &nbsp; See also: '[#... ]#...' which sets the code attribute.<br>
+&nbsp; &nbsp;$$... &nbsp;shortcut: [$$inline code]$ &nbsp;(close is one less than open)<br>
+<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Can also use inside {} to require extra $ to close:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [{$$ code=html}<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;b&gt;example html&lt;/b&gt;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]$<br>
 <br>
 &nbsp; quote &nbsp; create a quote block<br>
 &nbsp; &nbsp;" &nbsp; &nbsp; &nbsp;Example: ["quote block]<br>
@@ -68,17 +73,6 @@ The following attributes and shortcuts are supported
 <br>
 &nbsp; hidden &nbsp;hidden block, used for comments and/or assigning attributes<br>
 &nbsp; &nbsp;! &nbsp; &nbsp; &nbsp;Example: [!hidden block]<br>
-<br>
-&nbsp; #... &nbsp; &nbsp;any number of # characters create a "raw" block that must<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; have the same number of # characters closing it.<br>
-<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [##<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; some code<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]##<br>
-<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [{## code=html}<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;b&gt;example html&lt;/b&gt;<br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]##<br>
 <br>
 &nbsp; href &nbsp; &nbsp;hyper reference, aka a url.<br>
 &nbsp; &lt;href&gt;<br>
@@ -112,43 +106,49 @@ The following attributes and shortcuts are supported
 &nbsp; &nbsp;\\ &nbsp; &nbsp;literal \<br>
 &nbsp; &nbsp;\* &nbsp; &nbsp;literal \*, where * is any other character
 </div>
-<p>
+<br>
 <div class=info> Note:
 Any value after a bracket besides <span class=code>&nbsp;{...} b i u * , _ $ " + ! / : v @ </span>
-is invalid.</div>
-<p>
-<h2><a id="Demos" href="#Demos">Demos</h2></a>
-<p>
+is invalid.
+</div>
+<br>
+<h2><a id="Demos" href="#Demos" class=anchor>Demos</h2></a>
+<br>
 <h3>Inline Code:</h3>
-<p>
-<span class=code>[$inline code]. Note that [$balanced[brackets] are allowed]</span> <ul>
-  <li><span class=code>inline code</span>. Note that <span class=code>balanced[brackets] are allowed</span></li>
+<br>
+<span class=code>[$inline code]. Note that [$$ [brackets] need ]$</span>
+<ul>
+  <li><span class=code>inline code</span>. Note that <span class=code>&nbsp;[brackets] need </span></li>
 </ul>
-<p>
+<br>
+<div class=info>The number of $ at the end of a code block is one less
+than the number used to open it.
+</div>
+<br>
 <h3>Code block:</h3>
-<p>
-Writing this: <div class=code-block>[{## lang=lua}<br>
+<br>
+Writing this: <div class=code-block>[{$$ lang=lua}<br>
 function example()<br>
 &nbsp; print'Hello world'<br>
 end<br>
-]##
+]$
 </div>
-<p>
+<br>
 Will create a formatted code block: <div class=code-block>function example()<br>
 &nbsp; print'Hello world'<br>
 end
 </div>
-<p>
+<br>
 <h3>Text Formatting</h3>
 <span class=code>[*bold], [,italic] and [_underlined]</span> <ul>
   <li><b>bold</b>, <i>italic</i> and <u>underlined</u></li>
 </ul>
-<p>
+<br>
 <h3>Linking</h3>
 <span class=code>[{b i href=http://civboot.org}bold italic link]</span> <ul>
   <li><a href="http://civboot.org"><b><i>bold italic link</i></b></a></li>
 </ul>
-<p>
+<br>
 <h3>List</h3>
 Lists are started with <span class=code>+</span>, each items is deliniated by <span class=code>*</span>: <div class=code-block>A list of stuff: [+<br>
 * example list<br>
@@ -158,23 +158,23 @@ Lists are started with <span class=code>+</span>, each items is deliniated by <s
 <br>
 &nbsp; &nbsp; sub item.<br>
 &nbsp; * inner code block<br>
-&nbsp; &nbsp; [##<br>
+&nbsp; &nbsp; [$$<br>
 &nbsp; &nbsp; function example()<br>
 &nbsp; &nbsp; &nbsp; print'example inner block'<br>
 &nbsp; &nbsp; end<br>
-&nbsp; &nbsp; ]##<br>
+&nbsp; &nbsp; ]$<br>
 &nbsp; * final sub<br>
 ]<br>
 * final item<br>
 ]
 </div>
-<p>
+<br>
 A list of stuff: <ul>
   <li>example list</li>
   <li>with sub list:<ul>
     <li>sub item</li>
     <li>multi-line
-    <p>
+    <br>
     sub item.</li>
     <li>inner code block
     <div class=code-block>function example()<br>
@@ -185,24 +185,24 @@ end
   </ul></li>
   <li>final item</li>
 </ul>
-<p>
+<br>
 <h3>Hidden</h3>
 <span class=code>Hidden block: "[! this is hidden]"</span> <ul>
   <li>Hidden block: ""</li>
 </ul>
-<p>
+<br>
 <h3>Table</h3>
 A table is created by the 'table' attribute. We also set the <span class=code>head</span>, <span class=code>row</span>
 and <span class=code>col</span> to the defaults for demonstration (they can be excluded). The
 <span class=code>row</span> and <span class=code>head</span> deliminters are only recognized at the start of a line.
-<p>
+<br>
 <div class=code-block>A table: [{table head=# row=+ col=|}<br>
 # col 1 &nbsp; &nbsp; &nbsp;| col 2 &nbsp; | col 3<br>
 + row [*1.1] | row 1.2 | row 1.3<br>
 + row [*1.1] | row 1.2 | row 1.3<br>
 ]
 </div>
-<p>
+<br>
 A table: <div class=table><table>
   <tr>
     <th>col 1</th>
@@ -220,7 +220,7 @@ A table: <div class=table><table>
     <td>row 1.3</td>
   </tr>
 </table></div>
-<p>
+<br>
 <h3>Table with large columns</h3>
 For very large or multi-lined columns, you can organize them similar to
 sub-lists: <div class=code-block>[{table}<br>
@@ -232,17 +232,17 @@ sub-lists: <div class=code-block>[{table}<br>
 <br>
 &nbsp; Even includes new line!<br>
 | long row 1.3<br>
-&nbsp; [{## code=lua}<br>
+&nbsp; [{$$ code=lua}<br>
 &nbsp; function example()<br>
 &nbsp; &nbsp; return "code block"<br>
 &nbsp; end<br>
-&nbsp; ]##<br>
+&nbsp; ]$<br>
 + row 2.1<br>
 | row 2.2<br>
 | row 2.3<br>
 ]
 </div>
-<p>
+<br>
 <div class=table><table>
   <tr>
     <th>1st header column
@@ -255,7 +255,7 @@ sub-lists: <div class=code-block>[{table}<br>
     <td>long row 1.1
     </td>
     <td>long row 1.2
-    <p>
+    <br>
     Even includes new line!
     </td>
     <td>long row 1.3
@@ -272,35 +272,35 @@ end
     <td>row 2.3</td>
   </tr>
 </table></div>
-<p>
+<br>
 <h3>Named Nodes and Values</h3>
 <div class=info> <b>Note</b>: all visible named blocks have a ☍ link next to them and serve dual
 purpose of being referenced within the cxt file using <span class=code>[@name]</span> and by
 local and external links (<span class=code>href=#name</span>) </div>
-<p>
+<br>
 <span class=code>A hidden named block: "[{!:href=http://civboot.org}Civboot]"</span> <ul>
   <li>A hidden named block: ""</li>
 </ul>
-<p>
-<span class=code>A visible named block: [{:href=https://github.com/civboot/civlua}civlua]</span> <ul>
-  <li>A visible named block: <a id="civlua" href="#civlua"><a href="https://github.com/civboot/civlua">civlua</a></a></li>
-</ul>
-<p>
-<span class=code>[@Civboot] clones the hidden block (removing the [$clone] attribute)</span> <ul>
-  <li><a href="http://civboot.org">Civboot</a> clones the hidden block (removing the <span class=code>clone</span> attribute)</li>
-</ul>
-<p>
-<span class=code>[&lt;@Civboot&gt;Civboot Project] has [$href=http://civboot.org].</span><ul>
-  <li><a href="http://civboot.org">Civboot Project</a> has <span class=code>href=http://civboot.org</span>.</li>
-</ul>
-<p>
+<br>
+<div class=code-block>A visible named block: [{:href=https://github.com/civboot/civlua}civlua]] [+<br>
+* A visible named block: [{:href=https://github.com/civboot/civlua}civlua]
+</div>
+<br>
+<div class=code-block>[@Civboot] clones the hidden block (removing the [$clone] attribute)] [+<br>
+* [@Civboot] clones the hidden block (removing the [$clone] attribute)
+</div>
+<br>
+<div class=code-block>[&lt;@Civboot&gt;Civboot Project] has [$href=http://civboot.org].][+<br>
+* [&lt;@Civboot&gt;Civboot Project] has [$href=http://civboot.org].
+</div>
+<br>
 <div class=code-block>You can also link to named blocks with [$href=#name], for instance the "Demos"<br>
 header is named [&lt;#Demos&gt;Demos].
 </div> <ul>
   <li>You can also link to named blocks with <span class=code>href=#name</span>, for instance the "Demos"
   header is named <a href="#Demos">Demos</a>.</li>
 </ul>
-<p>
+<br>
 <h3>Escaping [brackets]</h3>
 <div class=code-block>You can \[escape\] brackets to render them directly.<br>
 You can also escape '\\'.
@@ -308,98 +308,96 @@ You can also escape '\\'.
   <li>You can [escape] brackets to render them directly.
   You can also escape '\'.</li>
 </ul>
-<p>
+<br>
 <h2>UNLICENSE</h2>
 Cxt is in the the public domain, see the <a href="../UNLICENSE">UNLICENSE</a> for details.
-<p>
+<br>
 It was originally created by Rett Berg as part of the <a href="http://civboot.org">Civboot</a> project.
-<p>
-<h1><a id=""cxt"" href="#"cxt"">Mod cxt</h1></a>
+<br>
+<h1><a id="cxt" href="#cxt" class=anchor>Mod cxt</h1></a>
 TODO: see TODO.cxt
-<p>
-<b>Types</b> <ul>
-  <li><b>cxt.Config</b></li>
-  <li><b>cxt.Writer</b></li>
-  <li><b>cxt.Html</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#cxt.Config">Config</a> <a href="#cxt.Writer">Writer</a> <a href="#cxt.Html">Html</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>escape(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span>
+  <li><a id="cxt.escape" href="#cxt.escape" class=anchor><b>fn escape</b></a><span class=code>(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span><br>
+  
   escape the string so it renders literally</li>
-  <li><span class=code>codeblock(str, lang)</span>
-  create a <span class=code>[##code block]##</span></li>
-  <li><span class=code>code(str, lang)</span>
-  create <span class=code>[$inline code]</span></li>
-  <li><span class=code>content(p, node, isRoot, altEnd)</span>
+  <li><a id="cxt.code" href="#cxt.code" class=anchor><b>fn code</b></a><span class=code>(str, lang)</span><br>
+  
+  create <span class=code>&nbsp;[$inline code] </span></li>
+  <li><a id="cxt.content" href="#cxt.content" class=anchor><b>fn content</b></a><span class=code>(p, node, isRoot, altEnd)</span><br>
+  
   parse normal content, adding to node</li>
-  <li><span class=code>parse(dat, dbg)</span></li>
-  <li><span class=code>checkParse(dat, context) -&gt; dat</span></li>
-  <li><span class=code>parsedStrings(p, node)</span></li>
-  <li><span class=code>assertParse(dat, expected, dbg) -&gt; node</span></li>
+  <li><a id="cxt.parse" href="#cxt.parse" class=anchor><b>fn parse</b></a><span class=code>(dat, dbg)</span></li>
+  <li><a id="cxt.checkParse" href="#cxt.checkParse" class=anchor><b>fn checkParse</b></a><span class=code>(dat, context) -&gt; dat</span></li>
+  <li><a id="cxt.parsedStrings" href="#cxt.parsedStrings" class=anchor><b>fn parsedStrings</b></a><span class=code>(p, node)</span></li>
+  <li><a id="cxt.assertParse" href="#cxt.assertParse" class=anchor><b>fn assertParse</b></a><span class=code>(dat, expected, dbg) -&gt; node</span></li>
+  <li><a id="cxt.assertThrows" href="#cxt.assertThrows" class=anchor><b>fn assertThrows</b></a><span class=code>(dat, err, dbg)</span></li>
 </ul>
-<p>
-<h2><a id=""cxt.Config"" href="#"cxt.Config"">Record Config</h2></a>
-<ul>
-  <li><b>header</b> :
-  typically used for html header</li>
-  <li><b>pathUrl</b> </li>
+<br>
+<h2><a id="cxt.Config" href="#cxt.Config" class=anchor>Record Config</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="cxt.Config.header" href="#cxt.Config.header" class=anchor><b>.header</b></a>typically used for html header</li>
+  <li><a id="cxt.Config.pathUrl" href="#cxt.Config.pathUrl" class=anchor><b>.pathUrl</b></a> <span class=code>=ds.iden</span></li>
 </ul>
-<p>
-<h2><a id=""cxt.Writer"" href="#"cxt.Writer"">Record Writer</h2></a>
-<ul>
-  <li><b>src</b> </li>
-  <li><b>to</b> </li>
-  <li><b>config</b> </li>
-</ul>
+<br>
+<h2><a id="cxt.Writer" href="#cxt.Writer" class=anchor>Record Writer</h2></a>
 A Writer for cxt serializers (terminal, http, etc) to use.
-<p>
+<br>
 The writer contains: <ul>
   <li>The src lines and token decoder for getting pegl.Token values.</li>
   <li>The destination lines and current indent level.</li>
 </ul>
-<p>
-<h2><a id=""cxt.Html"" href="#"cxt.Html"">Record Html</h2></a>
-<ul>
-  <li><b>to</b> :
-  where to write output.</li>
+<b>Fields:</b><ul>
+  <li><a id="cxt.Writer.src" href="#cxt.Writer.src" class=anchor><b>.src</b></a></li>
+  <li><a id="cxt.Writer.to" href="#cxt.Writer.to" class=anchor><b>.to</b></a></li>
+  <li><a id="cxt.Writer.config" href="#cxt.Writer.config" class=anchor><b>.config</b></a> <span class=code>=Config() instance</span></li>
 </ul>
+<b>Methods</b> <ul>
+  <li><a id="Writer.fromParser" href="#Writer.fromParser" class=anchor><b>fn fromParser</b></a><span class=code>(ty_, p, to)</span></li>
+  <li><a id="Writer.tokenStr" href="#Writer.tokenStr" class=anchor><b>fn tokenStr</b></a><span class=code>(w, t)</span></li>
+  <li><a id="Writer.eqStr" href="#Writer.eqStr" class=anchor><b>fn eqStr</b></a><span class=code>(w, t, str)</span></li>
+  <li><a id="Writer.level" href="#Writer.level" class=anchor><b>fn level</b></a><span class=code>(w, add) -&gt; w.to:level(add)</span></li>
+</ul>
+<br>
+<h2><a id="cxt.Html" href="#cxt.Html" class=anchor>Record Html</h2></a>
 Convert cxt to HTML.
-<p>
-<h1><a id=""cxt.term"" href="#"cxt.term"">Mod cxt.term</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="cxt.Html.to" href="#cxt.Html.to" class=anchor><b>.to</b></a>where to write output.</li>
+</ul>
+<br>
+<h1><a id="cxt.term" href="#cxt.term" class=anchor>Mod cxt.term</h1></a>
 cxt for the terminal, either plain text or vt100/etc
-<p>
-<b>Types</b> <ul>
-  <li><b>cxt.term.Args</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#cxt.term.Args">Args</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>serialize(w, node)</span></li>
-  <li><span class=code>convert(dat, to)</span></li>
-  <li><span class=code>main(args)</span></li>
+  <li><a id="cxt.term.serialize" href="#cxt.term.serialize" class=anchor><b>fn serialize</b></a><span class=code>(w, node)</span></li>
+  <li><a id="cxt.term.convert" href="#cxt.term.convert" class=anchor><b>fn convert</b></a><span class=code>(dat, to)</span></li>
+  <li><a id="cxt.term.main" href="#cxt.term.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
 </ul>
-<p>
-<h2><a id=""cxt.term.Args"" href="#"cxt.term.Args"">Record Args</h2></a>
-<ul>
-  <li><b>inp</b> :
-  input file</li>
-  <li><b>out</b> :
-  output file (default=stdout)</li>
-</ul>
+<br>
+<h2><a id="cxt.term.Args" href="#cxt.term.Args" class=anchor>Record Args</h2></a>
 Render cxt on a terminal.
-<p>
+<br>
 Will render an input string or --inp=file.
-<p>
-<h1><a id=""cxt.html"" href="#"cxt.html"">Mod cxt.html</h1></a>
-Serialize cxt nodes as html
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>htmlEncode(s)</span></li>
-  <li><span class=code>serialize(w, node)</span>
-  serialize the node to the writer.</li>
-  <li><span class=code>serializeDoc(w, node, head)</span></li>
-  <li><span class=code>convert(dat, to, config)</span></li>
-  <li><span class=code>assertHtml(expectedHtml, cxtDat, dbg)</span></li>
+<b>Fields:</b><ul>
+  <li><a id="cxt.term.Args.inp" href="#cxt.term.Args.inp" class=anchor><b>.inp</b></a>input file</li>
+  <li><a id="cxt.term.Args.out" href="#cxt.term.Args.out" class=anchor><b>.out</b></a>output file (default=stdout)</li>
 </ul>
-<p>
+<br>
+<h1><a id="cxt.html" href="#cxt.html" class=anchor>Mod cxt.html</h1></a>
+Serialize cxt nodes as html
+<b>Functions</b> <ul>
+  <li><a id="cxt.html.htmlEncode" href="#cxt.html.htmlEncode" class=anchor><b>fn htmlEncode</b></a><span class=code>(s)</span></li>
+  <li><a id="cxt.html.serialize" href="#cxt.html.serialize" class=anchor><b>fn serialize</b></a><span class=code>(w, node)</span><br>
+  
+  serialize the node to the writer.</li>
+  <li><a id="cxt.html.serializeDoc" href="#cxt.html.serializeDoc" class=anchor><b>fn serializeDoc</b></a><span class=code>(w, node, head)</span></li>
+  <li><a id="cxt.html.convert" href="#cxt.html.convert" class=anchor><b>fn convert</b></a><span class=code>(dat, to, config)</span></li>
+  <li><a id="cxt.html.assertHtml" href="#cxt.html.assertHtml" class=anchor><b>fn assertHtml</b></a><span class=code>(expectedHtml, cxtDat, dbg)</span></li>
+</ul>
+<br>
 </div></body>
 </html>

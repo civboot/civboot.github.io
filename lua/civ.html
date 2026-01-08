@@ -14,21 +14,21 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h1><a id="civ_build_system_and_pkg_manager" href="#civ_build_system_and_pkg_manager">civ build system and pkg manager</h1></a>
+<h1><a id="civ_build_system_and_pkg_manager" href="#civ_build_system_and_pkg_manager" class=anchor>civ build system and pkg manager</h1></a>
 Civstack is a full developer tech stack, and the bedrock of that is the build
 system -- which is this package (<span class=code>civ</span>).
-<p>
+<br>
 A "build system" is fundamentally a mechanism to convert a set of files and
 configuration (a package) into a runnable (and testable) software. A package
 manager is then a way to upload and depend on other packages.
-<p>
+<br>
 A <i>good</i> build system has two other primary features: <ul>
   <li>ergonomics: package specification is complete and easy to both read and write.</li>
   <li>hermetic: each built component <i>can</i> be isolated from the rest of the system
   and deterministically built.</li>
 </ul>
-<p>
-<h3><a id="PKG.lua" href="#PKG.lua">PKG.lua</h3></a>
+<br>
+<h3><a id="PKG.lua" href="#PKG.lua" class=anchor>PKG.lua</h3></a>
 The <span class=code>PKG.lua</span> file is is how you specify how to build a package and what is
 exported from that package. Below is an example one which we will walk though.
 Before we do, a few notes:
@@ -37,7 +37,7 @@ Before we do, a few notes:
   <li>Noteablly none of lua's builtins are available, and instead there are several
   functions for importing luk files (which we will get to).</li>
 </ul>
-<p>
+<br>
 Example <span class=code>PKG.lua</span>:
 <div class=code-block>local P = { summary = "Does foo and some bar" }<br>
 <br>
@@ -76,12 +76,12 @@ P.libfoo = cc {<br>
 <br>
 return P
 </div>
-<p>
+<br>
 <div class=info>Every value assigned to <span class=code>P</span> must be either a concrete type or a
 <a href="#pvc.Target">#pvc.Target</a>.
 </div>
-<p>
-<h3><a id="civ-out" href="#civ-out">civ output directory</h3></a>
+<br>
+<h3><a id="civ-out" href="#civ-out" class=anchor>civ output directory</h3></a>
 By default, <span class=code>civ build</span> puts files in <span class=code>.out/civ/</span>. Wherever it puts it's output
 (whether during build or installation), the output structure under that directory
 is as follows: <ul>
@@ -103,117 +103,90 @@ is as follows: <ul>
   by the build system for incremental builds as well as by installation system to remove
   files during uninstall.</li>
 </ul>
-<p>
-<p>
-<h1><a id=""civ"" href="#"civ"">Mod civ</h1></a>
+<br>
+<br>
+<h1><a id="civ" href="#civ" class=anchor>Mod civ</h1></a>
 The civ build system command.
-<p>
-<b>Types</b> <ul>
-  <li><b>civ.Init</b></li>
-  <li><b>civ.Base</b></li>
-  <li><b>civ.Build</b></li>
-  <li><b>civ.Test</b></li>
-  <li><b>civ.Run</b></li>
-  <li><b>civ.Install</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#civ.Init">Init</a> <a href="#civ.Base">Base</a> <a href="#civ.Build">Build</a> <a href="#civ.Test">Test</a> <a href="#civ.Run">Run</a> <a href="#civ.Install">Install</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>build(cv, tgtnames)</span></li>
-  <li><span class=code>test(cv, tgtnames)</span></li>
-  <li><span class=code>main(args)</span></li>
+  <li><a id="civ.build" href="#civ.build" class=anchor><b>fn build</b></a><span class=code>(cv, tgtnames)</span></li>
+  <li><a id="civ.test" href="#civ.test" class=anchor><b>fn test</b></a><span class=code>(cv, tgtnames)</span></li>
+  <li><a id="civ.main" href="#civ.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
 </ul>
-<p>
-<h2><a id=""civ.Init"" href="#"civ.Init"">Record Init</h2></a>
-<ul>
-  <li><b>out</b> :
-  path to output config.lua</li>
-  <li><b>base</b> :
-  base config to copy from</li>
-</ul>
+<br>
+<h2><a id="civ.Init" href="#civ.Init" class=anchor>Record Init</h2></a>
 civ init arguments.
-<p>
-<h2><a id=""civ.Base"" href="#"civ.Base"">Record Base</h2></a>
-<ul>
-  <li><b>config</b> :
-  path to civ config.</li>
+<b>Fields:</b><ul>
+  <li><a id="civ.Init.out" href="#civ.Init.out" class=anchor><b>.out</b></a> <span class=code>=".civconfig.lua"</span>path to output config.lua</li>
+  <li><a id="civ.Init.base" href="#civ.Init.base" class=anchor><b>.base</b></a>base config to copy from</li>
 </ul>
-<p>
-<h2><a id=""civ.Build"" href="#"civ.Build"">Record Build</h2></a>
-<ul>
-  <li><b>config</b> :
-  path to civ config.</li>
+<br>
+<h2><a id="civ.Base" href="#civ.Base" class=anchor>Record Base</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="civ.Base.config" href="#civ.Base.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>path to civ config.</li>
 </ul>
+<br>
+<h2><a id="civ.Build" href="#civ.Build" class=anchor>Record Build</h2></a>
 Usage: <span class=code>civ build hub:tgt#name</span>
-<p>
-<h2><a id=""civ.Test"" href="#"civ.Test"">Record Test</h2></a>
-<ul>
-  <li><b>config</b> :
-  path to civ config.</li>
+<b>Fields:</b><ul>
+  <li><a id="civ.Build.config" href="#civ.Build.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>path to civ config.</li>
 </ul>
+<br>
+<h2><a id="civ.Test" href="#civ.Test" class=anchor>Record Test</h2></a>
 Usage: <span class=code>civ test hub:tgt#name</span>
-<p>
-<h2><a id=""civ.Run"" href="#"civ.Run"">Record Run</h2></a>
-<ul>
-  <li><b>config</b> :
-  path to civ config.</li>
+<b>Fields:</b><ul>
+  <li><a id="civ.Test.config" href="#civ.Test.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>path to civ config.</li>
 </ul>
+<br>
+<h2><a id="civ.Run" href="#civ.Run" class=anchor>Record Run</h2></a>
 Usage: <span class=code>civ run hub:tgt#name -- ...args</span>
 Build+run a single build target which has a single bin output.
-<p>
-<h2><a id=""civ.Install"" href="#"civ.Install"">Record Install</h2></a>
-<ul>
-  <li><b>config</b> :
-  path to civ config.</li>
-  <li><b>force</b> :
-  do not confirm deletion of files.</li>
+<b>Fields:</b><ul>
+  <li><a id="civ.Run.config" href="#civ.Run.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>path to civ config.</li>
 </ul>
+<br>
+<h2><a id="civ.Install" href="#civ.Install" class=anchor>Record Install</h2></a>
 Usage: <span class=code>civ install hub:tgt#name</span>
-<p>
-<h1><a id=""civ.core"" href="#"civ.core"">Mod civ.core</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="civ.Install.config" href="#civ.Install.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>path to civ config.</li>
+  <li><a id="civ.Install.force" href="#civ.Install.force" class=anchor><b>.force</b></a>do not confirm deletion of files.</li>
+</ul>
+<br>
+<h1><a id="civ.core" href="#civ.core" class=anchor>Mod civ.core</h1></a>
 Core civ (build system) types and functions.
-<p>
-<b>Types</b> <ul>
-  <li><b>civ.core.TargetName</b></li>
-  <li><b>civ.core.Target</b></li>
-  <li><b>civ.core.CfgBuilder</b></li>
-  <li><b>civ.core.Cfg</b></li>
-  <li><b>civ.core.Civ</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#civ.core.TargetName">TargetName</a> <a href="#civ.core.Target">Target</a> <a href="#civ.core.CfgBuilder">CfgBuilder</a> <a href="#civ.core.Cfg">Cfg</a> <a href="#civ.core.Civ">Civ</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>tgtnameSplit()</span></li>
-  <li><span class=code>tgtname(tgtname)</span></li>
+  <li><a id="civ.core.tgtnameSplit" href="#civ.core.tgtnameSplit" class=anchor><b>fn tgtnameSplit</b></a></li>
+  <li><a id="civ.core.tgtname" href="#civ.core.tgtname" class=anchor><b>fn tgtname</b></a><span class=code>(tgtname)</span></li>
 </ul>
-<p>
-<h2><a id=""civ.core.TargetName"" href="#"civ.core.TargetName"">Record TargetName</h2></a>
-<ul>
-  <li><b>pkgname</b> </li>
-  <li><b>name</b> </li>
-</ul>
+<br>
+<h2><a id="civ.core.TargetName" href="#civ.core.TargetName" class=anchor>Record TargetName</h2></a>
 Represents a pkgname.target parsed from a string
-<p>
-<h2><a id=""civ.core.Target"" href="#"civ.core.Target"">Record Target</h2></a>
-<ul>
-  <li><b>pkgname</b> :
-  name of package target is in.</li>
-  <li><b>name</b> :
-  the name of the target.</li>
-  <li><b>kind</b> :
-  the kind of target: build, test, executable</li>
-  <li><b>dir</b> :
-  directory of src files</li>
-  <li><b>src</b> :
-  list of input source files (strings).</li>
-  <li><b>dep</b> :
-  list of input Target objects (dependencies).</li>
-  <li><b>extra</b> :
-  arbitrary value, used by run command</li>
-  <li><b>api</b> :
-  the lang-specific exported import paths.</li>
-  <li><b>depIds</b> :
-  list of dependency target ids. Populated for Worker.</li>
-  <li><b>out</b> :
-  POD table output segregated by language.<ul>
+<b>Fields:</b><ul>
+  <li><a id="civ.core.TargetName.pkgname" href="#civ.core.TargetName.pkgname" class=anchor><b>.pkgname</b></a></li>
+  <li><a id="civ.core.TargetName.name" href="#civ.core.TargetName.name" class=anchor><b>.name</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="TargetName.parse" href="#TargetName.parse" class=anchor><b>fn parse</b></a><span class=code>(T, tgtname)</span></li>
+</ul>
+<br>
+<h2><a id="civ.core.Target" href="#civ.core.Target" class=anchor>Record Target</h2></a>
+A build target, the result of compiling a package.
+<b>Fields:</b><ul>
+  <li><a id="civ.core.Target.pkgname" href="#civ.core.Target.pkgname" class=anchor><b>.pkgname</b></a>name of package target is in.</li>
+  <li><a id="civ.core.Target.name" href="#civ.core.Target.name" class=anchor><b>.name</b></a>the name of the target.</li>
+  <li><a id="civ.core.Target.kind" href="#civ.core.Target.kind" class=anchor><b>.kind</b></a>the kind of target: build, test, executable</li>
+  <li><a id="civ.core.Target.dir" href="#civ.core.Target.dir" class=anchor><b>.dir</b></a>directory of src files</li>
+  <li><a id="civ.core.Target.src" href="#civ.core.Target.src" class=anchor><b>.src</b></a>list of input source files (strings).</li>
+  <li><a id="civ.core.Target.dep" href="#civ.core.Target.dep" class=anchor><b>.dep</b></a>list of input Target objects (dependencies).</li>
+  <li><a id="civ.core.Target.extra" href="#civ.core.Target.extra" class=anchor><b>.extra</b></a>arbitrary value, used by run command</li>
+  <li><a id="civ.core.Target.api" href="#civ.core.Target.api" class=anchor><b>.api</b></a>the lang-specific exported import paths.</li>
+  <li><a id="civ.core.Target.depIds" href="#civ.core.Target.depIds" class=anchor><b>.depIds</b></a>list of dependency target ids. Populated for Worker.</li>
+  <li><a id="civ.core.Target.out" href="#civ.core.Target.out" class=anchor><b>.out</b></a>POD table output segregated by language.<ul>
     <li>t: PoD in a k/v table, can be used to configure downstream targets.</li>
     <li>data: list of raw files.</li>
     <li>include: header file paths for native code (C/iA).</li>
@@ -221,70 +194,103 @@ Represents a pkgname.target parsed from a string
     <li>bin: executable binaries</li>
     <li>lua: lua files</li>
   </ul></li>
-  <li><b>link</b> :
-  link outputs from -> to</li>
-  <li><b>tag</b> :
-  arbitrary attributes like test, testonly, etc.</li>
-  <li><b>ENV</b> :
-  the environment that scripts run in.</li>
-  <li><b>run</b> :
-  executable script which performs the operation kind.</li>
+  <li><a id="civ.core.Target.link" href="#civ.core.Target.link" class=anchor><b>.link</b></a>link outputs from -> to</li>
+  <li><a id="civ.core.Target.tag" href="#civ.core.Target.tag" class=anchor><b>.tag</b></a>arbitrary attributes like test, testonly, etc.</li>
+  <li><a id="civ.core.Target.ENV" href="#civ.core.Target.ENV" class=anchor><b>.ENV</b></a>the environment that scripts run in.</li>
+  <li><a id="civ.core.Target.run" href="#civ.core.Target.run" class=anchor><b>.run</b></a>executable script which performs the operation kind.</li>
 </ul>
-A build target, the result of compiling a package.
-<p>
-<h2><a id=""civ.core.CfgBuilder"" href="#"civ.core.CfgBuilder"">Record CfgBuilder</h2></a>
-<ul>
-  <li><b>direct</b> :
-  prefer building directly
+<b>Methods</b> <ul>
+  <li><a id="Target.tgtname" href="#Target.tgtname" class=anchor><b>fn:tgtname</b></a><span class=code>()</span></li>
+</ul>
+<br>
+<h2><a id="civ.core.CfgBuilder" href="#civ.core.CfgBuilder" class=anchor>Record CfgBuilder</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="civ.core.CfgBuilder.direct" href="#civ.core.CfgBuilder.direct" class=anchor><b>.direct</b></a>prefer building directly
   (running build scripts w/ dofile).</li>
 </ul>
-<p>
-<h2><a id=""civ.core.Cfg"" href="#"civ.core.Cfg"">Record Cfg</h2></a>
-<ul>
-  <li><b>path</b> :
-  the path to this config file.</li>
-  <li><b>host_os</b> :
-  the operating system of this computer.'
-  Typically equal to civix.OS</li>
-  <li><b>hubs</b> :
-  table of hubname -> /absolute/dir/path</li>
-  <li><b>buildDir</b> :
-  directory to put build/test files.</li>
-  <li><b>installDir</b> :
-  directory to install files to.</li>
-  <li><b>builder</b> :
-  builder settings</li>
-</ul>
+<br>
+<h2><a id="civ.core.Cfg" href="#civ.core.Cfg" class=anchor>Record Cfg</h2></a>
 The user configuration, typically at ./.civconfig.lua
-<p>
-<h2><a id=""civ.core.Civ"" href="#"civ.core.Civ"">Record Civ</h2></a>
-<ul>
-  <li><b>cfg</b> :
-  the user config</li>
-  <li><b>hubs</b> :
-  table of hub -> dir (cfg.hubs)</li>
-  <li><b>pkgs</b> :
-  table of pkgname -> pkg</li>
-  <li><b>luk</b> </li>
-  <li><b>cycle</b> </li>
-  <li><b>worker</b> :
-  direct worker</li>
-  <li><b>ENV</b> :
-  environment for running workers</li>
+<b>Fields:</b><ul>
+  <li><a id="civ.core.Cfg.path" href="#civ.core.Cfg.path" class=anchor><b>.path</b></a>the path to this config file.</li>
+  <li><a id="civ.core.Cfg.host_os" href="#civ.core.Cfg.host_os" class=anchor><b>.host_os</b></a>the operating system of this computer.'
+  Typically equal to civix.OS</li>
+  <li><a id="civ.core.Cfg.hubs" href="#civ.core.Cfg.hubs" class=anchor><b>.hubs</b></a>table of hubname -> /absolute/dir/path</li>
+  <li><a id="civ.core.Cfg.buildDir" href="#civ.core.Cfg.buildDir" class=anchor><b>.buildDir</b></a>directory to put build/test files.</li>
+  <li><a id="civ.core.Cfg.installDir" href="#civ.core.Cfg.installDir" class=anchor><b>.installDir</b></a>directory to install files to.</li>
+  <li><a id="civ.core.Cfg.builder" href="#civ.core.Cfg.builder" class=anchor><b>.builder</b></a>builder settings</li>
 </ul>
+<b>Methods</b> <ul>
+  <li><a id="Cfg.load" href="#Cfg.load" class=anchor><b>fn load</b></a><span class=code>(T, path)</span></li>
+</ul>
+<br>
+<h2><a id="civ.core.Civ" href="#civ.core.Civ" class=anchor>Record Civ</h2></a>
 Holds top-level data structures and algorithms for
 processing civ build graphs (pkgname graphs).
-<p>
-<h1><a id=""Ty<civ.Worker>"" href="#"Ty<civ.Worker>"">Record civ.Worker</h1></a>
-<ul>
-  <li><b>ids</b> :
-  the target ids to work on.</li>
-  <li><b>cfg</b> </li>
-  <li><b>tgtsDb</b> :
-  indexed line-file of targets by id</li>
-  <li><b>tgtsCache</b> :
-  already loaded targets</li>
+<b>Fields:</b><ul>
+  <li><a id="civ.core.Civ.cfg" href="#civ.core.Civ.cfg" class=anchor><b>.cfg</b></a>the user config</li>
+  <li><a id="civ.core.Civ.hubs" href="#civ.core.Civ.hubs" class=anchor><b>.hubs</b></a>table of hub -> dir (cfg.hubs)</li>
+  <li><a id="civ.core.Civ.pkgs" href="#civ.core.Civ.pkgs" class=anchor><b>.pkgs</b></a>table of pkgname -> pkg</li>
+  <li><a id="civ.core.Civ.luk" href="#civ.core.Civ.luk" class=anchor><b>.luk</b></a></li>
+  <li><a id="civ.core.Civ.cycle" href="#civ.core.Civ.cycle" class=anchor><b>.cycle</b></a></li>
+  <li><a id="civ.core.Civ.worker" href="#civ.core.Civ.worker" class=anchor><b>.worker</b></a>direct worker</li>
+  <li><a id="civ.core.Civ.ENV" href="#civ.core.Civ.ENV" class=anchor><b>.ENV</b></a>environment for running workers</li>
 </ul>
-<p>
+<b>Methods</b> <ul>
+  <li><a id="Civ.expand" href="#Civ.expand" class=anchor><b>fn:expand</b></a><span class=code>(pat) -&gt; targets</span><br>
+  
+  Expand a pattern to it's targets.
+  This has the side effect of loading all related packages.</li>
+  <li><a id="Civ.expandAll" href="#Civ.expandAll" class=anchor><b>fn:expandAll</b></a><span class=code>(tgtpats) -&gt; tgtnames</span><br>
+  
+  Given a list of hub:foo/.*#.* patterns, expand them.</li>
+  <li><a id="Civ.getPkgname" href="#Civ.getPkgname" class=anchor><b>fn:getPkgname</b></a><span class=code>(dep) -&gt; pkgname</span></li>
+  <li><a id="Civ.abspath" href="#Civ.abspath" class=anchor><b>fn:abspath</b></a><span class=code>(pkgpath) -&gt; abspath</span><br>
+  
+  Given a pkg:path/to/file convert to an abspath (used for Luk).</li>
+  <li><a id="Civ.pkgDir" href="#Civ.pkgDir" class=anchor><b>fn:pkgDir</b></a><span class=code>(pkgname) -&gt; dir/</span><br>
+  
+  Get pkgname's full directory.</li>
+  <li><a id="Civ.tgtDir" href="#Civ.tgtDir" class=anchor><b>fn:tgtDir</b></a><span class=code>(tgt) -&gt; dir/</span></li>
+  <li><a id="Civ.target" href="#Civ.target" class=anchor><b>fn:target</b></a><span class=code>(tgt) -&gt; Target?, errmsg</span></li>
+  <li><a id="Civ.loadPkg" href="#Civ.loadPkg" class=anchor><b>fn:loadPkg</b></a><span class=code>(pkgname)</span></li>
+  <li><a id="Civ.load" href="#Civ.load" class=anchor><b>fn:load</b></a><span class=code>(pkgnames)</span><br>
+  
+  Load the pkgs and update self.pkgs with values.</li>
+  <li><a id="Civ.targetDepMap" href="#Civ.targetDepMap" class=anchor><b>fn:targetDepMap</b></a><span class=code>(tgts, depMap)</span><br>
+  
+  recursively find all deps</li>
+  <li><a id="Civ.run" href="#Civ.run" class=anchor><b>fn:run</b></a><span class=code>(stage, tgtname, script, ids)</span></li>
+  <li><a id="Civ.build" href="#Civ.build" class=anchor><b>fn:build</b></a><span class=code>(tgts) -&gt; ordered, tgtsCache</span><br>
+  
+  Build the target.</li>
+  <li><a id="Civ.test" href="#Civ.test" class=anchor><b>fn:test</b></a><span class=code>(tgtnames, ordered, tgtsCache)</span><br>
+  
+  Test the targets.</li>
+</ul>
+<br>
+<h1><a id="Ty<civ.Worker>" href="#Ty<civ.Worker>" class=anchor>Record civ.Worker</h1></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<civ.Worker>.ids" href="#Ty<civ.Worker>.ids" class=anchor><b>.ids</b></a>the target ids to work on.</li>
+  <li><a id="Ty<civ.Worker>.cfg" href="#Ty<civ.Worker>.cfg" class=anchor><b>.cfg</b></a></li>
+  <li><a id="Ty<civ.Worker>.tgtsDb" href="#Ty<civ.Worker>.tgtsDb" class=anchor><b>.tgtsDb</b></a>indexed line-file of targets by id</li>
+  <li><a id="Ty<civ.Worker>.tgtsCache" href="#Ty<civ.Worker>.tgtsCache" class=anchor><b>.tgtsCache</b></a>already loaded targets</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="civ.Worker.get" href="#civ.Worker.get" class=anchor><b>fn get</b></a><span class=code>(T, args)</span><br>
+  
+  Usage: <span class=code>worker = Worker:get()</span></li>
+  <li><a id="civ.Worker.target" href="#civ.Worker.target" class=anchor><b>fn:target</b></a><span class=code>(id) -&gt; Target</span></li>
+  <li><a id="civ.Worker.copyOut" href="#civ.Worker.copyOut" class=anchor><b>fn:copyOut</b></a><span class=code>(tgt, outKey)</span><br>
+  
+  Copy output files from <span class=code>tgt.out[outKey</span></li>
+</ul>.
+* <a id="civ.Worker.link" href="#civ.Worker.link" class=anchor><b>fn:link</b></a><span class=code>(tgt)</span>
+* <a id="civ.Worker.set" href="#civ.Worker.set" class=anchor><b>fn:set</b></a><span class=code>()</span><br>
+
+Make self the singleton (future calls to Worker.get will return)
+* <a id="civ.Worker.close" href="#civ.Worker.close" class=anchor><b>fn:close</b></a><span class=code>()</span><br>
+
+Remove this as singleton.
 </div></body>
 </html>

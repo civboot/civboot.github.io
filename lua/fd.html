@@ -15,54 +15,56 @@
 <html>
 <body><div class=doc>
 fd: synchronous and asynchronous file descriptors
-<p>
+<br>
 fd implements an API identical to lua's <span class=code>file</span> object but with support for
 async operations following the <a href="lib/lap">lib/lap</a> protocol.
-<p>
+<br>
 It also contains a few simple file-backed data structures (fd.VFile and
 fd.LLFile).
-<p>
-<p>
-<h1><a id=""fd"" href="#"fd"">Mod fd</h1></a>
+<br>
+<br>
+<h1><a id="fd" href="#fd" class=anchor>Mod fd</h1></a>
 filedescriptor: direct control of filedescriptors.
 async operations support the LAP (see lib/lap) protocol.
-<p>
+<br>
 Can override default `io` module for global async mode.
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>isTrunc(mode) -&gt; bool</span>
+  <li><a id="fd.isTrunc" href="#fd.isTrunc" class=anchor><b>fn isTrunc</b></a><span class=code>(mode) -&gt; bool</span><br>
+  
   Given a string mode, return whether the file will be truncated.</li>
-  <li><span class=code>isCreate(mode)</span>
+  <li><a id="fd.isCreate" href="#fd.isCreate" class=anchor><b>fn isCreate</b></a><span class=code>(mode)</span><br>
+  
   Given a string mode, return whether the file will be created
   if it doesn't exist.</li>
-  <li><span class=code>newFD()</span></li>
-  <li><span class=code>newFDT()</span></li>
-  <li><span class=code>finishRunning(fd, kind, ...)</span></li>
-  <li><span class=code>modifiedEq(fs1, fs2)</span>
+  <li><a id="fd.newFD" href="#fd.newFD" class=anchor><b>fn newFD</b></a></li>
+  <li><a id="fd.newFDT" href="#fd.newFDT" class=anchor><b>fn newFDT</b></a></li>
+  <li><a id="fd.finishRunning" href="#fd.finishRunning" class=anchor><b>fn finishRunning</b></a><span class=code>(fd, kind, ...)</span></li>
+  <li><a id="fd.modifiedEq" href="#fd.modifiedEq" class=anchor><b>fn modifiedEq</b></a><span class=code>(fs1, fs2)</span><br>
+  
   return whether two fstat's have equal modification times
   FIXME: move this to civix</li>
-  <li><span class=code>openWith(openFn, path, mode)</span></li>
-  <li><span class=code>openFD(...) -&gt; M.openWith(S.openFD, ...)</span></li>
-  <li><span class=code>openFDT(...) -&gt; M.openWith(S.openFDT, ...)</span></li>
-  <li><span class=code>open(...)</span></li>
-  <li><span class=code>close()</span></li>
-  <li><span class=code>tmpfileFn(sysFn)</span></li>
-  <li><span class=code>tmpfile() -&gt; M.tmpfileFn(S.tmpFD)</span></li>
-  <li><span class=code>read(...)</span></li>
-  <li><span class=code>lines(path, mode)</span></li>
-  <li><span class=code>write(...) -&gt; M.output():write(...)</span></li>
-  <li><span class=code>openFileno(fileno)</span></li>
-  <li><span class=code>input() -&gt; M.stdin</span></li>
-  <li><span class=code>output() -&gt; M.stdout</span></li>
-  <li><span class=code>flush() -&gt; M.output():flush()</span></li>
-  <li><span class=code>type(fd)</span></li>
-  <li><span class=code>fileno(fd)</span></li>
-  <li><span class=code>ftype(f)</span></li>
-  <li><span class=code>isatty(fd)</span></li>
-  <li><span class=code>ioStd()</span></li>
-  <li><span class=code>ioSync()</span></li>
-  <li><span class=code>ioAsync()</span></li>
+  <li><a id="fd.openWith" href="#fd.openWith" class=anchor><b>fn openWith</b></a><span class=code>(openFn, path, mode)</span></li>
+  <li><a id="fd.openFD" href="#fd.openFD" class=anchor><b>fn openFD</b></a><span class=code>(...) -&gt; M.openWith(S.openFD, ...)</span></li>
+  <li><a id="fd.openFDT" href="#fd.openFDT" class=anchor><b>fn openFDT</b></a><span class=code>(...) -&gt; M.openWith(S.openFDT, ...)</span></li>
+  <li><a id="fd.open" href="#fd.open" class=anchor><b>fn open</b></a><span class=code>(...)</span></li>
+  <li><a id="fd.close" href="#fd.close" class=anchor><b>fn close</b></a><span class=code>()</span></li>
+  <li><a id="fd.tmpfileFn" href="#fd.tmpfileFn" class=anchor><b>fn tmpfileFn</b></a><span class=code>(sysFn)</span></li>
+  <li><a id="fd.tmpfile" href="#fd.tmpfile" class=anchor><b>fn tmpfile</b></a><span class=code>() -&gt; M.tmpfileFn(S.tmpFD)</span></li>
+  <li><a id="fd.read" href="#fd.read" class=anchor><b>fn read</b></a><span class=code>(...)</span></li>
+  <li><a id="fd.lines" href="#fd.lines" class=anchor><b>fn lines</b></a><span class=code>(path, mode)</span></li>
+  <li><a id="fd.write" href="#fd.write" class=anchor><b>fn write</b></a><span class=code>(...) -&gt; M.output():write(...)</span></li>
+  <li><a id="fd.openFileno" href="#fd.openFileno" class=anchor><b>fn openFileno</b></a><span class=code>(fileno)</span></li>
+  <li><a id="fd.input" href="#fd.input" class=anchor><b>fn input</b></a><span class=code>() -&gt; M.stdin</span></li>
+  <li><a id="fd.output" href="#fd.output" class=anchor><b>fn output</b></a><span class=code>() -&gt; M.stdout</span></li>
+  <li><a id="fd.flush" href="#fd.flush" class=anchor><b>fn flush</b></a><span class=code>() -&gt; M.output():flush()</span></li>
+  <li><a id="fd.type" href="#fd.type" class=anchor><b>fn type</b></a><span class=code>(fd)</span></li>
+  <li><a id="fd.fileno" href="#fd.fileno" class=anchor><b>fn fileno</b></a><span class=code>(fd)</span></li>
+  <li><a id="fd.ftype" href="#fd.ftype" class=anchor><b>fn ftype</b></a><span class=code>(f)</span></li>
+  <li><a id="fd.isatty" href="#fd.isatty" class=anchor><b>fn isatty</b></a><span class=code>(fd)</span></li>
+  <li><a id="fd.ioStd" href="#fd.ioStd" class=anchor><b>fn ioStd</b></a><span class=code>()</span></li>
+  <li><a id="fd.ioSync" href="#fd.ioSync" class=anchor><b>fn ioSync</b></a><span class=code>()</span></li>
+  <li><a id="fd.ioAsync" href="#fd.ioAsync" class=anchor><b>fn ioAsync</b></a><span class=code>()</span></li>
 </ul>
-<p>
+<br>
 </div></body>
 </html>

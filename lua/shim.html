@@ -16,7 +16,7 @@
 <body><div class=doc>
 write scripts for Lua, execute from shell. This is a tiny Lua module that makes
 it easy to write utilities that work from either bash or Lua.
-<p>
+<br>
 Example script (see also: <a href="#pkg-script">#pkg-script</a>) <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
 local G = G or _G -- typosafe globals<br>
 <br>
@@ -40,79 +40,82 @@ end<br>
 if M == MAIN then os.exit(M.main(G.arg)) end<br>
 return M -- return as library
 </div>
-<p>
+<br>
 Then in <span class=code>PKG.lua</span> add <span class=code>main = 'myCmdName.Main'</span> to enable better
 documentation formatting. Get documentation with <span class=code>doc 'myCmdName'</span>.
-<p>
-<h1><a id=""shim"" href="#"shim"">Mod shim</h1></a>
+<br>
+<h1><a id="shim" href="#shim" class=anchor>Mod shim</h1></a>
 shim: use a lua module in lua OR in the shell.
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>parse(v) -&gt; args</span>
+  <li><a id="shim.parse" href="#shim.parse" class=anchor><b>fn parse</b></a><span class=code>(v) -&gt; args</span><br>
+  
   Parse either a string or list and convert them to key=value table.
   v can be either a list of <span class=code>{'strings', '--option=foo'}</span>
   or <span class=code>{'strings", option='foo'}</span> or a combination of both. If v is a string then
   it is split on whitespace and parsed as a list.
   
   Note: this handles repeat keys by creating and appending a list for that key.</li>
-  <li><span class=code>parseStr(str) -&gt; args</span>
+  <li><a id="shim.parseStr" href="#shim.parseStr" class=anchor><b>fn parseStr</b></a><span class=code>(str) -&gt; args</span><br>
+  
   parses the string by splitting via whitespace.
-  Asserts the string contains no special chars: <span class=code>'"[]</span>
-  This is for convinience, use a table if it's not enough.
-  
-  Note: if the input is already a table it just returns it.</li>
-  <li><span class=code>parseList(strlist) -&gt; args</span>
-  Note: typically use parse() or parseStr() instead.</li>
-  <li><span class=code>short(args, short, long, value) -&gt; nil</span>
-  Helper for dealing with <span class=code>-s --short</span> arguments. Mutates
-  args to convert short paramaters to their long counterpart.</li>
-  <li><span class=code>boolean(v)</span>
-  Duck type: always return a boolean (except for nil).
-  See BOOLS (above) for mapping.</li>
-  <li><span class=code>boolean(v)</span>
-  Duck type: always return a boolean (except for nil).
-  See BOOLS (above) for mapping.</li>
-  <li><span class=code>bools(args, ...)</span></li>
-  <li><span class=code>number(num)</span>
-  Duck type: always return a number</li>
-  <li><span class=code>string(v)</span>
-  Duck type: always return a string
-  This is useful for some APIs where you want to convert
-  number/true/false to strings
-  Converts nil to ''</li>
-  <li><span class=code>list(val, default, empty)</span></li>
-  <li><span class=code>listSplit(val, sep)</span>
-  Duck type: if val is a string then splits it
-  if it's a list leaves alone.</li>
-  <li><span class=code>file(v, default, mode--[[w+]]) -&gt; file, error?</span>
-  Duck type: get a file handle.
-  If <span class=code>v or default</span> is a string then open the file in mode <span class=code>default='w+'</span></li>
-  <li><span class=code>expand(args)</span>
-  expand string keys into <span class=code>--key=value</span>, ordered alphabetically.
-  This is mostly useful for interfacing with non-lua shells.</li>
-  <li><span class=code>getEnvBool(k)</span></li>
-  <li><span class=code>popRaw(args, to) -&gt; to</span>
-  pop raw arguments after '--'
-  Removes them (including '--') from args.</li>
-  <li><span class=code>runSetup(args, force)</span>
-  Setup lua using <span class=code>require(LUA_SETUP).setup(args, force)</span>.
-  
-  The default is to use ds.setup.</li>
-  <li><span class=code>construct(Args, args) -&gt; ok, err?</span>
-  Construct a metaty-like object from args.
-  
-  If <span class=code>Args.subcmd</span> is truthy then treats it as a table of
-  subcmds. Looks for a subcmd at <span class=code>args[1]</span>, removes it and
-  constructs that subcmd, returning a table with the subcmd
-  key set.
-  
-  For example:
-  <span class=code>construct({foo=Foo, bar=Bar}, {'foo', 'ding', zing=true})</span>
-  returns a {foo=Foo{'ding', zing=true}}.</li>
-  <li><span class=code>init(Args, args)</span>
-  Convienience function to perform common setup and run a command-like object.</li>
-  <li><span class=code>run(Args, args)</span></li>
+  Asserts the string contains no special chars: <span class=code>'"[</span></li>
 </ul>
-<p>
+This is for convinience, use a table if it's not enough.
+
+Note: if the input is already a table it just returns it.
+* <a id="shim.parseList" href="#shim.parseList" class=anchor><b>fn parseList</b></a><span class=code>(strlist) -&gt; args</span><br>
+
+Note: typically use parse() or parseStr() instead.
+* <a id="shim.short" href="#shim.short" class=anchor><b>fn short</b></a><span class=code>(args, short, long, value) -&gt; nil</span><br>
+
+Helper for dealing with <span class=code>-s --short</span> arguments. Mutates
+args to convert short paramaters to their long counterpart.
+* <a id="shim.boolean" href="#shim.boolean" class=anchor><b>fn boolean</b></a><span class=code>(v)</span><br>
+
+Duck type: always return a boolean (except for nil).
+See BOOLS (above) for mapping.
+* <a id="shim.boolean" href="#shim.boolean" class=anchor><b>fn boolean</b></a><span class=code>(v)</span><br>
+
+Duck type: always return a boolean (except for nil).
+See BOOLS (above) for mapping.
+* <a id="shim.bools" href="#shim.bools" class=anchor><b>fn bools</b></a><span class=code>(args, ...)</span>
+* <a id="shim.number" href="#shim.number" class=anchor><b>fn number</b></a><span class=code>(num)</span><br>
+
+Duck type: always return a number
+* <a id="shim.string" href="#shim.string" class=anchor><b>fn string</b></a><span class=code>(v)</span><br>
+
+Duck type: always return a string
+This is useful for some APIs where you want to convert
+number/true/false to strings
+Converts nil to ''
+* <a id="shim.list" href="#shim.list" class=anchor><b>fn list</b></a><span class=code>(val, default, empty)</span>
+* <a id="shim.listSplit" href="#shim.listSplit" class=anchor><b>fn listSplit</b></a><span class=code>(val, sep)</span><br>
+
+Duck type: if val is a string then splits it
+if it's a list leaves alone.
+* <a id="shim.file" href="#shim.file" class=anchor><b>fn file</b></a><span class=code>(v, default, mode--[[w+]]) -&gt; file, error?</span><br>
+
+Duck type: get a file handle.
+If <span class=code>v or default</span> is a string then open the file in mode <span class=code>default='w+'</span>
+* <a id="shim.expand" href="#shim.expand" class=anchor><b>fn expand</b></a><span class=code>(args)</span><br>
+
+expand string keys into <span class=code>--key=value</span>, ordered alphabetically.
+This is mostly useful for interfacing with non-lua shells.
+* <a id="shim.getEnvBool" href="#shim.getEnvBool" class=anchor><b>fn getEnvBool</b></a><span class=code>(k)</span>
+* <a id="shim.popRaw" href="#shim.popRaw" class=anchor><b>fn popRaw</b></a><span class=code>(args, to) -&gt; to</span><br>
+
+pop raw arguments after '--'
+Removes them (including '--') from args.
+* <a id="shim.runSetup" href="#shim.runSetup" class=anchor><b>fn runSetup</b></a><span class=code>(args, force)</span><br>
+
+Setup lua using <span class=code>require(LUA_SETUP).setup(args, force)</span>.
+
+The default is to use ds.setup.
+* <a id="shim.construct" href="#shim.construct" class=anchor><b>fn construct</b></a><span class=code>(Args, args) -&gt; ok, err?</span><br>
+
+Construct a metaty-like object from args.
+
+If <span class=code>Args.subcmd</span> is truthy then treats it as a table of
+subcmds. Looks for a subcmd at <span class=code>args[1</span>
 </div></body>
 </html>

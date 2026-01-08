@@ -15,12 +15,12 @@
 <html>
 <body><div class=doc>
 Civboot's unix system library
-<p>
+<br>
 Civix contains standard unix functions that exist in most language's "sys"
 library such as <span class=code>sleep</span>, <span class=code>epoch</span> etc. It also contains a powerful <span class=code>Sh{}</span> type
 and convieience <span class=code>sh()</span> function for executing system shell commands, either
 synchronously or asynchronously using the LAP protocol (see <a href="#Package_lap">#Package_lap</a>.
-<p>
+<br>
 <div class=code-block>$ lua<br>
 &gt; sh = require'civix'.sh<br>
 &gt; print(sh'ls some/path')<br>
@@ -28,66 +28,77 @@ synchronously or asynchronously using the LAP protocol (see <a href="#Package_la
 &gt; out = sh{stdin=io.open'/var/log/syslog', 'grep', 'netgroup: version'}<br>
 &gt; for line in require'ds'.lines(out) do ... something per line ... end
 </div>
-<p>
+<br>
 <div class=info>Civix depends on the <a href="#Package_fd">#Package_fd</a> library for async file descriptors and
 other filedescriptor functionality.</div>
-<p>
-<h1><a id=""civix"" href="#"civix"">Mod civix</h1></a>
+<br>
+<h1><a id="civix" href="#civix" class=anchor>Mod civix</h1></a>
 civix: unix-like OS utilities.
-<p>
-<b>Types</b> <ul>
-  <li><b>civix.B</b></li>
-  <li><b>civix.Walk</b></li>
-  <li><b>civix.Sh</b></li>
-  <li><b>civix.ShFin</b></li>
-</ul>
-<p>
+<br>
+<b>Types: </b><a href="#civix.B">B</a> <a href="#civix.Walk">Walk</a> <a href="#civix.Sh">Sh</a> <a href="#civix.ShFin">ShFin</a> 
+<br>
 <b>Functions</b> <ul>
-  <li><span class=code>mkdir(path)</span></li>
-  <li><span class=code>dir(path)</span></li>
-  <li><span class=code>rmdir(path)</span></li>
-  <li><span class=code>exists(path)</span></li>
-  <li><span class=code>pathtype(path)</span></li>
-  <li><span class=code>rm(path) -&gt; nil</span>
+  <li><a id="civix.mkdir" href="#civix.mkdir" class=anchor><b>fn mkdir</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.dir" href="#civix.dir" class=anchor><b>fn dir</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.rmdir" href="#civix.rmdir" class=anchor><b>fn rmdir</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.exists" href="#civix.exists" class=anchor><b>fn exists</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.pathtype" href="#civix.pathtype" class=anchor><b>fn pathtype</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.rm" href="#civix.rm" class=anchor><b>fn rm</b></a><span class=code>(path) -&gt; nil</span><br>
+  
   remove file.</li>
-  <li><span class=code>statModifiedEq(fs1, fs2) -&gt; boolean</span>
+  <li><a id="civix.statModifiedEq" href="#civix.statModifiedEq" class=anchor><b>fn statModifiedEq</b></a><span class=code>(fs1, fs2) -&gt; boolean</span><br>
+  
   return whether two Stat's have equal modification times</li>
-  <li><span class=code>stat(v) -&gt; Stat?, errmsg?</span>
+  <li><a id="civix.stat" href="#civix.stat" class=anchor><b>fn stat</b></a><span class=code>(v) -&gt; Stat?, errmsg?</span><br>
+  
   Given a path|File|Stat return a Stat</li>
-  <li><span class=code>modifiedEq(a, b)</span>
+  <li><a id="civix.modifiedEq" href="#civix.modifiedEq" class=anchor><b>fn modifiedEq</b></a><span class=code>(a, b)</span><br>
+  
   return whether two path|File|Stat have equal modification times</li>
-  <li><span class=code>getpagesize() -&gt; 4096</span></li>
-  <li><span class=code>ls(dir) -&gt; list[str]</span>
+  <li><a id="civix.getpagesize" href="#civix.getpagesize" class=anchor><b>fn getpagesize</b></a><span class=code>() -&gt; 4096</span></li>
+  <li><a id="civix.ls" href="#civix.ls" class=anchor><b>fn ls</b></a><span class=code>(dir) -&gt; list[str]</span><br>
+  
   Return the entries in a dir as a list.
   They are sorted to put the directories first.</li>
-  <li><span class=code>mv(old, new)</span>
+  <li><a id="civix.mv" href="#civix.mv" class=anchor><b>fn mv</b></a><span class=code>(old, new)</span><br>
+  
   Move path from old -> new, throwing an error on failure.</li>
-  <li><span class=code>fdWrite(to, from, sz--[[=BLOCK_SZ]]) -&gt; (to, from)</span>
+  <li><a id="civix.fdWrite" href="#civix.fdWrite" class=anchor><b>fn fdWrite</b></a><span class=code>(to, from, sz--[[=BLOCK_SZ]]) -&gt; (to, from)</span><br>
+  
   Read data from fd <span class=code>from</span> and write to fd <span class=code>to</span>, then flush.</li>
-  <li><span class=code>cp(from, to)</span>
+  <li><a id="civix.cp" href="#civix.cp" class=anchor><b>fn cp</b></a><span class=code>(from, to)</span><br>
+  
   copy data from <span class=code>from</span> to <span class=code>to</span>. Their types can be either
   a string (path) or a file descriptor.</li>
-  <li><span class=code>swap(a, b, ext)</span>
+  <li><a id="civix.swap" href="#civix.swap" class=anchor><b>fn swap</b></a><span class=code>(a, b, ext)</span><br>
+  
   swap paths a <-> b</li>
-  <li><span class=code>setModified(f, sec, nsec) -&gt; ok, errmsg?</span>
+  <li><a id="civix.setModified" href="#civix.setModified" class=anchor><b>fn setModified</b></a><span class=code>(f, sec, nsec) -&gt; ok, errmsg?</span><br>
+  
   set the modified time of the path|file</li>
-  <li><span class=code>quote(str)</span>
+  <li><a id="civix.quote" href="#civix.quote" class=anchor><b>fn quote</b></a><span class=code>(str)</span><br>
+  
   quote the str if it's possible</li>
-  <li><span class=code>sleep(d) -&gt; nil</span>
+  <li><a id="civix.sleep" href="#civix.sleep" class=anchor><b>fn sleep</b></a><span class=code>(d) -&gt; nil</span><br>
+  
   Sleep for the specified duration</li>
-  <li><span class=code>epoch() -&gt; ds.Epoch(lib.epoch())</span>
+  <li><a id="civix.epoch" href="#civix.epoch" class=anchor><b>fn epoch</b></a><span class=code>() -&gt; ds.Epoch(lib.epoch())</span><br>
+  
   Return the Epoch/Mono time
   Time according to realtime clock</li>
-  <li><span class=code>mono() -&gt; ds.Duration(lib.mono())</span>
+  <li><a id="civix.mono" href="#civix.mono" class=anchor><b>fn mono</b></a><span class=code>() -&gt; ds.Duration(lib.mono())</span><br>
+  
   Duration according to monotomically incrementing clock.</li>
-  <li><span class=code>monoSec() -&gt; M.mono():asSeconds()</span></li>
-  <li><span class=code>pathEq(path1, path2)</span>
+  <li><a id="civix.monoSec" href="#civix.monoSec" class=anchor><b>fn monoSec</b></a><span class=code>() -&gt; M.mono():asSeconds()</span></li>
+  <li><a id="civix.pathEq" href="#civix.pathEq" class=anchor><b>fn pathEq</b></a><span class=code>(path1, path2)</span><br>
+  
   return if the contents of the two paths are equal.
   If both are directories return true (do not recurse).
   If both don't exist return true</li>
-  <li><span class=code>isFile(path) -&gt; M.pathtype(path) == 'file'</span></li>
-  <li><span class=code>isDir(path) -&gt; M.pathtype(path) == 'dir'</span></li>
-  <li><span class=code>walk(paths, ftypeFns, maxDepth)</span>
+  <li><a id="civix.isFile" href="#civix.isFile" class=anchor><b>fn isFile</b></a><span class=code>(path) -&gt; M.pathtype(path) == 'file'</span></li>
+  <li><a id="civix.isDir" href="#civix.isDir" class=anchor><b>fn isDir</b></a><span class=code>(path) -&gt; M.pathtype(path) == 'dir'</span></li>
+  <li><a id="civix.walk" href="#civix.walk" class=anchor><b>fn walk</b></a><span class=code>(paths, ftypeFns, maxDepth)</span><br>
+  
   TODO: remove this, use Walk instead.
   walk the paths up to depth, calling <span class=code>ftypeFns[ftype]</span> for
   each item encountered.
@@ -105,16 +116,20 @@ civix: unix-like OS utilities.
   The Fn signatures are: (path, ftype) -> stopWalk
   If either return true then the walk is ended immediately
   If dirFn returns 'skip' then the directory is skipped</li>
-  <li><span class=code>cpRecursive(from, to, except)</span>
+  <li><a id="civix.cpRecursive" href="#civix.cpRecursive" class=anchor><b>fn cpRecursive</b></a><span class=code>(from, to, except)</span><br>
+  
   recursively copy <span class=code>from/</span> to new <span class=code>to/</span> directory.</li>
-  <li><span class=code>rmRecursive(path)</span></li>
-  <li><span class=code>mkDirs(path)</span></li>
-  <li><span class=code>mkDir(path, parents)</span></li>
-  <li><span class=code>forceCp(from, to)</span>
+  <li><a id="civix.rmRecursive" href="#civix.rmRecursive" class=anchor><b>fn rmRecursive</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.mkDirs" href="#civix.mkDirs" class=anchor><b>fn mkDirs</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.mkDir" href="#civix.mkDir" class=anchor><b>fn mkDir</b></a><span class=code>(path, parents)</span></li>
+  <li><a id="civix.forceCp" href="#civix.forceCp" class=anchor><b>fn forceCp</b></a><span class=code>(from, to)</span><br>
+  
   copy <span class=code>from</span> to <span class=code>to</span>, creating the directory structure if necessary.</li>
-  <li><span class=code>forceWrite(path, text)</span>
+  <li><a id="civix.forceWrite" href="#civix.forceWrite" class=anchor><b>fn forceWrite</b></a><span class=code>(path, text)</span><br>
+  
   write <span class=code>text</span> to <span class=code>path</span>, creating the directory structure if necessary.</li>
-  <li><span class=code>mkTree(dir, tree, parents)</span>
+  <li><a id="civix.mkTree" href="#civix.mkTree" class=anchor><b>fn mkTree</b></a><span class=code>(dir, tree, parents)</span><br>
+  
   mkTree(tree) builds a tree of files and dirs at `dir` <ul>
     <li>Dirs  are tables.</li>
     <li>Files are string or fd -- which are read+closed.</li>
@@ -136,8 +151,9 @@ civix: unix-like OS utilities.
 &nbsp; a/a3/a4.txt # content: stuff in a3.txt<br>
 &nbsp; 
 </div></li>
-  <li><span class=code>Lap()</span></li>
-  <li><span class=code>sh(M,'sh') -&gt; out, err, Sh</span>
+  <li><a id="civix.Lap" href="#civix.Lap" class=anchor><b>fn Lap</b></a><span class=code>()</span></li>
+  <li><a id="civix.sh" href="#civix.sh" class=anchor><b>fn sh</b></a><span class=code>(M,'sh') -&gt; out, err, Sh</span><br>
+  
   Execute the command in another process via execvp (system shell). Throws an
   error if the command fails.
   
@@ -170,66 +186,57 @@ civix: unix-like OS utilities.
       <td><span class=code>echo "sent to stdin" | cat</span></td>
     </tr>
   </table></div></li>
-  <li><span class=code>isRoot() -&gt; os.getenv'EUID' == '0'</span></li>
+  <li><a id="civix.isRoot" href="#civix.isRoot" class=anchor><b>fn isRoot</b></a><span class=code>() -&gt; os.getenv'EUID' == '0'</span></li>
 </ul>
-<p>
-<h2><a id=""civix.B"" href="#"civix.B"">Mod civix.B</h2></a>
+<br>
+<h2><a id="civix.B" href="#civix.B" class=anchor>Mod civix.B</h2></a>
 Several (but not all) functions in this module are used for civ.lua.
 However, native modules especially cannot be loaded before the
 bulid system is bootstrapped (at least not easily), so there are
 a few of these checks for NOLIB in this library which will use
 civix.B (bootstrap) instead in that case.
-<p>
+<br>
 Clients should typically not use civix.B.
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>sh(cmd) -&gt; stdout, stderr, fakeSh</span></li>
-  <li><span class=code>mkdir(dir)</span></li>
-  <li><span class=code>rmdir(dir)</span></li>
-  <li><span class=code>dir(dir) -&gt; iter[entry]</span></li>
-  <li><span class=code>exists(path) -&gt; bool</span></li>
-  <li><span class=code>pathtype(path)</span></li>
+  <li><a id="civix.B.sh" href="#civix.B.sh" class=anchor><b>fn sh</b></a><span class=code>(cmd) -&gt; stdout, stderr, fakeSh</span></li>
+  <li><a id="civix.B.mkdir" href="#civix.B.mkdir" class=anchor><b>fn mkdir</b></a><span class=code>(dir)</span></li>
+  <li><a id="civix.B.rmdir" href="#civix.B.rmdir" class=anchor><b>fn rmdir</b></a><span class=code>(dir)</span></li>
+  <li><a id="civix.B.dir" href="#civix.B.dir" class=anchor><b>fn dir</b></a><span class=code>(dir) -&gt; iter[entry]</span></li>
+  <li><a id="civix.B.exists" href="#civix.B.exists" class=anchor><b>fn exists</b></a><span class=code>(path) -&gt; bool</span></li>
+  <li><a id="civix.B.pathtype" href="#civix.B.pathtype" class=anchor><b>fn pathtype</b></a><span class=code>(path)</span></li>
 </ul>
-<p>
-<h2><a id=""civix.Walk"" href="#"civix.Walk"">Record Walk</h2></a>
-<ul>
-  <li><b>maxDepth</b> :
-  maximum depth to walk (default=infinite)</li>
-  <li><b>pi</b> :
-  the current (root) path index being walked</li>
-</ul>
+<br>
+<h2><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h2></a>
 Walk the directory tree as a iterator of <span class=code>path, ftype</span>. Can walk either a
 single path <span class=code>Walk'path/'</span> or a list of paths <span class=code>Walk{'a/', 'b.txt'}</span>. <ul>
   <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
   <li>Warning: you may want to handle <span class=code>ftype=='error'</span></li>
 </ul>
-<p>
-<h2><a id=""civix.Sh"" href="#"civix.Sh"">Record Sh</h2></a>
-<ul>
-  <li><b>args</b> :
-  arguments to pass to shell</li>
-  <li><b>stdin</b> :
-  shell's stdin to send  (default=empty)</li>
-  <li><b>stdout</b> :
-  shell's stdout              (default=empty)</li>
-  <li><b>stderr</b> :
-  shell's stderr              (default=empty)</li>
-  <li><b>env</b> :
-  shell's environment {'FOO=bar', ...}</li>
-  <li><b>cwd</b> :
-  current working directory</li>
+<b>Fields:</b><ul>
+  <li><a id="civix.Walk.maxDepth" href="#civix.Walk.maxDepth" class=anchor><b>.maxDepth</b></a>maximum depth to walk (default=infinite)</li>
+  <li><a id="civix.Walk.pi" href="#civix.Walk.pi" class=anchor><b>.pi</b></a> <span class=code>=0</span>the current (root) path index being walked</li>
 </ul>
+<b>Methods</b> <ul>
+  <li><a id="Walk.depth" href="#Walk.depth" class=anchor><b>fn depth</b></a><span class=code>(w) -&gt; #w._dirs</span><br>
+  
+  - get the depth of the current directory being walked</li>
+  <li><a id="Walk.skip" href="#Walk.skip" class=anchor><b>fn skip</b></a><span class=code>(w._dirs)</span><br>
+  
+  skip the current directory level</li>
+</ul>
+<br>
+<h2><a id="civix.Sh" href="#civix.Sh" class=anchor>Record Sh</h2></a>
 Start args on the shell
 <div class=info>Suggestion: use civix.sh instead.</div>
-<p>
+<br>
 <span class=code>Sh:start()</span> kicks off a subprocess which start the shell using the fds
 you pass in or creating them if you set them to true. Created file
 descriptors will be stored in the associated name.
-<p>
+<br>
 <div class=info>Why? This means that <span class=code>:close()</span> will only close filedescriptors created
 by the shell itself, and you won't accidentially close
 io.stdout/etc.</div>
-<p>
+<br>
 Examples (see civix.sh for more examples): <div class=table><table>
   <tr>
     <th>Lua</th>
@@ -244,21 +251,46 @@ Examples (see civix.sh for more examples): <div class=table><table>
     <td><span class=code>v=$(ls foo/bar)</span></td>
   </tr>
 </table></div>
-<p>
-<h2><a id=""civix.ShFin"" href="#"civix.ShFin"">Record ShFin</h2></a>
-<ul>
-  <li><b>stdin</b> </li>
-  <li><b>stdout</b> </li>
-  <li><b>stderr</b> </li>
-  <li><b>input</b> :
-  write to then close stdin (either self's or shell's)</li>
+<b>Fields:</b><ul>
+  <li><a id="civix.Sh.args" href="#civix.Sh.args" class=anchor><b>.args</b></a>arguments to pass to shell</li>
+  <li><a id="civix.Sh.stdin" href="#civix.Sh.stdin" class=anchor><b>.stdin</b></a>shell's stdin to send  (default=empty)</li>
+  <li><a id="civix.Sh.stdout" href="#civix.Sh.stdout" class=anchor><b>.stdout</b></a>shell's stdout              (default=empty)</li>
+  <li><a id="civix.Sh.stderr" href="#civix.Sh.stderr" class=anchor><b>.stderr</b></a>shell's stderr              (default=empty)</li>
+  <li><a id="civix.Sh.env" href="#civix.Sh.env" class=anchor><b>.env</b></a>shell's environment {'FOO=bar', ...}</li>
+  <li><a id="civix.Sh.cwd" href="#civix.Sh.cwd" class=anchor><b>.cwd</b></a>current working directory</li>
 </ul>
-<p>
-<h1><a id=""civix.testing"" href="#"civix.testing"">Mod civix.testing</h1></a>
+<b>Methods</b> <ul>
+  <li><a id="Sh.start" href="#Sh.start" class=anchor><b>fn start</b></a><span class=code>(sh)</span><br>
+  
+  start the shell in the background.
+  Example: <span class=code>sh{arg1, arg2, stdin=nostdin, stdout=true, stderr=io.stderr}</span>
+  <div class=info>Note: See Sh for how filedescriptors are set</div></li>
+  <li><a id="Sh.isDone" href="#Sh.isDone" class=anchor><b>fn isDone</b></a><span class=code>(sh) -&gt; sh._sh:isDone()</span></li>
+  <li><a id="Sh.rc" href="#Sh.rc" class=anchor><b>fn rc</b></a><span class=code>(sh) -&gt; sh._sh:rc()</span></li>
+  <li><a id="Sh.wait" href="#Sh.wait" class=anchor><b>fn wait</b></a><span class=code>(sh) -&gt; int</span><br>
+  
+  wait for shell to complete, returns return code</li>
+  <li><a id="Sh.finish" href="#Sh.finish" class=anchor><b>fn finish</b></a><span class=code>(sh, other) -&gt; out, err</span><br>
+  
+  finish files (in sh or other) by writing other.input to stdin and reading
+  stdout/stderr.  All processes are done asynchronously</li>
+  <li><a id="Sh.write" href="#Sh.write" class=anchor><b>fn write</b></a><span class=code>(sh, ...) -&gt; sh.stdin:write(...)</span></li>
+  <li><a id="Sh.read" href="#Sh.read" class=anchor><b>fn read</b></a><span class=code>(sh, ...) -&gt; sh.stdout:read(...)</span></li>
+</ul>
+<br>
+<h2><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h2></a>
+<b>Fields:</b><ul>
+  <li><a id="civix.ShFin.stdin" href="#civix.ShFin.stdin" class=anchor><b>.stdin</b></a></li>
+  <li><a id="civix.ShFin.stdout" href="#civix.ShFin.stdout" class=anchor><b>.stdout</b></a></li>
+  <li><a id="civix.ShFin.stderr" href="#civix.ShFin.stderr" class=anchor><b>.stderr</b></a></li>
+  <li><a id="civix.ShFin.input" href="#civix.ShFin.input" class=anchor><b>.input</b></a>write to then close stdin (either self's or shell's)</li>
+</ul>
+<br>
+<h1><a id="civix.testing" href="#civix.testing" class=anchor>Mod civix.testing</h1></a>
 test runners and helpers for civix
-<p>
 <b>Functions</b> <ul>
-  <li><span class=code>runAsyncTest(fn)</span>
+  <li><a id="civix.testing.runAsyncTest" href="#civix.testing.runAsyncTest" class=anchor><b>fn runAsyncTest</b></a><span class=code>(fn)</span><br>
+  
   Typically an entire test file is wrapped in a function,
   then passed to this -- which runs all tests sequentially
   inside the lap environment.
@@ -267,6 +299,6 @@ test runners and helpers for civix
   equivalent for that.
   </div></li>
 </ul>
-<p>
+<br>
 </div></body>
 </html>

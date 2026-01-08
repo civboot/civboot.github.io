@@ -15,16 +15,16 @@
 <html>
 <body><div class=doc>
 <h1>fmt module: format and style anything</h1>
-<p>
+<br>
 The fmt module is a small (~200 lines of code) module which formats arbitrary
 lua types as well as enables users to define formatting for their own
 <a href="#Package_metaty">metatypes</a> via the <span class=code>function __fmt(self, fmter)</span> method.
-<p>
+<br>
 It also provides several helper methods such as <span class=code>print</span>, <span class=code>assertf</span> and
 <span class=code>errorf</span>, making it more convienent to print or format types. In addition, it
 sets <span class=code>io.fmt = io.fmt or Fmt{to=io.stderr}</span>, providing a default hook for
 <a href="#ds.log">#ds.log</a> and command line utilities to write formatted text to.
-<p>
+<br>
 The <a href="#fmt.Fmt">#fmt.Fmt</a> interface (which is passed to a metaty's <span class=code>__fmt</span> method if
 present) accepts both <span class=code>write</span> (like a file) and
 <span class=code>styled("style", "styled text", ..."non-styled text")</span>, enabling the
@@ -33,111 +33,15 @@ user-configurable colors for specific styles which integrate with the
 <a href="#Package_vt100">vt100</a> library and the <a href="#Package_cxt">cxt</a> libraries. This
 is used throughout civlua to provide user-configurable (and optional) color
 to the terminal, web-pages and the civlua editor.
-<p>
+<br>
 <h2>API / Architecture</h2>
-<p>
+<br>
 <a href="#fmt.Fmt">#fmt.Fmt</a> defines the formatter which has methods/settings: <ul>
-  <li><span class=code>to [file|Styler]</span> (argument): where to write to. Default is to push to
-  self, treating Fmt as a list of strings (which you can call <span class=code>table.concat</span>
-  on).</li>
-  <li><span class=code>style [boolean]</span> to enable/disable styling. Set to <span class=code>true</span> if <span class=code>to=styler</span>
-  AND you want color/etc.</li>
-  <li><span class=code>__call(f, v)</span>: call with any value to use <span class=code>__fmt</span> method or default.</li>
-  <li><span class=code>write(...)</span>: write like a normal file</li>
-  <li><span class=code>styled(style, text, ...)</span>: style <span class=code>text</span> and <span class=code>write(...)</span> using a
-  provided styler (i.e. <a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a>)</li>
-  <li><span class=code>level(add)</span> to increase/decrease the indentation level.</li>
-</ul>
-<p>
-See the documentation of each function for more details.
-<p>
-<h1><a id=""fmt"" href="#"fmt"">Mod fmt</h1></a>
-format module: format any type into a readable string
-<p>
-<b>Types</b> <ul>
-  <li><b>fmt.Fmt</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>cmpDuck(a, b)</span>
-  Compares two values of any type.
-  
-  Note: <span class=code>nil &lt; bool &lt; number &lt; string &lt; table</span></li>
-  <li><span class=code>sortKeys(t) -&gt; list</span>
-  Return a list of the table's keys sorted using <span class=code>cmpDuck</span></li>
-  <li><span class=code>tostring(v, fmt)</span></li>
-  <li><span class=code>format(fmt, ...)</span></li>
-  <li><span class=code>errorf(...)</span></li>
-  <li><span class=code>assertf(a, ...) -&gt; a or error(format(...), 2)</span></li>
-  <li><span class=code>fprint(f, ...)</span></li>
-  <li><span class=code>print(...) -&gt; fprint(io.fmt, ...)</span>
-  <span class=code>print(...)</span> but using <span class=code>io.fmt</span></li>
-  <li><span class=code>pprint(...)</span>
-  pretty print</li>
-  <li><span class=code>pretty(v) -&gt; string</span>
-  pretty format the value</li>
-  <li><span class=code>table(tbl, f) -&gt; f:rawtable(tbl)</span>
-  Set to __fmt to format a type like a table.</li>
-</ul>
-<p>
-<h2><a id=""fmt.Fmt"" href="#"fmt.Fmt"">Record Fmt</h2></a>
-<ul>
-  <li><b>style</b> :
-  enable styling. If true, set <span class=code>to=Styler</span></li>
-  <li><b>to</b> :
-  if set calls write</li>
-  <li><b>keyEnd</b> </li>
-  <li><b>keySet</b> </li>
-  <li><b>indexEnd</b> </li>
-  <li><b>tableStart</b> </li>
-  <li><b>tableEnd</b> </li>
-  <li><b>listEnd</b> :
-  separator between list/map</li>
-  <li><b>indent</b> </li>
-  <li><b>maxIndent</b> </li>
-  <li><b>numfmt</b> </li>
-  <li><b>strfmt</b> </li>
-  <li><b>table</b> </li>
-  <li><b>string</b> </li>
-</ul>
-The Fmt formatter object.
-<p>
-This is the main API of this module. It enables formatting any
-type by simply calling it's instance, appending the result to <span class=code>f</span> (i.e.
-self) or (if present) writing the result to <span class=code>f.to</span>.
-<p>
-If <span class=code>f.to</span> is not provided, you can get the resulting string by calling
-<span class=code>tostring(f)</span>
-<p>
-<h1><a id=""fmt.binary"" href="#"fmt.binary"">Mod fmt.binary</h1></a>
-format binary text
-When called directly returns the result of
-<span class=code>binary.columns(fmt.Fmt{}, ...)</span>
-<p>
-<b>Types</b> <ul>
-  <li><b>fmt.binary.Args</b></li>
-</ul>
-<p>
-<b>Functions</b> <ul>
-  <li><span class=code>format(f, str, fmt)</span></li>
-  <li><span class=code>ascii(f, str)</span></li>
-  <li><span class=code>columns(f, str, width, si, fmt)</span></li>
-  <li><span class=code>main(args)</span></li>
-</ul>
-<p>
-<h2><a id=""fmt.binary.Args"" href="#"fmt.binary.Args"">Record Args</h2></a>
-<ul>
-  <li><b>width</b> :
-  column width in bytes</li>
-  <li><b>fmt</b> :
-  format string for hex</li>
-  <li><b>to</b> :
-  (lua only) file to output to (default=stdout)</li>
-  <li><b>i</b> :
-  starting index to use</li>
-</ul>
-Command: <span class=code>{'path.bin', width=16, '--', 'literal binary'}</span>
-Use <span class=code>-</span> to format stdin
-<p>
+  <li><span class=code>to [file|Styler</span></li>
+</ul> (argument): where to write to. Default is to push to
+self, treating Fmt as a list of strings (which you can call <span class=code>table.concat</span>
+on).
+<br>
+* <span class=code>style [boolean</span>
 </div></body>
 </html>
