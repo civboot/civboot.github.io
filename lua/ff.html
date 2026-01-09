@@ -1,0 +1,98 @@
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<!DOCTYPE html>
+<html>
+<body><div class=doc>
+ff: the find-fix utility.
+<br>
+<br>
+<span class=code>ff</span> is a utility command-line tool (and lua library) to find and optionally
+replace lua patterns. It searches for file patterns, file content, or both.  It
+can also rename files and modify the content using <span class=code>--sub</span> with <span class=code>--mut</span>.
+<br>
+ff uses an easy to learn shorthand for many operations, displayed below:
+<br>
+<div class=table><table>
+  <tr>
+    <th>syntax</th>
+    <th>equivalent</th>
+  </tr>
+  <tr>
+    <td><span class=code>some_pat</span> (no prefix)</td>
+    <td><span class=code>--pat=some_pat</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>r:some/dir/</span></td>
+    <td><span class=code>--root=some/dir</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>p:path.*pattern</span></td>
+    <td><span class=code>--path=path.*pattern</span></td>
+  </tr>
+  <tr>
+    <td><span class=code>-p:%.so$</span></td>
+    <td><span class=code>--nopath=%.so$</span></td>
+  </tr>
+</table></div>
+<br>
+Examples:<div class=code-block>ff 'some.*pattern' &nbsp; &nbsp; &nbsp; # search for some.*pattern<br>
+ff r:some/root/ pat &nbsp; &nbsp; &nbsp;# search for pat in root<br>
+ff find --sub=fix &nbsp; &nbsp; &nbsp; &nbsp;# replace 'find' with 'fix' (display)<br>
+ff find --sub=fix --mut &nbsp;# actually replace 'find' with 'fix'
+</div>
+<br>
+Note: all <span class=code>directories/</span> always end with <span class=code>/</span> which you can
+use to include/exclude them.
+<br>
+<h1><a id="ff" href="#ff" class=anchor>Command ff</h1></a>
+When called in lua, returns a list of paths which matched
+all requirements.
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="ff.root" href="#ff.root" class=anchor><b>.root</b></a>
+  list of root paths, i.e. <span class=code>r:path1/ r:path2</span></li>
+  <li><a id="ff.pat" href="#ff.pat" class=anchor><b>.pat</b></a>
+  list of patterns to find</li>
+  <li><a id="ff.nopat" href="#ff.nopat" class=anchor><b>.nopat</b></a>
+  list of (file-wide) pattern exclusions</li>
+  <li><a id="ff.path" href="#ff.path" class=anchor><b>.path</b></a>
+  <span class=code>p:%.lua</span> list of file path patterns</li>
+  <li><a id="ff.nopath" href="#ff.nopath" class=anchor><b>.nopath</b></a>
+  <span class=code>-p:%.bin</span> list of file path patterns to exclude.
+  default: exclude dirs starting with '.'. Disable default by setting
+  to an empty string, i.e. <span class=code>--nopath=</span>
+  </li>
+  <li><a id="ff.sub" href="#ff.sub" class=anchor><b>.sub</b></a>
+  the subsitution string to use with pat</li>
+  <li><a id="ff.mut" href="#ff.mut" class=anchor><b>.mut</b></a>
+  mutate files (used with sub)</li>
+  <li><a id="ff.dirs" href="#ff.dirs" class=anchor><b>.dirs</b></a>
+  show all non-excluded directories</li>
+  <li><a id="ff.content" href="#ff.content" class=anchor><b>.content</b></a> <span class=code>=true</span>
+  if false do not show content (only show paths)</li>
+  <li><a id="ff.pathsub" href="#ff.pathsub" class=anchor><b>.pathsub</b></a>
+  the substitution string to rename the path.
+  Note: this implies content=false and cannot be used with sub</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="ff.iter" href="#ff.iter" class=anchor><b>fn:iter</b></a><span class=code>() -&gt; iter</span><br>
+  
+  Get an iterator of matching paths.
+  
+  Usage: <span class=code>for path, pty in FF:new{...}:iter() do ... end</span></li>
+</ul>
+<br>
+</div></body>
+</html>

@@ -69,8 +69,10 @@ vsds: version control data structures (and algorithms)
 Single Line Diff
 This type is good for displaying differences to a user.
 <b>Fields:</b><ul>
-  <li><a id="vcds.Diff.b" href="#vcds.Diff.b" class=anchor><b>.b</b></a>(base)   orig file.  '+'=added</li>
-  <li><a id="vcds.Diff.c" href="#vcds.Diff.c" class=anchor><b>.c</b></a>(change) new file.   '-'=removed</li>
+  <li><a id="vcds.Diff.b" href="#vcds.Diff.b" class=anchor><b>.b</b></a>
+  (base)   orig file.  '+'=added</li>
+  <li><a id="vcds.Diff.c" href="#vcds.Diff.c" class=anchor><b>.c</b></a>
+  (change) new file.   '-'=removed</li>
   <li><a id="vcds.Diff.text" href="#vcds.Diff.text" class=anchor><b>.text</b></a></li>
 </ul>
 <b>Methods</b> <ul>
@@ -87,8 +89,10 @@ This type is good for displaying differences to a user.
 <br>
 <h2><a id="vcds.Change" href="#vcds.Change" class=anchor>Record Change</h2></a>
 <b>Fields:</b><ul>
-  <li><a id="vcds.Change.rem" href="#vcds.Change.rem" class=anchor><b>.rem</b></a>removed lines</li>
-  <li><a id="vcds.Change.add" href="#vcds.Change.add" class=anchor><b>.add</b></a>text to add</li>
+  <li><a id="vcds.Change.rem" href="#vcds.Change.rem" class=anchor><b>.rem</b></a>
+  removed lines</li>
+  <li><a id="vcds.Change.add" href="#vcds.Change.add" class=anchor><b>.add</b></a>
+  text to add</li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Change.len" href="#Change.len" class=anchor><b>fn len</b></a><span class=code>(ch)</span></li>
@@ -98,8 +102,10 @@ This type is good for displaying differences to a user.
 <b>Fields:</b><ul>
   <li><a id="vcds.DiffsExtender.diffs" href="#vcds.DiffsExtender.diffs" class=anchor><b>.diffs</b></a></li>
   <li><a id="vcds.DiffsExtender.base" href="#vcds.DiffsExtender.base" class=anchor><b>.base</b></a></li>
-  <li><a id="vcds.DiffsExtender.bl" href="#vcds.DiffsExtender.bl" class=anchor><b>.bl</b></a>base line</li>
-  <li><a id="vcds.DiffsExtender.cl" href="#vcds.DiffsExtender.cl" class=anchor><b>.cl</b></a>change line</li>
+  <li><a id="vcds.DiffsExtender.bl" href="#vcds.DiffsExtender.bl" class=anchor><b>.bl</b></a>
+  base line</li>
+  <li><a id="vcds.DiffsExtender.cl" href="#vcds.DiffsExtender.cl" class=anchor><b>.cl</b></a>
+  change line</li>
 </ul>
 <br>
 <h2><a id="vcds.Picks" href="#vcds.Picks" class=anchor>Record Picks</h2></a>
@@ -109,10 +115,13 @@ These can then be applied to a new base using vcds.patch(base, picks)
 Each "pick" is a list of Diffs which are anchored by the lines
 above and below (unless they are start/end of file).
 <b>Fields:</b><ul>
-  <li><a id="vcds.Picks.changes" href="#vcds.Picks.changes" class=anchor><b>.changes</b></a>list of changes</li>
-  <li><a id="vcds.Picks.ci" href="#vcds.Picks.ci" class=anchor><b>.ci</b></a>for iterating</li>
+  <li><a id="vcds.Picks.changes" href="#vcds.Picks.changes" class=anchor><b>.changes</b></a>
+  list of changes</li>
+  <li><a id="vcds.Picks.ci" href="#vcds.Picks.ci" class=anchor><b>.ci</b></a>
+  for iterating</li>
   <li><a id="vcds.Picks.de" href="#vcds.Picks.de" class=anchor><b>.de</b></a></li>
-  <li><a id="vcds.Picks.set" href="#vcds.Picks.set" class=anchor><b>.set</b></a>settings (need refactor)</li>
+  <li><a id="vcds.Picks.set" href="#vcds.Picks.set" class=anchor><b>.set</b></a>
+  settings (need refactor)</li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Picks.groupChanges" href="#Picks.groupChanges" class=anchor><b>fn groupChanges</b></a><span class=code>(p, ci)</span><br>

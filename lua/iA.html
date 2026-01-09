@@ -429,24 +429,36 @@ end
   <h2><a id="iA.Ty" href="#iA.Ty" class=anchor>Record Ty</h2></a>
   iA Type, either user-defined (i.e. struct, enum) or native.
   <b>Fields:</b><ul>
-    <li><a id="iA.Ty.mod" href="#iA.Ty.mod" class=anchor><b>.mod</b></a>the module the type is defined in.</li>
-    <li><a id="iA.Ty.name" href="#iA.Ty.name" class=anchor><b>.name</b></a>the name of the type.</li>
-    <li><a id="iA.Ty.sz" href="#iA.Ty.sz" class=anchor><b>.sz</b></a>the size of the type in bytes, or nil if unknown.</li>
-    <li><a id="iA.Ty.ref" href="#iA.Ty.ref" class=anchor><b>.ref</b></a> <span class=code>=0</span>the number of & reference levels of the type</li>
-    <li><a id="iA.Ty.kind" href="#iA.Ty.kind" class=anchor><b>.kind</b></a>the kind of type</li>
-    <li><a id="iA.Ty.field" href="#iA.Ty.field" class=anchor><b>.field</b></a>STRUCT/ENUM only, map of name -> idx.</li>
+    <li><a id="iA.Ty.mod" href="#iA.Ty.mod" class=anchor><b>.mod</b></a>
+    the module the type is defined in.</li>
+    <li><a id="iA.Ty.name" href="#iA.Ty.name" class=anchor><b>.name</b></a>
+    the name of the type.</li>
+    <li><a id="iA.Ty.sz" href="#iA.Ty.sz" class=anchor><b>.sz</b></a>
+    the size of the type in bytes, or nil if unknown.</li>
+    <li><a id="iA.Ty.ref" href="#iA.Ty.ref" class=anchor><b>.ref</b></a> <span class=code>=0</span>
+    the number of & reference levels of the type</li>
+    <li><a id="iA.Ty.kind" href="#iA.Ty.kind" class=anchor><b>.kind</b></a>
+    the kind of type</li>
+    <li><a id="iA.Ty.field" href="#iA.Ty.field" class=anchor><b>.field</b></a>
+    STRUCT/ENUM only, map of name -> idx.</li>
   </ul>
   <br>
   <h2><a id="iA.Var" href="#iA.Var" class=anchor>Record Var</h2></a>
   Named register or memory location and its type.
   <b>Fields:</b><ul>
-    <li><a id="iA.Var.imm" href="#iA.Var.imm" class=anchor><b>.imm</b></a>whether this is immutable</li>
-    <li><a id="iA.Var.reg" href="#iA.Var.reg" class=anchor><b>.reg</b></a>register type (or V/U/etc)</li>
-    <li><a id="iA.Var.name" href="#iA.Var.name" class=anchor><b>.name</b></a>name</li>
-    <li><a id="iA.Var.ty" href="#iA.Var.ty" class=anchor><b>.ty</b></a>the type of the variable.</li>
-    <li><a id="iA.Var.scope" href="#iA.Var.scope" class=anchor><b>.scope</b></a>the scope where the variable is active for
+    <li><a id="iA.Var.imm" href="#iA.Var.imm" class=anchor><b>.imm</b></a>
+    whether this is immutable</li>
+    <li><a id="iA.Var.reg" href="#iA.Var.reg" class=anchor><b>.reg</b></a>
+    register type (or V/U/etc)</li>
+    <li><a id="iA.Var.name" href="#iA.Var.name" class=anchor><b>.name</b></a>
+    name</li>
+    <li><a id="iA.Var.ty" href="#iA.Var.ty" class=anchor><b>.ty</b></a>
+    the type of the variable.</li>
+    <li><a id="iA.Var.scope" href="#iA.Var.scope" class=anchor><b>.scope</b></a>
+    the scope where the variable is active for
     (Mod, Fn, Block, etc)</li>
-    <li><a id="iA.Var.cap" href="#iA.Var.cap" class=anchor><b>.cap</b></a>the max capacity of a non-ref array type, or nil</li>
+    <li><a id="iA.Var.cap" href="#iA.Var.cap" class=anchor><b>.cap</b></a>
+    the max capacity of a non-ref array type, or nil</li>
   </ul>
   <br>
   <h2><a id="iA.Literal" href="#iA.Literal" class=anchor>Record Literal</h2></a>
@@ -464,8 +476,10 @@ end
   </ul>
   <b>Fields:</b><ul>
     <li><a id="iA.Expr1.kind" href="#iA.Expr1.kind" class=anchor><b>.kind</b></a></li>
-    <li><a id="iA.Expr1.op" href="#iA.Expr1.op" class=anchor><b>.op</b></a>the operation being performed for EQ1</li>
-    <li><a id="iA.Expr1.fn" href="#iA.Expr1.fn" class=anchor><b>.fn</b></a>the function being called</li>
+    <li><a id="iA.Expr1.op" href="#iA.Expr1.op" class=anchor><b>.op</b></a>
+    the operation being performed for EQ1</li>
+    <li><a id="iA.Expr1.fn" href="#iA.Expr1.fn" class=anchor><b>.fn</b></a>
+    the function being called</li>
   </ul>
   <br>
   <h2><a id="iA.Assign" href="#iA.Assign" class=anchor>Record Assign</h2></a>
@@ -475,15 +489,18 @@ end
     <li>values are stored in assign list.</li>
   </ul>
   <b>Fields:</b><ul>
-    <li><a id="iA.Assign.eq" href="#iA.Assign.eq" class=anchor><b>.eq</b></a>expr1</li>
+    <li><a id="iA.Assign.eq" href="#iA.Assign.eq" class=anchor><b>.eq</b></a>
+    expr1</li>
   </ul>
   <br>
   <h2><a id="iA.Cmp" href="#iA.Cmp" class=anchor>Record Cmp</h2></a>
   Cmp operation between left and right
   <b>Fields:</b><ul>
     <li><a id="iA.Cmp.op" href="#iA.Cmp.op" class=anchor><b>.op</b></a></li>
-    <li><a id="iA.Cmp.l" href="#iA.Cmp.l" class=anchor><b>.l</b></a>left expr</li>
-    <li><a id="iA.Cmp.r" href="#iA.Cmp.r" class=anchor><b>.r</b></a>right expr</li>
+    <li><a id="iA.Cmp.l" href="#iA.Cmp.l" class=anchor><b>.l</b></a>
+    left expr</li>
+    <li><a id="iA.Cmp.r" href="#iA.Cmp.r" class=anchor><b>.r</b></a>
+    right expr</li>
   </ul>
   <br>
   <h2><a id="iA.CondBlock" href="#iA.CondBlock" class=anchor>Record CondBlock</h2></a>
@@ -492,7 +509,8 @@ end
   <br>
   Note: a normal block is just a list (no type)
   <b>Fields:</b><ul>
-    <li><a id="iA.CondBlock.cond" href="#iA.CondBlock.cond" class=anchor><b>.cond</b></a>the final must be cmp</li>
+    <li><a id="iA.CondBlock.cond" href="#iA.CondBlock.cond" class=anchor><b>.cond</b></a>
+    the final must be cmp</li>
   </ul>
   <br>
   <h2><a id="iA.If" href="#iA.If" class=anchor>Record If</h2></a>
