@@ -45,7 +45,7 @@ versa. The difference is: <ul>
   data in LSON MUCH more compact (and possible) than JSON.</li>
 </ul>
 <br>
-<h1><a id="lson" href="#lson" class=anchor>Mod lson</h1></a>
+<h3><a id="lson" href="#lson" class=anchor>Mod lson</h3></a>
 <br>
 <b>Types: </b><a href="#lson.Json">Json</a> <a href="#lson.Lson">Lson</a> <a href="#lson.De">De</a> 
 <br>
@@ -68,7 +68,7 @@ versa. The difference is: <ul>
   <li><a id="lson.deObject" href="#lson.deObject" class=anchor><b>fn deObject</b></a><span class=code>(de)</span></li>
 </ul>
 <br>
-<h2><a id="lson.Json" href="#lson.Json" class=anchor>Record Json</h2></a>
+<h4><a id="lson.Json" href="#lson.Json" class=anchor>Record Json</h4></a>
 Json Encoder (via fmt.Fmt)
 This works identically to metaty.Fmt except it overrides
 how tables are formatted to use JSON instead of printing them.
@@ -158,7 +158,7 @@ how tables are formatted to use JSON instead of printing them.
   <li><a id="Json.tostring" href="#Json.tostring" class=anchor><b>fn tostring</b></a></li>
 </ul>
 <br>
-<h2><a id="lson.Lson" href="#lson.Lson" class=anchor>Record Lson</h2></a>
+<h4><a id="lson.Lson" href="#lson.Lson" class=anchor>Record Lson</h4></a>
 Similar to JSON but no commas and strings are encoded as <span class=code>|bytes|</span>
 <b>Fields:</b><ul>
   <li><a id="lson.Lson.style" href="#lson.Lson.style" class=anchor><b>.style</b></a>
@@ -246,7 +246,7 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
   <li><a id="Lson.tostring" href="#Lson.tostring" class=anchor><b>fn tostring</b></a></li>
 </ul>
 <br>
-<h2><a id="lson.De" href="#lson.De" class=anchor>Record De</h2></a>
+<h4><a id="lson.De" href="#lson.De" class=anchor>Record De</h4></a>
 <span class=code>De(string or lines) -&gt; value-iter</span>
 <span class=code>for val in De'["my", "lson"</span>' do ... end
 </div></body>

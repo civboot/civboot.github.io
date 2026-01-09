@@ -14,7 +14,7 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h1><a id="lines" href="#lines" class=anchor>Mod lines</h1></a>
+<h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
 lines module, when called splits a string into lines.
 <span class=code>require'lines'(text) -&gt; table of lines</span>
 <br>
@@ -22,7 +22,7 @@ sub-modules include several data structures with more performant
 mechanisms to insert/remove/etc based on real-world workloads
 (i.e. editor, parser, etc)
 <br>
-<h1><a id="lines.diff" href="#lines.diff" class=anchor>Mod lines.diff</h1></a>
+<h3><a id="lines.diff" href="#lines.diff" class=anchor>Mod lines.diff</h3></a>
 Diffing module and command
 Example command: <span class=code>lines.diff{'file/path1.txt', 'file/path2.txt'}</span>
 Note: the arguments can be a string (path) or list of lines.
@@ -33,7 +33,7 @@ Note: the arguments can be a string (path) or list of lines.
   <li><a id="lines.diff.main" href="#lines.diff.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
 </ul>
 <br>
-<h2><a id="lines.diff.Diff" href="#lines.diff.Diff" class=anchor>Record Diff</h2></a>
+<h4><a id="lines.diff.Diff" href="#lines.diff.Diff" class=anchor>Record Diff</h4></a>
 Line-based diff.
 The default algorithm uses patience diff. Special thanks to:
 <a href="https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm">https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm</a>
@@ -71,7 +71,7 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   Note that the num removed/added will be nil if none were added/removed.</li>
 </ul>
 <br>
-<h1><a id="Ty<lines.Writer>" href="#Ty<lines.Writer>" class=anchor>Record lines.Writer</h1></a>
+<h4><a id="Ty<lines.Writer>" href="#Ty<lines.Writer>" class=anchor>Record lines.Writer</h4></a>
 <b>Methods</b> <ul>
   <li><a id="lines.Writer.set" href="#lines.Writer.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
   
@@ -87,7 +87,7 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="lines.Writer.icopy" href="#lines.Writer.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
 </ul>
 <br>
-<h1><a id="Ty<Gap>" href="#Ty<Gap>" class=anchor>Record Gap</h1></a>
+<h4><a id="Ty<Gap>" href="#Ty<Gap>" class=anchor>Record Gap</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<Gap>.bot" href="#Ty<Gap>.bot" class=anchor><b>.bot</b></a></li>
   <li><a id="Ty<Gap>.top" href="#Ty<Gap>.top" class=anchor><b>.top</b></a></li>
@@ -115,7 +115,7 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="Gap.dumpf" href="#Gap.dumpf" class=anchor><b>fn dumpf</b></a></li>
 </ul>
 <br>
-<h1><a id="Ty<lines.U3File>" href="#Ty<lines.U3File>" class=anchor>Record lines.U3File</h1></a>
+<h4><a id="Ty<lines.U3File>" href="#Ty<lines.U3File>" class=anchor>Record lines.U3File</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<lines.U3File>.f" href="#Ty<lines.U3File>.f" class=anchor><b>.f</b></a></li>
   <li><a id="Ty<lines.U3File>.path" href="#Ty<lines.U3File>.path" class=anchor><b>.path</b></a></li>
@@ -166,7 +166,7 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="lines.U3File.icopy" href="#lines.U3File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
 </ul>
 <br>
-<h1><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h1></a>
+<h4><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<File>.path" href="#Ty<File>.path" class=anchor><b>.path</b></a></li>
   <li><a id="Ty<File>.mode" href="#Ty<File>.mode" class=anchor><b>.mode</b></a></li>
@@ -198,7 +198,7 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="File.icopy" href="#File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
 </ul>
 <br>
-<h1><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h1></a>
+<h4><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<EdFile>.lf" href="#Ty<EdFile>.lf" class=anchor><b>.lf</b></a>
   indexed file</li>
@@ -238,7 +238,7 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="EdFile.icopy" href="#EdFile.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
 </ul>
 <br>
-<h1><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h1></a>
+<h3><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h3></a>
 utilities for file loading of lines.
 <b>Functions</b> <ul>
   <li><a id="lines.futils.forceLoadIdx" href="#lines.futils.forceLoadIdx" class=anchor><b>fn forceLoadIdx</b></a><span class=code>(f, idxpath)</span><br>
@@ -252,7 +252,7 @@ utilities for file loading of lines.
   load or reindex the file at path to/from idxpath.</li>
 </ul>
 <br>
-<h1><a id="rebuf.motion" href="#rebuf.motion" class=anchor>Mod rebuf.motion</h1></a>
+<h3><a id="rebuf.motion" href="#rebuf.motion" class=anchor>Mod rebuf.motion</h3></a>
 module with helper methods for moving a cursor
 around a lines-like 2D grid.
 <b>Functions</b> <ul>

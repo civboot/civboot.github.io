@@ -14,7 +14,7 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h1><a id="vcds" href="#vcds" class=anchor>Mod vcds</h1></a>
+<h3><a id="vcds" href="#vcds" class=anchor>Mod vcds</h3></a>
 vsds: version control data structures (and algorithms)
 <br>
 <b>Types: </b><a href="#vcds.Diff">Diff</a> <a href="#vcds.Keep">Keep</a> <a href="#vcds.Change">Change</a> <a href="#vcds.DiffsExtender">DiffsExtender</a> <a href="#vcds.Picks">Picks</a> <a href="#vcds.Patch">Patch</a> 
@@ -65,7 +65,7 @@ vsds: version control data structures (and algorithms)
   </ul></li>
 </ul>
 <br>
-<h2><a id="vcds.Diff" href="#vcds.Diff" class=anchor>Record Diff</h2></a>
+<h4><a id="vcds.Diff" href="#vcds.Diff" class=anchor>Record Diff</h4></a>
 Single Line Diff
 This type is good for displaying differences to a user.
 <b>Fields:</b><ul>
@@ -79,7 +79,7 @@ This type is good for displaying differences to a user.
   <li><a id="Diff.isKeep" href="#Diff.isKeep" class=anchor><b>fn isKeep</b></a><span class=code>(d)</span></li>
 </ul>
 <br>
-<h2><a id="vcds.Keep" href="#vcds.Keep" class=anchor>Record Keep</h2></a>
+<h4><a id="vcds.Keep" href="#vcds.Keep" class=anchor>Record Keep</h4></a>
 <b>Fields:</b><ul>
   <li><a id="vcds.Keep.num" href="#vcds.Keep.num" class=anchor><b>.num</b></a></li>
 </ul>
@@ -87,7 +87,7 @@ This type is good for displaying differences to a user.
   <li><a id="Keep.len" href="#Keep.len" class=anchor><b>fn len</b></a><span class=code>(k) -&gt; k.num and k.num or #k</span></li>
 </ul>
 <br>
-<h2><a id="vcds.Change" href="#vcds.Change" class=anchor>Record Change</h2></a>
+<h4><a id="vcds.Change" href="#vcds.Change" class=anchor>Record Change</h4></a>
 <b>Fields:</b><ul>
   <li><a id="vcds.Change.rem" href="#vcds.Change.rem" class=anchor><b>.rem</b></a>
   removed lines</li>
@@ -98,7 +98,7 @@ This type is good for displaying differences to a user.
   <li><a id="Change.len" href="#Change.len" class=anchor><b>fn len</b></a><span class=code>(ch)</span></li>
 </ul>
 <br>
-<h2><a id="vcds.DiffsExtender" href="#vcds.DiffsExtender" class=anchor>Record DiffsExtender</h2></a>
+<h4><a id="vcds.DiffsExtender" href="#vcds.DiffsExtender" class=anchor>Record DiffsExtender</h4></a>
 <b>Fields:</b><ul>
   <li><a id="vcds.DiffsExtender.diffs" href="#vcds.DiffsExtender.diffs" class=anchor><b>.diffs</b></a></li>
   <li><a id="vcds.DiffsExtender.base" href="#vcds.DiffsExtender.base" class=anchor><b>.base</b></a></li>
@@ -108,7 +108,7 @@ This type is good for displaying differences to a user.
   change line</li>
 </ul>
 <br>
-<h2><a id="vcds.Picks" href="#vcds.Picks" class=anchor>Record Picks</h2></a>
+<h4><a id="vcds.Picks" href="#vcds.Picks" class=anchor>Record Picks</h4></a>
 Create picks (aka cherry picks) iterator from changes.
 These can then be applied to a new base using vcds.patch(base, picks)
 <br>
@@ -131,7 +131,7 @@ above and below (unless they are start/end of file).
   between them.</li>
 </ul>
 <br>
-<h2><a id="vcds.Patch" href="#vcds.Patch" class=anchor>Record Patch</h2></a>
+<h4><a id="vcds.Patch" href="#vcds.Patch" class=anchor>Record Patch</h4></a>
 <b>Fields:</b><ul>
   <li><a id="vcds.Patch.conflict" href="#vcds.Patch.conflict" class=anchor><b>.conflict</b></a></li>
   <li><a id="vcds.Patch.bl" href="#vcds.Patch.bl" class=anchor><b>.bl</b></a></li>

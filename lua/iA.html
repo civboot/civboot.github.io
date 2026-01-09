@@ -379,7 +379,7 @@ end
     directly.</li>
   </ul>
   <br>
-  <h1><a id="iA" href="#iA" class=anchor>Mod iA</h1></a>
+  <h3><a id="iA" href="#iA" class=anchor>Mod iA</h3></a>
   intermediate Assembly
   <br>
   <b>Types: </b><a href="#iA.mod">mod</a> <a href="#iA.core">core</a> <a href="#iA.array">array</a> <a href="#iA.Ty">Ty</a> <a href="#iA.Var">Var</a> <a href="#iA.Literal">Literal</a> <a href="#iA.Expr1">Expr1</a> <a href="#iA.Assign">Assign</a> <a href="#iA.Cmp">Cmp</a> <a href="#iA.CondBlock">CondBlock</a> <a href="#iA.If">If</a> <a href="#iA.Loc">Loc</a> <a href="#iA.Goto">Goto</a> <a href="#iA.Switch">Switch</a> <a href="#iA.While">While</a> 
@@ -393,7 +393,7 @@ end
     Create a Literal</li>
   </ul>
   <br>
-  <h2><a id="iA.mod" href="#iA.mod" class=anchor>Mod iA.mod</h2></a>
+  <h3><a id="iA.mod" href="#iA.mod" class=anchor>Mod iA.mod</h3></a>
   iA submodule containing all modules
   (both user-defined and native).
   <br>
@@ -414,7 +414,7 @@ end
     Create a new enum type</li>
   </ul>
   <br>
-  <h2><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h2></a>
+  <h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
   iA default core module, containing core types and functions.
   <b>Functions</b> <ul>
     <li><a id="iA.core.enum" href="#iA.core.enum" class=anchor><b>fn enum</b></a><span class=code>(t)</span><br>
@@ -422,11 +422,11 @@ end
     Create a new enum type</li>
   </ul>
   <br>
-  <h2><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h2></a>
+  <h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
   iA array module, containing all array types used in code.
   Get or fetch an array type by calling it with the inner type.
   <br>
-  <h2><a id="iA.Ty" href="#iA.Ty" class=anchor>Record Ty</h2></a>
+  <h4><a id="iA.Ty" href="#iA.Ty" class=anchor>Record Ty</h4></a>
   iA Type, either user-defined (i.e. struct, enum) or native.
   <b>Fields:</b><ul>
     <li><a id="iA.Ty.mod" href="#iA.Ty.mod" class=anchor><b>.mod</b></a>
@@ -443,7 +443,7 @@ end
     STRUCT/ENUM only, map of name -> idx.</li>
   </ul>
   <br>
-  <h2><a id="iA.Var" href="#iA.Var" class=anchor>Record Var</h2></a>
+  <h4><a id="iA.Var" href="#iA.Var" class=anchor>Record Var</h4></a>
   Named register or memory location and its type.
   <b>Fields:</b><ul>
     <li><a id="iA.Var.imm" href="#iA.Var.imm" class=anchor><b>.imm</b></a>
@@ -461,13 +461,13 @@ end
     the max capacity of a non-ref array type, or nil</li>
   </ul>
   <br>
-  <h2><a id="iA.Literal" href="#iA.Literal" class=anchor>Record Literal</h2></a>
+  <h4><a id="iA.Literal" href="#iA.Literal" class=anchor>Record Literal</h4></a>
   A literal value.
   <b>Fields:</b><ul>
     <li><a id="iA.Literal.ty" href="#iA.Literal.ty" class=anchor><b>.ty</b></a></li>
   </ul>
   <br>
-  <h2><a id="iA.Expr1" href="#iA.Expr1" class=anchor>Record Expr1</h2></a>
+  <h4><a id="iA.Expr1" href="#iA.Expr1" class=anchor>Record Expr1</h4></a>
   An expression which returns a single value or register. The number
   of items in the list will depend on the kind: <ul>
     <li>VAL: will contain one item, the Var or Literal.</li>
@@ -482,7 +482,7 @@ end
     the function being called</li>
   </ul>
   <br>
-  <h2><a id="iA.Assign" href="#iA.Assign" class=anchor>Record Assign</h2></a>
+  <h4><a id="iA.Assign" href="#iA.Assign" class=anchor>Record Assign</h4></a>
   Multi assignment statement.
   <span class=code>a, b, c = myfn()</span> where: <ul>
     <li><span class=code>to</span> is the right side of the fn.</li>
@@ -493,7 +493,7 @@ end
     expr1</li>
   </ul>
   <br>
-  <h2><a id="iA.Cmp" href="#iA.Cmp" class=anchor>Record Cmp</h2></a>
+  <h4><a id="iA.Cmp" href="#iA.Cmp" class=anchor>Record Cmp</h4></a>
   Cmp operation between left and right
   <b>Fields:</b><ul>
     <li><a id="iA.Cmp.op" href="#iA.Cmp.op" class=anchor><b>.op</b></a></li>
@@ -503,7 +503,7 @@ end
     right expr</li>
   </ul>
   <br>
-  <h2><a id="iA.CondBlock" href="#iA.CondBlock" class=anchor>Record CondBlock</h2></a>
+  <h4><a id="iA.CondBlock" href="#iA.CondBlock" class=anchor>Record CondBlock</h4></a>
   A block of statements gated by a condition,
   used in If and Loop.
   <br>
@@ -513,7 +513,7 @@ end
     the final must be cmp</li>
   </ul>
   <br>
-  <h2><a id="iA.If" href="#iA.If" class=anchor>Record If</h2></a>
+  <h4><a id="iA.If" href="#iA.If" class=anchor>Record If</h4></a>
   if-elif-else statement (not if-goto)
   The list is a series of CondBlocks with an optional
   else block.
@@ -521,19 +521,19 @@ end
     <li><a id="iA.If.else_" href="#iA.If.else_" class=anchor><b>.else_</b></a></li>
   </ul>
   <br>
-  <h2><a id="iA.Loc" href="#iA.Loc" class=anchor>Record Loc</h2></a>
+  <h4><a id="iA.Loc" href="#iA.Loc" class=anchor>Record Loc</h4></a>
   A local #loc location statement.
   <b>Fields:</b><ul>
     <li><a id="iA.Loc.name" href="#iA.Loc.name" class=anchor><b>.name</b></a></li>
   </ul>
   <br>
-  <h2><a id="iA.Goto" href="#iA.Goto" class=anchor>Record Goto</h2></a>
+  <h4><a id="iA.Goto" href="#iA.Goto" class=anchor>Record Goto</h4></a>
   <span class=code>if cond goto to</span>
   <b>Fields:</b><ul>
     <li><a id="iA.Goto.to" href="#iA.Goto.to" class=anchor><b>.to</b></a></li>
   </ul>
   <br>
-  <h2><a id="iA.Switch" href="#iA.Switch" class=anchor>Record Switch</h2></a>
+  <h4><a id="iA.Switch" href="#iA.Switch" class=anchor>Record Switch</h4></a>
   <span class=code>switch of do case 0 do ... default ... end</span>
   Type is <span class=code>&nbsp;map[int, list[stmt</span></li>
 </ul> 

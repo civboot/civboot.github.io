@@ -32,7 +32,7 @@ synchronously or asynchronously using the LAP protocol (see <a href="#Package_la
 <div class=info>Civix depends on the <a href="#Package_fd">#Package_fd</a> library for async file descriptors and
 other filedescriptor functionality.</div>
 <br>
-<h1><a id="civix" href="#civix" class=anchor>Mod civix</h1></a>
+<h3><a id="civix" href="#civix" class=anchor>Mod civix</h3></a>
 civix: unix-like OS utilities.
 <br>
 <b>Types: </b><a href="#civix.B">B</a> <a href="#civix.Walk">Walk</a> <a href="#civix.Sh">Sh</a> <a href="#civix.ShFin">ShFin</a> 
@@ -193,7 +193,7 @@ civix: unix-like OS utilities.
   <li><a id="civix.isRoot" href="#civix.isRoot" class=anchor><b>fn isRoot</b></a><span class=code>() -&gt; os.getenv'EUID' == '0'</span></li>
 </ul>
 <br>
-<h2><a id="civix.B" href="#civix.B" class=anchor>Mod civix.B</h2></a>
+<h3><a id="civix.B" href="#civix.B" class=anchor>Mod civix.B</h3></a>
 Several (but not all) functions in this module are used for civ.lua.
 However, native modules especially cannot be loaded before the
 bulid system is bootstrapped (at least not easily), so there are
@@ -210,7 +210,7 @@ Clients should typically not use civix.B.
   <li><a id="civix.B.pathtype" href="#civix.B.pathtype" class=anchor><b>fn pathtype</b></a><span class=code>(path)</span></li>
 </ul>
 <br>
-<h2><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h2></a>
+<h4><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h4></a>
 Walk the directory tree as a iterator of <span class=code>path, ftype</span>. Can walk either a
 single path <span class=code>Walk'path/'</span> or a list of paths <span class=code>Walk{'a/', 'b.txt'}</span>. <ul>
   <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
@@ -231,7 +231,7 @@ single path <span class=code>Walk'path/'</span> or a list of paths <span class=c
   skip the current directory level</li>
 </ul>
 <br>
-<h2><a id="civix.Sh" href="#civix.Sh" class=anchor>Record Sh</h2></a>
+<h4><a id="civix.Sh" href="#civix.Sh" class=anchor>Record Sh</h4></a>
 Start args on the shell
 <div class=info>Suggestion: use civix.sh instead.</div>
 <br>
@@ -290,7 +290,7 @@ Examples (see civix.sh for more examples): <div class=table><table>
   <li><a id="Sh.read" href="#Sh.read" class=anchor><b>fn read</b></a><span class=code>(sh, ...) -&gt; sh.stdout:read(...)</span></li>
 </ul>
 <br>
-<h2><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h2></a>
+<h4><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h4></a>
 <b>Fields:</b><ul>
   <li><a id="civix.ShFin.stdin" href="#civix.ShFin.stdin" class=anchor><b>.stdin</b></a></li>
   <li><a id="civix.ShFin.stdout" href="#civix.ShFin.stdout" class=anchor><b>.stdout</b></a></li>
@@ -299,7 +299,7 @@ Examples (see civix.sh for more examples): <div class=table><table>
   write to then close stdin (either self's or shell's)</li>
 </ul>
 <br>
-<h1><a id="civix.testing" href="#civix.testing" class=anchor>Mod civix.testing</h1></a>
+<h3><a id="civix.testing" href="#civix.testing" class=anchor>Mod civix.testing</h3></a>
 test runners and helpers for civix
 <b>Functions</b> <ul>
   <li><a id="civix.testing.runAsyncTest" href="#civix.testing.runAsyncTest" class=anchor><b>fn runAsyncTest</b></a><span class=code>(fn)</span><br>

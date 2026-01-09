@@ -132,7 +132,7 @@ expression(p)
 <br>
 See <a href="#pegl.Seq">#pegl.Seq</a> for the basic API of parsing specs.
 <br>
-<h1><a id="pegl" href="#pegl" class=anchor>Mod pegl</h1></a>
+<h3><a id="pegl" href="#pegl" class=anchor>Mod pegl</h3></a>
 pegl: peg-like lua parser
 <br>
 <b>Types: </b><a href="#pegl.Token">Token</a> <a href="#pegl.Config">Config</a> <a href="#pegl.Parser">Parser</a> <a href="#pegl.Pat">Pat</a> <a href="#pegl.Key">Key</a> <a href="#pegl.Or">Or</a> <a href="#pegl.Many">Many</a> <a href="#pegl.Seq">Seq</a> <a href="#pegl.Not">Not</a> <a href="#pegl.common">common</a> <a href="#pegl.FmtPegl">FmtPegl</a> 
@@ -175,7 +175,7 @@ pegl: peg-like lua parser
   <li><a id="pegl.isKeyword" href="#pegl.isKeyword" class=anchor><b>fn isKeyword</b></a><span class=code>(t) -&gt; #t == 1 and t.kind == t[1]</span></li>
 </ul>
 <br>
-<h2><a id="pegl.Token" href="#pegl.Token" class=anchor>Record Token</h2></a>
+<h4><a id="pegl.Token" href="#pegl.Token" class=anchor>Record Token</h4></a>
 <b>Fields:</b><ul>
   <li><a id="pegl.Token.kind" href="#pegl.Token.kind" class=anchor><b>.kind</b></a>
   optional, used for debugging</li>
@@ -186,7 +186,7 @@ pegl: peg-like lua parser
   <li><a id="Token.decode" href="#Token.decode" class=anchor><b>fn decode</b></a><span class=code>(t, dat) -&gt; lines.sub(dat, M.decodeSpan(t[1]))</span></li>
 </ul>
 <br>
-<h2><a id="pegl.Config" href="#pegl.Config" class=anchor>Record Config</h2></a>
+<h4><a id="pegl.Config" href="#pegl.Config" class=anchor>Record Config</h4></a>
 The config spec defines custom behavior when parsing. It's attributes
 can be set to change how the parser skips empty (whitespace) and handles comments.
 <b>Fields:</b><ul>
@@ -223,7 +223,7 @@ can be set to change how the parser skips empty (whitespace) and handles comment
   <li><a id="Config.newFmt" href="#Config.newFmt" class=anchor><b>fn newFmt</b></a><span class=code>()</span></li>
 </ul>
 <br>
-<h2><a id="pegl.Parser" href="#pegl.Parser" class=anchor>Record Parser</h2></a>
+<h4><a id="pegl.Parser" href="#pegl.Parser" class=anchor>Record Parser</h4></a>
 The parser tracks the current position of parsing in `dat` and has several
 convienience methods for hand-rolling your own recursive descent functions.
 <br>
@@ -295,7 +295,7 @@ is designed to work with an application that stores the strings as lines
   <li><a id="Parser.dbg" href="#Parser.dbg" class=anchor><b>fn dbg</b></a><span class=code>(p, fmtstr, ...)</span></li>
 </ul>
 <br>
-<h2><a id="pegl.Pat" href="#pegl.Pat" class=anchor>Record Pat</h2></a>
+<h4><a id="pegl.Pat" href="#pegl.Pat" class=anchor>Record Pat</h4></a>
 <span class=code>Pat{'%w+', kind='word'}</span> will create a Token with the span matching the
 <span class=code>%w+</span> pattern and the kind of <span class=code>word</span> when matched.
 <b>Fields:</b><ul>
@@ -315,7 +315,7 @@ is designed to work with an application that stores the strings as lines
   <li><a id="Pat.parse" href="#Pat.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p)</span></li>
 </ul>
 <br>
-<h2><a id="pegl.Key" href="#pegl.Key" class=anchor>Record Key</h2></a>
+<h4><a id="pegl.Key" href="#pegl.Key" class=anchor>Record Key</h4></a>
 The table given to <span class=code>Key</span> forms a Trie which is extremely performant. Key depends
 strongly on the <span class=code>tokenizer</span> passed to Config.
 <br>

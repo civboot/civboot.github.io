@@ -314,7 +314,7 @@ Cxt is in the the public domain, see the <a href="../UNLICENSE">UNLICENSE</a> fo
 <br>
 It was originally created by Rett Berg as part of the <a href="http://civboot.org">Civboot</a> project.
 <br>
-<h1><a id="cxt" href="#cxt" class=anchor>Mod cxt</h1></a>
+<h3><a id="cxt" href="#cxt" class=anchor>Mod cxt</h3></a>
 TODO: see TODO.cxt
 <br>
 <b>Types: </b><a href="#cxt.Config">Config</a> <a href="#cxt.Writer">Writer</a> <a href="#cxt.Html">Html</a> 
@@ -336,14 +336,14 @@ TODO: see TODO.cxt
   <li><a id="cxt.assertThrows" href="#cxt.assertThrows" class=anchor><b>fn assertThrows</b></a><span class=code>(dat, err, dbg)</span></li>
 </ul>
 <br>
-<h2><a id="cxt.Config" href="#cxt.Config" class=anchor>Record Config</h2></a>
+<h4><a id="cxt.Config" href="#cxt.Config" class=anchor>Record Config</h4></a>
 <b>Fields:</b><ul>
   <li><a id="cxt.Config.header" href="#cxt.Config.header" class=anchor><b>.header</b></a>
   typically used for html header</li>
   <li><a id="cxt.Config.pathUrl" href="#cxt.Config.pathUrl" class=anchor><b>.pathUrl</b></a> <span class=code>=ds.iden</span></li>
 </ul>
 <br>
-<h2><a id="cxt.Writer" href="#cxt.Writer" class=anchor>Record Writer</h2></a>
+<h4><a id="cxt.Writer" href="#cxt.Writer" class=anchor>Record Writer</h4></a>
 A Writer for cxt serializers (terminal, http, etc) to use.
 <br>
 The writer contains: <ul>
@@ -362,14 +362,14 @@ The writer contains: <ul>
   <li><a id="Writer.level" href="#Writer.level" class=anchor><b>fn level</b></a><span class=code>(w, add) -&gt; w.to:level(add)</span></li>
 </ul>
 <br>
-<h2><a id="cxt.Html" href="#cxt.Html" class=anchor>Record Html</h2></a>
+<h4><a id="cxt.Html" href="#cxt.Html" class=anchor>Record Html</h4></a>
 Convert cxt to HTML.
 <b>Fields:</b><ul>
   <li><a id="cxt.Html.to" href="#cxt.Html.to" class=anchor><b>.to</b></a>
   where to write output.</li>
 </ul>
 <br>
-<h1><a id="cxt.term" href="#cxt.term" class=anchor>Mod cxt.term</h1></a>
+<h3><a id="cxt.term" href="#cxt.term" class=anchor>Mod cxt.term</h3></a>
 cxt for the terminal, either plain text or vt100/etc
 <br>
 <b>Types: </b><a href="#cxt.term.Args">Args</a> 
@@ -380,7 +380,7 @@ cxt for the terminal, either plain text or vt100/etc
   <li><a id="cxt.term.main" href="#cxt.term.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
 </ul>
 <br>
-<h2><a id="cxt.term.Args" href="#cxt.term.Args" class=anchor>Record Args</h2></a>
+<h4><a id="cxt.term.Args" href="#cxt.term.Args" class=anchor>Record Args</h4></a>
 Render cxt on a terminal.
 <br>
 Will render an input string or --inp=file.
@@ -391,7 +391,7 @@ Will render an input string or --inp=file.
   output file (default=stdout)</li>
 </ul>
 <br>
-<h1><a id="cxt.html" href="#cxt.html" class=anchor>Mod cxt.html</h1></a>
+<h3><a id="cxt.html" href="#cxt.html" class=anchor>Mod cxt.html</h3></a>
 Serialize cxt nodes as html
 <b>Functions</b> <ul>
   <li><a id="cxt.html.htmlEncode" href="#cxt.html.htmlEncode" class=anchor><b>fn htmlEncode</b></a><span class=code>(s)</span></li>

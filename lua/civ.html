@@ -109,64 +109,55 @@ is as follows: <ul>
 </ul>
 <br>
 <br>
-<h1><a id="civ" href="#civ" class=anchor>Mod civ</h1></a>
-The civ build system command.
-<br>
-<b>Types: </b><a href="#civ.Init">Init</a> <a href="#civ.Base">Base</a> <a href="#civ.Build">Build</a> <a href="#civ.Test">Test</a> <a href="#civ.Run">Run</a> <a href="#civ.Install">Install</a> 
-<br>
-<b>Functions</b> <ul>
-  <li><a id="civ.build" href="#civ.build" class=anchor><b>fn build</b></a><span class=code>(cv, tgtnames)</span></li>
-  <li><a id="civ.test" href="#civ.test" class=anchor><b>fn test</b></a><span class=code>(cv, tgtnames)</span></li>
-  <li><a id="civ.main" href="#civ.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
-</ul>
-<br>
-<h2><a id="civ.Init" href="#civ.Init" class=anchor>Record Init</h2></a>
+<h3><a id="civ" href="#civ" class=anchor>Command civ</h3></a>
+civ command
+<h4><a id="init" href="#init" class=anchor>Subcmd init</h4></a>
 civ init arguments.
-<b>Fields:</b><ul>
-  <li><a id="civ.Init.out" href="#civ.Init.out" class=anchor><b>.out</b></a> <span class=code>=".civconfig.lua"</span>
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="init.out" href="#init.out" class=anchor><b>.out</b></a> <span class=code>=".civconfig.lua"</span>
   path to output config.lua</li>
-  <li><a id="civ.Init.base" href="#civ.Init.base" class=anchor><b>.base</b></a>
+  <li><a id="init.base" href="#init.base" class=anchor><b>.base</b></a>
   base config to copy from</li>
 </ul>
-<br>
-<h2><a id="civ.Base" href="#civ.Base" class=anchor>Record Base</h2></a>
-<b>Fields:</b><ul>
-  <li><a id="civ.Base.config" href="#civ.Base.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
-  path to civ config.</li>
-</ul>
-<br>
-<h2><a id="civ.Build" href="#civ.Build" class=anchor>Record Build</h2></a>
+<h4><a id="build" href="#build" class=anchor>Subcmd build</h4></a>
 Usage: <span class=code>civ build hub:tgt#name</span>
-<b>Fields:</b><ul>
-  <li><a id="civ.Build.config" href="#civ.Build.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="civ.build.config" href="#civ.build.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
   path to civ config.</li>
 </ul>
-<br>
-<h2><a id="civ.Test" href="#civ.Test" class=anchor>Record Test</h2></a>
+<h4><a id="test" href="#test" class=anchor>Subcmd test</h4></a>
 Usage: <span class=code>civ test hub:tgt#name</span>
-<b>Fields:</b><ul>
-  <li><a id="civ.Test.config" href="#civ.Test.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="civ.test.config" href="#civ.test.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
   path to civ config.</li>
 </ul>
-<br>
-<h2><a id="civ.Run" href="#civ.Run" class=anchor>Record Run</h2></a>
+<h4><a id="run" href="#run" class=anchor>Subcmd run</h4></a>
 Usage: <span class=code>civ run hub:tgt#name -- ...args</span>
 Build+run a single build target which has a single bin output.
-<b>Fields:</b><ul>
-  <li><a id="civ.Run.config" href="#civ.Run.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="civ.run.config" href="#civ.run.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
   path to civ config.</li>
 </ul>
-<br>
-<h2><a id="civ.Install" href="#civ.Install" class=anchor>Record Install</h2></a>
+<h4><a id="install" href="#install" class=anchor>Subcmd install</h4></a>
 Usage: <span class=code>civ install hub:tgt#name</span>
-<b>Fields:</b><ul>
-  <li><a id="civ.Install.config" href="#civ.Install.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="civ.install.config" href="#civ.install.config" class=anchor><b>.config</b></a> <span class=code>=".civconfig.lua"</span>
   path to civ config.</li>
-  <li><a id="civ.Install.force" href="#civ.Install.force" class=anchor><b>.force</b></a>
+  <li><a id="civ.install.force" href="#civ.install.force" class=anchor><b>.force</b></a>
   do not confirm deletion of files.</li>
 </ul>
 <br>
-<h1><a id="civ.core" href="#civ.core" class=anchor>Mod civ.core</h1></a>
+<h3><a id="civ.core" href="#civ.core" class=anchor>Mod civ.core</h3></a>
 Core civ (build system) types and functions.
 <br>
 <b>Types: </b><a href="#civ.core.TargetName">TargetName</a> <a href="#civ.core.Target">Target</a> <a href="#civ.core.CfgBuilder">CfgBuilder</a> <a href="#civ.core.Cfg">Cfg</a> <a href="#civ.core.Civ">Civ</a> 
@@ -176,7 +167,7 @@ Core civ (build system) types and functions.
   <li><a id="civ.core.tgtname" href="#civ.core.tgtname" class=anchor><b>fn tgtname</b></a><span class=code>(tgtname)</span></li>
 </ul>
 <br>
-<h2><a id="civ.core.TargetName" href="#civ.core.TargetName" class=anchor>Record TargetName</h2></a>
+<h4><a id="civ.core.TargetName" href="#civ.core.TargetName" class=anchor>Record TargetName</h4></a>
 Represents a pkgname.target parsed from a string
 <b>Fields:</b><ul>
   <li><a id="civ.core.TargetName.pkgname" href="#civ.core.TargetName.pkgname" class=anchor><b>.pkgname</b></a></li>
@@ -186,7 +177,7 @@ Represents a pkgname.target parsed from a string
   <li><a id="TargetName.parse" href="#TargetName.parse" class=anchor><b>fn parse</b></a><span class=code>(T, tgtname)</span></li>
 </ul>
 <br>
-<h2><a id="civ.core.Target" href="#civ.core.Target" class=anchor>Record Target</h2></a>
+<h4><a id="civ.core.Target" href="#civ.core.Target" class=anchor>Record Target</h4></a>
 A build target, the result of compiling a package.
 <b>Fields:</b><ul>
   <li><a id="civ.core.Target.pkgname" href="#civ.core.Target.pkgname" class=anchor><b>.pkgname</b></a>
@@ -229,14 +220,14 @@ A build target, the result of compiling a package.
   <li><a id="Target.tgtname" href="#Target.tgtname" class=anchor><b>fn:tgtname</b></a><span class=code>()</span></li>
 </ul>
 <br>
-<h2><a id="civ.core.CfgBuilder" href="#civ.core.CfgBuilder" class=anchor>Record CfgBuilder</h2></a>
+<h4><a id="civ.core.CfgBuilder" href="#civ.core.CfgBuilder" class=anchor>Record CfgBuilder</h4></a>
 <b>Fields:</b><ul>
   <li><a id="civ.core.CfgBuilder.direct" href="#civ.core.CfgBuilder.direct" class=anchor><b>.direct</b></a>
   prefer building directly
   (running build scripts w/ dofile).</li>
 </ul>
 <br>
-<h2><a id="civ.core.Cfg" href="#civ.core.Cfg" class=anchor>Record Cfg</h2></a>
+<h4><a id="civ.core.Cfg" href="#civ.core.Cfg" class=anchor>Record Cfg</h4></a>
 The user configuration, typically at ./.civconfig.lua
 <b>Fields:</b><ul>
   <li><a id="civ.core.Cfg.path" href="#civ.core.Cfg.path" class=anchor><b>.path</b></a>
@@ -257,7 +248,7 @@ The user configuration, typically at ./.civconfig.lua
   <li><a id="Cfg.load" href="#Cfg.load" class=anchor><b>fn load</b></a><span class=code>(T, path)</span></li>
 </ul>
 <br>
-<h2><a id="civ.core.Civ" href="#civ.core.Civ" class=anchor>Record Civ</h2></a>
+<h4><a id="civ.core.Civ" href="#civ.core.Civ" class=anchor>Record Civ</h4></a>
 Holds top-level data structures and algorithms for
 processing civ build graphs (pkgname graphs).
 <b>Fields:</b><ul>
@@ -307,7 +298,7 @@ processing civ build graphs (pkgname graphs).
   Test the targets.</li>
 </ul>
 <br>
-<h1><a id="Ty<civ.Worker>" href="#Ty<civ.Worker>" class=anchor>Record civ.Worker</h1></a>
+<h4><a id="Ty<civ.Worker>" href="#Ty<civ.Worker>" class=anchor>Record civ.Worker</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<civ.Worker>.ids" href="#Ty<civ.Worker>.ids" class=anchor><b>.ids</b></a>
   the target ids to work on.</li>
