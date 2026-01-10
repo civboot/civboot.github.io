@@ -29,18 +29,20 @@ luk: lua config language.
 <h4><a id="luk.Table" href="#luk.Table" class=anchor>Record Table</h4></a>
 A luk table object
 <br>
+<br>
 <h4><a id="luk.Luk" href="#luk.Luk" class=anchor>Record Luk</h4></a>
 The luk loader.
+<br>
 <b>Fields:</b><ul>
-  <li><a id="luk.Luk.imported" href="#luk.Luk.imported" class=anchor><b>.imported</b></a>
+  <li><a id="luk.Luk.imported" href="#luk.Luk.imported" class=anchor><b>imported</b></a>
   table of ipath -> imported luk</li>
-  <li><a id="luk.Luk.imports" href="#luk.Luk.imports" class=anchor><b>.imports</b></a>
+  <li><a id="luk.Luk.imports" href="#luk.Luk.imports" class=anchor><b>imports</b></a>
   table of ipath to its imports for dependency analysis.</li>
-  <li><a id="luk.Luk.pathFn" href="#luk.Luk.pathFn" class=anchor><b>.pathFn</b></a> <span class=code>=ds.iden</span>
+  <li><a id="luk.Luk.pathFn" href="#luk.Luk.pathFn" class=anchor><b>pathFn</b></a> <span class=code>=ds.iden</span>
   a function that given a non-relative import path
   returns the path to the file to import.</li>
-  <li><a id="luk.Luk.envMeta" href="#luk.Luk.envMeta" class=anchor><b>.envMeta</b></a> <span class=code>=ds.load.ENV</span></li>
-  <li><a id="luk.Luk.cycle" href="#luk.Luk.cycle" class=anchor><b>.cycle</b></a>
+  <li><a id="luk.Luk.envMeta" href="#luk.Luk.envMeta" class=anchor><b>envMeta</b></a> <span class=code>=ds.load.ENV</span></li>
+  <li><a id="luk.Luk.cycle" href="#luk.Luk.cycle" class=anchor><b>cycle</b></a>
   used to detect cycles</li>
 </ul>
 <b>Methods</b> <ul>

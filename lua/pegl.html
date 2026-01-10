@@ -177,7 +177,7 @@ pegl: peg-like lua parser
 <br>
 <h4><a id="pegl.Token" href="#pegl.Token" class=anchor>Record Token</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="pegl.Token.kind" href="#pegl.Token.kind" class=anchor><b>.kind</b></a>
+  <li><a id="pegl.Token.kind" href="#pegl.Token.kind" class=anchor><b>kind</b></a>
   optional, used for debugging</li>
 </ul>
 <b>Methods</b> <ul>
@@ -189,8 +189,9 @@ pegl: peg-like lua parser
 <h4><a id="pegl.Config" href="#pegl.Config" class=anchor>Record Config</h4></a>
 The config spec defines custom behavior when parsing. It's attributes
 can be set to change how the parser skips empty (whitespace) and handles comments.
+<br>
 <b>Fields:</b><ul>
-  <li><a id="pegl.Config.skipEmpty" href="#pegl.Config.skipEmpty" class=anchor><b>.skipEmpty</b></a> <span class=code>=pegl.skipEmpty</span>
+  <li><a id="pegl.Config.skipEmpty" href="#pegl.Config.skipEmpty" class=anchor><b>skipEmpty</b></a> <span class=code>=pegl.skipEmpty</span>
   default=skip whitespace <ul>
     <li>must be a function that accepts the `Parser`
     and advances it's `l` and `c` past any empty (white) space. It must also set
@@ -202,18 +203,18 @@ can be set to change how the parser skips empty (whitespace) and handles comment
     strings) then hand-roll those as recursive-descent functions and leave
     this function alone.</li>
   </ul></li>
-  <li><a id="pegl.Config.skipComment" href="#pegl.Config.skipComment" class=anchor><b>.skipComment</b></a>
+  <li><a id="pegl.Config.skipComment" href="#pegl.Config.skipComment" class=anchor><b>skipComment</b></a>
   fn(p) -> Token for found comment</li>
-  <li><a id="pegl.Config.tokenizer" href="#pegl.Config.tokenizer" class=anchor><b>.tokenizer</b></a> <span class=code>=pegl.defaultTokenizer</span>
+  <li><a id="pegl.Config.tokenizer" href="#pegl.Config.tokenizer" class=anchor><b>tokenizer</b></a> <span class=code>=pegl.defaultTokenizer</span>
   Requires: <ul>
     <li>must return one token. The default is to return a single punctuation character
     or a whole word (<span class=code>_%w</span>)</li>
     <li>Objects like <span class=code>Key</span> can use the single punctuation characters in a Trie-like
     performant data structure.</li>
   </ul></li>
-  <li><a id="pegl.Config.dbg" href="#pegl.Config.dbg" class=anchor><b>.dbg</b></a>
+  <li><a id="pegl.Config.dbg" href="#pegl.Config.dbg" class=anchor><b>dbg</b></a>
   if true, prints out huge amounts of debug information of parsing.</li>
-  <li><a id="pegl.Config.lenient" href="#pegl.Config.lenient" class=anchor><b>.lenient</b></a>
+  <li><a id="pegl.Config.lenient" href="#pegl.Config.lenient" class=anchor><b>lenient</b></a>
   if set, syntax errors do not cause failure.
   Instead, all errors act as if the current block missed but was UNPIN.</li>
 </ul>
@@ -230,27 +231,28 @@ convienience methods for hand-rolling your own recursive descent functions.
 <div class=info> Note: the location is **line/col based** (not position based) because it
 is designed to work with an application that stores the strings as lines
 (a text editor) </div>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="pegl.Parser.dat" href="#pegl.Parser.dat" class=anchor><b>.dat</b></a>
+  <li><a id="pegl.Parser.dat" href="#pegl.Parser.dat" class=anchor><b>dat</b></a>
   reference to the underlying data.
   Must look like a table of lines</li>
-  <li><a id="pegl.Parser.l" href="#pegl.Parser.l" class=anchor><b>.l</b></a>
+  <li><a id="pegl.Parser.l" href="#pegl.Parser.l" class=anchor><b>l</b></a>
   line, incremented when <span class=code>c</span> is exhausted</li>
-  <li><a id="pegl.Parser.c" href="#pegl.Parser.c" class=anchor><b>.c</b></a>
+  <li><a id="pegl.Parser.c" href="#pegl.Parser.c" class=anchor><b>c</b></a>
   column in <span class=code>line</span></li>
-  <li><a id="pegl.Parser.line" href="#pegl.Parser.line" class=anchor><b>.line</b></a>
+  <li><a id="pegl.Parser.line" href="#pegl.Parser.line" class=anchor><b>line</b></a>
   the current line (<span class=code>dat:get(l)</span>)</li>
-  <li><a id="pegl.Parser.lines" href="#pegl.Parser.lines" class=anchor><b>.lines</b></a></li>
-  <li><a id="pegl.Parser.config" href="#pegl.Parser.config" class=anchor><b>.config</b></a></li>
-  <li><a id="pegl.Parser.stack" href="#pegl.Parser.stack" class=anchor><b>.stack</b></a></li>
-  <li><a id="pegl.Parser.stackL" href="#pegl.Parser.stackL" class=anchor><b>.stackL</b></a></li>
-  <li><a id="pegl.Parser.stackC" href="#pegl.Parser.stackC" class=anchor><b>.stackC</b></a></li>
-  <li><a id="pegl.Parser.stackLast" href="#pegl.Parser.stackLast" class=anchor><b>.stackLast</b></a></li>
-  <li><a id="pegl.Parser.commentLC" href="#pegl.Parser.commentLC" class=anchor><b>.commentLC</b></a>
+  <li><a id="pegl.Parser.lines" href="#pegl.Parser.lines" class=anchor><b>lines</b></a></li>
+  <li><a id="pegl.Parser.config" href="#pegl.Parser.config" class=anchor><b>config</b></a></li>
+  <li><a id="pegl.Parser.stack" href="#pegl.Parser.stack" class=anchor><b>stack</b></a></li>
+  <li><a id="pegl.Parser.stackL" href="#pegl.Parser.stackL" class=anchor><b>stackL</b></a></li>
+  <li><a id="pegl.Parser.stackC" href="#pegl.Parser.stackC" class=anchor><b>stackC</b></a></li>
+  <li><a id="pegl.Parser.stackLast" href="#pegl.Parser.stackLast" class=anchor><b>stackLast</b></a></li>
+  <li><a id="pegl.Parser.commentLC" href="#pegl.Parser.commentLC" class=anchor><b>commentLC</b></a>
   table of {line={col=CommentToken}}</li>
-  <li><a id="pegl.Parser.dbgLevel" href="#pegl.Parser.dbgLevel" class=anchor><b>.dbgLevel</b></a> <span class=code>=0</span></li>
-  <li><a id="pegl.Parser.path" href="#pegl.Parser.path" class=anchor><b>.path</b></a></li>
-  <li><a id="pegl.Parser.firstError" href="#pegl.Parser.firstError" class=anchor><b>.firstError</b></a>
+  <li><a id="pegl.Parser.dbgLevel" href="#pegl.Parser.dbgLevel" class=anchor><b>dbgLevel</b></a> <span class=code>=0</span></li>
+  <li><a id="pegl.Parser.path" href="#pegl.Parser.path" class=anchor><b>path</b></a></li>
+  <li><a id="pegl.Parser.firstError" href="#pegl.Parser.firstError" class=anchor><b>firstError</b></a>
   first error.</li>
 </ul>
 <b>Methods</b> <ul>
@@ -298,9 +300,10 @@ is designed to work with an application that stores the strings as lines
 <h4><a id="pegl.Pat" href="#pegl.Pat" class=anchor>Record Pat</h4></a>
 <span class=code>Pat{'%w+', kind='word'}</span> will create a Token with the span matching the
 <span class=code>%w+</span> pattern and the kind of <span class=code>word</span> when matched.
+<br>
 <b>Fields:</b><ul>
-  <li><a id="pegl.Pat.kind" href="#pegl.Pat.kind" class=anchor><b>.kind</b></a></li>
-  <li><a id="pegl.Pat.name" href="#pegl.Pat.name" class=anchor><b>.name</b></a></li>
+  <li><a id="pegl.Pat.kind" href="#pegl.Pat.kind" class=anchor><b>kind</b></a></li>
+  <li><a id="pegl.Pat.name" href="#pegl.Pat.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Pat.set" href="#Pat.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>

@@ -116,6 +116,9 @@ civix: unix-like OS utilities.
   The Fn signatures are: (path, ftype) -> stopWalk
   If either return true then the walk is ended immediately
   If dirFn returns 'skip' then the directory is skipped</li>
+  <li><a id="civix.findBack" href="#civix.findBack" class=anchor><b>fn findBack</b></a><span class=code>(name, dir) -&gt; path</span><br>
+  
+  Find the filename path going backwards.</li>
   <li><a id="civix.cpRecursive" href="#civix.cpRecursive" class=anchor><b>fn cpRecursive</b></a><span class=code>(from, to, except)</span><br>
   
   recursively copy <span class=code>from/</span> to new <span class=code>to/</span> directory.</li>
@@ -216,10 +219,11 @@ single path <span class=code>Walk'path/'</span> or a list of paths <span class=c
   <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
   <li>Warning: you may want to handle <span class=code>ftype=='error'</span></li>
 </ul>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="civix.Walk.maxDepth" href="#civix.Walk.maxDepth" class=anchor><b>.maxDepth</b></a>
+  <li><a id="civix.Walk.maxDepth" href="#civix.Walk.maxDepth" class=anchor><b>maxDepth</b></a>
   maximum depth to walk (default=infinite)</li>
-  <li><a id="civix.Walk.pi" href="#civix.Walk.pi" class=anchor><b>.pi</b></a> <span class=code>=0</span>
+  <li><a id="civix.Walk.pi" href="#civix.Walk.pi" class=anchor><b>pi</b></a> <span class=code>=0</span>
   the current (root) path index being walked</li>
 </ul>
 <b>Methods</b> <ul>
@@ -257,18 +261,19 @@ Examples (see civix.sh for more examples): <div class=table><table>
     <td><span class=code>v=$(ls foo/bar)</span></td>
   </tr>
 </table></div>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="civix.Sh.args" href="#civix.Sh.args" class=anchor><b>.args</b></a>
+  <li><a id="civix.Sh.args" href="#civix.Sh.args" class=anchor><b>args</b></a>
   arguments to pass to shell</li>
-  <li><a id="civix.Sh.stdin" href="#civix.Sh.stdin" class=anchor><b>.stdin</b></a>
+  <li><a id="civix.Sh.stdin" href="#civix.Sh.stdin" class=anchor><b>stdin</b></a>
   shell's stdin to send  (default=empty)</li>
-  <li><a id="civix.Sh.stdout" href="#civix.Sh.stdout" class=anchor><b>.stdout</b></a>
+  <li><a id="civix.Sh.stdout" href="#civix.Sh.stdout" class=anchor><b>stdout</b></a>
   shell's stdout              (default=empty)</li>
-  <li><a id="civix.Sh.stderr" href="#civix.Sh.stderr" class=anchor><b>.stderr</b></a>
+  <li><a id="civix.Sh.stderr" href="#civix.Sh.stderr" class=anchor><b>stderr</b></a>
   shell's stderr              (default=empty)</li>
-  <li><a id="civix.Sh.env" href="#civix.Sh.env" class=anchor><b>.env</b></a>
+  <li><a id="civix.Sh.env" href="#civix.Sh.env" class=anchor><b>env</b></a>
   shell's environment {'FOO=bar', ...}</li>
-  <li><a id="civix.Sh.cwd" href="#civix.Sh.cwd" class=anchor><b>.cwd</b></a>
+  <li><a id="civix.Sh.cwd" href="#civix.Sh.cwd" class=anchor><b>cwd</b></a>
   current working directory</li>
 </ul>
 <b>Methods</b> <ul>
@@ -292,10 +297,10 @@ Examples (see civix.sh for more examples): <div class=table><table>
 <br>
 <h4><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="civix.ShFin.stdin" href="#civix.ShFin.stdin" class=anchor><b>.stdin</b></a></li>
-  <li><a id="civix.ShFin.stdout" href="#civix.ShFin.stdout" class=anchor><b>.stdout</b></a></li>
-  <li><a id="civix.ShFin.stderr" href="#civix.ShFin.stderr" class=anchor><b>.stderr</b></a></li>
-  <li><a id="civix.ShFin.input" href="#civix.ShFin.input" class=anchor><b>.input</b></a>
+  <li><a id="civix.ShFin.stdin" href="#civix.ShFin.stdin" class=anchor><b>stdin</b></a></li>
+  <li><a id="civix.ShFin.stdout" href="#civix.ShFin.stdout" class=anchor><b>stdout</b></a></li>
+  <li><a id="civix.ShFin.stderr" href="#civix.ShFin.stderr" class=anchor><b>stderr</b></a></li>
+  <li><a id="civix.ShFin.input" href="#civix.ShFin.input" class=anchor><b>input</b></a>
   write to then close stdin (either self's or shell's)</li>
 </ul>
 <br>

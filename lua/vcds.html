@@ -68,12 +68,13 @@ vsds: version control data structures (and algorithms)
 <h4><a id="vcds.Diff" href="#vcds.Diff" class=anchor>Record Diff</h4></a>
 Single Line Diff
 This type is good for displaying differences to a user.
+<br>
 <b>Fields:</b><ul>
-  <li><a id="vcds.Diff.b" href="#vcds.Diff.b" class=anchor><b>.b</b></a>
+  <li><a id="vcds.Diff.b" href="#vcds.Diff.b" class=anchor><b>b</b></a>
   (base)   orig file.  '+'=added</li>
-  <li><a id="vcds.Diff.c" href="#vcds.Diff.c" class=anchor><b>.c</b></a>
+  <li><a id="vcds.Diff.c" href="#vcds.Diff.c" class=anchor><b>c</b></a>
   (change) new file.   '-'=removed</li>
-  <li><a id="vcds.Diff.text" href="#vcds.Diff.text" class=anchor><b>.text</b></a></li>
+  <li><a id="vcds.Diff.text" href="#vcds.Diff.text" class=anchor><b>text</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Diff.isKeep" href="#Diff.isKeep" class=anchor><b>fn isKeep</b></a><span class=code>(d)</span></li>
@@ -81,7 +82,7 @@ This type is good for displaying differences to a user.
 <br>
 <h4><a id="vcds.Keep" href="#vcds.Keep" class=anchor>Record Keep</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="vcds.Keep.num" href="#vcds.Keep.num" class=anchor><b>.num</b></a></li>
+  <li><a id="vcds.Keep.num" href="#vcds.Keep.num" class=anchor><b>num</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Keep.len" href="#Keep.len" class=anchor><b>fn len</b></a><span class=code>(k) -&gt; k.num and k.num or #k</span></li>
@@ -89,9 +90,9 @@ This type is good for displaying differences to a user.
 <br>
 <h4><a id="vcds.Change" href="#vcds.Change" class=anchor>Record Change</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="vcds.Change.rem" href="#vcds.Change.rem" class=anchor><b>.rem</b></a>
+  <li><a id="vcds.Change.rem" href="#vcds.Change.rem" class=anchor><b>rem</b></a>
   removed lines</li>
-  <li><a id="vcds.Change.add" href="#vcds.Change.add" class=anchor><b>.add</b></a>
+  <li><a id="vcds.Change.add" href="#vcds.Change.add" class=anchor><b>add</b></a>
   text to add</li>
 </ul>
 <b>Methods</b> <ul>
@@ -100,11 +101,11 @@ This type is good for displaying differences to a user.
 <br>
 <h4><a id="vcds.DiffsExtender" href="#vcds.DiffsExtender" class=anchor>Record DiffsExtender</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="vcds.DiffsExtender.diffs" href="#vcds.DiffsExtender.diffs" class=anchor><b>.diffs</b></a></li>
-  <li><a id="vcds.DiffsExtender.base" href="#vcds.DiffsExtender.base" class=anchor><b>.base</b></a></li>
-  <li><a id="vcds.DiffsExtender.bl" href="#vcds.DiffsExtender.bl" class=anchor><b>.bl</b></a>
+  <li><a id="vcds.DiffsExtender.diffs" href="#vcds.DiffsExtender.diffs" class=anchor><b>diffs</b></a></li>
+  <li><a id="vcds.DiffsExtender.base" href="#vcds.DiffsExtender.base" class=anchor><b>base</b></a></li>
+  <li><a id="vcds.DiffsExtender.bl" href="#vcds.DiffsExtender.bl" class=anchor><b>bl</b></a>
   base line</li>
-  <li><a id="vcds.DiffsExtender.cl" href="#vcds.DiffsExtender.cl" class=anchor><b>.cl</b></a>
+  <li><a id="vcds.DiffsExtender.cl" href="#vcds.DiffsExtender.cl" class=anchor><b>cl</b></a>
   change line</li>
 </ul>
 <br>
@@ -114,13 +115,14 @@ These can then be applied to a new base using vcds.patch(base, picks)
 <br>
 Each "pick" is a list of Diffs which are anchored by the lines
 above and below (unless they are start/end of file).
+<br>
 <b>Fields:</b><ul>
-  <li><a id="vcds.Picks.changes" href="#vcds.Picks.changes" class=anchor><b>.changes</b></a>
+  <li><a id="vcds.Picks.changes" href="#vcds.Picks.changes" class=anchor><b>changes</b></a>
   list of changes</li>
-  <li><a id="vcds.Picks.ci" href="#vcds.Picks.ci" class=anchor><b>.ci</b></a>
+  <li><a id="vcds.Picks.ci" href="#vcds.Picks.ci" class=anchor><b>ci</b></a>
   for iterating</li>
-  <li><a id="vcds.Picks.de" href="#vcds.Picks.de" class=anchor><b>.de</b></a></li>
-  <li><a id="vcds.Picks.set" href="#vcds.Picks.set" class=anchor><b>.set</b></a>
+  <li><a id="vcds.Picks.de" href="#vcds.Picks.de" class=anchor><b>de</b></a></li>
+  <li><a id="vcds.Picks.set" href="#vcds.Picks.set" class=anchor><b>set</b></a>
   settings (need refactor)</li>
 </ul>
 <b>Methods</b> <ul>
@@ -133,8 +135,8 @@ above and below (unless they are start/end of file).
 <br>
 <h4><a id="vcds.Patch" href="#vcds.Patch" class=anchor>Record Patch</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="vcds.Patch.conflict" href="#vcds.Patch.conflict" class=anchor><b>.conflict</b></a></li>
-  <li><a id="vcds.Patch.bl" href="#vcds.Patch.bl" class=anchor><b>.bl</b></a></li>
+  <li><a id="vcds.Patch.conflict" href="#vcds.Patch.conflict" class=anchor><b>conflict</b></a></li>
+  <li><a id="vcds.Patch.bl" href="#vcds.Patch.bl" class=anchor><b>bl</b></a></li>
 </ul>
 <br>
 </div></body>

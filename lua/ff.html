@@ -54,33 +54,32 @@ Note: all <span class=code>directories/</span> always end with <span class=code>
 use to include/exclude them.
 <br>
 <h4><a id="ff" href="#ff" class=anchor>Command ff</h4></a>
-When called in lua, returns a list of paths which matched
-all requirements.
+Usage: <span class=code>ff find_this or_this</span>
 <br>
 <br>
 <b>Arguments:</b><ul>
-  <li><a id="ff.root" href="#ff.root" class=anchor><b>.root</b></a>
+  <li><a id="ff.root" href="#ff.root" class=anchor><b>root</b></a>
   list of root paths, i.e. <span class=code>r:path1/ r:path2</span></li>
-  <li><a id="ff.pat" href="#ff.pat" class=anchor><b>.pat</b></a>
+  <li><a id="ff.pat" href="#ff.pat" class=anchor><b>pat</b></a>
   list of patterns to find</li>
-  <li><a id="ff.nopat" href="#ff.nopat" class=anchor><b>.nopat</b></a>
+  <li><a id="ff.nopat" href="#ff.nopat" class=anchor><b>nopat</b></a>
   list of (file-wide) pattern exclusions</li>
-  <li><a id="ff.path" href="#ff.path" class=anchor><b>.path</b></a>
+  <li><a id="ff.path" href="#ff.path" class=anchor><b>path</b></a>
   <span class=code>p:%.lua</span> list of file path patterns</li>
-  <li><a id="ff.nopath" href="#ff.nopath" class=anchor><b>.nopath</b></a>
+  <li><a id="ff.nopath" href="#ff.nopath" class=anchor><b>nopath</b></a>
   <span class=code>-p:%.bin</span> list of file path patterns to exclude.
   default: exclude dirs starting with '.'. Disable default by setting
   to an empty string, i.e. <span class=code>--nopath=</span>
   </li>
-  <li><a id="ff.sub" href="#ff.sub" class=anchor><b>.sub</b></a>
+  <li><a id="ff.sub" href="#ff.sub" class=anchor><b>sub</b></a>
   the subsitution string to use with pat</li>
-  <li><a id="ff.mut" href="#ff.mut" class=anchor><b>.mut</b></a>
+  <li><a id="ff.mut" href="#ff.mut" class=anchor><b>mut</b></a>
   mutate files (used with sub)</li>
-  <li><a id="ff.dirs" href="#ff.dirs" class=anchor><b>.dirs</b></a>
+  <li><a id="ff.dirs" href="#ff.dirs" class=anchor><b>dirs</b></a>
   show all non-excluded directories</li>
-  <li><a id="ff.content" href="#ff.content" class=anchor><b>.content</b></a> <span class=code>=true</span>
+  <li><a id="ff.content" href="#ff.content" class=anchor><b>content</b></a> <span class=code>=true</span>
   if false do not show content (only show paths)</li>
-  <li><a id="ff.pathsub" href="#ff.pathsub" class=anchor><b>.pathsub</b></a>
+  <li><a id="ff.pathsub" href="#ff.pathsub" class=anchor><b>pathsub</b></a>
   the substitution string to rename the path.
   Note: this implies content=false and cannot be used with sub</li>
 </ul>

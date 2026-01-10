@@ -314,11 +314,41 @@ Cxt is in the the public domain, see the <a href="../UNLICENSE">UNLICENSE</a> fo
 <br>
 It was originally created by Rett Berg as part of the <a href="http://civboot.org">Civboot</a> project.
 <br>
-<h3><a id="cxt" href="#cxt" class=anchor>Mod cxt</h3></a>
+<h3><a id="cxt" href="#cxt" class=anchor>Command cxt</h3></a>
 TODO: see TODO.cxt
+<h4><a id="html" href="#html" class=anchor>Subcmd html</h4></a>
+Convert cxt to HTML.
 <br>
-<b>Types: </b><a href="#cxt.Config">Config</a> <a href="#cxt.Writer">Writer</a> <a href="#cxt.Html">Html</a> 
 <br>
+<b>Arguments:</b><ul>
+  <li><a id="html.to" href="#html.to" class=anchor><b>to</b></a>
+  where to write output.</li>
+</ul>
+<h4><a id="cxt.Config" href="#cxt.Config" class=anchor>Record Config</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="cxt.Config.header" href="#cxt.Config.header" class=anchor><b>header</b></a>
+  typically used for html header</li>
+  <li><a id="cxt.Config.pathUrl" href="#cxt.Config.pathUrl" class=anchor><b>pathUrl</b></a> <span class=code>=ds.iden</span></li>
+</ul>
+<h4><a id="cxt.Writer" href="#cxt.Writer" class=anchor>Record Writer</h4></a>
+A Writer for cxt serializers (terminal, http, etc) to use.
+<br>
+The writer contains: <ul>
+  <li>The src lines and token decoder for getting pegl.Token values.</li>
+  <li>The destination lines and current indent level.</li>
+</ul>
+<br>
+<b>Fields:</b><ul>
+  <li><a id="cxt.Writer.src" href="#cxt.Writer.src" class=anchor><b>src</b></a></li>
+  <li><a id="cxt.Writer.to" href="#cxt.Writer.to" class=anchor><b>to</b></a></li>
+  <li><a id="cxt.Writer.config" href="#cxt.Writer.config" class=anchor><b>config</b></a> <span class=code>=Config() instance</span></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Writer.fromParser" href="#Writer.fromParser" class=anchor><b>fn fromParser</b></a><span class=code>(ty_, p, to)</span></li>
+  <li><a id="Writer.tokenStr" href="#Writer.tokenStr" class=anchor><b>fn tokenStr</b></a><span class=code>(w, t)</span></li>
+  <li><a id="Writer.eqStr" href="#Writer.eqStr" class=anchor><b>fn eqStr</b></a><span class=code>(w, t, str)</span></li>
+  <li><a id="Writer.level" href="#Writer.level" class=anchor><b>fn level</b></a><span class=code>(w, add) -&gt; w.to:level(add)</span></li>
+</ul>
 <b>Functions</b> <ul>
   <li><a id="cxt.escape" href="#cxt.escape" class=anchor><b>fn escape</b></a><span class=code>(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span><br>
   
@@ -336,39 +366,6 @@ TODO: see TODO.cxt
   <li><a id="cxt.assertThrows" href="#cxt.assertThrows" class=anchor><b>fn assertThrows</b></a><span class=code>(dat, err, dbg)</span></li>
 </ul>
 <br>
-<h4><a id="cxt.Config" href="#cxt.Config" class=anchor>Record Config</h4></a>
-<b>Fields:</b><ul>
-  <li><a id="cxt.Config.header" href="#cxt.Config.header" class=anchor><b>.header</b></a>
-  typically used for html header</li>
-  <li><a id="cxt.Config.pathUrl" href="#cxt.Config.pathUrl" class=anchor><b>.pathUrl</b></a> <span class=code>=ds.iden</span></li>
-</ul>
-<br>
-<h4><a id="cxt.Writer" href="#cxt.Writer" class=anchor>Record Writer</h4></a>
-A Writer for cxt serializers (terminal, http, etc) to use.
-<br>
-The writer contains: <ul>
-  <li>The src lines and token decoder for getting pegl.Token values.</li>
-  <li>The destination lines and current indent level.</li>
-</ul>
-<b>Fields:</b><ul>
-  <li><a id="cxt.Writer.src" href="#cxt.Writer.src" class=anchor><b>.src</b></a></li>
-  <li><a id="cxt.Writer.to" href="#cxt.Writer.to" class=anchor><b>.to</b></a></li>
-  <li><a id="cxt.Writer.config" href="#cxt.Writer.config" class=anchor><b>.config</b></a> <span class=code>=Config() instance</span></li>
-</ul>
-<b>Methods</b> <ul>
-  <li><a id="Writer.fromParser" href="#Writer.fromParser" class=anchor><b>fn fromParser</b></a><span class=code>(ty_, p, to)</span></li>
-  <li><a id="Writer.tokenStr" href="#Writer.tokenStr" class=anchor><b>fn tokenStr</b></a><span class=code>(w, t)</span></li>
-  <li><a id="Writer.eqStr" href="#Writer.eqStr" class=anchor><b>fn eqStr</b></a><span class=code>(w, t, str)</span></li>
-  <li><a id="Writer.level" href="#Writer.level" class=anchor><b>fn level</b></a><span class=code>(w, add) -&gt; w.to:level(add)</span></li>
-</ul>
-<br>
-<h4><a id="cxt.Html" href="#cxt.Html" class=anchor>Record Html</h4></a>
-Convert cxt to HTML.
-<b>Fields:</b><ul>
-  <li><a id="cxt.Html.to" href="#cxt.Html.to" class=anchor><b>.to</b></a>
-  where to write output.</li>
-</ul>
-<br>
 <h3><a id="cxt.term" href="#cxt.term" class=anchor>Mod cxt.term</h3></a>
 cxt for the terminal, either plain text or vt100/etc
 <br>
@@ -384,23 +381,21 @@ cxt for the terminal, either plain text or vt100/etc
 Render cxt on a terminal.
 <br>
 Will render an input string or --inp=file.
+<br>
 <b>Fields:</b><ul>
-  <li><a id="cxt.term.Args.inp" href="#cxt.term.Args.inp" class=anchor><b>.inp</b></a>
+  <li><a id="cxt.term.Args.inp" href="#cxt.term.Args.inp" class=anchor><b>inp</b></a>
   input file</li>
-  <li><a id="cxt.term.Args.out" href="#cxt.term.Args.out" class=anchor><b>.out</b></a>
+  <li><a id="cxt.term.Args.out" href="#cxt.term.Args.out" class=anchor><b>out</b></a>
   output file (default=stdout)</li>
 </ul>
 <br>
-<h3><a id="cxt.html" href="#cxt.html" class=anchor>Mod cxt.html</h3></a>
-Serialize cxt nodes as html
-<b>Functions</b> <ul>
-  <li><a id="cxt.html.htmlEncode" href="#cxt.html.htmlEncode" class=anchor><b>fn htmlEncode</b></a><span class=code>(s)</span></li>
-  <li><a id="cxt.html.serialize" href="#cxt.html.serialize" class=anchor><b>fn serialize</b></a><span class=code>(w, node)</span><br>
-  
-  serialize the node to the writer.</li>
-  <li><a id="cxt.html.serializeDoc" href="#cxt.html.serializeDoc" class=anchor><b>fn serializeDoc</b></a><span class=code>(w, node, head)</span></li>
-  <li><a id="cxt.html.convert" href="#cxt.html.convert" class=anchor><b>fn convert</b></a><span class=code>(dat, to, config)</span></li>
-  <li><a id="cxt.html.assertHtml" href="#cxt.html.assertHtml" class=anchor><b>fn assertHtml</b></a><span class=code>(expectedHtml, cxtDat, dbg)</span></li>
+<h4><a id="html" href="#html" class=anchor>Command html</h4></a>
+Convert cxt to HTML.
+<br>
+<br>
+<b>Arguments:</b><ul>
+  <li><a id="html.to" href="#html.to" class=anchor><b>to</b></a>
+  where to write output.</li>
 </ul>
 <br>
 </div></body>

@@ -46,18 +46,19 @@ The basic algorithm on before/after line lists: <ul>
 </ul>
 <br>
 Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="lines.diff.Diff.b" href="#lines.diff.Diff.b" class=anchor><b>.b</b></a>
+  <li><a id="lines.diff.Diff.b" href="#lines.diff.Diff.b" class=anchor><b>b</b></a>
   base, aka original lines</li>
-  <li><a id="lines.diff.Diff.c" href="#lines.diff.Diff.c" class=anchor><b>.c</b></a>
+  <li><a id="lines.diff.Diff.c" href="#lines.diff.Diff.c" class=anchor><b>c</b></a>
   change, aka new lines</li>
-  <li><a id="lines.diff.Diff.di" href="#lines.diff.Diff.di" class=anchor><b>.di</b></a>
+  <li><a id="lines.diff.Diff.di" href="#lines.diff.Diff.di" class=anchor><b>di</b></a>
   len of noc/rem/add</li>
-  <li><a id="lines.diff.Diff.noc" href="#lines.diff.Diff.noc" class=anchor><b>.noc</b></a>
+  <li><a id="lines.diff.Diff.noc" href="#lines.diff.Diff.noc" class=anchor><b>noc</b></a>
   nochange range (in both)</li>
-  <li><a id="lines.diff.Diff.rem" href="#lines.diff.Diff.rem" class=anchor><b>.rem</b></a>
+  <li><a id="lines.diff.Diff.rem" href="#lines.diff.Diff.rem" class=anchor><b>rem</b></a>
   removed from b</li>
-  <li><a id="lines.diff.Diff.add" href="#lines.diff.Diff.add" class=anchor><b>.add</b></a>
+  <li><a id="lines.diff.Diff.add" href="#lines.diff.Diff.add" class=anchor><b>add</b></a>
   added from c</li>
 </ul>
 <b>Methods</b> <ul>
@@ -89,10 +90,10 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
 <br>
 <h4><a id="Ty<Gap>" href="#Ty<Gap>" class=anchor>Record Gap</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="Ty<Gap>.bot" href="#Ty<Gap>.bot" class=anchor><b>.bot</b></a></li>
-  <li><a id="Ty<Gap>.top" href="#Ty<Gap>.top" class=anchor><b>.top</b></a></li>
-  <li><a id="Ty<Gap>.path" href="#Ty<Gap>.path" class=anchor><b>.path</b></a></li>
-  <li><a id="Ty<Gap>.readonly" href="#Ty<Gap>.readonly" class=anchor><b>.readonly</b></a></li>
+  <li><a id="Ty<Gap>.bot" href="#Ty<Gap>.bot" class=anchor><b>bot</b></a></li>
+  <li><a id="Ty<Gap>.top" href="#Ty<Gap>.top" class=anchor><b>top</b></a></li>
+  <li><a id="Ty<Gap>.path" href="#Ty<Gap>.path" class=anchor><b>path</b></a></li>
+  <li><a id="Ty<Gap>.readonly" href="#Ty<Gap>.readonly" class=anchor><b>readonly</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Gap.flush" href="#Gap.flush" class=anchor><b>fn flush</b></a><span class=code>()</span></li>
@@ -117,11 +118,11 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
 <br>
 <h4><a id="Ty<lines.U3File>" href="#Ty<lines.U3File>" class=anchor>Record lines.U3File</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="Ty<lines.U3File>.f" href="#Ty<lines.U3File>.f" class=anchor><b>.f</b></a></li>
-  <li><a id="Ty<lines.U3File>.path" href="#Ty<lines.U3File>.path" class=anchor><b>.path</b></a></li>
-  <li><a id="Ty<lines.U3File>.mode" href="#Ty<lines.U3File>.mode" class=anchor><b>.mode</b></a></li>
-  <li><a id="Ty<lines.U3File>.len" href="#Ty<lines.U3File>.len" class=anchor><b>.len</b></a></li>
-  <li><a id="Ty<lines.U3File>.sz" href="#Ty<lines.U3File>.sz" class=anchor><b>.sz</b></a>
+  <li><a id="Ty<lines.U3File>.f" href="#Ty<lines.U3File>.f" class=anchor><b>f</b></a></li>
+  <li><a id="Ty<lines.U3File>.path" href="#Ty<lines.U3File>.path" class=anchor><b>path</b></a></li>
+  <li><a id="Ty<lines.U3File>.mode" href="#Ty<lines.U3File>.mode" class=anchor><b>mode</b></a></li>
+  <li><a id="Ty<lines.U3File>.len" href="#Ty<lines.U3File>.len" class=anchor><b>len</b></a></li>
+  <li><a id="Ty<lines.U3File>.sz" href="#Ty<lines.U3File>.sz" class=anchor><b>sz</b></a>
   the size of each value</li>
 </ul>
 <b>Methods</b> <ul>
@@ -168,15 +169,15 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
 <br>
 <h4><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="Ty<File>.path" href="#Ty<File>.path" class=anchor><b>.path</b></a></li>
-  <li><a id="Ty<File>.mode" href="#Ty<File>.mode" class=anchor><b>.mode</b></a></li>
-  <li><a id="Ty<File>.f" href="#Ty<File>.f" class=anchor><b>.f</b></a>
+  <li><a id="Ty<File>.path" href="#Ty<File>.path" class=anchor><b>path</b></a></li>
+  <li><a id="Ty<File>.mode" href="#Ty<File>.mode" class=anchor><b>mode</b></a></li>
+  <li><a id="Ty<File>.f" href="#Ty<File>.f" class=anchor><b>f</b></a>
   open file</li>
-  <li><a id="Ty<File>.idx" href="#Ty<File>.idx" class=anchor><b>.idx</b></a>
+  <li><a id="Ty<File>.idx" href="#Ty<File>.idx" class=anchor><b>idx</b></a>
   line index of f</li>
-  <li><a id="Ty<File>.cache" href="#Ty<File>.cache" class=anchor><b>.cache</b></a>
+  <li><a id="Ty<File>.cache" href="#Ty<File>.cache" class=anchor><b>cache</b></a>
   cache of lines</li>
-  <li><a id="Ty<File>.loadIdxFn" href="#Ty<File>.loadIdxFn" class=anchor><b>.loadIdxFn</b></a>
+  <li><a id="Ty<File>.loadIdxFn" href="#Ty<File>.loadIdxFn" class=anchor><b>loadIdxFn</b></a>
   default=lines.futils.loadIdx</li>
 </ul>
 <b>Methods</b> <ul>
@@ -200,11 +201,11 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
 <br>
 <h4><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h4></a>
 <b>Fields:</b><ul>
-  <li><a id="Ty<EdFile>.lf" href="#Ty<EdFile>.lf" class=anchor><b>.lf</b></a>
+  <li><a id="Ty<EdFile>.lf" href="#Ty<EdFile>.lf" class=anchor><b>lf</b></a>
   indexed file</li>
-  <li><a id="Ty<EdFile>.dats" href="#Ty<EdFile>.dats" class=anchor><b>.dats</b></a>
+  <li><a id="Ty<EdFile>.dats" href="#Ty<EdFile>.dats" class=anchor><b>dats</b></a>
   list of Slc | Gap</li>
-  <li><a id="Ty<EdFile>.lens" href="#Ty<EdFile>.lens" class=anchor><b>.lens</b></a>
+  <li><a id="Ty<EdFile>.lens" href="#Ty<EdFile>.lens" class=anchor><b>lens</b></a>
   rolling sum of dat lengths</li>
 </ul>
 <b>Methods</b> <ul>

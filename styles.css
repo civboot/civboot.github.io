@@ -37,9 +37,9 @@ Other properties are largely self-documenting or documented inline.
 *  { margin: 0; padding: 0; }
 html {
   font-family: Helvetica, sans-serif;
-  font-size: 1.4em;
   color: white; background-color: rgb(18,17,17,1.0);
   overflow-wrap: break-word; /*split words if screen too small*/
+  line-height: 1.3;
 }
 nav { margin-top: 0.5em; margin-left: 0.5em; font-size: 1.6em; }
 .nav {
@@ -50,9 +50,10 @@ nav { margin-top: 0.5em; margin-left: 0.5em; font-size: 1.6em; }
   color: rgb(18,17,17,1.0); background-color: gold;
 }
 .doc {
-  margin: 1.8%; padding: 1%;
+  margin:  1% 2%   1%   2%;
+  padding: 1% 0.5% 1%   0.5%;
+  border-radius: 2%;
   background-color: rgb(43,43,43,1.0);
-  border-radius: 0.5em;
 }
 
 /* general elements */
@@ -67,10 +68,10 @@ h1 { font-size: 3.0rem; }
 h2 { font-size: 2.5rem; }
 h3 { font-size: 2.0rem; }
 h4 { font-size: 1.8rem; }
-h5 { font-size: 1.6rem; }
-h6 { font-size: 1.5rem; }
+h5 { font-size: 1.4rem; }
+h6 { font-size: 1.2rem; }
 ul, ol { margin-top: 0.1em; margin-bottom: 0.2em; }
-li     { margin-left: 1em; }
+li     { margin-left: 1em; margin-top: 0.05em; }
 a {
   text-decoration: none;
   cursor: pointer;
@@ -87,6 +88,8 @@ a:hover   {
 a.anchor {
   color: gold;
 }
+
+table { font-size: inherit; }
 
 /* table class */
 .table { overflow-x: auto }
@@ -145,4 +148,22 @@ a.anchor {
 .syn-string { color: limegreen; }
 .syn-name, a.syn-name { color: limegreen; font-weight: bold; }
 .syn-comment { color: white; background-color: rgb(43,43,43,1.0); }
+
+/* Specific screen size overrides */
+@media (min-width:481px)  { /* phones */
+  html {
+    font-size: 1.1em;
+  }
+}
+@media (min-width:1025px) { /* laptops */
+  html {
+    font-size: 1.4em;
+  }
+  .doc {
+    margin: 0.5rem 1.5rem 0.5rem 1.5rem;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+  }
+}
+
 
