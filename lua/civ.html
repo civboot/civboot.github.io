@@ -66,7 +66,7 @@ P.foo = lua {<br>
 -- test rule<br>
 P.test = lua.test {<br>
 &nbsp; src = 'test.lua',<br>
-&nbsp; dep = { 'myhub:foo',<br>
+&nbsp; dep = { 'myhub:foo' },<br>
 }<br>
 <br>
 -- C build target<br>
@@ -86,17 +86,15 @@ return P
 </div>
 <br>
 <h3><a id="civ-out" href="#civ-out" class=anchor>civ output directory</h3></a>
-By default, <span class=code>civ build</span> puts files in <span class=code>.out/civ/</span>. Wherever it puts it's output
+By default, <span class=code>civ build</span> puts files in <span class=code>.civ/</span>. Wherever it puts it's output
 (whether during build or installation), the output structure under that directory
 is as follows: <ul>
-  <li><span class=code>bin/</span>: executable binaries/scripts segregated by pkg, i.e.
-  <span class=code>bin/pkgname_foo</span>. Also contains soft-links for binaries with unique names
-  to conform with <span class=code>PATH</span>, i.e. <span class=code>bin/foo</span>.</li>
+  <li><span class=code>bin/</span>: executables (and links to them) go here and must not conflict.</li>
   <li><span class=code>lua/</span>: contains all <span class=code>mod.lua</span> files, and the sub-module files under
   <span class=code>mod/sub.lua</span>. This conforms with
   <a href="https://www.lua.org/manual/5.4/manual.html#pdf-package.searchpath">package.searchpath</a>,
   which allows the normal lua loader to load these packages with <span class=code>LUA_PATH</span>
-  set to <span class=code>.../civ/lua/</span>.</li>
+  set to <span class=code>.../civ/lua/?.lua</span>.</li>
   <li><span class=code>data/</span>: contains arbitrary data files defined by targets.</li>
   <li><span class=code>lib/</span>: all library files in a flat directory, all of which must start with
   <span class=code>lib</span> i.e. <span class=code>libfoo.so</span>. This is to conform with the envornment variables
@@ -107,7 +105,6 @@ is as follows: <ul>
   by the build system for incremental builds as well as by installation system to remove
   files during uninstall.</li>
 </ul>
-<br>
 <br>
 <h3><a id="civ" href="#civ" class=anchor>Command civ</h3></a>
 civ command
