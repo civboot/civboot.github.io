@@ -16,25 +16,12 @@
 <body><div class=doc>
 <h1>Ele: Extendable Lua Editor</h1>
 <br>
-Ele is an (**In Development**) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor.
+Ele is an (<b>In Development</b>) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor written to be easy
+to understand, extend and modify. It is the primary editor and shell for the
+Civstack project, and also the core framework for the devleopment of
+Civstack's text-based learning games.
 <br>
-Ele's primary goals are: <ul>
-  <li>Implemented in a minimal amount of understandable code. It is the main editor
-  for Civboot</li>
-  <li>Enjoyable and extendable for developers to fit their workflow <ul>
-    <li>undo/redo, syntax highlighting, plugins, user-configurable bindings
-    (supports vim/emacs style), etc.</li>
-  </ul></li>
-  <li>Implements a lua shell (zsh competitor)</li>
-  <li>Can handle any size text file</li>
-  <li>Cross platform (currently vt100-only protocol, which should run anywhere)</li>
-</ul>
-<br>
-Non-goals of Ele are: <ul>
-  <li>Focusing on performance against the other goals. It should be fast enough
-  to be an editor and should not choke on large files -- otherwise performance
-  is not important.</li>
-</ul>
+To install: follow <a href="civ.html#install">civ.html#install</a>, ele will be installed by default.
 <br>
 <h1>Architecture</h1>
 <br>
@@ -62,7 +49,7 @@ by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
   which are sent on an events channel. This also handles
   chords correctly, see the ele.bindings documentation.</li>
   <li>A coroutine that listens for event tables, looks up their
-  <span class=code>action</span> in ele.actions and runs the appropriate action.</li>
+  <span class=code>action</span> in <h3>Mod ele.actions</h3> and runs the appropriate action.</li>
   <li>A coroutine that "draws" the current display once per "frame"
   This is done by recursing the tree from <span class=code>Editor.root</span> down,
   having them write the relevant text to a vt100.Term object,
@@ -96,18 +83,437 @@ B.command['y y'] = {action='insert', 'Why oh why did I bind this?\n'},
 </div>
 <br>
 To write your own action you must: <ul>
-  <li>Add a callable to ele.actions which implements the intended behavior. The
-  signature is: <span class=code>fn(Editor, event, Channel[event</span>)</li>
-</ul>. You may modify the Editor
-in the appropriate way for your action.  You are recommended to handle
-<span class=code>event.times</span> to do your action multiple times (if that makes sense for your
-action). Note that you are free to throw errors -- any errors will be caught
-and logged.
+  <li>Add a callable to <h3>Mod ele.actions</h3> which implements the intended behavior. The
+  signature is: <span class=code>fn(Editor, event, Channel[event])</span>. You may
+  modify the Editor in the appropriate way for your action.  You are
+  recommended to handle <span class=code>event.times</span> to do your action multiple times (if
+  that makes sense for your action). Note that you are free to throw errors --
+  any errors will be caught and logged.</li>
+  <li>Add a binding to an editor mode. The binding can either be a plain table,
+  which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
+  Using the callable API is slightly complex but allows for complex key
+  interactions where you build-up a command with a chaing (aka "chord") of
+  multiple key inputs. Refer to the ele.bindings documentation.</li>
+</ul>
 <br>
-* Add a binding to an editor mode. The binding can either be a plain table,
-which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
-Using the callable API is slightly complex but allows for complex key
-interactions where you build-up a command with a chaing (aka "chord") of
-multiple key inputs. Refer to the ele.bindings documentation.
+<h1>Editor API</h1>
+ele.Editor is the main object most custom actions or Ele scripts will
+interact with. It has several fields, but the fields and methods that most
+folks will care about are: <ul>
+  <li><span class=code>edit</span>: this is the current edit buffer and is typically where the
+  user wants to insert or otherwise interact with text. It is
+  typically a <h4>Record Edit</h4> instance, though plugins may
+  eventually allow other types to be used.</li>
+  <li><span class=code>view</span> this is the "root" view, which contains a tree who's
+  leaves are the visible Edit views.</li>
+  <li><span class=code>ext</span> a plain table that extensions can set Edit-local values
+  too. Very useful for plugins.</li>
+  <li><span class=code>:buffer(idOrPath) --&gt; Buffer</span> this will get or create a buffer.</li>
+  <li><span class=code>:focus(idOrPath) --&gt; Edit</span> focus on a buffer, replacing
+  the current one.</li>
+</ul>
+<br>
+Most plugins will simply get <span class=code>edit</span> and then insert/remove/search its <span class=code>buf</span>
+data using its APIs and/or change its <span class=code>l,c</span> (line,column) values. They are
+free to use any lua API to do so, but should avoid large amounts
+of work as much as possible.
+<br>
+<br>
+<h4><a id="ele" href="#ele" class=anchor>Command ele</h4></a>
+Usage: <span class=code>ele path/to/file.txt</span><br>
+
+The ele commandline editor.
+<br>
+<br>
+<br>
+<h3><a id="ele.types" href="#ele.types" class=anchor>Mod ele.types</h3></a>
+<br>
+<b>Types: </b><a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="ele.types.uniqueId" href="#ele.types.uniqueId" class=anchor><b>fn uniqueId</b></a><span class=code>()</span></li>
+  <li><a id="ele.types.checkBinding" href="#ele.types.checkBinding" class=anchor><b>fn checkBinding</b></a><span class=code>(b)</span></li>
+  <li><a id="ele.types.checkBindings" href="#ele.types.checkBindings" class=anchor><b>fn checkBindings</b></a><span class=code>(btable, path)</span></li>
+  <li><a id="ele.types.checkMode" href="#ele.types.checkMode" class=anchor><b>fn checkMode</b></a><span class=code>(data, mode) -&gt; errstring</span></li>
+  <li><a id="ele.types.checkAction" href="#ele.types.checkAction" class=anchor><b>fn checkAction</b></a><span class=code>(data, action) -&gt; errstring</span></li>
+</ul>
+<br>
+<h4><a id="ele.types.VSplit" href="#ele.types.VSplit" class=anchor>Record VSplit</h4></a>
+A container with windows split vertically (i.e. tall windows)
+<br>
+<b>Fields:</b><ul>
+  <li><a id="ele.types.VSplit.container" href="#ele.types.VSplit.container" class=anchor><b>container</b></a>
+  parent container</li>
+  <li><a id="ele.types.VSplit.tl" href="#ele.types.VSplit.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.VSplit.tc" href="#ele.types.VSplit.tc" class=anchor><b>tc</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.VSplit.th" href="#ele.types.VSplit.th" class=anchor><b>th</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.VSplit.tw" href="#ele.types.VSplit.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="VSplit.close" href="#VSplit.close" class=anchor><b>fn close</b></a><span class=code>()</span></li>
+  <li><a id="VSplit.insert" href="#VSplit.insert" class=anchor><b>fn insert</b></a><span class=code>(sp, i, v)</span></li>
+  <li><a id="VSplit.replace" href="#VSplit.replace" class=anchor><b>fn replace</b></a><span class=code>(sp, from, to) -&gt; from</span></li>
+  <li><a id="VSplit.remove" href="#VSplit.remove" class=anchor><b>fn remove</b></a><span class=code>(sp, v) -&gt; v</span></li>
+  <li><a id="VSplit.draw" href="#VSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
+</ul>
+<br>
+<h4><a id="ele.types.HSplit" href="#ele.types.HSplit" class=anchor>Record HSplit</h4></a>
+A container with windows split horizontally (i.e. wide windows)
+<br>
+<b>Fields:</b><ul>
+  <li><a id="ele.types.HSplit.container" href="#ele.types.HSplit.container" class=anchor><b>container</b></a>
+  parent container</li>
+  <li><a id="ele.types.HSplit.tl" href="#ele.types.HSplit.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.HSplit.tc" href="#ele.types.HSplit.tc" class=anchor><b>tc</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.HSplit.th" href="#ele.types.HSplit.th" class=anchor><b>th</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.HSplit.tw" href="#ele.types.HSplit.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="HSplit.close" href="#HSplit.close" class=anchor><b>fn close</b></a><span class=code>()</span></li>
+  <li><a id="HSplit.insert" href="#HSplit.insert" class=anchor><b>fn insert</b></a><span class=code>(sp, i, v)</span></li>
+  <li><a id="HSplit.replace" href="#HSplit.replace" class=anchor><b>fn replace</b></a><span class=code>(sp, from, to) -&gt; from</span></li>
+  <li><a id="HSplit.remove" href="#HSplit.remove" class=anchor><b>fn remove</b></a><span class=code>(sp, v) -&gt; v</span></li>
+  <li><a id="HSplit.draw" href="#HSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
+</ul>
+<br>
+<h3><a id="ele.keys" href="#ele.keys" class=anchor>Mod ele.keys</h3></a>
+<br>
+<b>Types: </b><a href="#ele.keys.KeySt">KeySt</a> <a href="#ele.keys.KeyBindings">KeyBindings</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="ele.keys.chord" href="#ele.keys.chord" class=anchor><b>fn chord</b></a><span class=code>(str) -&gt; keylist</span></li>
+  <li><a id="ele.keys.literal" href="#ele.keys.literal" class=anchor><b>fn literal</b></a><span class=code>(key)</span></li>
+  <li><a id="ele.keys.chordstr" href="#ele.keys.chordstr" class=anchor><b>fn chordstr</b></a><span class=code>(chord)</span></li>
+  <li><a id="ele.keys.insertChord" href="#ele.keys.insertChord" class=anchor><b>fn insertChord</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.keys.unboundChord" href="#ele.keys.unboundChord" class=anchor><b>fn unboundChord</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.keys.moveAction" href="#ele.keys.moveAction" class=anchor><b>fn moveAction</b></a><span class=code>(event)</span></li>
+  <li><a id="ele.keys.left" href="#ele.keys.left" class=anchor><b>fn left</b></a></li>
+  <li><a id="ele.keys.right" href="#ele.keys.right" class=anchor><b>fn right</b></a></li>
+  <li><a id="ele.keys.backword" href="#ele.keys.backword" class=anchor><b>fn backword</b></a></li>
+  <li><a id="ele.keys.forword" href="#ele.keys.forword" class=anchor><b>fn forword</b></a></li>
+  <li><a id="ele.keys.up" href="#ele.keys.up" class=anchor><b>fn up</b></a></li>
+  <li><a id="ele.keys.down" href="#ele.keys.down" class=anchor><b>fn down</b></a></li>
+  <li><a id="ele.keys.sot" href="#ele.keys.sot" class=anchor><b>fn sot</b></a></li>
+  <li><a id="ele.keys.sol" href="#ele.keys.sol" class=anchor><b>fn sol</b></a></li>
+  <li><a id="ele.keys.eot" href="#ele.keys.eot" class=anchor><b>fn eot</b></a></li>
+  <li><a id="ele.keys.eol" href="#ele.keys.eol" class=anchor><b>fn eol</b></a></li>
+  <li><a id="ele.keys.eof" href="#ele.keys.eof" class=anchor><b>fn eof</b></a></li>
+  <li><a id="ele.keys.sof" href="#ele.keys.sof" class=anchor><b>fn sof</b></a></li>
+  <li><a id="ele.keys.upScreen" href="#ele.keys.upScreen" class=anchor><b>fn upScreen</b></a></li>
+  <li><a id="ele.keys.downScreen" href="#ele.keys.downScreen" class=anchor><b>fn downScreen</b></a></li>
+  <li><a id="ele.keys.moveG" href="#ele.keys.moveG" class=anchor><b>fn moveG</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.keys.movekey" href="#ele.keys.movekey" class=anchor><b>fn movekey</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.keys.find" href="#ele.keys.find" class=anchor><b>fn find</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.keys.till" href="#ele.keys.till" class=anchor><b>fn till</b></a><span class=code>(keys)</span><br>
+  
+  go to the column before the character</li>
+  <li><a id="ele.keys.findback" href="#ele.keys.findback" class=anchor><b>fn findback</b></a><span class=code>(keys)</span><br>
+  
+  go back to the character</li>
+  <li><a id="ele.keys.tillback" href="#ele.keys.tillback" class=anchor><b>fn tillback</b></a><span class=code>(keys)</span><br>
+  
+  go back to the column after the character</li>
+  <li><a id="ele.keys.delete" href="#ele.keys.delete" class=anchor><b>fn delete</b></a><span class=code>(keySt)</span><br>
+  
+  delete until a movement command (or similar)</li>
+  <li><a id="ele.keys.deleteEol" href="#ele.keys.deleteEol" class=anchor><b>fn deleteEol</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.keys.change" href="#ele.keys.change" class=anchor><b>fn change</b></a><span class=code>(keySt)</span><br>
+  
+  Delete <move> then enter insert.</li>
+  <li><a id="ele.keys.changeEol" href="#ele.keys.changeEol" class=anchor><b>fn changeEol</b></a><span class=code>(keySt, evsend)</span></li>
+  <li><a id="ele.keys.times" href="#ele.keys.times" class=anchor><b>fn times</b></a><span class=code>(keys)</span><br>
+  
+  used for setting the number of times to do an action.
+  1 0 d t x: delete till the 10th x</li>
+  <li><a id="ele.keys.zero" href="#ele.keys.zero" class=anchor><b>fn zero</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.keys.searchBuf" href="#ele.keys.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(keySt)</span><br>
+  
+  Interactively search the buffer.
+  
+  This holds onto keySt (sets .keep), effectively owning all keyboard
+  inputs.</li>
+  <li><a id="ele.keys.install" href="#ele.keys.install" class=anchor><b>fn install</b></a><span class=code>(ed)</span></li>
+  <li><a id="ele.keys.keyactions" href="#ele.keys.keyactions" class=anchor><b>fn keyactions</b></a><span class=code>(ed, keyrecv, evsend)</span></li>
+</ul>
+<br>
+<h4><a id="ele.keys.KeySt" href="#ele.keys.KeySt" class=anchor>Record KeySt</h4></a>
+The state of the keyboard input (chord).
+Some bindings are a simple action to perform, whereas callable bindings
+can update the KeySt to affect future ones, such as decimals causing
+later actions to be repeated a <span class=code>num</span> of times.
+<br>
+<b>Fields:</b><ul>
+  <li><a id="ele.keys.KeySt.chord" href="#ele.keys.KeySt.chord" class=anchor><b>chord</b></a>
+  list of keys which led to this binding, i.e. {'space', 'a'}</li>
+  <li><a id="ele.keys.KeySt.event" href="#ele.keys.KeySt.event" class=anchor><b>event</b></a>
+  table to use when returning (emitting) an event.</li>
+  <li><a id="ele.keys.KeySt.next" href="#ele.keys.KeySt.next" class=anchor><b>next</b></a>
+  the binding which will be used for the next key</li>
+  <li><a id="ele.keys.KeySt.keep" href="#ele.keys.KeySt.keep" class=anchor><b>keep</b></a>
+  if true the above fields will be preserved in next call</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="KeySt.check" href="#KeySt.check" class=anchor><b>fn check</b></a><span class=code>(k, ele) -&gt; errstring?</span><br>
+  
+  Check the current Key State.</li>
+</ul>
+<br>
+<h4><a id="ele.keys.KeyBindings" href="#ele.keys.KeyBindings" class=anchor>Record KeyBindings</h4></a>
+A map of key -> binding.
+The name and doc can be provided for the user.
+<br>
+Other "fields" must be valid chords. They will be automatically
+split (by whitespace) to create sub-KeyBindings as-needed.
+<br>
+The value must be one of: <ul>
+  <li>KeyBindings instance to explicitly create chorded bindings.</li>
+  <li>plain event table to fire off a simple event</li>
+  <li>callable <span class=code>event(ev, keySt)</span> for more complex bindings.</li>
+</ul>
+<br>
+<b>Fields:</b><ul>
+  <li><a id="ele.keys.KeyBindings.name" href="#ele.keys.KeyBindings.name" class=anchor><b>name</b></a>
+  the name of the group for documentation</li>
+  <li><a id="ele.keys.KeyBindings.doc" href="#ele.keys.KeyBindings.doc" class=anchor><b>doc</b></a>
+  documentation to display to the user</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="KeyBindings.getBinding" href="#KeyBindings.getBinding" class=anchor><b>fn getBinding</b></a><span class=code>(name)</span><br>
+  
+  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+  and must define the <span class=code>parse</span> method.</li>
+</ul>
+<br>
+<h3><a id="ele.edit" href="#ele.edit" class=anchor>Mod ele.edit</h3></a>
+<br>
+<b>Types: </b><a href="#ele.edit.Edit">Edit</a> 
+<br>
+<br>
+<h4><a id="ele.edit.Edit" href="#ele.edit.Edit" class=anchor>Record Edit</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="ele.edit.Edit.id" href="#ele.edit.Edit.id" class=anchor><b>id</b></a></li>
+  <li><a id="ele.edit.Edit.container" href="#ele.edit.Edit.container" class=anchor><b>container</b></a></li>
+  <li><a id="ele.edit.Edit.buf" href="#ele.edit.Edit.buf" class=anchor><b>buf</b></a></li>
+  <li><a id="ele.edit.Edit.l" href="#ele.edit.Edit.l" class=anchor><b>l</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.c" href="#ele.edit.Edit.c" class=anchor><b>c</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.vl" href="#ele.edit.Edit.vl" class=anchor><b>vl</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.vc" href="#ele.edit.Edit.vc" class=anchor><b>vc</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.tl" href="#ele.edit.Edit.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.edit.Edit.tc" href="#ele.edit.Edit.tc" class=anchor><b>tc</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.edit.Edit.th" href="#ele.edit.Edit.th" class=anchor><b>th</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.edit.Edit.tw" href="#ele.edit.Edit.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.edit.Edit.fh" href="#ele.edit.Edit.fh" class=anchor><b>fh</b></a> <span class=code>=0</span></li>
+  <li><a id="ele.edit.Edit.fw" href="#ele.edit.Edit.fw" class=anchor><b>fw</b></a> <span class=code>=0</span></li>
+  <li><a id="ele.edit.Edit.closed" href="#ele.edit.Edit.closed" class=anchor><b>closed</b></a> <span class=code>=false</span></li>
+  <li><a id="ele.edit.Edit.modes" href="#ele.edit.Edit.modes" class=anchor><b>modes</b></a></li>
+  <li><a id="ele.edit.Edit.drawBars" href="#ele.edit.Edit.drawBars" class=anchor><b>drawBars</b></a> <span class=code>=Edit.drawBars</span></li>
+  <li><a id="ele.edit.Edit.lineStyle" href="#ele.edit.Edit.lineStyle" class=anchor><b>lineStyle</b></a> <span class=code>="bar:line"</span>
+  asciicolor style</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Edit.close" href="#Edit.close" class=anchor><b>fn close</b></a><span class=code>(e, ed)</span></li>
+  <li><a id="Edit.save" href="#Edit.save" class=anchor><b>fn save</b></a><span class=code>(e, ed)</span></li>
+  <li><a id="Edit.copy" href="#Edit.copy" class=anchor><b>fn copy</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.forceHeight" href="#Edit.forceHeight" class=anchor><b>fn forceHeight</b></a><span class=code>(e) -&gt; e.fh</span></li>
+  <li><a id="Edit.forceWidth" href="#Edit.forceWidth" class=anchor><b>fn forceWidth</b></a><span class=code>(e) -&gt; e.fw</span></li>
+  <li><a id="Edit.curLine" href="#Edit.curLine" class=anchor><b>fn curLine</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.colEnd" href="#Edit.colEnd" class=anchor><b>fn colEnd</b></a><span class=code>(e) -&gt; #(e:curLine() or '') + 1</span></li>
+  <li><a id="Edit.lastLine" href="#Edit.lastLine" class=anchor><b>fn lastLine</b></a><span class=code>(e) -&gt; e.buf[#e]</span></li>
+  <li><a id="Edit.offset" href="#Edit.offset" class=anchor><b>fn offset</b></a><span class=code>(e, off)</span></li>
+  <li><a id="Edit.boundC" href="#Edit.boundC" class=anchor><b>fn boundC</b></a><span class=code>(e, l,c)</span></li>
+  <li><a id="Edit.boundLC" href="#Edit.boundLC" class=anchor><b>fn boundLC</b></a><span class=code>(e, l, c)</span></li>
+  <li><a id="Edit.boundCol" href="#Edit.boundCol" class=anchor><b>fn boundCol</b></a><span class=code>(e, c, l)</span></li>
+  <li><a id="Edit.viewCursor" href="#Edit.viewCursor" class=anchor><b>fn viewCursor</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.changeStart" href="#Edit.changeStart" class=anchor><b>fn changeStart</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.changeUpdate2" href="#Edit.changeUpdate2" class=anchor><b>fn changeUpdate2</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.append" href="#Edit.append" class=anchor><b>fn append</b></a><span class=code>(e, msg)</span></li>
+  <li><a id="Edit.insert" href="#Edit.insert" class=anchor><b>fn insert</b></a><span class=code>(e, s)</span></li>
+  <li><a id="Edit.remove" href="#Edit.remove" class=anchor><b>fn remove</b></a><span class=code>(e, ...)</span></li>
+  <li><a id="Edit.removeOff" href="#Edit.removeOff" class=anchor><b>fn removeOff</b></a><span class=code>(e, off, l, c)</span></li>
+  <li><a id="Edit.replace" href="#Edit.replace" class=anchor><b>fn replace</b></a><span class=code>(e, s, ...)</span></li>
+  <li><a id="Edit.clear" href="#Edit.clear" class=anchor><b>fn clear</b></a><span class=code>(e)</span><br>
+  
+  Clear the buffer.</li>
+  <li><a id="Edit.undo" href="#Edit.undo" class=anchor><b>fn undo</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.redo" href="#Edit.redo" class=anchor><b>fn redo</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.draw" href="#Edit.draw" class=anchor><b>fn draw</b></a><span class=code>(e, ed, isRight)</span></li>
+  <li><a id="Edit.barDims" href="#Edit.barDims" class=anchor><b>fn barDims</b></a><span class=code>(e)</span></li>
+  <li><a id="Edit.drawBars" href="#Edit.drawBars" class=anchor><b>fn drawBars</b></a><span class=code>(e, d) -&gt; botHeight, leftWidth</span></li>
+  <li><a id="Edit.drawCursor" href="#Edit.drawCursor" class=anchor><b>fn drawCursor</b></a><span class=code>(e, ed)</span></li>
+  <li><a id="Edit.split" href="#Edit.split" class=anchor><b>fn split</b></a><span class=code>(e, S) -&gt; split</span><br>
+  
+  Split the edit by wrapping it and a copy into split type S.
+  Return the resulting split.</li>
+  <li><a id="Edit.path" href="#Edit.path" class=anchor><b>fn path</b></a><span class=code>(e) -&gt; path?</span></li>
+</ul>
+<br>
+<h3><a id="ele.actions" href="#ele.actions" class=anchor>Mod ele.actions</h3></a>
+<br>
+<b>Types: </b><a href="#ele.actions.nav">nav</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="ele.actions.keyinput" href="#ele.actions.keyinput" class=anchor><b>fn keyinput</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.merge" href="#ele.actions.merge" class=anchor><b>fn merge</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.chain" href="#ele.actions.chain" class=anchor><b>fn chain</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.move" href="#ele.actions.move" class=anchor><b>fn move</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.insert" href="#ele.actions.insert" class=anchor><b>fn insert</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.insertTab" href="#ele.actions.insertTab" class=anchor><b>fn insertTab</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.remove" href="#ele.actions.remove" class=anchor><b>fn remove</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.searchBuf" href="#ele.actions.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.path" href="#ele.actions.path" class=anchor><b>fn path</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.edit" href="#ele.actions.edit" class=anchor><b>fn edit</b></a><span class=code>(ed, ev)</span><br>
+  
+  Do something with the edit view, in this order: <ul>
+    <li>save=true: save the current edit view.</li>
+    <li>focus: focus the buffer, typically 'b#named'.</li>
+    <li>clear: clear the current edit view.</li>
+  </ul></li>
+  <li><a id="ele.actions.buf" href="#ele.actions.buf" class=anchor><b>fn buf</b></a><span class=code>(ed, ev)</span><br>
+  
+  Directly modify a buffer by name. This is most commonly
+  used for the overlay.</li>
+  <li><a id="ele.actions.window" href="#ele.actions.window" class=anchor><b>fn window</b></a><span class=code>(ed, ev)</span><br>
+  
+  Window operations like split and close</li>
+</ul>
+<br>
+<h3><a id="ele.actions.nav" href="#ele.actions.nav" class=anchor>Mod ele.actions.nav</h3></a>
+<b>Functions</b> <ul>
+  <li><a id="ele.actions.nav.getFocus" href="#ele.actions.nav.getFocus" class=anchor><b>fn getFocus</b></a><span class=code>(line)</span></li>
+  <li><a id="ele.actions.nav.getEntry" href="#ele.actions.nav.getEntry" class=anchor><b>fn getEntry</b></a><span class=code>(line) -&gt; (indent, kind, entry)</span></li>
+  <li><a id="ele.actions.nav.findParent" href="#ele.actions.nav.findParent" class=anchor><b>fn findParent</b></a><span class=code>(b, l) -&gt; linenum, line</span><br>
+  
+  Find the parent of current path entry
+  if isFocus the entry will be the focus (and ind will be 0)</li>
+  <li><a id="ele.actions.nav.findFocus" href="#ele.actions.nav.findFocus" class=anchor><b>fn findFocus</b></a><span class=code>(b, l) -&gt; linenum, line</span><br>
+  
+  Find the focus path line num (i.e. the starting directory)</li>
+  <li><a id="ele.actions.nav.findEnd" href="#ele.actions.nav.findEnd" class=anchor><b>fn findEnd</b></a><span class=code>(b, l) -&gt; linenum</span><br>
+  
+  Find the last line of the focus's entities (or itself).
+  invariant: line l is an entry or focus.</li>
+  <li><a id="ele.actions.nav.findView" href="#ele.actions.nav.findView" class=anchor><b>fn findView</b></a><span class=code>(b, l) -&gt; (fln, eln, fline)</span><br>
+  
+  Find the view (focusLineNum, endLineNum, focusLine)</li>
+  <li><a id="ele.actions.nav.getPath" href="#ele.actions.nav.getPath" class=anchor><b>fn getPath</b></a><span class=code>(b, l,c) -&gt; string</span><br>
+  
+  Walk up the parents, getting the full path.
+  If not an entry, try to find the path from the column.</li>
+  <li><a id="ele.actions.nav.findEntryEnd" href="#ele.actions.nav.findEntryEnd" class=anchor><b>fn findEntryEnd</b></a><span class=code>(b, l) -&gt; linenum</span></li>
+  <li><a id="ele.actions.nav.backFocus" href="#ele.actions.nav.backFocus" class=anchor><b>fn backFocus</b></a><span class=code>(b, l)</span></li>
+  <li><a id="ele.actions.nav.backEntry" href="#ele.actions.nav.backEntry" class=anchor><b>fn backEntry</b></a><span class=code>(b, l) -&gt; ln</span><br>
+  
+  Go backwards on the entry, returning the new line
+  For focus, this will go back one component.
+  For entry, this will collapse parent (and move to it).</li>
+  <li><a id="ele.actions.nav.expandEntry" href="#ele.actions.nav.expandEntry" class=anchor><b>fn expandEntry</b></a><span class=code>(b, l, ls) -&gt; numEntries</span></li>
+  <li><a id="ele.actions.nav.doBack" href="#ele.actions.nav.doBack" class=anchor><b>fn doBack</b></a><span class=code>(b, l, times)</span></li>
+  <li><a id="ele.actions.nav.doExpand" href="#ele.actions.nav.doExpand" class=anchor><b>fn doExpand</b></a><span class=code>(b, l, times, ls)</span></li>
+  <li><a id="ele.actions.nav.goPath" href="#ele.actions.nav.goPath" class=anchor><b>fn goPath</b></a><span class=code>(ed, create)</span><br>
+  
+  go to path at l,c. If op=='create' then create the path</li>
+  <li><a id="ele.actions.nav.doEntry" href="#ele.actions.nav.doEntry" class=anchor><b>fn doEntry</b></a><span class=code>(ed, op, times, ls)</span><br>
+  
+  perform the entry operation</li>
+</ul>
+<br>
+<h4><a id="Ty<Editor>" href="#Ty<Editor>" class=anchor>Record Editor</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<Editor>.s" href="#Ty<Editor>.s" class=anchor><b>s</b></a></li>
+  <li><a id="Ty<Editor>.mode" href="#Ty<Editor>.mode" class=anchor><b>mode</b></a>
+  current editor mode</li>
+  <li><a id="Ty<Editor>.modes" href="#Ty<Editor>.modes" class=anchor><b>modes</b></a>
+  keyboard bindings per mode (see: bindings.lua)</li>
+  <li><a id="Ty<Editor>.actions" href="#Ty<Editor>.actions" class=anchor><b>actions</b></a>
+  actions which events can trigger (see: actions.lua)</li>
+  <li><a id="Ty<Editor>.resources" href="#Ty<Editor>.resources" class=anchor><b>resources</b></a>
+  resources to close when shutting down</li>
+  <li><a id="Ty<Editor>.buffers" href="#Ty<Editor>.buffers" class=anchor><b>buffers</b></a></li>
+  <li><a id="Ty<Editor>.bufferId" href="#Ty<Editor>.bufferId" class=anchor><b>bufferId</b></a></li>
+  <li><a id="Ty<Editor>.namedBuffers" href="#Ty<Editor>.namedBuffers" class=anchor><b>namedBuffers</b></a></li>
+  <li><a id="Ty<Editor>.overlay" href="#Ty<Editor>.overlay" class=anchor><b>overlay</b></a>
+  the overlay buffer</li>
+  <li><a id="Ty<Editor>.edit" href="#Ty<Editor>.edit" class=anchor><b>edit</b></a>
+  the current edit buffer. Also in namedBuffers.overlay</li>
+  <li><a id="Ty<Editor>.view" href="#Ty<Editor>.view" class=anchor><b>view</b></a>
+  the root view</li>
+  <li><a id="Ty<Editor>.display" href="#Ty<Editor>.display" class=anchor><b>display</b></a>
+  display/terminal to write+paint text</li>
+  <li><a id="Ty<Editor>.run" href="#Ty<Editor>.run" class=anchor><b>run</b></a> <span class=code>=true</span>
+  set to false to stop the app</li>
+  <li><a id="Ty<Editor>.ext" href="#Ty<Editor>.ext" class=anchor><b>ext</b></a>
+  table for extensions to store data</li>
+  <li><a id="Ty<Editor>.search" href="#Ty<Editor>.search" class=anchor><b>search</b></a>
+  search pattern for searchBuf, etc</li>
+  <li><a id="Ty<Editor>.lastEvent" href="#Ty<Editor>.lastEvent" class=anchor><b>lastEvent</b></a>
+  the last event executed.</li>
+  <li><a id="Ty<Editor>.error" href="#Ty<Editor>.error" class=anchor><b>error</b></a>
+  error handler (ds.log.logfmt sig)</li>
+  <li><a id="Ty<Editor>.warn" href="#Ty<Editor>.warn" class=anchor><b>warn</b></a>
+  warn handler</li>
+  <li><a id="Ty<Editor>.newDat" href="#Ty<Editor>.newDat" class=anchor><b>newDat</b></a> <span class=code>=function() instance</span>
+  function to create new buffer</li>
+  <li><a id="Ty<Editor>.redraw" href="#Ty<Editor>.redraw" class=anchor><b>redraw</b></a>
+  set to true to force a redraw</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Editor.init" href="#Editor.init" class=anchor><b>fn init</b></a><span class=code>(ed)</span></li>
+  <li><a id="Editor.getBuffer" href="#Editor.getBuffer" class=anchor><b>fn getBuffer</b></a><span class=code>(ed, v) -&gt; Buffer?</span><br>
+  
+  Get an existing buffer if it exists.
+  Else return false if the buffer is path-like and should be
+  created, else nil.</li>
+  <li><a id="Editor.buffer" href="#Editor.buffer" class=anchor><b>fn buffer</b></a><span class=code>(ed, idOrPath) -&gt; Buffer</span></li>
+  <li><a id="Editor.namedBuffer" href="#Editor.namedBuffer" class=anchor><b>fn namedBuffer</b></a><span class=code>(ed, name, path)</span><br>
+  
+  Get or create a named buffer (NOT a path).</li>
+  <li><a id="Editor.open" href="#Editor.open" class=anchor><b>fn open</b></a><span class=code>(ed, path) -&gt; edit</span></li>
+  <li><a id="Editor.draw" href="#Editor.draw" class=anchor><b>fn draw</b></a><span class=code>(ed)</span></li>
+  <li><a id="Editor.handleStandard" href="#Editor.handleStandard" class=anchor><b>fn handleStandard</b></a><span class=code>(ed, ev)</span><br>
+  
+  Handle standard event fields.
+  Currently this only handles the <span class=code>mode</span> field.</li>
+  <li><a id="Editor.replace" href="#Editor.replace" class=anchor><b>fn replace</b></a><span class=code>(ed, from, to) -&gt; from</span><br>
+  
+  Replace the view/edit from with to.
+  Since Editor supports only <span class=code>ed.view</span> this means
+  it must be that value.</li>
+  <li><a id="Editor.remove" href="#Editor.remove" class=anchor><b>fn remove</b></a><span class=code>(ed, v) -&gt; v</span><br>
+  
+  Remove a view and remove self as it's container.
+  This does NOT close the view.</li>
+  <li><a id="Editor.focusFirst" href="#Editor.focusFirst" class=anchor><b>fn focusFirst</b></a><span class=code>(ed, c)</span><br>
+  
+  Focus the first edit view in container c (default ed.view)</li>
+  <li><a id="Editor.focus" href="#Editor.focus" class=anchor><b>fn focus</b></a><span class=code>(ed, b) -&gt; Edit</span><br>
+  
+  Replace the current edit view with the new <span class=code>ed:buffer(b)</span>.
+  Return the new edit view being focused.</li>
+</ul>
+<br>
+<h4><a id="Ty<Session>" href="#Ty<Session>" class=anchor>Record Session</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<Session>.ed" href="#Ty<Session>.ed" class=anchor><b>ed</b></a></li>
+  <li><a id="Ty<Session>.events" href="#Ty<Session>.events" class=anchor><b>events</b></a></li>
+  <li><a id="Ty<Session>.evsend" href="#Ty<Session>.evsend" class=anchor><b>evsend</b></a></li>
+  <li><a id="Ty<Session>.keys" href="#Ty<Session>.keys" class=anchor><b>keys</b></a></li>
+  <li><a id="Ty<Session>.keysend" href="#Ty<Session>.keysend" class=anchor><b>keysend</b></a></li>
+  <li><a id="Ty<Session>.logf" href="#Ty<Session>.logf" class=anchor><b>logf</b></a></li>
+  <li><a id="Ty<Session>.running" href="#Ty<Session>.running" class=anchor><b>running</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Session.test" href="#Session.test" class=anchor><b>fn test</b></a><span class=code>(T, s)</span></li>
+  <li><a id="Session.user" href="#Session.user" class=anchor><b>fn user</b></a><span class=code>(T, s)</span></li>
+  <li><a id="Session.run" href="#Session.run" class=anchor><b>fn run</b></a><span class=code>(s)</span></li>
+  <li><a id="Session.play" href="#Session.play" class=anchor><b>fn play</b></a><span class=code>(s, chord)</span></li>
+  <li><a id="Session.handleEvents" href="#Session.handleEvents" class=anchor><b>fn handleEvents</b></a><span class=code>(s)</span></li>
+  <li><a id="Session.draw" href="#Session.draw" class=anchor><b>fn draw</b></a><span class=code>(s)</span></li>
+</ul>
+<br>
+<h3><a id="ele.testing" href="#ele.testing" class=anchor>Mod ele.testing</h3></a>
+<b>Functions</b> <ul>
+  <li><a id="ele.testing.newSession" href="#ele.testing.newSession" class=anchor><b>fn newSession</b></a><span class=code>(text)</span></li>
+</ul>
+<br>
 </div></body>
 </html>

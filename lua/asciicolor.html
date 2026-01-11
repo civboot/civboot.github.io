@@ -14,18 +14,245 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-encode text color and style with a two ascii characters.
+<h1>AsciiColor: encode color in ASCII</h1>
+asciicolor is a library and protocol which encodes text color in terminals and
+(in future) elsewhere using only a single ascii character: i.e. <span class=code>b</span> for black,
+<span class=code>w</span> for white and <span class=code>n</span> for navy blue, etc. Capitalizing the character encodes
+a style (bold for foreground, underlined for background).
 <br>
-asciicolor is a protocol which encodes text color in terminals and (in future)
-elsewhere using only a single ascii character: i.e. <span class=code>b</span> for black, <span class=code>w</span> for
-white and <span class=code>n</span> for navy blue, etc. Capitalizing the character encodes a style
-(bold for foreground, underlined for background).
 <br>
-See <a href="#asciicolor.Color">#asciicolor.Color</a> for all codes.
+<a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a> enables <a href="fmt.html">fmt.html</a> to function ergonomically you
+can color text by simply writing <span class=code>io.fmt:styled('error', 'some error message')</span>
+and it will automatically load the user's configuration (see <a href="shim.html">shim.html</a> for
+details on how).
 <br>
-The color codes are used by <a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a> to style text
-using an <span class=code>AcWriter</span>. See <a href="#vt100.AcWriter">#vt100.AcWriter</a> for the reference spec.
+<h2><a id="Codes" href="#Codes" class=anchor>Codes</h2></a>
+The codes are as follows and are specified as two characters (foreground +
+background), captial means bold/underline. Additionally, <span class=code>'z'</span> <span class=code>' '</span> <span class=code>''</span>
+all mean "zero", aka the default code. <span class=code>z</span> can be capitalized to mean default
+with bold/underline.
 <br>
+<a id="codes" href="#codes" class=anchor><b>Codes</b></a>: <div class=table><table>
+  <tr>
+    <th>dark</th>
+    <th>light</th>
+  </tr>
+  <tr>
+    <td><span class=code>b</span> - black</td>
+    <td><span class=code>w</span> - white</td>
+  </tr>
+  <tr>
+    <td><span class=code>d</span> - darkgrey</td>
+    <td><span class=code>l</span> - lightgrey</td>
+  </tr>
+  <tr>
+    <td><span class=code>r</span> - red</td>
+    <td><span class=code>p</span> - pink</td>
+  </tr>
+  <tr>
+    <td><span class=code>y</span> - yellow</td>
+    <td><span class=code>h</span> - honey</td>
+  </tr>
+  <tr>
+    <td><span class=code>g</span> - green</td>
+    <td><span class=code>t</span> - tea</td>
+  </tr>
+  <tr>
+    <td><span class=code>c</span> - cyan</td>
+    <td><span class=code>a</span> - aqua</td>
+  </tr>
+  <tr>
+    <td><span class=code>n</span> - navy</td>
+    <td><span class=code>s</span> - sky -- blue</td>
+  </tr>
+  <tr>
+    <td><span class=code>m</span> - magenta</td>
+    <td><span class=code>f</span> - fuschia</td>
+  </tr>
+</table></div>
+Examples:<ul>
+  <li><span class=code>zl</span>: foreground default, background lightgrey.</li>
+  <li><span class=code>Rc</span> foreground bold-red, background cyan</li>
+  <li><span class=code>yP</span> foreground yellow, background underlined-pink.</li>
+</ul>
+<br>
+<h2><a id="Styles" href="#Styles" class=anchor>Styles</h2></a>
+The following are the builtin styles and their descriptions, which
+are intended for a "darkmode" black-background terminal. These can
+be overriden by (TODO: allow override again).
+<br>
+<a id="codes" href="#codes" class=anchor><b>Codes</b></a>: <div class=table><table>
+  <tr>
+    <th><b>Name</b></th>
+    <th><b>Description</b></th>
+  </tr>
+  <tr>
+    <td>bg</td>
+    <td>special: defines the default background color.
+    <br>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <th>Tools/Loggers/etc</th>
+  </tr>
+  <tr>
+    <td>path</td>
+    <td>file/dir path</td>
+  </tr>
+  <tr>
+    <td>match</td>
+    <td>search match</td>
+  </tr>
+  <tr>
+    <td>line</td>
+    <td>line number / etc</td>
+  </tr>
+  <tr>
+    <td>meta</td>
+    <td>Meta=metadata such as description of ops, etc</td>
+  </tr>
+  <tr>
+    <td>info</td>
+    <td>info box, i.e. editor overlay.</td>
+  </tr>
+  <tr>
+    <td>notify</td>
+    <td>make very visible</td>
+  </tr>
+  <tr>
+    <td>good</td>
+    <td>tell the user something was positive.</td>
+  </tr>
+  <tr>
+    <td>error</td>
+    <td>tell the user of an error.</td>
+  </tr>
+  <tr>
+    <td>warn</td>
+    <td>warn the use.</td>
+  </tr>
+  <tr>
+    <td>base</td>
+    <td>The base when comparing text (aka removed text)</td>
+  </tr>
+  <tr>
+    <td>basel</td>
+    <td>The base line number (use with base)</td>
+  </tr>
+  <tr>
+    <td>change</td>
+    <td>The change when comparing (aka added text)</td>
+  </tr>
+  <tr>
+    <td>changel</td>
+    <td>The change line number (use with change)</td>
+  </tr>
+  <tr>
+    <td>empty</td>
+    <td>Denote that something is empty.</td>
+  </tr>
+  <tr>
+    <td>ref</td>
+    <td>Denote a reference (i.e. to code, docs, etc)
+    <br>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <th>Document Styles</th>
+  </tr>
+  <tr>
+    <td>code</td>
+    <td>code</td>
+  </tr>
+  <tr>
+    <td>bold</td>
+    <td>bold text</td>
+  </tr>
+  <tr>
+    <td>ul</td>
+    <td>underlined text</td>
+  </tr>
+  <tr>
+    <td>boldul</td>
+    <td>bold-underlined text</td>
+  </tr>
+  <tr>
+    <td>h1, h2, h3, h4</td>
+    <td>headers
+    <br>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <th>Code Syntax</th>
+  </tr>
+  <tr>
+    <td>api</td>
+    <td>api, i.e. public function/class name</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>type signature</td>
+  </tr>
+  <tr>
+    <td>var</td>
+    <td>variable name</td>
+  </tr>
+  <tr>
+    <td>keyword</td>
+    <td>for while do etc</td>
+  </tr>
+  <tr>
+    <td>symbol</td>
+    <td>= <span class=code>+ . { }</span> etc</td>
+  </tr>
+  <tr>
+    <td>builtin</td>
+    <td>builtin fns/mods/names: io sys self etc</td>
+  </tr>
+  <tr>
+    <td>commentbox</td>
+    <td>start/end of comment: -- <span class=code>// /**/</span> etc</td>
+  </tr>
+  <tr>
+    <td>comment</td>
+    <td>content of comment:  <span class=code>/*content*/</span></td>
+  </tr>
+  <tr>
+    <td>stringbox</td>
+    <td>start/end of string: <span class=code>'' "" [[]]</span> etc</td>
+  </tr>
+  <tr>
+    <td>string</td>
+    <td>content of string inside quotes</td>
+  </tr>
+  <tr>
+    <td>key</td>
+    <td>key in map/struct/etc</td>
+  </tr>
+  <tr>
+    <td>char</td>
+    <td>single character: <span class=code>'c'</span></td>
+  </tr>
+  <tr>
+    <td>num</td>
+    <td>float or integer: <span class=code>0 1.0 0xFF</span> etc</td>
+  </tr>
+  <tr>
+    <td>literal</td>
+    <td>other literal: null, bool, date, regex, etc</td>
+  </tr>
+  <tr>
+    <td>call</td>
+    <td>function call: <span class=code>foo()</span></td>
+  </tr>
+  <tr>
+    <td>dispatch</td>
+    <td>object.method called: <span class=code>obj.foo()</span>, <span class=code>obj:foo()</span> }</td>
+  </tr>
+</table></div>
 <br>
 <h3><a id="asciicolor" href="#asciicolor" class=anchor>Mod asciicolor</h3></a>
 <br>
