@@ -37,7 +37,7 @@ M.main = function(args)<br>
 &nbsp; print('Hello '..args.name..'!')<br>
 end<br>
 <br>
-if M == MAIN then os.exit(M.main(G.arg)) end<br>
+if M == MAIN then M.main(G.arg) end<br>
 return M -- return as library
 </div>
 <br>
@@ -130,7 +130,7 @@ Create a new command as your module.
 &nbsp; 'to [path|file]: where to write output',<br>
 }<br>
 -- ... rest of your module.<br>
-if shim.isMain(M) then os.exit(M:main(arg)) end<br>
+if shim.isMain(M) then M:main(arg) end<br>
 return M
 </div>
 * <a id="shim.subcmds" href="#shim.subcmds" class=anchor><b>fn subcmds</b></a><span class=code>(name)</span><br>
