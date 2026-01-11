@@ -17,18 +17,37 @@
 <span class=code>pvc &lt;cmd&gt;</span>: patch version control command line utility.
 <div class=info>NOTICE: pvc now works but will have bugs and the API is subject to change.
 Use at your own risk and always back up work that you are using pvc
-to track (aka use <a href="#pvc-git">git and pvc together</a>).
+to track (aka use <a href="#git">git and pvc together</a>).
 </div>
 <br>
-<h2><a id="pvc-about" href="#pvc-about" class=anchor>About</h2></a>
+<h2><a id="about" href="#about" class=anchor>About</h2></a>
 <b>pvc</b> is a version control system similar to git or mercurial, but is ultra
 simple: branches are simply a <span class=code>base</span> followed by a set of unix patches with
 incrementing id. The only fundamental disadvantage (or advantage) of using pvc
 instead of git is that pvc supports only fast-forward merges, which are the
 cleanest and simplest to understand.
 <br>
-<h2><a id="pvc-init" href="#pvc-init" class=anchor>Initiaize your pvc repo</h2></a>
-<div class=info>You may also want to see <a href="#pvc-git">#pvc-git</a> to use git for backups</div>
+<h2><a id="basic" href="#basic" class=anchor>Basic Operation</h2></a>
+The <span class=code>pvc</span> command works very similar to git:<ul>
+  <li><a href="#init">initialize your repo</a> with pvc.init.</li>
+  <li>Whenever you have modified files you add them to
+  <span class=code>.pvcpaths</span> (so they are tracked) and commit them
+  to the current branch with pvc.commit.</li>
+  <li>When doing experimental changes, you create a branch
+  with pvc.branch.</li>
+  <li>When you are ready to merge changes from your dev branch
+  onto your main branch:<ul>
+    <li>pvc.squash the changes to a single commit (or a few
+    commits).</li>
+    <li>pvc.rebase so your branch's base is the same as main.</li>
+    <li>pvc.grow to merge the changes in.</li>
+  </ul></li>
+</ul>
+<div class=info>In the future civstack will offer tutorials for using
+all the development tools.
+</div>
+<h2><a id="init" href="#init" class=anchor>Initiaize your pvc repo</h2></a>
+<div class=info>You may also want to see <a href="#git">#git</a> to use git for backups</div>
 <br>
 With <span class=code>civ install .#</span> you will have pvc installed.
 <br>
@@ -60,7 +79,7 @@ directories. A common pvc ignore file might look like:
 %./path/to/some_binary
 </div>
 <br>
-<h3><a id="pvc-git" href="#pvc-git" class=anchor>Use with git</h3></a>
+<h3><a id="git" href="#git" class=anchor>Use with git</h3></a>
 pvc is still in early development, so there is no hosting service which
 ergonomically supports backing-up development. The following is how pvc
 (and civstack) itself is developed and seems to work well.
@@ -78,7 +97,7 @@ civstack as the example:<ul>
 <b>First</b>, put <span class=code>.pvc/</span> in your main repo's <span class=code>.gitignore</span>
 <div class=code-block>echo .pvc &gt;&gt; .gitignore</div>
 <br>
-<b>Second</b>, follow the <a href="#pvc-init">#pvc-init</a> section above. This should include adding
+<b>Second</b>, follow the <a href="#init">#init</a> section above. This should include adding
 all your files to pvc and making your first pvc commit.
 <br>
 <b>Third</b>, <span class=code>cd .pvc/</span> and create your git repository <i>inside the .pvc/
@@ -107,10 +126,10 @@ location followed by the commit message. When you want to push your
 documentation or releases to git, simply do so -- your main commit log
 won't be polluted by commiting pvc files.
 <br>
-<h1><a id="pvc-arch" href="#pvc-arch" class=anchor>Architecture</h1></a>
-<br>
+<h1><a id="arch" href="#arch" class=anchor>Architecture</h1></a>
 This architecture is given both so users can debug or fix any errors as well as
 to make it easier to create other implementations of pvc (i.e. in bash).
+<br>
 <br>
 pvc is composed of the following components: <ul>
   <li><b>repo</b>: the pvc repo (repository) is stored in the <span class=code>.pvc/</span> directory inside of
@@ -157,7 +176,7 @@ pvc is composed of the following components: <ul>
   <li><b>checkout (action)</b>: to "checkout a commit" means to make the local project
   directory the same as the commit. This is performed by finding the closest
   <b>snapshot</b> and applying commit patches (either forwards or backwards) in
-  order to make the snapshot reflect the commits state.</li>
+  order to make the snapshot reflect the commit's state.</li>
   <li><b>rebase (action)</b>: to "rebase a branch" means to increase the id of it's
   <b>base</b>. This is accomplished by making a copy of the new id's snapshot and
   repeatedly applying the unix <span class=code>merge</span> command (or equivalent) on each change,
@@ -199,9 +218,15 @@ mutated.
 
 <br>
 <h3><a id="pvc" href="#pvc" class=anchor>Command pvc</h3></a>
-Usage: <span class=code>pvc &lt;subcmd&gt; --help</span>
+Usage: <span class=code>pvc &lt;subcmd&gt; --help</span><br>
+
+This is the <span class=code>pvc</span> command-line tool which can also be called directly from
+Lua.
 <h4><a id="init" href="#init" class=anchor>Subcmd init</h4></a>
-Usage: <span class=code>pvc init dir --branch=main</span>
+Usage: <span class=code>pvc init dir --branch=main</span><br>
+
+Initialize the current directory as a pvc directory.
+This will create <span class=code>.pvc/</span> and <span class=code>.pvcpaths</span>
 <br>
 <br>
 <b>Arguments:</b><ul>
@@ -209,7 +234,14 @@ Usage: <span class=code>pvc init dir --branch=main</span>
   the initial branch name</li>
 </ul>
 <h4><a id="diff" href="#diff" class=anchor>Subcmd diff</h4></a>
-Usage: <span class=code>pvc diff branch1 branch2</span>
+Usage: <span class=code>pvc diff branch1=at branch2=local</span><br>
+
+Show the difference between two branches.  The default is <span class=code>at</span> (the
+current commit) vs <span class=code>local</span> (the local working directory).<br>
+
+<br>
+This command accepts either <span class=code>branch#id</span> names or <span class=code>paths/to/dir/</span>, where
+that dir/ has a <span class=code>.pvcpaths</span> file.
 <br>
 <br>
 <b>Arguments:</b><ul>
@@ -217,7 +249,13 @@ Usage: <span class=code>pvc diff branch1 branch2</span>
   show only changed paths</li>
 </ul>
 <h4><a id="commit" href="#commit" class=anchor>Subcmd commit</h4></a>
-Usage: <span class=code>pvc commit -- my message</span>
+Usage: <span class=code>pvc commit -- my message</span><br>
+
+Commit local changes to the current branch, creating
+a new id.
+<br>
+If no message is given this uses the COMMIT file
+for the message, if it exists.
 <br>
 <br>
 <h4><a id="at" href="#at" class=anchor>Subcmd at</h4></a>
@@ -230,6 +268,9 @@ directory to be updated to be that content.
 This will , this will fail (unless <span class=code>force=true</span>) if it would
 cause any local changes to be overwritten.
 <br>
+<div class=info><span class=code>at branch</span> is called a "checkout" in other version
+control systems.</div>
+<br>
 <br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.at.force" href="#pvc.at.force" class=anchor><b>force</b></a>
@@ -237,9 +278,9 @@ cause any local changes to be overwritten.
   If given without <span class=code>branch</span>, resets to current commit</li>
 </ul>
 <h4><a id="tip" href="#tip" class=anchor>Subcmd tip</h4></a>
-Usage: <span class=code>pvc tip [branch]</span><br>
+Usage: <span class=code>pvc tip [branch=current]</span><br>
 
-Get the tip id of branch (default=current)
+Get the tip id of branch.
 <br>
 <br>
 <h4><a id="branch" href="#branch" class=anchor>Subcmd branch</h4></a>
@@ -255,7 +296,8 @@ those changes into the local repo as the named <span class=code>branch</span>.
 <h4><a id="show" href="#show" class=anchor>Subcmd show</h4></a>
 Usage: <span class=code>pvc show [branch#id] --before=10</span><br>
 
-Show the commits before/after <span class=code>branch#id</span>.
+Show the commits before/after <span class=code>branch#id</span>.<br>
+
 <br>
 If <span class=code>branch#id</span> is not given, print all branches.
 <br>
@@ -271,7 +313,8 @@ If <span class=code>branch#id</span> is not given, print all branches.
 <h4><a id="desc" href="#desc" class=anchor>Subcmd desc</h4></a>
 Usage: <span class=code>pvc desc branch#id=current [$to/new.cxt]</span><br>
 
-Get or set the description for a single branch id.
+Get or set the description for a single branch id.<br>
+
 <br>
 The new description can be passed via <span class=code>to/new.cxt</span> or
 after <span class=code>--</span> (like commit).
@@ -280,9 +323,8 @@ after <span class=code>--</span> (like commit).
 <h4><a id="squash" href="#squash" class=anchor>Subcmd squash</h4></a>
 Usage: <span class=code>pvc squash [name#id]</span><br>
 
-Combine changes and descriptions from 
-<span class=code>branch id -&gt; endId</span> (inclusive) into a single commit.
-You can then edit the description using
+Combine changes and descriptions from <span class=code>branch id -&gt; endId</span> (inclusive)
+into a single commit. You can then edit the description using
 <span class=code>pvc desc branch#id</span>.<br>
 
 <br>
@@ -296,9 +338,14 @@ in a good state.
   the branch to squash</li>
 </ul>
 <h4><a id="rebase" href="#rebase" class=anchor>Subcmd rebase</h4></a>
-Usage: <span class=code>rebase [branch=current] --id=10 </span><br>
+Usage: <span class=code>rebase [branch=current] --id=10</span><br>
 
-Change the base of <span class=code>branch</span> to <span class=code>id</span>.
+Change the base of <span class=code>branch</span> to <span class=code>id</span>.<br>
+
+<br>
+Rebase is a fundamental operation. It allows you to make or accept changes
+on your "main" branch while you work on development branches which are
+behind the main. See <a href="#basic">#basic</a> for more details.
 <br>
 <br>
 <b>Arguments:</b><ul>
@@ -308,8 +355,7 @@ Change the base of <span class=code>branch</span> to <span class=code>id</span>.
 <h4><a id="grow" href="#grow" class=anchor>Subcmd grow</h4></a>
 Usage: <span class=code>grow --branch=current [from]</span><br>
 
-grow <span class=code>branch</span> to be same as branch <span class=code>from</span>
-<br>
+Copy changes in <span class=code>from</span> onto <span class=code>branch</span>.
 <div class=info>In other version control systems this is called a
 "fast forward merge"</div>
 <br>
