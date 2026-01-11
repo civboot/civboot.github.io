@@ -25,16 +25,17 @@ to supercharge their personal development stack.
 <br>
 The Civstack is a complete and well documented software development tech stack
 built from scratch. It encompases an <a href="lua/ele.html">editor</a>,
-<a href="lua/pvc.html">version control></a>, <a href="lua/civ.html">build system and package
+<a href="lua/pvc.html">version control</a>, <a href="lua/civ.html">build system and package
 manager</a> and <a href="lua/cxt.html">documentation language</a>. Soon it will have
 educational games and tutorials, a custom assembly language, and its own
 implementation of lua, which all of the high-level software is implemented in.
 <br>
 <h3><a id="install" href="#install" class=anchor>Installation</h3></a>
-<b>First</b>, install Lua5.4 with <span class=code>apt-get install lua</span>, <span class=code>brew lua</span>, <div class=code-block>pkgin install<br>
-lua5.4
-</div> or however you normally install software, or follow directions at
+<b>First</b>, install Lua5.4 with <span class=code>apt-get install lua</span> (Ubuntu), <span class=code>brew lua</span>
+(Mac), <span class=code>pkgin install lua5.4</span> (NetBSD) or however you normally install
+software, or follow directions at
 <a href="https://lua.org/start.html">https://lua.org/start.html</a>. You will also need a C compiler.
+<br>
 <br>
 <b>Then</b> run the following (or equivalent). Make certain to follow the
 directions for <span class=code>PATH</span> variables.
@@ -48,11 +49,9 @@ source ~/.bashrc &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; # load new PAT
 civ test civ:.# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# test all targets<br>
 civ install civ:#full &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# install main civ software
 </div>
-<br>
 <div class=info>By default, civ software will be put in <span class=code>~/.local/civ/</span>. You can
 modify this by changing <span class=code>.civconfig</span>.
 </div>
-<br>
 <h3><a id="cmd" href="#cmd" class=anchor>Commands</h3></a>
 Commands installed by <span class=code>civ install civ:#full</span>. You can view their command
 documentation using <span class=code>luadoc &lt;cmd&gt;</span>.
@@ -109,7 +108,6 @@ scripting, asynchronous file access and other goodies.
   <li><a href="lua/vt100.html"><b>vt100</b></a>: defines common VT100 (aka standard unix)
   terminal input and output.</li>
 </ul>
-<br>
 <h2><a id="LICENSE" href="#LICENSE" class=anchor>LICENSE</h2></a>
 All software, tests, documentation, notes and anything else in this repository
 is released into the public domain (<a href="LICENSE">LICENSE</a>) unless otherwise noted in the
