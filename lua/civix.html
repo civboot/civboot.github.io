@@ -14,35 +14,37 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-Civboot's unix system library
-<br>
+<h1>civix: unix system library for Civstack</h1>
 Civix contains standard unix functions that exist in most language's "sys"
-library such as <span class=code>sleep</span>, <span class=code>epoch</span> etc. It also contains a powerful <span class=code>Sh{}</span> type
-and convieience <span class=code>sh()</span> function for executing system shell commands, either
-synchronously or asynchronously using the LAP protocol (see <a href="#Package_lap">#Package_lap</a>.
+library such as <span class=code>sleep</span>, <span class=code>epoch</span> etc. It also contains a powerful <span class=code>Sh{}</span>
+type and convieience <span class=code>sh()</span> function for executing system shell commands,
+either synchronously or asynchronously using the LAP protocol (see
+<a href="lap.html">lap.html</a>.
 <br>
-<div class=code-block>$ lua<br>
-&gt; sh = require'civix'.sh<br>
-&gt; print(sh'ls some/path')<br>
-&gt; -- cat /var/log/syslog | grep "netgroup: version"<br>
-&gt; out = sh{stdin=io.open'/var/log/syslog', 'grep', 'netgroup: version'}<br>
-&gt; for line in require'ds'.lines(out) do ... something per line ... end
-</div>
-<br>
-<div class=info>Civix depends on the <a href="#Package_fd">#Package_fd</a> library for async file descriptors and
-other filedescriptor functionality.</div>
+<div class=info>TODO: better docs to come once the ele shell is finished</div>
 <br>
 <h3><a id="civix" href="#civix" class=anchor>Mod civix</h3></a>
 civix: unix-like OS utilities.
 <br>
-<b>Types: </b><a href="#civix.B">B</a> <a href="#civix.Walk">Walk</a> <a href="#civix.Sh">Sh</a> <a href="#civix.ShFin">ShFin</a> 
+<b>Types: </b><a href="#civix.Walk">Walk</a> <a href="#civix.Sh">Sh</a> <a href="#civix.ShFin">ShFin</a> 
 <br>
 <b>Functions</b> <ul>
-  <li><a id="civix.mkdir" href="#civix.mkdir" class=anchor><b>fn mkdir</b></a><span class=code>(path)</span></li>
-  <li><a id="civix.dir" href="#civix.dir" class=anchor><b>fn dir</b></a><span class=code>(path)</span></li>
-  <li><a id="civix.rmdir" href="#civix.rmdir" class=anchor><b>fn rmdir</b></a><span class=code>(path)</span></li>
-  <li><a id="civix.exists" href="#civix.exists" class=anchor><b>fn exists</b></a><span class=code>(path)</span></li>
-  <li><a id="civix.pathtype" href="#civix.pathtype" class=anchor><b>fn pathtype</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.mkdir" href="#civix.mkdir" class=anchor><b>fn mkdir</b></a><br>
+  
+  make a new directory, the parent must exist.</li>
+  <li><a id="civix.dir" href="#civix.dir" class=anchor><b>fn dir</b></a><span class=code>(dir) -&gt; iter[entry]</span><br>
+  
+  list entires in directory.</li>
+  <li><a id="civix.rmdir" href="#civix.rmdir" class=anchor><b>fn rmdir</b></a><span class=code>(path) -&gt; ok, errmsg, errno</span><br>
+  
+  remove empty directory</li>
+  <li><a id="civix.exists" href="#civix.exists" class=anchor><b>fn exists</b></a><span class=code>(path) -&gt; bool</span><br>
+  
+  return whether path exists.</li>
+  <li><a id="civix.pathtype" href="#civix.pathtype" class=anchor><b>fn pathtype</b></a><span class=code>(path) -&gt; str?, err</span><br>
+  
+  return path type (i.e. M.FILE, M.DIR, etc).
+  if path DNE then return (nil, errmsg).</li>
   <li><a id="civix.rm" href="#civix.rm" class=anchor><b>fn rm</b></a><span class=code>(path) -&gt; nil</span><br>
   
   remove file.</li>
@@ -55,7 +57,6 @@ civix: unix-like OS utilities.
   <li><a id="civix.modifiedEq" href="#civix.modifiedEq" class=anchor><b>fn modifiedEq</b></a><span class=code>(a, b)</span><br>
   
   return whether two path|File|Stat have equal modification times</li>
-  <li><a id="civix.getpagesize" href="#civix.getpagesize" class=anchor><b>fn getpagesize</b></a><span class=code>() -&gt; 4096</span></li>
   <li><a id="civix.ls" href="#civix.ls" class=anchor><b>fn ls</b></a><span class=code>(dir) -&gt; list[str]</span><br>
   
   Return the entries in a dir as a list.
@@ -122,9 +123,15 @@ civix: unix-like OS utilities.
   <li><a id="civix.cpRecursive" href="#civix.cpRecursive" class=anchor><b>fn cpRecursive</b></a><span class=code>(from, to, except)</span><br>
   
   recursively copy <span class=code>from/</span> to new <span class=code>to/</span> directory.</li>
-  <li><a id="civix.rmRecursive" href="#civix.rmRecursive" class=anchor><b>fn rmRecursive</b></a><span class=code>(path)</span></li>
-  <li><a id="civix.mkDirs" href="#civix.mkDirs" class=anchor><b>fn mkDirs</b></a><span class=code>(path)</span></li>
-  <li><a id="civix.mkDir" href="#civix.mkDir" class=anchor><b>fn mkDir</b></a><span class=code>(path, parents)</span></li>
+  <li><a id="civix.rmRecursive" href="#civix.rmRecursive" class=anchor><b>fn rmRecursive</b></a><span class=code>(path)</span><br>
+  
+  Recursively (force) remove the directory and all children.</li>
+  <li><a id="civix.mkDirs" href="#civix.mkDirs" class=anchor><b>fn mkDirs</b></a><span class=code>(path)</span><br>
+  
+  Recursively (force) create the directory and any missing children.</li>
+  <li><a id="civix.mkDir" href="#civix.mkDir" class=anchor><b>fn mkDir</b></a><span class=code>(path, parents)</span><br>
+  
+  Create a single directory. The parent must exist.</li>
   <li><a id="civix.forceCp" href="#civix.forceCp" class=anchor><b>fn forceCp</b></a><span class=code>(from, to)</span><br>
   
   copy <span class=code>from</span> to <span class=code>to</span>, creating the directory structure if necessary.</li>
@@ -158,7 +165,10 @@ civix: unix-like OS utilities.
 &nbsp; a/a3/a4.txt # content: stuff in a3.txt<br>
 &nbsp; 
 </div></li>
-  <li><a id="civix.Lap" href="#civix.Lap" class=anchor><b>fn Lap</b></a><span class=code>()</span></li>
+  <li><a id="civix.Lap" href="#civix.Lap" class=anchor><b>fn Lap</b></a><span class=code>()</span><br>
+  
+  civix's implementation of lap.Lap, enabling asynchronous file
+  reading/writing and async shell operations using pure lua coroutines.</li>
   <li><a id="civix.sh" href="#civix.sh" class=anchor><b>fn sh</b></a><span class=code>(M,'sh') -&gt; out, err, Sh</span><br>
   
   Execute the command in another process via execvp (system shell). Throws an
@@ -178,7 +188,8 @@ civix: unix-like OS utilities.
   Note: use <span class=code>Plumb{...}:run()</span> if you want to pipe multiple shells together.
   <div class=table><table>
     <tr>
-      <th>Command                               Bash</th>
+      <th>Lua</th>
+      <th>Bash</th>
     </tr>
     <tr>
       <td><span class=code>sh'ls foo/bar'</span></td>
@@ -196,29 +207,22 @@ civix: unix-like OS utilities.
   <li><a id="civix.isRoot" href="#civix.isRoot" class=anchor><b>fn isRoot</b></a><span class=code>() -&gt; os.getenv'EUID' == '0'</span></li>
 </ul>
 <br>
-<h3><a id="civix.B" href="#civix.B" class=anchor>Mod civix.B</h3></a>
-Several (but not all) functions in this module are used for civ.lua.
-However, native modules especially cannot be loaded before the
-bulid system is bootstrapped (at least not easily), so there are
-a few of these checks for NOLIB in this library which will use
-civix.B (bootstrap) instead in that case.
-<br>
-Clients should typically not use civix.B.
-<b>Functions</b> <ul>
-  <li><a id="civix.B.sh" href="#civix.B.sh" class=anchor><b>fn sh</b></a><span class=code>(cmd) -&gt; stdout, stderr, fakeSh</span></li>
-  <li><a id="civix.B.mkdir" href="#civix.B.mkdir" class=anchor><b>fn mkdir</b></a><span class=code>(dir)</span></li>
-  <li><a id="civix.B.rmdir" href="#civix.B.rmdir" class=anchor><b>fn rmdir</b></a><span class=code>(dir)</span></li>
-  <li><a id="civix.B.dir" href="#civix.B.dir" class=anchor><b>fn dir</b></a><span class=code>(dir) -&gt; iter[entry]</span></li>
-  <li><a id="civix.B.exists" href="#civix.B.exists" class=anchor><b>fn exists</b></a><span class=code>(path) -&gt; bool</span></li>
-  <li><a id="civix.B.pathtype" href="#civix.B.pathtype" class=anchor><b>fn pathtype</b></a><span class=code>(path)</span></li>
-</ul>
-<br>
 <h4><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h4></a>
 Walk the directory tree as a iterator of <span class=code>path, ftype</span>. Can walk either a
 single path <span class=code>Walk'path/'</span> or a list of paths <span class=code>Walk{'a/', 'b.txt'}</span>. <ul>
   <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
   <li>Warning: you may want to handle <span class=code>ftype=='error'</span></li>
 </ul>
+<br>
+<b>Usage:</b><div class=code-block>local ix = require'civix'<br>
+local w = ix.Walk{'path/', 'path2/', 'file.txt'}<br>
+for path, pathTy in w do<br>
+&nbsp; if pathTy == 'dir' and path:match'skipMe' do<br>
+&nbsp; &nbsp; w:skip() -- skips the rest in this directory.<br>
+&nbsp; end<br>
+&nbsp; -- ... do something with each path.<br>
+end
+</div>
 <br>
 <b>Fields:</b><ul>
   <li><a id="civix.Walk.maxDepth" href="#civix.Walk.maxDepth" class=anchor><b>maxDepth</b></a>
@@ -296,6 +300,8 @@ Examples (see civix.sh for more examples): <div class=table><table>
 </ul>
 <br>
 <h4><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h4></a>
+Argument for <a href="#civix.Sh.finish">#civix.Sh.finish</a>.
+<br>
 <b>Fields:</b><ul>
   <li><a id="civix.ShFin.stdin" href="#civix.ShFin.stdin" class=anchor><b>stdin</b></a></li>
   <li><a id="civix.ShFin.stdout" href="#civix.ShFin.stdout" class=anchor><b>stdout</b></a></li>
