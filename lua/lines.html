@@ -83,9 +83,20 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
   and must define the <span class=code>parse</span> method.</li>
   <li><a id="lines.Writer.write" href="#lines.Writer.write" class=anchor><b>fn write</b></a></li>
-  <li><a id="lines.Writer.flush" href="#lines.Writer.flush" class=anchor><b>fn flush</b></a><span class=code>()</span></li>
-  <li><a id="lines.Writer.extend" href="#lines.Writer.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span></li>
-  <li><a id="lines.Writer.icopy" href="#lines.Writer.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+  <li><a id="lines.Writer.flush" href="#lines.Writer.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
+  
+  function that does and returns nothing.</li>
+  <li><a id="lines.Writer.extend" href="#lines.Writer.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
+  
+  This is used by types implementing <span class=code>:extend</span>.
+  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
+  extend in a for loop.
+  
+  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
+  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
+  <li><a id="lines.Writer.icopy" href="#lines.Writer.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
+  
+  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h4><a id="Ty<Gap>" href="#Ty<Gap>" class=anchor>Record Gap</h4></a>
@@ -96,8 +107,12 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="Ty<Gap>.readonly" href="#Ty<Gap>.readonly" class=anchor><b>readonly</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Gap.flush" href="#Gap.flush" class=anchor><b>fn flush</b></a><span class=code>()</span></li>
-  <li><a id="Gap.close" href="#Gap.close" class=anchor><b>fn close</b></a><span class=code>()</span></li>
+  <li><a id="Gap.flush" href="#Gap.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
+  
+  function that does and returns nothing.</li>
+  <li><a id="Gap.close" href="#Gap.close" class=anchor><b>fn close</b></a><span class=code>()</span><br>
+  
+  function that does and returns nothing.</li>
   <li><a id="Gap.icopy" href="#Gap.icopy" class=anchor><b>fn icopy</b></a><span class=code>(g) -&gt; list</span></li>
   <li><a id="Gap.load" href="#Gap.load" class=anchor><b>fn load</b></a><span class=code>(T, f, close) -&gt; Gap?, err?</span><br>
   
@@ -163,8 +178,17 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   Warning: currently the reader's len will be static, so this should
   be mostly used for temporary cases. This might be changed in
   the future.</li>
-  <li><a id="lines.U3File.extend" href="#lines.U3File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span></li>
-  <li><a id="lines.U3File.icopy" href="#lines.U3File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+  <li><a id="lines.U3File.extend" href="#lines.U3File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
+  
+  This is used by types implementing <span class=code>:extend</span>.
+  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
+  extend in a for loop.
+  
+  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
+  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
+  <li><a id="lines.U3File.icopy" href="#lines.U3File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
+  
+  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h4><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h4></a>
@@ -195,8 +219,17 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="File.reader" href="#File.reader" class=anchor><b>fn reader</b></a><span class=code>(lf) -&gt; lines.File?, err?</span><br>
   
   Get a new read-only instance with an independent file-descriptor.</li>
-  <li><a id="File.extend" href="#File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span></li>
-  <li><a id="File.icopy" href="#File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+  <li><a id="File.extend" href="#File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
+  
+  This is used by types implementing <span class=code>:extend</span>.
+  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
+  extend in a for loop.
+  
+  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
+  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
+  <li><a id="File.icopy" href="#File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
+  
+  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h4><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h4></a>
@@ -236,7 +269,9 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="EdFile.inset" href="#EdFile.inset" class=anchor><b>fn inset</b></a><span class=code>(ef, i, values, rmlen) -&gt; rm?</span><br>
   
   insert into EdFile's dats.</li>
-  <li><a id="EdFile.icopy" href="#EdFile.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span></li>
+  <li><a id="EdFile.icopy" href="#EdFile.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
+  
+  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h3><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h3></a>
@@ -280,7 +315,38 @@ around a lines-like 2D grid.
   Go backward to find the start of this (or previous) word</li>
   <li><a id="rebuf.motion.getRange" href="#rebuf.motion.getRange" class=anchor><b>fn getRange</b></a><span class=code>(s, i, getKind) -&gt; si,ei</span><br>
   
-  get the <span class=code>range[si,ei</span></li>
-</ul> of whatever is at <span class=code>s[i</span>
+  get the <span class=code>range[si,ei]</span> of whatever is at <span class=code>s[i]</span>.</li>
+  <li><a id="rebuf.motion.findBack" href="#rebuf.motion.findBack" class=anchor><b>fn findBack</b></a><span class=code>(s, pat, end_, plain) -&gt; int</span><br>
+  
+  find backwards
+  this searches for the pattern and returns the LAST one found.
+  This is HORRIBLY non-performant, only use for small amounts of data</li>
+</ul>
+<br>
+<b>table</b>: raw <span class=code>table</span>
+<br>
+<h3><a id="lines.kev" href="#lines.kev" class=anchor>Mod lines.kev</h3></a>
+kev: "Key Equal Value" serialization format.
+<br>
+This is an extremely common format in many unix utilities, "good enough"
+for a large number of configuration use cases. The format is simple: a file
+containing lines of <span class=code>key=value</span>. The input and output are a table of
+key,val strings (though tostring is called for <span class=code>to()</span>). Lines which don't
+have <span class=code>=</span> in them are ignored.
+<br>
+Nested data is absolutely not supported. Spaces are treated as literal both
+before and after <span class=code>=</span>. If you want a key containing <span class=code>=</span> or key/value
+containing newline then use a different format.
+<b>Functions</b> <ul>
+  <li><a id="lines.kev.to" href="#lines.kev.to" class=anchor><b>fn to</b></a><span class=code>(t)</span><br>
+  
+  convert to a table of <span class=code>key=value</span> lines.</li>
+  <li><a id="lines.kev.from" href="#lines.kev.from" class=anchor><b>fn from</b></a><span class=code>(lines, to)</span><br>
+  
+  convert <span class=code>key=value</span> lines to a table.</li>
+  <li><a id="lines.kev.load" href="#lines.kev.load" class=anchor><b>fn load</b></a><span class=code>(f, to) -&gt; M.from(lines.load(f), to)</span></li>
+  <li><a id="lines.kev.dump" href="#lines.kev.dump" class=anchor><b>fn dump</b></a><span class=code>(t, f) -&gt; lines.dump(M.to(t), f)</span></li>
+</ul>
+<br>
 </div></body>
 </html>

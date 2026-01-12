@@ -37,11 +37,186 @@ to the terminal, web-pages and the civstack editor.
 <h2>API / Architecture</h2>
 <br>
 <a href="#fmt.Fmt">#fmt.Fmt</a> defines the formatter which has methods/settings: <ul>
-  <li><span class=code>to [file|Styler</span></li>
-</ul> (argument): where to write to. Default is to push to
-self, treating Fmt as a list of strings (which you can call <span class=code>table.concat</span>
-on).
+  <li><span class=code>to [file|Styler]</span> (argument): where to write to. Default is to push to
+  self, treating Fmt as a list of strings (which you can call <span class=code>table.concat</span>
+  on).</li>
+  <li><span class=code>style [boolean]</span> to enable/disable styling. Set to <span class=code>true</span> if <span class=code>to=styler</span>
+  AND you want color/etc.</li>
+  <li><span class=code>__call(f, v)</span>: call with any value to use <span class=code>__fmt</span> method or default.</li>
+  <li><span class=code>write(...)</span>: write like a normal file</li>
+  <li><span class=code>styled(style, text, ...)</span>: style <span class=code>text</span> and <span class=code>write(...)</span> using a
+  provided styler (i.e. <a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a>)</li>
+  <li><span class=code>level(add)</span> to increase/decrease the indentation level.</li>
+</ul>
 <br>
-* <span class=code>style [boolean</span>
+See the documentation of each function for more details.
+<br>
+<h3><a id="fmt" href="#fmt" class=anchor>Mod fmt</h3></a>
+format module: format any type into a readable string
+<br>
+<b>Types: </b><a href="#fmt.Fmt">Fmt</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="fmt.cmpDuck" href="#fmt.cmpDuck" class=anchor><b>fn cmpDuck</b></a><span class=code>(a, b)</span><br>
+  
+  Compares two values of any type.
+  
+  Note: <span class=code>nil &lt; bool &lt; number &lt; string &lt; table</span></li>
+  <li><a id="fmt.sortKeys" href="#fmt.sortKeys" class=anchor><b>fn sortKeys</b></a><span class=code>(t) -&gt; list</span><br>
+  
+  Return a list of the table's keys sorted using <span class=code>cmpDuck</span></li>
+  <li><a id="fmt.tostring" href="#fmt.tostring" class=anchor><b>fn tostring</b></a><span class=code>(v, fmt)</span></li>
+  <li><a id="fmt.format" href="#fmt.format" class=anchor><b>fn format</b></a><span class=code>(fmt, ...)</span></li>
+  <li><a id="fmt.errorf" href="#fmt.errorf" class=anchor><b>fn errorf</b></a><span class=code>(...)</span></li>
+  <li><a id="fmt.assertf" href="#fmt.assertf" class=anchor><b>fn assertf</b></a><span class=code>(a, ...) -&gt; a or error(format(...), 2)</span></li>
+  <li><a id="fmt.fprint" href="#fmt.fprint" class=anchor><b>fn fprint</b></a><span class=code>(f, ...)</span></li>
+  <li><a id="fmt.print" href="#fmt.print" class=anchor><b>fn print</b></a><span class=code>(...) -&gt; fprint(io.fmt, ...)</span><br>
+  
+  <span class=code>print(...)</span> but using <span class=code>io.fmt</span></li>
+  <li><a id="fmt.pprint" href="#fmt.pprint" class=anchor><b>fn pprint</b></a><span class=code>(...)</span><br>
+  
+  pretty print</li>
+  <li><a id="fmt.pretty" href="#fmt.pretty" class=anchor><b>fn pretty</b></a><span class=code>(v) -&gt; string</span><br>
+  
+  pretty format the value</li>
+  <li><a id="fmt.table" href="#fmt.table" class=anchor><b>fn table</b></a><span class=code>(tbl, f) -&gt; f:rawtable(tbl)</span><br>
+  
+  Set to __fmt to format a type like a table.</li>
+</ul>
+<br>
+<h4><a id="fmt.Fmt" href="#fmt.Fmt" class=anchor>Record Fmt</h4></a>
+The Fmt formatter object.
+<br>
+This is the main API of this module. It enables formatting any
+type by simply calling it's instance, appending the result to <span class=code>f</span> (i.e.
+self) or (if present) writing the result to <span class=code>f.to</span>.
+<br>
+If <span class=code>f.to</span> is not provided, you can get the resulting string by calling
+<span class=code>tostring(f)</span>
+<br>
+<b>Fields:</b><ul>
+  <li><a id="fmt.Fmt.style" href="#fmt.Fmt.style" class=anchor><b>style</b></a>
+  enable styling. If true, set <span class=code>to=Styler</span></li>
+  <li><a id="fmt.Fmt.to" href="#fmt.Fmt.to" class=anchor><b>to</b></a>
+  if set calls write</li>
+  <li><a id="fmt.Fmt.keyEnd" href="#fmt.Fmt.keyEnd" class=anchor><b>keyEnd</b></a> <span class=code>=", "</span></li>
+  <li><a id="fmt.Fmt.keySet" href="#fmt.Fmt.keySet" class=anchor><b>keySet</b></a> <span class=code>="="</span></li>
+  <li><a id="fmt.Fmt.indexEnd" href="#fmt.Fmt.indexEnd" class=anchor><b>indexEnd</b></a> <span class=code>=", "</span></li>
+  <li><a id="fmt.Fmt.tableStart" href="#fmt.Fmt.tableStart" class=anchor><b>tableStart</b></a> <span class=code>="{"</span></li>
+  <li><a id="fmt.Fmt.tableEnd" href="#fmt.Fmt.tableEnd" class=anchor><b>tableEnd</b></a> <span class=code>="}"</span></li>
+  <li><a id="fmt.Fmt.listEnd" href="#fmt.Fmt.listEnd" class=anchor><b>listEnd</b></a> <span class=code>=""</span>
+  separator between list/map</li>
+  <li><a id="fmt.Fmt.indent" href="#fmt.Fmt.indent" class=anchor><b>indent</b></a> <span class=code>=" &nbsp;"</span></li>
+  <li><a id="fmt.Fmt.maxIndent" href="#fmt.Fmt.maxIndent" class=anchor><b>maxIndent</b></a> <span class=code>=20</span></li>
+  <li><a id="fmt.Fmt.numfmt" href="#fmt.Fmt.numfmt" class=anchor><b>numfmt</b></a> <span class=code>="%q"</span></li>
+  <li><a id="fmt.Fmt.strfmt" href="#fmt.Fmt.strfmt" class=anchor><b>strfmt</b></a> <span class=code>="%q"</span></li>
+  <li><a id="fmt.Fmt.table" href="#fmt.Fmt.table" class=anchor><b>table</b></a> <span class=code>=Fmt.table</span></li>
+  <li><a id="fmt.Fmt.string" href="#fmt.Fmt.string" class=anchor><b>string</b></a> <span class=code>=Fmt.string</span></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Fmt.toPretty" href="#Fmt.toPretty" class=anchor><b>fn toPretty</b></a><span class=code>(f)</span></li>
+  <li><a id="Fmt.pretty" href="#Fmt.pretty" class=anchor><b>fn pretty</b></a><span class=code>(F, t) -&gt; F(t):toPretty()</span><br>
+  
+  Create a new Formatter object with default "pretty" settings.
+  Generally, this means line-separated and indented tables.</li>
+  <li><a id="Fmt.level" href="#Fmt.level" class=anchor><b>fn:level</b></a><span class=code>(add) -&gt; int: current level</span><br>
+  
+  Add to the indent level and get the new value
+  call with <span class=code>add=nil</span> to just get the current level</li>
+  <li><a id="Fmt.write" href="#Fmt.write" class=anchor><b>fn:write</b></a><span class=code>(...)</span><br>
+  
+  Same as <span class=code>file:write</span>.</li>
+  <li><a id="Fmt.flush" href="#Fmt.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span></li>
+  <li><a id="Fmt.close" href="#Fmt.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
+  <li><a id="Fmt.styled" href="#Fmt.styled" class=anchor><b>fn styled</b></a><span class=code>(f, style, text, ...)</span><br>
+  
+  Call <span class=code>to:styled(...)</span> if it is enabled, else simply <span class=code>f:write(text, ...)</span>.
+  This allows for configurable styling of output, both for objects as well
+  as command-line utilities/etc.</li>
+  <li><a id="Fmt.tableKey" href="#Fmt.tableKey" class=anchor><b>fn tableKey</b></a><span class=code>(f, k)</span><br>
+  
+  Format like a table key. This can be overriden by type extensions to
+  provide other behavior.</li>
+  <li><a id="Fmt.nil" href="#Fmt.nil" class=anchor><b>fn nil</b></a><span class=code>(f)</span><br>
+  
+  format a nil value.</li>
+  <li><a id="Fmt.boolean" href="#Fmt.boolean" class=anchor><b>fn boolean</b></a><span class=code>(f, b)</span><br>
+  
+  format a boolean value.</li>
+  <li><a id="Fmt.number" href="#Fmt.number" class=anchor><b>fn number</b></a><span class=code>(f, n)</span><br>
+  
+  format a number value.</li>
+  <li><a id="Fmt.string" href="#Fmt.string" class=anchor><b>fn string</b></a><span class=code>(f, s)</span><br>
+  
+  format a string value.</li>
+  <li><a id="Fmt.thread" href="#Fmt.thread" class=anchor><b>fn thread</b></a><span class=code>(f, th)</span><br>
+  
+  format a thread value.</li>
+  <li><a id="Fmt.userdata" href="#Fmt.userdata" class=anchor><b>fn userdata</b></a><span class=code>(f, ud)</span><br>
+  
+  format a userdata value.</li>
+  <li><a id="Fmt.function" href="#Fmt.function" class=anchor><b>fn function</b></a><span class=code>(f, fn)</span><br>
+  
+  format a function value.</li>
+  <li><a id="Fmt.items" href="#Fmt.items" class=anchor><b>fn items</b></a><span class=code>(f, t, hasKeys, listEnd)</span><br>
+  
+  format items in table "list"</li>
+  <li><a id="Fmt.keyvals" href="#Fmt.keyvals" class=anchor><b>fn keyvals</b></a><span class=code>(f, t, keys)</span><br>
+  
+  format key/vals in table "map".</li>
+  <li><a id="Fmt.list" href="#Fmt.list" class=anchor><b>fn list</b></a><span class=code>(f, t)</span><br>
+  
+  Format only the list-elements of a table.</li>
+  <li><a id="Fmt.rawtable" href="#Fmt.rawtable" class=anchor><b>fn rawtable</b></a><span class=code>(f, t)</span></li>
+  <li><a id="Fmt.table" href="#Fmt.table" class=anchor><b>fn table</b></a><span class=code>(f, t)</span><br>
+  
+  Recursively format a table.
+  Yes this is complicated. No, there is no way to really improve
+  this while preserving the features.</li>
+  <li><a id="Fmt.format" href="#Fmt.format" class=anchor><b>fn format</b></a><span class=code>(f, fmt, ...) -&gt; varargsUsed</span><br>
+  
+  like string.format but use <span class=code>Fmt</span> for <span class=code>%q</span>.
+  Doesn't return the string, instead writes to <span class=code>Fmt</span></li>
+  <li><a id="Fmt.concat" href="#Fmt.concat" class=anchor><b>fn concat</b></a><span class=code>(f, sep, ...) -&gt; f</span><br>
+  
+  fmt ... separated by sep</li>
+  <li><a id="Fmt.tabulated" href="#Fmt.tabulated" class=anchor><b>fn tabulated</b></a><span class=code>(f, ...) -&gt; f:concat('\t', ...)</span><br>
+  
+  fmt ... separated by tabs</li>
+  <li><a id="Fmt.lined" href="#Fmt.lined" class=anchor><b>fn lined</b></a><span class=code>(f, ...) -&gt; f:concat('\n', ...)</span><br>
+  
+  fmt ... separated by newlines</li>
+  <li><a id="Fmt.tostring" href="#Fmt.tostring" class=anchor><b>fn tostring</b></a></li>
+</ul>
+<br>
+<h3><a id="fmt.binary" href="#fmt.binary" class=anchor>Mod fmt.binary</h3></a>
+format binary text
+When called directly returns the result of
+<span class=code>binary.columns(fmt.Fmt{}, ...)</span>
+<br>
+<b>Types: </b><a href="#fmt.binary.Args">Args</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="fmt.binary.format" href="#fmt.binary.format" class=anchor><b>fn format</b></a><span class=code>(f, str, fmt)</span></li>
+  <li><a id="fmt.binary.ascii" href="#fmt.binary.ascii" class=anchor><b>fn ascii</b></a><span class=code>(f, str)</span></li>
+  <li><a id="fmt.binary.columns" href="#fmt.binary.columns" class=anchor><b>fn columns</b></a><span class=code>(f, str, width, si, fmt)</span></li>
+  <li><a id="fmt.binary.main" href="#fmt.binary.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
+</ul>
+<br>
+<h4><a id="fmt.binary.Args" href="#fmt.binary.Args" class=anchor>Record Args</h4></a>
+Command: <span class=code>{'path.bin', width=16, '--', 'literal binary'}</span>
+Use <span class=code>-</span> to format stdin
+<br>
+<b>Fields:</b><ul>
+  <li><a id="fmt.binary.Args.width" href="#fmt.binary.Args.width" class=anchor><b>width</b></a> <span class=code>=16</span>
+  column width in bytes</li>
+  <li><a id="fmt.binary.Args.fmt" href="#fmt.binary.Args.fmt" class=anchor><b>fmt</b></a> <span class=code>="%.2x "</span>
+  format string for hex</li>
+  <li><a id="fmt.binary.Args.to" href="#fmt.binary.Args.to" class=anchor><b>to</b></a>
+  (lua only) file to output to (default=stdout)</li>
+  <li><a id="fmt.binary.Args.i" href="#fmt.binary.Args.i" class=anchor><b>i</b></a> <span class=code>=0</span>
+  starting index to use</li>
+</ul>
+<br>
 </div></body>
 </html>

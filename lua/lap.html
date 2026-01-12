@@ -64,6 +64,197 @@ should be run at some later time (by the executor). The values are arbitrary
 (typically a string identifier for debugging).
 <br>
 This means that a coroutine can schedule another coroutine <span class=code>cor</span> by simply doing
-<span class=code>LAP_READY[cor</span> = "my_identifier"
+<span class=code>LAP_READY[cor] = "my_identifier"</span>. This simple feature can be used for many
+purposes such as creating Channel datastructures as well as handling any/all
+behavior. See the Library section for details.
+<br>
+<h3><a id="lap-protocol" href="#lap-protocol" class=anchor>Yielding Protocol</h3></a>
+LAP's yielding protocol makes it trivial for Lua libraries to interface with
+executors. Libraries can simply call <span class=code>coroutine.yield</span> with one of the
+following and a compliant executor will perform the behavior specified if it is
+supported (else it will run the coroutine on the next loop). <ul>
+  <li><span class=code>yield(nil)</span> or <span class=code>yield(false)</span>: forget the coroutine, the executor will not
+  run it.</li>
+  <li><span class=code>yield(true)</span>: run the corroutine again as soon as possible. <ul>
+    <li>Should prevent the executor loop from sleeping.</li>
+    <li>Equivalent to: <span class=code>LAP_READY[coroutine.running()] = true; coroutine.yield()</span></li>
+  </ul></li>
+  <li><span class=code>yield("sleep", sleepSec)</span>: run the coroutine again after <span class=code>sleepSec</span> seconds
+  (a float).</li>
+  <li><span class=code>yield("poll", fileno, events)</span>: tell the coroutine to use unix's
+  <span class=code>poll(fileno, events)</span> syscall to determine when ready.</li>
+  <li>Other yield values may be defined by application-specific executors.
+  If the executor doesn't recognize a value it can either throw an error or
+  treat it as <span class=code>true</span> (aka "ready"), depending on the application requirements.</li>
+</ul>
+<br>
+<h4><a id="lap-globals" href="#lap-globals" class=anchor>Global Variables</h4></a>
+<br>
+There are four global variables defined by the LAP protocol: <ul>
+  <li><span class=code>LAP_READY</span>: contains the currently ready coroutines for the executor loop to
+  resume.</li>
+  <li><span class=code>LAP_FNS_SYNC</span> / <span class=code>LAP_FNS_ASYNC</span>: contains functions to switch lua to synchronous /
+  asynchronous modes, respectively.</li>
+  <li><span class=code>LAP_ASYNC</span>: is set to true when in async mode to determine behavior at
+  runtime.</li>
+</ul>
+<br>
+The sync/async tables allows a user to write code in a blocking style yet it
+can be run asynchronously, such as the following. You can even switch back and
+forth so that tests can be run in both modes.
+<br>
+<div class=code-block>function getLines(path, fn)<br>
+&nbsp; local lines = {}<br>
+&nbsp; for line in io.lines(path) do<br>
+&nbsp; &nbsp; table.insert(lines, line)<br>
+&nbsp; end<br>
+&nbsp; return lines<br>
+end
+</div>
+<br>
+<div class=info>Recomendation: use <a href="#lap.async">#lap.async</a> and <a href="#lap.sync">#lap.sync</a> to switch modes</div>
+<br>
+<h3><span class=code>lap.lua</span> Library</h3>
+The (pure lua) <a href="#lap">#lap</a> library implements: <ul>
+  <li><a href="#lap.Lap">#lap.Lap</a> default implementation of a single loop (aka "lap") in an
+  executor.</li>
+  <li><a href="#lap.Any">#lap.Any</a> and <a href="lap.all">lap.all</a> for interacting with lists of coroutines.</li>
+  <li><a href="#lap.channel()">#lap.channel()</a> which creates the <a href="#lap.Recv">#lap.Recv</a> and <a href="#lap.Send">#lap.Send</a> channel types to send
+  values between coroutines.</li>
+  <li><a href="#lap.async">#lap.async</a> / <a href="#lap.sync">#lap.sync</a>: switches all registered libraries to
+  async/sync mode (just calls every function in <a href="#lap.LAP_FNS_SYNC">#lap.LAP_FNS_SYNC</a> or
+  <a href="#LAP_FNS_ASYNC">#LAP_FNS_ASYNC</a>)</li>
+</ul>
+<br>
+<h3><a id="lap" href="#lap" class=anchor>Mod lap</h3></a>
+superpower your libraries run either sync or async
+<br>
+<b>Types: </b><a href="#lap.Recv">Recv</a> <a href="#lap.Send">Send</a> <a href="#lap.Any">Any</a> <a href="#lap.Lap">Lap</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="lap.reset" href="#lap.reset" class=anchor><b>fn reset</b></a><span class=code>()</span><br>
+  
+  Clear all lap globals.</li>
+  <li><a id="lap.formatCorErrors" href="#lap.formatCorErrors" class=anchor><b>fn formatCorErrors</b></a><span class=code>(corErrors)</span></li>
+  <li><a id="lap.sync" href="#lap.sync" class=anchor><b>fn sync</b></a><span class=code>()</span><br>
+  
+  Switch lua to synchronous mode</li>
+  <li><a id="lap.async" href="#lap.async" class=anchor><b>fn async</b></a><span class=code>()</span><br>
+  
+  Switch lua to asynchronous (yielding) mode</li>
+  <li><a id="lap.lt1" href="#lap.lt1" class=anchor><b>fn lt1</b></a><span class=code>(a, b) -&gt; a[1] &lt; b[1]</span></li>
+  <li><a id="lap.all" href="#lap.all" class=anchor><b>fn all</b></a><span class=code>(lap, fns, setup, teardown)</span></li>
+  <li><a id="lap.yield" href="#lap.yield" class=anchor><b>fn yield</b></a><span class=code>(lap, fns, setup, teardown)</span></li>
+  <li><a id="lap.schedule" href="#lap.schedule" class=anchor><b>fn schedule</b></a><span class=code>(lap, fns, setup, teardown)</span></li>
+</ul>
+<br>
+<h4><a id="lap.Recv" href="#lap.Recv" class=anchor>Record Recv</h4></a>
+<span class=code>Recv() -&gt; recv</span> the receive side of channel.
+<br>
+Is considered closed when all senders are closed.
+<br>
+Notes: <ul>
+  <li>Use <span class=code>recv:sender()</span> to create a sender. You can create
+  multiple senders.</li>
+  <li>Use <span class=code>recv:recv()</span> or simply <span class=code>recv()</span> to receive a value
+  (or block)</li>
+  <li>User <span class=code>sender:send(v)</span> or simply <span class=code>sender(v)</span> to send a value.</li>
+  <li><span class=code>recv:close()</span> when done. Also closes all senders.</li>
+  <li><span class=code>#recv</span> gets number of items buffered.</li>
+  <li><span class=code>recv:isDone()</span> returns true when either recv is closed
+  OR all senders are closed and <span class=code>#recv == 0</span></li>
+</ul>
+<br>
+<b>Fields:</b><ul>
+  <li><a id="lap.Recv.deq" href="#lap.Recv.deq" class=anchor><b>deq</b></a></li>
+  <li><a id="lap.Recv.cor" href="#lap.Recv.cor" class=anchor><b>cor</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Recv.close" href="#Recv.close" class=anchor><b>fn close</b></a><br>
+  
+  Close read side and all associated sends.</li>
+  <li><a id="Recv.isClosed" href="#Recv.isClosed" class=anchor><b>fn isClosed</b></a><span class=code>(r) -&gt; r._s</span></li>
+  <li><a id="Recv.isDone" href="#Recv.isDone" class=anchor><b>fn isDone</b></a><span class=code>(r)</span></li>
+  <li><a id="Recv.sender" href="#Recv.sender" class=anchor><b>fn sender</b></a><span class=code>(r)</span></li>
+  <li><a id="Recv.hasSender" href="#Recv.hasSender" class=anchor><b>fn hasSender</b></a><span class=code>(r)</span></li>
+  <li><a id="Recv.wait" href="#Recv.wait" class=anchor><b>fn wait</b></a><span class=code>(r)</span></li>
+  <li><a id="Recv.recv" href="#Recv.recv" class=anchor><b>fn recv</b></a><span class=code>(r) -&gt; r.deq()</span></li>
+  <li><a id="Recv.drain" href="#Recv.drain" class=anchor><b>fn drain</b></a><span class=code>(r) -&gt; r.deq:drain()</span><br>
+  
+  drain the recv. This does NOT wait for new items.</li>
+</ul>
+<br>
+<h4><a id="lap.Send" href="#lap.Send" class=anchor>Record Send</h4></a>
+Sender, created through <span class=code>recv:sender()</span>
+Is considered closed if the receiver is closed.  The receiver will
+automatically close if it is garbage collected.
+<br>
+<b>Methods</b> <ul>
+  <li><a id="Send.close" href="#Send.close" class=anchor><b>fn close</b></a><span class=code>(send)</span></li>
+  <li><a id="Send.isClosed" href="#Send.isClosed" class=anchor><b>fn isClosed</b></a><span class=code>(s) -&gt; s._recv == nil</span></li>
+  <li><a id="Send.push" href="#Send.push" class=anchor><b>fn push</b></a><span class=code>(send, val)</span></li>
+  <li><a id="Send.extend" href="#Send.extend" class=anchor><b>fn extend</b></a><span class=code>(send, vals)</span></li>
+  <li><a id="Send.pushLeft" href="#Send.pushLeft" class=anchor><b>fn pushLeft</b></a><span class=code>(send, val)</span></li>
+  <li><a id="Send.extendLeft" href="#Send.extendLeft" class=anchor><b>fn extendLeft</b></a><span class=code>(send, vals)</span></li>
+</ul>
+<br>
+<h4><a id="lap.Any" href="#lap.Any" class=anchor>Record Any</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="lap.Any.cor" href="#lap.Any.cor" class=anchor><b>cor</b></a></li>
+  <li><a id="lap.Any.fns" href="#lap.Any.fns" class=anchor><b>fns</b></a></li>
+  <li><a id="lap.Any.done" href="#lap.Any.done" class=anchor><b>done</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Any.ignore" href="#Any.ignore" class=anchor><b>fn ignore</b></a><span class=code>(self)</span></li>
+  <li><a id="Any.schedule" href="#Any.schedule" class=anchor><b>fn schedule</b></a><span class=code>(self) -&gt; self</span><br>
+  
+  ensure all fns are scheduled</li>
+  <li><a id="Any.yield" href="#Any.yield" class=anchor><b>fn yield</b></a><span class=code>(self) -&gt; fnIndex</span></li>
+  <li><a id="Any.restart" href="#Any.restart" class=anchor><b>fn restart</b></a><span class=code>(self, i)</span></li>
+</ul>
+<br>
+<h4><a id="lap.Lap" href="#lap.Lap" class=anchor>Record Lap</h4></a>
+A single lap of the executor loop
+<br>
+Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedule other fns<br>
+&nbsp; lap.schedule(myMainFn)<br>
+<br>
+&nbsp; -- create a Lap instance with the necessary configs<br>
+&nbsp; local Lap = lap.Lap{<br>
+&nbsp; &nbsp; sleepFn=civix.sleep, monoFn=civix.monoSecs, pollList=fd.PollList()<br>
+&nbsp; }<br>
+<br>
+&nbsp; -- run repeatedly while there are coroutines to run<br>
+&nbsp; while next(LAP_READY) do<br>
+&nbsp; &nbsp; errors = Lap(); if errors then<br>
+&nbsp; &nbsp; &nbsp; -- handle errors<br>
+&nbsp; &nbsp; end<br>
+&nbsp; &nbsp; -- do other things in your application's executor loop<br>
+&nbsp; end
+</div>
+<br>
+<b>Fields:</b><ul>
+  <li><a id="lap.Lap.sleepFn" href="#lap.Lap.sleepFn" class=anchor><b>sleepFn</b></a></li>
+  <li><a id="lap.Lap.monoFn" href="#lap.Lap.monoFn" class=anchor><b>monoFn</b></a></li>
+  <li><a id="lap.Lap.monoHeap" href="#lap.Lap.monoHeap" class=anchor><b>monoHeap</b></a></li>
+  <li><a id="lap.Lap.defaultSleep" href="#lap.Lap.defaultSleep" class=anchor><b>defaultSleep</b></a> <span class=code>=number() instance</span></li>
+  <li><a id="lap.Lap.pollMap" href="#lap.Lap.pollMap" class=anchor><b>pollMap</b></a></li>
+  <li><a id="lap.Lap.pollList" href="#lap.Lap.pollList" class=anchor><b>pollList</b></a>
+  Poll list data structure. Required methods:</li>
+  <li>__len                   to get length with `#`</li>
+  <li>insert(fileno, events)  insert the fileno+events into the poll list</li>
+  <li>remove(fileno)          remove the fileno from poll list</li>
+  <li>ready(self, durationSec) -> {filenos}
+  poll for durationSec (float), return any ready filenos.</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Lap.stop" href="#Lap.stop" class=anchor><b>fn stop</b></a><span class=code>(l)</span></li>
+  <li><a id="Lap.sleep" href="#Lap.sleep" class=anchor><b>fn sleep</b></a></li>
+  <li><a id="Lap.poll" href="#Lap.poll" class=anchor><b>fn poll</b></a></li>
+  <li><a id="Lap.execute" href="#Lap.execute" class=anchor><b>fn execute</b></a><span class=code>(lap, cor, note) -&gt; errstr?</span></li>
+  <li><a id="Lap.isDone" href="#Lap.isDone" class=anchor><b>fn isDone</b></a><span class=code>(lap)</span></li>
+  <li><a id="Lap.run" href="#Lap.run" class=anchor><b>fn run</b></a><span class=code>(lap, fns, setup, teardown)</span></li>
+</ul>
+<br>
 </div></body>
 </html>

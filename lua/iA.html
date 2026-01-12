@@ -545,7 +545,30 @@ end
   <br>
   <h4><a id="iA.Switch" href="#iA.Switch" class=anchor>Record Switch</h4></a>
   <span class=code>switch of do case 0 do ... default ... end</span>
-  Type is <span class=code>&nbsp;map[int, list[stmt</span></li>
-</ul> 
+  Type is <span class=code>&nbsp;map[int, list[stmt]] </span>
+  0 - highest MUST be filled out.
+  <br>
+  <b>Fields:</b><ul>
+    <li><a id="iA.Switch.of" href="#iA.Switch.of" class=anchor><b>of</b></a>
+    last expr1 is jmp</li>
+    <li><a id="iA.Switch.default" href="#iA.Switch.default" class=anchor><b>default</b></a></li>
+  </ul>
+  <br>
+  <h4><a id="iA.While" href="#iA.While" class=anchor>Record While</h4></a>
+  <span class=code>while cond [atend</span> do block end</li>
+</ul>
+The block is stored in the While list.
+<br>
+<b>Fields:</b><ul>
+  <li><a id="iA.While.cond" href="#iA.While.cond" class=anchor><b>cond</b></a></li>
+  <li><a id="iA.While.atend" href="#iA.While.atend" class=anchor><b>atend</b></a></li>
+</ul>
+<br>
+<h3><a id="iA.parse" href="#iA.parse" class=anchor>Mod iA.parse</h3></a>
+parse intermediate assembly
+<b>Functions</b> <ul>
+  <li><a id="iA.parse.toIa" href="#iA.parse.toIa" class=anchor><b>fn toIa</b></a><span class=code>(tok)</span></li>
+</ul>
+<br>
 </div></body>
 </html>

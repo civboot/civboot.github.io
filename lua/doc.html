@@ -254,126 +254,125 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
 </div></li>
   <li><a id="doc.lua.string.byte" href="#doc.lua.string.byte" class=anchor><b>fn string.byte</b></a><span class=code>(str, si=1, ei=si) -&gt; ...ints</span><br>
   
-  Get ASCII (integer) codes for <span class=code>s[si:ei</span></li>
-</ul>
-
-Example: <span class=code>T.eq({98, 99}, {string.byte('abcd', 2, 3)})</span>
-* <a id="doc.lua.string.char" href="#doc.lua.string.char" class=anchor><b>fn string.char</b></a><span class=code>(c1, c2, ...) -&gt; string</span><br>
-
-convert character codes to string and concatenate
-* <a id="doc.lua.string.rep" href="#doc.lua.string.rep" class=anchor><b>fn string.rep</b></a><br>
-
-repeat str n times with separator
-* <a id="doc.lua.string.pack" href="#doc.lua.string.pack" class=anchor><b>fn string.pack</b></a><br>
-
-pack the values as bytes into the string using the strtys.
-
-strtys is a string of the form: <div class=table><table>
-  <tr>
-    <td><span class=code>&nbsp;&lt; &nbsp;&gt; &nbsp;=</span></td>
-    <td>(start only) little / big / native endian</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;!# &nbsp; &nbsp; </span></td>
-    <td>(start only) max alignment = <span class=code>#</span> bytes</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;b B &nbsp; &nbsp;</span></td>
-    <td>signed / unsigned byte</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;h H l L</span></td>
-    <td>native short(h) and long(l) + unsigned vers</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;i# I# &nbsp;</span></td>
-    <td>signed/unsigned int with <span class=code>#</span> bytes</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;f d &nbsp; &nbsp;</span></td>
-    <td>native float / double</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;T &nbsp; &nbsp; &nbsp;</span></td>
-    <td>size_t</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;c# &nbsp; &nbsp; </span></td>
-    <td>fixed-sized string of <span class=code>#</span> bytes (unaligned)</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;z &nbsp; &nbsp; &nbsp;</span></td>
-    <td>zero-terminated string        (unaligned)</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;s# &nbsp; &nbsp; </span></td>
-    <td>counted string of size <span class=code>#</span> bytes</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;x &nbsp; &nbsp; &nbsp;</span></td>
-    <td>one byte of padding</td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;Xo &nbsp; &nbsp; </span></td>
-    <td>align to option <span class=code>o</span>, i.e. <span class=code>Xi4</span></td>
-  </tr>
-  <tr>
-    <td><span class=code>&nbsp;j J n &nbsp;</span></td>
-    <td>lua Integer / Unsigned / Number</td>
-  </tr>
-</table></div>
-
-Example: <div class=code-block>&nbsp; T.eq(string.pack('&gt;i2i2', 0x1234, 0x5678) == '\x12\x34\x56\x78')]<br>
+  Get ASCII (integer) codes for <span class=code>s[si:ei]</span>.
+  
+  Example: <span class=code>T.eq({98, 99}, {string.byte('abcd', 2, 3)})</span></li>
+  <li><a id="doc.lua.string.char" href="#doc.lua.string.char" class=anchor><b>fn string.char</b></a><span class=code>(c1, c2, ...) -&gt; string</span><br>
+  
+  convert character codes to string and concatenate</li>
+  <li><a id="doc.lua.string.rep" href="#doc.lua.string.rep" class=anchor><b>fn string.rep</b></a><br>
+  
+  repeat str n times with separator</li>
+  <li><a id="doc.lua.string.pack" href="#doc.lua.string.pack" class=anchor><b>fn string.pack</b></a><br>
+  
+  pack the values as bytes into the string using the strtys.
+  
+  strtys is a string of the form: <div class=table><table>
+    <tr>
+      <td><span class=code>&nbsp;&lt; &nbsp;&gt; &nbsp;=</span></td>
+      <td>(start only) little / big / native endian</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;!# &nbsp; &nbsp; </span></td>
+      <td>(start only) max alignment = <span class=code>#</span> bytes</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;b B &nbsp; &nbsp;</span></td>
+      <td>signed / unsigned byte</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;h H l L</span></td>
+      <td>native short(h) and long(l) + unsigned vers</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;i# I# &nbsp;</span></td>
+      <td>signed/unsigned int with <span class=code>#</span> bytes</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;f d &nbsp; &nbsp;</span></td>
+      <td>native float / double</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;T &nbsp; &nbsp; &nbsp;</span></td>
+      <td>size_t</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;c# &nbsp; &nbsp; </span></td>
+      <td>fixed-sized string of <span class=code>#</span> bytes (unaligned)</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;z &nbsp; &nbsp; &nbsp;</span></td>
+      <td>zero-terminated string        (unaligned)</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;s# &nbsp; &nbsp; </span></td>
+      <td>counted string of size <span class=code>#</span> bytes</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;x &nbsp; &nbsp; &nbsp;</span></td>
+      <td>one byte of padding</td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;Xo &nbsp; &nbsp; </span></td>
+      <td>align to option <span class=code>o</span>, i.e. <span class=code>Xi4</span></td>
+    </tr>
+    <tr>
+      <td><span class=code>&nbsp;j J n &nbsp;</span></td>
+      <td>lua Integer / Unsigned / Number</td>
+    </tr>
+  </table></div>
+  
+  Example: <div class=code-block>&nbsp; T.eq(string.pack('&gt;i2i2', 0x1234, 0x5678) == '\x12\x34\x56\x78')]<br>
 &nbsp; 
-</div>
-* <a id="doc.lua.string.unpack" href="#doc.lua.string.unpack" class=anchor><b>fn string.unpack</b></a><br>
-
-See string.pack for the fmt
-* <a id="doc.lua.string.packsize" href="#doc.lua.string.packsize" class=anchor><b>fn string.packsize</b></a><br>
-
-Get the size which is used by strtys.
-* <a id="doc.lua.string.reverse" href="#doc.lua.string.reverse" class=anchor><b>fn string.reverse</b></a><br>
-
-not documented: see <span class=code>string</span> module
-* <a id="doc.lua.string.lower" href="#doc.lua.string.lower" class=anchor><b>fn string.lower</b></a><br>
-
-not documented: see <span class=code>string</span> module
-* <a id="doc.lua.string.upper" href="#doc.lua.string.upper" class=anchor><b>fn string.upper</b></a><br>
-
-not documented: see <span class=code>string</span> module
-* <a id="doc.lua.string.dump" href="#doc.lua.string.dump" class=anchor><b>fn string.dump</b></a><br>
-
-not documented: see <span class=code>string</span> module
-* <a id="doc.lua.string.len" href="#doc.lua.string.len" class=anchor><b>fn string.len</b></a><br>
-
-not documented: see <span class=code>string</span> module
-* <a id="doc.lua.table.update" href="#doc.lua.table.update" class=anchor><b>fn table.update</b></a><span class=code>(to, from) -&gt; to</span><br>
-
-update to with from, return to.
-
-Note: this is an addon from metaty.
-* <a id="doc.lua.table.concat" href="#doc.lua.table.concat" class=anchor><b>fn table.concat</b></a><span class=code>(t, sep='') -&gt; string</span><br>
-
-concatenate a table of strings with optional separator.
-
-Examples: <div class=code-block>&nbsp; concat = table.concat<br>
+</div></li>
+  <li><a id="doc.lua.string.unpack" href="#doc.lua.string.unpack" class=anchor><b>fn string.unpack</b></a><br>
+  
+  See string.pack for the fmt</li>
+  <li><a id="doc.lua.string.packsize" href="#doc.lua.string.packsize" class=anchor><b>fn string.packsize</b></a><br>
+  
+  Get the size which is used by strtys.</li>
+  <li><a id="doc.lua.string.lower" href="#doc.lua.string.lower" class=anchor><b>fn string.lower</b></a><br>
+  
+  not documented: see <span class=code>string</span> module</li>
+  <li><a id="doc.lua.string.upper" href="#doc.lua.string.upper" class=anchor><b>fn string.upper</b></a><br>
+  
+  not documented: see <span class=code>string</span> module</li>
+  <li><a id="doc.lua.string.dump" href="#doc.lua.string.dump" class=anchor><b>fn string.dump</b></a><br>
+  
+  not documented: see <span class=code>string</span> module</li>
+  <li><a id="doc.lua.string.reverse" href="#doc.lua.string.reverse" class=anchor><b>fn string.reverse</b></a><br>
+  
+  not documented: see <span class=code>string</span> module</li>
+  <li><a id="doc.lua.string.len" href="#doc.lua.string.len" class=anchor><b>fn string.len</b></a><br>
+  
+  not documented: see <span class=code>string</span> module</li>
+  <li><a id="doc.lua.table.update" href="#doc.lua.table.update" class=anchor><b>fn table.update</b></a><span class=code>(to, from) -&gt; to</span><br>
+  
+  update to with from, return to.
+  
+  Note: this is an addon from metaty.</li>
+  <li><a id="doc.lua.table.concat" href="#doc.lua.table.concat" class=anchor><b>fn table.concat</b></a><span class=code>(t, sep='') -&gt; string</span><br>
+  
+  concatenate a table of strings with optional separator.
+  
+  Examples: <div class=code-block>&nbsp; concat = table.concat<br>
 &nbsp; T.eq(1..' = '..3, concat{1, ' = ', 3})<br>
 &nbsp; T.eq('1, 2, 3', &nbsp; concat({1, 2, 3}, ', ')<br>
 &nbsp; 
-</div>
-* <a id="doc.lua.table.remove" href="#doc.lua.table.remove" class=anchor><b>fn table.remove</b></a><span class=code>(t, index=#table) -&gt; t[index]</span><br>
-
-remove an item from a table, returning it.
-The table is shifted if index < #table which may cost up to O(n)
-* <a id="doc.lua.table.sort" href="#doc.lua.table.sort" class=anchor><b>fn table.sort</b></a><span class=code>(list, cmp=lt) -&gt; nil</span><br>
-
-sort a table in place using a comparison function <span class=code>cmp</span> who's behavior
-must be: <span class=code>cmp(a, b) --&gt; makeAFirst</span>
-* <a id="doc.lua.table.insert" href="#doc.lua.table.insert" class=anchor><b>fn table.insert</b></a><br>
-
-insert or push to table (list-like)
-
-Example: <div class=code-block>&nbsp; local push = table.insert<br>
+</div></li>
+  <li><a id="doc.lua.table.remove" href="#doc.lua.table.remove" class=anchor><b>fn table.remove</b></a><span class=code>(t, index=#table) -&gt; t[index]</span><br>
+  
+  remove an item from a table, returning it.
+  The table is shifted if index < #table which may cost up to O(n)</li>
+  <li><a id="doc.lua.table.sort" href="#doc.lua.table.sort" class=anchor><b>fn table.sort</b></a><span class=code>(list, cmp=lt) -&gt; nil</span><br>
+  
+  sort a table in place using a comparison function <span class=code>cmp</span> who's behavior
+  must be: <span class=code>cmp(a, b) --&gt; makeAFirst</span></li>
+  <li><a id="doc.lua.table.insert" href="#doc.lua.table.insert" class=anchor><b>fn table.insert</b></a><br>
+  
+  insert or push to table (list-like)
+  
+  Example: <div class=code-block>&nbsp; local push = table.insert<br>
 &nbsp; local t = {}<br>
 &nbsp; <br>
 &nbsp; -- push/append behavior<br>
@@ -385,180 +384,180 @@ Example: <div class=code-block>&nbsp; local push = table.insert<br>
 &nbsp; table.insert(t, 'c', 2) -- {'b', 'c', 'd', 'e'}<br>
 &nbsp; T.eq({'b', 'c', 'd', 'e'}, t)<br>
 &nbsp; 
-</div>
-* <a id="doc.lua.table.move" href="#doc.lua.table.move" class=anchor><b>fn table.move</b></a><br>
-
-Move values from one list to another.
-Note that <span class=code>si=startIndex</span> and <span class=code>ei=endIndex</span> (inclusive).
-
-Equivalent to the following, though done in a way
-that will properly handle overlapping data: <div class=code-block>&nbsp; ti = siTo<br>
+</div></li>
+  <li><a id="doc.lua.table.move" href="#doc.lua.table.move" class=anchor><b>fn table.move</b></a><br>
+  
+  Move values from one list to another.
+  Note that <span class=code>si=startIndex</span> and <span class=code>ei=endIndex</span> (inclusive).
+  
+  Equivalent to the following, though done in a way
+  that will properly handle overlapping data: <div class=code-block>&nbsp; ti = siTo<br>
 &nbsp; for fi=siFrom,eiFrom do<br>
 &nbsp; &nbsp; to[ti] = from[fi]; ti = ti + 1<br>
 &nbsp; end<br>
 &nbsp; 
-</div>
-* <a id="doc.lua.io.popen" href="#doc.lua.io.popen" class=anchor><b>fn io.popen</b></a><br>
-
-Execute shell command in separate process.
-
-See also: <ul>
-  <li><span class=code>os.execute()</span>: docs on file:close()</li>
-  <li><a href="lib/civix">lib/civix</a><span class=code>.sh()</span>: ergonomic blocking shell.</li>
-</ul>
-* <a id="doc.lua.io.output" href="#doc.lua.io.output" class=anchor><b>fn io.output</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.type" href="#doc.lua.io.type" class=anchor><b>fn io.type</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.flush" href="#doc.lua.io.flush" class=anchor><b>fn io.flush</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.tmpfile" href="#doc.lua.io.tmpfile" class=anchor><b>fn io.tmpfile</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.write" href="#doc.lua.io.write" class=anchor><b>fn io.write</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.input" href="#doc.lua.io.input" class=anchor><b>fn io.input</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.close" href="#doc.lua.io.close" class=anchor><b>fn io.close</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.lines" href="#doc.lua.io.lines" class=anchor><b>fn io.lines</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.open" href="#doc.lua.io.open" class=anchor><b>fn io.open</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.io.read" href="#doc.lua.io.read" class=anchor><b>fn io.read</b></a><br>
-
-not documented: see <span class=code>io</span> module
-* <a id="doc.lua.os.execute" href="#doc.lua.os.execute" class=anchor><b>fn os.execute</b></a><span class=code>(string) -&gt; (ok, "exit", rc)</span><br>
-
-Execute shell command via C's `system` API. Returns: <ul>
-  <li>ok:      true on command success, false if rc>0</li>
-  <li>"exit":  always literal "exit" if command completed</li>
-  <li>rc:      the return code of the command</li>
-</ul>
-<div class=code-block>&nbsp; os.execute'shell command' -&gt; (ok, "exit", rc)<br>
+</div></li>
+  <li><a id="doc.lua.io.popen" href="#doc.lua.io.popen" class=anchor><b>fn io.popen</b></a><br>
+  
+  Execute shell command in separate process.
+  
+  See also: <ul>
+    <li><span class=code>os.execute()</span>: docs on file:close()</li>
+    <li><a href="lib/civix">lib/civix</a><span class=code>.sh()</span>: ergonomic blocking shell.</li>
+  </ul></li>
+  <li><a id="doc.lua.io.write" href="#doc.lua.io.write" class=anchor><b>fn io.write</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.tmpfile" href="#doc.lua.io.tmpfile" class=anchor><b>fn io.tmpfile</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.flush" href="#doc.lua.io.flush" class=anchor><b>fn io.flush</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.type" href="#doc.lua.io.type" class=anchor><b>fn io.type</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.lines" href="#doc.lua.io.lines" class=anchor><b>fn io.lines</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.input" href="#doc.lua.io.input" class=anchor><b>fn io.input</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.close" href="#doc.lua.io.close" class=anchor><b>fn io.close</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.output" href="#doc.lua.io.output" class=anchor><b>fn io.output</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.read" href="#doc.lua.io.read" class=anchor><b>fn io.read</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.open" href="#doc.lua.io.open" class=anchor><b>fn io.open</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.os.execute" href="#doc.lua.os.execute" class=anchor><b>fn os.execute</b></a><span class=code>(string) -&gt; (ok, "exit", rc)</span><br>
+  
+  Execute shell command via C's `system` API. Returns: <ul>
+    <li>ok:      true on command success, false if rc>0</li>
+    <li>"exit":  always literal "exit" if command completed</li>
+    <li>rc:      the return code of the command</li>
+  </ul>
+  <div class=code-block>&nbsp; os.execute'shell command' -&gt; (ok, "exit", rc)<br>
 &nbsp; os.execute() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-&gt; isShellAvailable
 </div>
-
-Prints whatever was executed. There are no ways to
-redirect the output besides piping in the command
-string itself.
-
-Recommendation:
-For all but the simplest cases use io.popen instead
-* <a id="doc.lua.os.difftime" href="#doc.lua.os.difftime" class=anchor><b>fn os.difftime</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.tmpname" href="#doc.lua.os.tmpname" class=anchor><b>fn os.tmpname</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.date" href="#doc.lua.os.date" class=anchor><b>fn os.date</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.time" href="#doc.lua.os.time" class=anchor><b>fn os.time</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.exit" href="#doc.lua.os.exit" class=anchor><b>fn os.exit</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.remove" href="#doc.lua.os.remove" class=anchor><b>fn os.remove</b></a><span class=code>(path) -&gt; nil</span><br>
-
-remove file.
-* <a id="doc.lua.os.rename" href="#doc.lua.os.rename" class=anchor><b>fn os.rename</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.clock" href="#doc.lua.os.clock" class=anchor><b>fn os.clock</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.setlocale" href="#doc.lua.os.setlocale" class=anchor><b>fn os.setlocale</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.os.getenv" href="#doc.lua.os.getenv" class=anchor><b>fn os.getenv</b></a><br>
-
-not documented: see <span class=code>os</span> module
-* <a id="doc.lua.math.type" href="#doc.lua.math.type" class=anchor><b>fn math.type</b></a><span class=code>(v) -&gt; ("float" | "integer" | nil)</span>
-* <a id="doc.lua.math.max" href="#doc.lua.math.max" class=anchor><b>fn math.max</b></a><span class=code>(x, ...) -&gt; max according to [$&lt;]</span>
-* <a id="doc.lua.math.min" href="#doc.lua.math.min" class=anchor><b>fn math.min</b></a><span class=code>(x, ...) -&gt; min according to [$&lt;]</span>
-* <a id="doc.lua.math.cos" href="#doc.lua.math.cos" class=anchor><b>fn math.cos</b></a><span class=code>(x) -&gt; cos(x) in radians</span>
-* <a id="doc.lua.math.sin" href="#doc.lua.math.sin" class=anchor><b>fn math.sin</b></a><span class=code>(x) -&gt; sin(x) in radians</span>
-* <a id="doc.lua.math.tan" href="#doc.lua.math.tan" class=anchor><b>fn math.tan</b></a><span class=code>(x) -&gt; tan(x) in radians</span>
-* <a id="doc.lua.math.acos" href="#doc.lua.math.acos" class=anchor><b>fn math.acos</b></a><span class=code>(x) -&gt; arccos(x) in radians</span>
-* <a id="doc.lua.math.asin" href="#doc.lua.math.asin" class=anchor><b>fn math.asin</b></a><span class=code>(x) -&gt; arcsin(x) in radians</span>
-* <a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span>
-* <a id="doc.lua.math.exp" href="#doc.lua.math.exp" class=anchor><b>fn math.exp</b></a><span class=code>(x) -&gt; e^x (where e is the natural log base)</span>
-* <a id="doc.lua.math.tanh" href="#doc.lua.math.tanh" class=anchor><b>fn math.tanh</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.abs" href="#doc.lua.math.abs" class=anchor><b>fn math.abs</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.modf" href="#doc.lua.math.modf" class=anchor><b>fn math.modf</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.random" href="#doc.lua.math.random" class=anchor><b>fn math.random</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.ceil" href="#doc.lua.math.ceil" class=anchor><b>fn math.ceil</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span>
-* <a id="doc.lua.math.pow" href="#doc.lua.math.pow" class=anchor><b>fn math.pow</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.deg" href="#doc.lua.math.deg" class=anchor><b>fn math.deg</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.cosh" href="#doc.lua.math.cosh" class=anchor><b>fn math.cosh</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.rad" href="#doc.lua.math.rad" class=anchor><b>fn math.rad</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.ult" href="#doc.lua.math.ult" class=anchor><b>fn math.ult</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.randomseed" href="#doc.lua.math.randomseed" class=anchor><b>fn math.randomseed</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.sinh" href="#doc.lua.math.sinh" class=anchor><b>fn math.sinh</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.frexp" href="#doc.lua.math.frexp" class=anchor><b>fn math.frexp</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.fmod" href="#doc.lua.math.fmod" class=anchor><b>fn math.fmod</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.tointeger" href="#doc.lua.math.tointeger" class=anchor><b>fn math.tointeger</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.ldexp" href="#doc.lua.math.ldexp" class=anchor><b>fn math.ldexp</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.sqrt" href="#doc.lua.math.sqrt" class=anchor><b>fn math.sqrt</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.floor" href="#doc.lua.math.floor" class=anchor><b>fn math.floor</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.log" href="#doc.lua.math.log" class=anchor><b>fn math.log</b></a><br>
-
-currently not documented
-* <a id="doc.lua.math.log10" href="#doc.lua.math.log10" class=anchor><b>fn math.log10</b></a><br>
-
-currently not documented
-* <a id="doc.lua.for" href="#doc.lua.for" class=anchor><b>fn for</b></a><span class=code>()</span><br>
-
-for is a looping construct with two forms:
-
-Numeric: <div class=code-block>&nbsp; &nbsp; for i=si,ei,period do -- period=1 by default<br>
+  
+  Prints whatever was executed. There are no ways to
+  redirect the output besides piping in the command
+  string itself.
+  
+  Recommendation:
+  For all but the simplest cases use io.popen instead</li>
+  <li><a id="doc.lua.os.remove" href="#doc.lua.os.remove" class=anchor><b>fn os.remove</b></a><span class=code>(path) -&gt; nil</span><br>
+  
+  remove file.</li>
+  <li><a id="doc.lua.os.clock" href="#doc.lua.os.clock" class=anchor><b>fn os.clock</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.getenv" href="#doc.lua.os.getenv" class=anchor><b>fn os.getenv</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.setlocale" href="#doc.lua.os.setlocale" class=anchor><b>fn os.setlocale</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.time" href="#doc.lua.os.time" class=anchor><b>fn os.time</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.date" href="#doc.lua.os.date" class=anchor><b>fn os.date</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.exit" href="#doc.lua.os.exit" class=anchor><b>fn os.exit</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.difftime" href="#doc.lua.os.difftime" class=anchor><b>fn os.difftime</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.tmpname" href="#doc.lua.os.tmpname" class=anchor><b>fn os.tmpname</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.rename" href="#doc.lua.os.rename" class=anchor><b>fn os.rename</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.math.type" href="#doc.lua.math.type" class=anchor><b>fn math.type</b></a><span class=code>(v) -&gt; ("float" | "integer" | nil)</span></li>
+  <li><a id="doc.lua.math.max" href="#doc.lua.math.max" class=anchor><b>fn math.max</b></a><span class=code>(x, ...) -&gt; max according to [$&lt;]</span></li>
+  <li><a id="doc.lua.math.min" href="#doc.lua.math.min" class=anchor><b>fn math.min</b></a><span class=code>(x, ...) -&gt; min according to [$&lt;]</span></li>
+  <li><a id="doc.lua.math.cos" href="#doc.lua.math.cos" class=anchor><b>fn math.cos</b></a><span class=code>(x) -&gt; cos(x) in radians</span></li>
+  <li><a id="doc.lua.math.sin" href="#doc.lua.math.sin" class=anchor><b>fn math.sin</b></a><span class=code>(x) -&gt; sin(x) in radians</span></li>
+  <li><a id="doc.lua.math.tan" href="#doc.lua.math.tan" class=anchor><b>fn math.tan</b></a><span class=code>(x) -&gt; tan(x) in radians</span></li>
+  <li><a id="doc.lua.math.acos" href="#doc.lua.math.acos" class=anchor><b>fn math.acos</b></a><span class=code>(x) -&gt; arccos(x) in radians</span></li>
+  <li><a id="doc.lua.math.asin" href="#doc.lua.math.asin" class=anchor><b>fn math.asin</b></a><span class=code>(x) -&gt; arcsin(x) in radians</span></li>
+  <li><a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span></li>
+  <li><a id="doc.lua.math.exp" href="#doc.lua.math.exp" class=anchor><b>fn math.exp</b></a><span class=code>(x) -&gt; e^x (where e is the natural log base)</span></li>
+  <li><a id="doc.lua.math.pow" href="#doc.lua.math.pow" class=anchor><b>fn math.pow</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.ceil" href="#doc.lua.math.ceil" class=anchor><b>fn math.ceil</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.sinh" href="#doc.lua.math.sinh" class=anchor><b>fn math.sinh</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.log" href="#doc.lua.math.log" class=anchor><b>fn math.log</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.frexp" href="#doc.lua.math.frexp" class=anchor><b>fn math.frexp</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.sqrt" href="#doc.lua.math.sqrt" class=anchor><b>fn math.sqrt</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.fmod" href="#doc.lua.math.fmod" class=anchor><b>fn math.fmod</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.floor" href="#doc.lua.math.floor" class=anchor><b>fn math.floor</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.cosh" href="#doc.lua.math.cosh" class=anchor><b>fn math.cosh</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.modf" href="#doc.lua.math.modf" class=anchor><b>fn math.modf</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.ldexp" href="#doc.lua.math.ldexp" class=anchor><b>fn math.ldexp</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.ult" href="#doc.lua.math.ult" class=anchor><b>fn math.ult</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.random" href="#doc.lua.math.random" class=anchor><b>fn math.random</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.log10" href="#doc.lua.math.log10" class=anchor><b>fn math.log10</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.tointeger" href="#doc.lua.math.tointeger" class=anchor><b>fn math.tointeger</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.randomseed" href="#doc.lua.math.randomseed" class=anchor><b>fn math.randomseed</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.rad" href="#doc.lua.math.rad" class=anchor><b>fn math.rad</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span></li>
+  <li><a id="doc.lua.math.tanh" href="#doc.lua.math.tanh" class=anchor><b>fn math.tanh</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.abs" href="#doc.lua.math.abs" class=anchor><b>fn math.abs</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.deg" href="#doc.lua.math.deg" class=anchor><b>fn math.deg</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.for" href="#doc.lua.for" class=anchor><b>fn for</b></a><span class=code>()</span><br>
+  
+  for is a looping construct with two forms:
+  
+  Numeric: <div class=code-block>&nbsp; &nbsp; for i=si,ei,period do -- period=1 by default<br>
 &nbsp; &nbsp; &nbsp; ... do something with i<br>
 &nbsp; &nbsp; end<br>
 &nbsp; <br>
@@ -569,8 +568,8 @@ Numeric: <div class=code-block>&nbsp; &nbsp; for i=si,ei,period do -- period=1 b
 &nbsp; &nbsp; end<br>
 &nbsp; 
 </div>
-
-Generic: <div class=code-block>&nbsp; &nbsp; for i, v, etc in (nextfn, state, _index) do<br>
+  
+  Generic: <div class=code-block>&nbsp; &nbsp; for i, v, etc in (nextfn, state, _index) do<br>
 &nbsp; &nbsp; &nbsp; .. do something with i, v, ...<br>
 &nbsp; &nbsp; end<br>
 &nbsp; <br>
@@ -583,11 +582,11 @@ Generic: <div class=code-block>&nbsp; &nbsp; for i, v, etc in (nextfn, state, _i
 &nbsp; &nbsp; end<br>
 &nbsp; 
 </div>
-
-The goal in writing a stateless iterator function is to match this
-loop's API as much as possible.
-
-Example rewriting ipairs: <div class=code-block>&nbsp; &nbsp; local function rawipairs(t, i)<br>
+  
+  The goal in writing a stateless iterator function is to match this
+  loop's API as much as possible.
+  
+  Example rewriting ipairs: <div class=code-block>&nbsp; &nbsp; local function rawipairs(t, i)<br>
 &nbsp; &nbsp; &nbsp; i = i + 1<br>
 &nbsp; &nbsp; &nbsp; if i &gt; #t then return nil end<br>
 &nbsp; &nbsp; &nbsp; return i, t[i]<br>
@@ -600,8 +599,8 @@ Example rewriting ipairs: <div class=code-block>&nbsp; &nbsp; local function raw
 &nbsp; &nbsp; end<br>
 &nbsp; 
 </div>
-
-Example rewriting pairs using <span class=code>next(t, key)</span>: <div class=code-block>&nbsp; &nbsp; function mypairs(t)<br>
+  
+  Example rewriting pairs using <span class=code>next(t, key)</span>: <div class=code-block>&nbsp; &nbsp; function mypairs(t)<br>
 &nbsp; &nbsp; &nbsp; return next, t, nil<br>
 &nbsp; &nbsp; end<br>
 &nbsp; &nbsp; for k, v in mypairs{a=1, b=2, c=3} do<br>
@@ -609,7 +608,9 @@ Example rewriting pairs using <span class=code>next(t, key)</span>: <div class=c
 &nbsp; &nbsp; end<br>
 &nbsp; 
 </div>
-
-See also: metaty.split is a more complex example.
+  
+  See also: metaty.split is a more complex example.</li>
+</ul>
+<br>
 </div></body>
 </html>

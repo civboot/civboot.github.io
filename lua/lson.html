@@ -250,6 +250,22 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
 <br>
 <h4><a id="lson.De" href="#lson.De" class=anchor>Record De</h4></a>
 <span class=code>De(string or lines) -&gt; value-iter</span>
-<span class=code>for val in De'["my", "lson"</span>' do ... end
+<span class=code>for val in De'["my", "lson"]' do ... end</span>
+<br>
+<b>Fields:</b><ul>
+  <li><a id="lson.De.dat" href="#lson.De.dat" class=anchor><b>dat</b></a>
+  lines-like data to parse</li>
+  <li><a id="lson.De.null" href="#lson.De.null" class=anchor><b>null</b></a> <span class=code>=ds.none</span>
+  value to use for null</li>
+  <li><a id="lson.De.l" href="#lson.De.l" class=anchor><b>l</b></a></li>
+  <li><a id="lson.De.c" href="#lson.De.c" class=anchor><b>c</b></a></li>
+  <li><a id="lson.De.line" href="#lson.De.line" class=anchor><b>line</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="De.assert" href="#De.assert" class=anchor><b>fn assert</b></a><span class=code>(de, ok, msg)</span></li>
+  <li><a id="De.skipWs" href="#De.skipWs" class=anchor><b>fn skipWs</b></a><span class=code>(de, eofOkay)</span></li>
+  <li><a id="De.consume" href="#De.consume" class=anchor><b>fn consume</b></a><span class=code>(de, pat, context)</span></li>
+</ul>
+<br>
 </div></body>
 </html>

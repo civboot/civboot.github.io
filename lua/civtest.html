@@ -17,35 +17,49 @@
 Civtest: absurdly simple test library
 <br>
 This is a no-frills test library. It simply builds on <a href="lib/metaty">lib/metaty</a> and
-<a href="lib/ds">lib/ds</a> to provide the simplest possible needs for testing.
+<a href="lib/ds">lib/ds</a> to provide the simplest possible needs for testing. Your tests
+are just a lua file which something (i.e. <a href="civ.html">civ.html</a>) executes. This library
+provides helpers to print helpful headers for each test and provide
+superior assertions.
+<br>
+<a id="Usage" href="#Usage" class=anchor><b>Usage</b></a>: <div class=code-block>local T = require'civtest'<br>
+<br>
+T'my test name' do<br>
+&nbsp; T.eq('some expected\ntext', 'some actual\ntext')<br>
+end
+</div>
 <br>
 <h3><a id="civtest" href="#civtest" class=anchor>Mod civtest</h3></a>
 module for writing simple tests
 <b>Functions</b> <ul>
-  <li><a id="civtest.printName" href="#civtest.printName" class=anchor><b>fn printName</b></a><span class=code>(name, path)</span></li>
   <li><a id="civtest.runTest" href="#civtest.runTest" class=anchor><b>fn runTest</b></a><span class=code>(name, fn, path)</span><br>
   
+  <div class=info>Note: you probably want to do <span class=code>T'name'</span> instead.
+  See <a href="#usage">#usage</a>.</div>
   Run the test, printing information to the terminal.
   
   This function computes name=<span class=code>name..civtest.SUBNAME</span>
   and sets civtest.NAME to the new name, which can be
-  used in the test.
+  used in the test.</li>
+  <li><a id="civtest.showDiff" href="#civtest.showDiff" class=anchor><b>fn showDiff</b></a><span class=code>(f, a, b)</span><br>
   
-  <div class=info>Note: normally this is called when the user sets
-  a key to the civtest module, which has __newindex()
-  overriden to call this function.
-  </div></li>
-  <li><a id="civtest.showDiff" href="#civtest.showDiff" class=anchor><b>fn showDiff</b></a><span class=code>(f, a, b)</span></li>
+  Write the diff of strings a vs b to the fmt.Fmt <span class=code>f</span>.
+  Typically, you want to call <a href="#civtest.eq">#civtest.eq</a> instead.</li>
   <li><a id="civtest.eq" href="#civtest.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b)</span><br>
   
-  Assert that <span class=code>a</span> equals <span class=code>b</span> (according to <a href="#metaty.eq">#metaty.eq</a>.</li>
-  <li><a id="civtest.binEq" href="#civtest.binEq" class=anchor><b>fn binEq</b></a><span class=code>(e, r)</span></li>
+  Assert that <span class=code>a</span> equals <span class=code>b</span> (according to <a href="#metaty.eq">#metaty.eq</a>
+  and print a diff if not.</li>
+  <li><a id="civtest.binEq" href="#civtest.binEq" class=anchor><b>fn binEq</b></a><span class=code>(e, r)</span><br>
+  
+  Same as eq but for binary strings. Shows a very clear
+  diff for binary.</li>
   <li><a id="civtest.matches" href="#civtest.matches" class=anchor><b>fn matches</b></a><span class=code>(pat, subj) -&gt; !?error</span><br>
   
-  assert <span class=code>subj:find(pat)</span></li>
+  assert <span class=code>subj:find(pat)</span> or show a helpful error message.</li>
   <li><a id="civtest.contains" href="#civtest.contains" class=anchor><b>fn contains</b></a><span class=code>(plain, subj) -&gt; !?error</span><br>
   
-  assert <span class=code>subj:find(pat, 1, true)</span> (plain find)</li>
+  assert <span class=code>subj:find(pat, 1, true)</span> (plain find)
+  or show a helpful error message.</li>
   <li><a id="civtest.throws" href="#civtest.throws" class=anchor><b>fn throws</b></a><span class=code>(contains, fn) -&gt; ds.Error</span><br>
   
   assert <span class=code>fn()</span> fails and the <span class=code>contains</span> is in the message.</li>
@@ -54,7 +68,10 @@ module for writing simple tests
   Assert that the path exists.</li>
   <li><a id="civtest.pathEq" href="#civtest.pathEq" class=anchor><b>fn pathEq</b></a><span class=code>(a, b)</span><br>
   
-  Assert the contents at the two paths are equal</li>
+  Assert the contents at the two paths are equal.</li>
+  <li><a id="civtest.pathEq" href="#civtest.pathEq" class=anchor><b>fn pathEq</b></a><span class=code>(a, b)</span><br>
+  
+  Assert the contents at the two paths are equal.</li>
   <li><a id="civtest.path" href="#civtest.path" class=anchor><b>fn path</b></a><span class=code>(path, expect)</span><br>
   
   Assert that path matches expect. Expect can be of type:</li>

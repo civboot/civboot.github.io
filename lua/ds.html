@@ -41,7 +41,7 @@ It interacts (but does not set) the <b>globals</b> <span class=code>CWD</span> a
 <h3><a id="ds" href="#ds" class=anchor>Mod ds</h3></a>
 ds: data structures and algorithms.
 <br>
-<b>Types: </b><a href="#ds.B">B</a> <a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
+<b>Types: </b><a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
 <br>
 <b>Functions</b> <ul>
   <li><a id="ds.setup" href="#ds.setup" class=anchor><b>fn setup</b></a><span class=code>(args)</span><br>
@@ -60,89 +60,779 @@ ds: data structures and algorithms.
   
   insert values into list at index i.
   Uses <span class=code>inset</span> method if available.
-  rmlen, if provided, will cause <span class=code>t[i:i+rmlen</span></li>
-</ul> to be removed first
-
-inset is like an extend but the items are insert at any place in the array.
-The rmlen will also remove a certain number of items.
-* <a id="ds.isPod" href="#ds.isPod" class=anchor><b>fn isPod</b></a>
-* <a id="ds.noop" href="#ds.noop" class=anchor><b>fn noop</b></a><span class=code>()</span>
-* <a id="ds.nosupport" href="#ds.nosupport" class=anchor><b>fn nosupport</b></a><span class=code>()</span>
-* <a id="ds.iden" href="#ds.iden" class=anchor><b>fn iden</b></a><span class=code>(...) -&gt; ...</span>
-* <a id="ds.retTrue" href="#ds.retTrue" class=anchor><b>fn retTrue</b></a><span class=code>() -&gt; true</span>
-* <a id="ds.retFalse" href="#ds.retFalse" class=anchor><b>fn retFalse</b></a><span class=code>() -&gt; false</span>
-* <a id="ds.newTable" href="#ds.newTable" class=anchor><b>fn newTable</b></a><span class=code>() -&gt; {}</span>
-* <a id="ds.eq" href="#ds.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b) -&gt; a == b</span>
-* <a id="ds.srcloc" href="#ds.srcloc" class=anchor><b>fn srcloc</b></a><span class=code>(level) -&gt; "/path/to/dir/file.lua:10"</span>
-* <a id="ds.shortloc" href="#ds.shortloc" class=anchor><b>fn shortloc</b></a><span class=code>(level) -&gt; "dir/file.lua:10"</span>
-* <a id="ds.srcdir" href="#ds.srcdir" class=anchor><b>fn srcdir</b></a><span class=code>(level) -&gt; "/path/to/dir/"</span>
-* <a id="ds.coroutineErrorMessage" href="#ds.coroutineErrorMessage" class=anchor><b>fn coroutineErrorMessage</b></a><span class=code>(cor, err) -&gt; string</span>
-* <a id="ds.isWithin" href="#ds.isWithin" class=anchor><b>fn isWithin</b></a><span class=code>(v, min, max) -&gt; bool</span>
-* <a id="ds.lt" href="#ds.lt" class=anchor><b>fn lt</b></a><span class=code>(a, b) -&gt; a &lt; b</span>
-* <a id="ds.gt" href="#ds.gt" class=anchor><b>fn gt</b></a><span class=code>(a, b) -&gt; a &gt; b</span>
-* <a id="ds.lte" href="#ds.lte" class=anchor><b>fn lte</b></a><span class=code>(a, b) -&gt; a &lt;= b</span>
-* <a id="ds.bound" href="#ds.bound" class=anchor><b>fn bound</b></a><span class=code>(v, min, max) -&gt; value within [min,max]</span>
-* <a id="ds.sort2" href="#ds.sort2" class=anchor><b>fn sort2</b></a><span class=code>(a, b) -&gt; (small, large)</span>
-* <a id="ds.repr" href="#ds.repr" class=anchor><b>fn repr</b></a><span class=code>(v) -&gt; sfmt('%q', v)</span>
-* <a id="ds.isEven" href="#ds.isEven" class=anchor><b>fn isEven</b></a><span class=code>(a) -&gt; bool</span>
-* <a id="ds.isOdd" href="#ds.isOdd" class=anchor><b>fn isOdd</b></a><span class=code>(a) -&gt; bool</span>
-* <a id="ds.decAbs" href="#ds.decAbs" class=anchor><b>fn decAbs</b></a><span class=code>(v) -&gt; number</span>
-* <a id="ds.concat" href="#ds.concat" class=anchor><b>fn concat</b></a><span class=code>(sep, ...) -&gt; string</span><br>
-
-concatenate the string arguments.
-* <a id="ds.isupper" href="#ds.isupper" class=anchor><b>fn isupper</b></a><span class=code>(c) -&gt; string?</span><br>
-
-return the string if it is only uppercase letters
-* <a id="ds.islower" href="#ds.islower" class=anchor><b>fn islower</b></a><span class=code>(c) -&gt; string?</span><br>
-
-return the string if it is only lowercase letters
-* <a id="ds.trim" href="#ds.trim" class=anchor><b>fn trim</b></a><span class=code>(subj, pat, index) -&gt; string</span>
-* <a id="ds.find" href="#ds.find" class=anchor><b>fn find</b></a><span class=code>(subj, pats, si, plain) -&gt; (ms, me, pi, pat)</span><br>
-
-find any of a list of patterns. Return the match <span class=code>start, end</span> as well as
-the <span class=code>index, pat</span> of the pattern matched.
-* <a id="ds.split" href="#ds.split" class=anchor><b>fn split</b></a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span><br>
-
-split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
-<span class=code>ei</span> (end index)
-<div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
+  rmlen, if provided, will cause <span class=code>t[i:i+rmlen]</span> to be removed first
+  
+  inset is like an extend but the items are insert at any place in the array.
+  The rmlen will also remove a certain number of items.</li>
+  <li><a id="ds.isPod" href="#ds.isPod" class=anchor><b>fn isPod</b></a><span class=code>(v, mtFn)</span><br>
+  
+  return true if the value is "plain old data".
+  
+  Plain old data is defined as any concrete type or a table with no metatable
+  and who's pairs() are only POD.</li>
+  <li><a id="ds.noop" href="#ds.noop" class=anchor><b>fn noop</b></a><span class=code>()</span><br>
+  
+  function that does and returns nothing.</li>
+  <li><a id="ds.nosupport" href="#ds.nosupport" class=anchor><b>fn nosupport</b></a><span class=code>()</span><br>
+  
+  Function that indicates an API is not supported for a type.
+  Throws <span class=code>error'not supported'</span>.</li>
+  <li><a id="ds.iden" href="#ds.iden" class=anchor><b>fn iden</b></a><span class=code>(...) -&gt; ...</span><br>
+  
+  identity function, return the inputs.</li>
+  <li><a id="ds.retTrue" href="#ds.retTrue" class=anchor><b>fn retTrue</b></a><span class=code>() -&gt; true</span><br>
+  
+  function that always return true.</li>
+  <li><a id="ds.retFalse" href="#ds.retFalse" class=anchor><b>fn retFalse</b></a><span class=code>() -&gt; false</span><br>
+  
+  function that always return false.</li>
+  <li><a id="ds.newTable" href="#ds.newTable" class=anchor><b>fn newTable</b></a><span class=code>() -&gt; {}</span><br>
+  
+  Function that creates a new, empty table.</li>
+  <li><a id="ds.eq" href="#ds.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b) -&gt; bool</span><br>
+  
+  Function that returns <span class=code>a == b</span>.</li>
+  <li><a id="ds.srcloc" href="#ds.srcloc" class=anchor><b>fn srcloc</b></a><span class=code>(level) -&gt; "/path/to/dir/file.lua:10"</span><br>
+  
+  Get the source location of wherever this is called
+  (or at a higher <span class=code>level</span>).</li>
+  <li><a id="ds.shortloc" href="#ds.shortloc" class=anchor><b>fn shortloc</b></a><span class=code>(level) -&gt; "dir/file.lua:10"</span><br>
+  
+  Same as srcloc but shortens to only the parent dir.</li>
+  <li><a id="ds.srcdir" href="#ds.srcdir" class=anchor><b>fn srcdir</b></a><span class=code>(level) -&gt; "/path/to/dir/"</span><br>
+  
+  Same as srcloc but removes the <span class=code>file:linenum</span></li>
+  <li><a id="ds.coroutineErrorMessage" href="#ds.coroutineErrorMessage" class=anchor><b>fn coroutineErrorMessage</b></a><span class=code>(cor, err) -&gt; string</span><br>
+  
+  Create an error message for the coroutine which includes
+  it's traceback.</li>
+  <li><a id="ds.isWithin" href="#ds.isWithin" class=anchor><b>fn isWithin</b></a><span class=code>(v, min, max) -&gt; bool</span><br>
+  
+  Return whether <span class=code>min &lt;= v &lt;= max</span>.</li>
+  <li><a id="ds.lt" href="#ds.lt" class=anchor><b>fn lt</b></a><span class=code>(a, b) -&gt; bool</span><br>
+  
+  Return <span class=code>a &lt; b</span>.</li>
+  <li><a id="ds.gt" href="#ds.gt" class=anchor><b>fn gt</b></a><span class=code>(a, b) -&gt; bool</span><br>
+  
+  Return <span class=code>a &gt; b</span>.</li>
+  <li><a id="ds.lte" href="#ds.lte" class=anchor><b>fn lte</b></a><span class=code>(a, b) -&gt; bool</span><br>
+  
+  Return <span class=code>a &lt;= b</span>.</li>
+  <li><a id="ds.bound" href="#ds.bound" class=anchor><b>fn bound</b></a><span class=code>(v, min, max) -&gt; int</span><br>
+  
+  Return value within <span class=code>[min,max]</span> (inclusive).</li>
+  <li><a id="ds.sort2" href="#ds.sort2" class=anchor><b>fn sort2</b></a><span class=code>(a, b) -&gt; (small, large)</span><br>
+  
+  Return the two passed-in values in sorted order.</li>
+  <li><a id="ds.isEven" href="#ds.isEven" class=anchor><b>fn isEven</b></a><span class=code>(a) -&gt; bool</span><br>
+  
+  Return whether value is even.</li>
+  <li><a id="ds.isOdd" href="#ds.isOdd" class=anchor><b>fn isOdd</b></a><span class=code>(a) -&gt; bool</span><br>
+  
+  Return whether value is odd.</li>
+  <li><a id="ds.absDec" href="#ds.absDec" class=anchor><b>fn absDec</b></a><span class=code>(v) -&gt; number</span><br>
+  
+  Moves the absolute value of <span class=code>v</span> towards <span class=code>0</span> by <span class=code>1</span>.
+  If <span class=code>v==0</span> then do nothing.</li>
+  <li><a id="ds.concat" href="#ds.concat" class=anchor><b>fn concat</b></a><span class=code>(sep, ...) -&gt; string</span><br>
+  
+  concatenate the string arguments.</li>
+  <li><a id="ds.isupper" href="#ds.isupper" class=anchor><b>fn isupper</b></a><span class=code>(c) -&gt; string?</span><br>
+  
+  return the string if it is only uppercase letters</li>
+  <li><a id="ds.islower" href="#ds.islower" class=anchor><b>fn islower</b></a><span class=code>(c) -&gt; string?</span><br>
+  
+  return the string if it is only lowercase letters</li>
+  <li><a id="ds.trim" href="#ds.trim" class=anchor><b>fn trim</b></a><span class=code>(subj, pat, si) -&gt; string</span><br>
+  
+  Remove <span class=code>pat</span> (default=<span class=code>%s</span>, aka whitespace) from the front and back
+  of the string.</li>
+  <li><a id="ds.trimEnd" href="#ds.trimEnd" class=anchor><b>fn trimEnd</b></a><span class=code>(subj, pat, index) -&gt; string</span><br>
+  
+  Trim the end of the string by removing pat (default=<span class=code>%s</span>)</li>
+  <li><a id="ds.find" href="#ds.find" class=anchor><b>fn find</b></a><span class=code>(subj, pats, si, plain) -&gt; (ms, me, pi, pat)</span><br>
+  
+  Find any of a list of patterns. Return the match <span class=code>start, end</span> as well as
+  the <span class=code>index, pat</span> of the pattern matched.</li>
+  <li><a id="ds.split" href="#ds.split" class=anchor><b>fn split</b></a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span><br>
+  
+  split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
+  <span class=code>ei</span> (end index)
+  <div class=code-block>for ctx, line in split(text, '\n') do -- split lines<br>
 &nbsp; ... do something with line<br>
 end
-</div>
-* <a id="ds.splitList" href="#ds.splitList" class=anchor><b>fn splitList</b></a><span class=code>(...) -&gt; list</span>
-* <a id="ds.trimEnd" href="#ds.trimEnd" class=anchor><b>fn trimEnd</b></a><span class=code>(subj, pat, index) -&gt; string</span><br>
-
-trim the end of the string by removing pat (default='%s')
-* <a id="ds.squash" href="#ds.squash" class=anchor><b>fn squash</b></a><span class=code>(s, repl) -&gt; string</span><br>
-
-Squash a string: convert all whitespace to repl (default=' ').
-* <a id="ds.usub" href="#ds.usub" class=anchor><b>fn usub</b></a><span class=code>(s, si, ei, len)</span><br>
-
-utf8 sub. If len is pre-computed you can pass it in for better performance.
-* <a id="ds.simplestr" href="#ds.simplestr" class=anchor><b>fn simplestr</b></a><span class=code>(s)</span><br>
-
-A way to declare simpler mulitline strings which: <ul>
-  <li>ignores the first/last newline if empty</li>
-  <li>removes leading whitespace equal to the first
-  line (or second line if first line has no indent)</li>
-</ul>
-Example: <div class=code-block>&nbsp; local s = require'ds'.simplestr<br>
+</div></li>
+  <li><a id="ds.splitList" href="#ds.splitList" class=anchor><b>fn splitList</b></a><span class=code>(...) -&gt; list</span><br>
+  
+  Perform a split but returning a list instead of a string.</li>
+  <li><a id="ds.squash" href="#ds.squash" class=anchor><b>fn squash</b></a><span class=code>(s, repl) -&gt; string</span><br>
+  
+  Squash a string: convert all whitespace to repl (default=single-space).</li>
+  <li><a id="ds.usub" href="#ds.usub" class=anchor><b>fn usub</b></a><span class=code>(s, si, ei, len)</span><br>
+  
+  utf8 sub. If len is pre-computed you can pass it in for better performance.</li>
+  <li><a id="ds.simplestr" href="#ds.simplestr" class=anchor><b>fn simplestr</b></a><span class=code>(s)</span><br>
+  
+  A way to declare simpler mulitline strings which: <ul>
+    <li>ignores the first/last newline if empty</li>
+    <li>removes leading whitespace equal to the first
+    line (or second line if first line has no indent)</li>
+  </ul>
+  Example: <div class=code-block>&nbsp; local s = require'ds'.simplestr<br>
 &nbsp; local mystr = s[[<br>
 &nbsp; &nbsp; this is<br>
 &nbsp; &nbsp; &nbsp; a string.<br>
 &nbsp; ]]<br>
 &nbsp; T.eq('this is\n &nbsp;a string.', mystr)<br>
 &nbsp; 
+</div></li>
+  <li><a id="ds.bin" href="#ds.bin" class=anchor><b>fn bin</b></a><span class=code>(uint, width--[[8]], sep4--[['_']]) -&gt; str</span><br>
+  
+  Convert integer to binary representation (0's and 1's) <ul>
+    <li>width will be the number of bits.</li>
+    <li>sep4 will be used to separate every 4 bits, set to
+    nil to disable.</li>
+  </ul></li>
+  <li><a id="ds.get" href="#ds.get" class=anchor><b>fn get</b></a><span class=code>(t, k) -&gt; value</span><br>
+  
+  <span class=code>t[k]</span> if t is a raw table, else <span class=code>getmetatable(t).get(t, k)</span>
+  
+  This lets many types be substitutable for raw-tables in some APIs (i.e.
+  lines).</li>
+  <li><a id="ds.set" href="#ds.set" class=anchor><b>fn set</b></a><span class=code>(t, k, v)</span><br>
+  
+  <span class=code>t[k] = v</span> if t is a raw table, else <span class=code>getmetatable(t).set(t, k, v)</span>
+  
+  This lets many types be substitutable for raw-tables in some APIs (i.e.
+  lines).</li>
+  <li><a id="ds.isEmpty" href="#ds.isEmpty" class=anchor><b>fn isEmpty</b></a><span class=code>(t) -&gt; t == nil or next(t) == nil</span><br>
+  
+  Return whether <span class=code>t</span> is nil or the result of <span class=code>next(t)</span> is nil.</li>
+  <li><a id="ds.pairlen" href="#ds.pairlen" class=anchor><b>fn pairlen</b></a><span class=code>(t) -&gt; int</span><br>
+  
+  the full length of all pairs
+  <div class=info>WARNING: very slow, requires iterating the whole table</div></li>
+  <li><a id="ds.sort" href="#ds.sort" class=anchor><b>fn sort</b></a><span class=code>(t, fn) -&gt; t</span><br>
+  
+  Sort table and return it. Eventually this may use the <span class=code>__sort</span> metamethod.</li>
+  <li><a id="ds.sortUnique" href="#ds.sortUnique" class=anchor><b>fn sortUnique</b></a><span class=code>(t, sortFn, rmFn) -&gt; t</span><br>
+  
+  sort t and remove anything where <span class=code>rmFn(v1, v2)</span>
+  (normally rmFn is <span class=code>ds.eq</span>)</li>
+  <li><a id="ds.geti" href="#ds.geti" class=anchor><b>fn geti</b></a><span class=code>(t, i) -&gt; t[i]</span><br>
+  
+  get index, handling negatives</li>
+  <li><a id="ds.last" href="#ds.last" class=anchor><b>fn last</b></a><span class=code>(t) -&gt; t[#t]</span><br>
+  
+  get the last value of a list-like table.</li>
+  <li><a id="ds.only" href="#ds.only" class=anchor><b>fn only</b></a><span class=code>(t) -&gt; t[1]</span><br>
+  
+  get the first (and assert only) element of the list</li>
+  <li><a id="ds.values" href="#ds.values" class=anchor><b>fn values</b></a><span class=code>(t) -&gt; list</span><br>
+  
+  get only the values of pairs(t) as a list</li>
+  <li><a id="ds.keys" href="#ds.keys" class=anchor><b>fn keys</b></a><span class=code>(t) -&gt; list</span><br>
+  
+  get only the keys of <span class=code>pairs(t)</span> as a list.</li>
+  <li><a id="ds.inext" href="#ds.inext" class=anchor><b>fn inext</b></a><span class=code>(t, i) -&gt; (i+1, v)</span><br>
+  
+  next(t, key) but with indexes</li>
+  <li><a id="ds.iprev" href="#ds.iprev" class=anchor><b>fn iprev</b></a><span class=code>(t, i) -&gt; (i-1, v)</span><br>
+  
+  inext but reversed.</li>
+  <li><a id="ds.ireverse" href="#ds.ireverse" class=anchor><b>fn ireverse</b></a><span class=code>(t) -&gt; iter</span><br>
+  
+  ipairs reversed</li>
+  <li><a id="ds.rawislice" href="#ds.rawislice" class=anchor><b>fn rawislice</b></a><span class=code>(state, i) -&gt; (i+1, v)</span><br>
+  
+  <div class=info>You probably want islice instead.</div>
+  Usage: <span class=code>for i, v in rawislice, {t, ei}, si do ... end</span><br>
+  
+  where <span class=code>si, ei</span> is the start/end indexes.</li>
+  <li><a id="ds.islice" href="#ds.islice" class=anchor><b>fn islice</b></a><span class=code>(t, starti, endi) -&gt; iter</span><br>
+  
+  Usage: <span class=code>for i,v in islice(t, starti, endi)</span><br>
+  
+  <br>
+  <h4><a id="ds.PlainStyler" href="#ds.PlainStyler" class=anchor>Record PlainStyler</h4></a>
+  <br>
+  <h4><a id="ds.TypoSafe" href="#ds.TypoSafe" class=anchor>Record TypoSafe</h4></a>
+  A typo-safe table, typically used in libraries for storing constants.
+  <br>
+  Adding keys is always allowed but getting non-existant keys is an error.
+  <br>
+  <br>
+  <h4><a id="ds.Slc" href="#ds.Slc" class=anchor>Record Slc</h4></a>
+  A slice of anything with start and end indexes.
+  <div class=info>Note: This object does not hold a reference to the object being
+  sliced.</div>
+  <br>
+  <b>Fields:</b><ul>
+    <li><a id="ds.Slc.si" href="#ds.Slc.si" class=anchor><b>si</b></a>
+    start index</li>
+    <li><a id="ds.Slc.ei" href="#ds.Slc.ei" class=anchor><b>ei</b></a>
+    end index</li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="Slc.merge" href="#Slc.merge" class=anchor><b>fn merge</b></a><span class=code>(a, b) -&gt; first, second?</span><br>
+    
+    return either a single (new) merged or two sorted Slcs.</li>
+  </ul>
+  <br>
+  <h4><a id="ds.Imm" href="#ds.Imm" class=anchor>Record Imm</h4></a>
+  Immutable table
+  <br>
+  <br>
+  <h4><a id="ds.Duration" href="#ds.Duration" class=anchor>Record Duration</h4></a>
+  <b>Fields:</b><ul>
+    <li><a id="ds.Duration.s" href="#ds.Duration.s" class=anchor><b>s</b></a>
+    seconds</li>
+    <li><a id="ds.Duration.ns" href="#ds.Duration.ns" class=anchor><b>ns</b></a>
+    nanoseconds</li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="Duration.fromSeconds" href="#Duration.fromSeconds" class=anchor><b>fn fromSeconds</b></a></li>
+    <li><a id="Duration.fromMs" href="#Duration.fromMs" class=anchor><b>fn fromMs</b></a></li>
+    <li><a id="Duration.asSeconds" href="#Duration.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
+  </ul>
+  <br>
+  <h4><a id="ds.Epoch" href="#ds.Epoch" class=anchor>Record Epoch</h4></a>
+  <b>Fields:</b><ul>
+    <li><a id="ds.Epoch.s" href="#ds.Epoch.s" class=anchor><b>s</b></a>
+    seconds</li>
+    <li><a id="ds.Epoch.ns" href="#ds.Epoch.ns" class=anchor><b>ns</b></a>
+    nanoseconds</li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="Epoch.fromSeconds" href="#Epoch.fromSeconds" class=anchor><b>fn fromSeconds</b></a></li>
+    <li><a id="Epoch.asSeconds" href="#Epoch.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
+  </ul>
+  <br>
+  <h4><a id="ds.Set" href="#ds.Set" class=anchor>Record Set</h4></a>
+  <b>Methods</b> <ul>
+    <li><a id="Set.union" href="#Set.union" class=anchor><b>fn union</b></a><span class=code>(self, s) -&gt; Set</span></li>
+    <li><a id="Set.diff" href="#Set.diff" class=anchor><b>fn diff</b></a><span class=code>(self, s) -&gt; Set</span><br>
+    
+    items in self but not in s</li>
+  </ul>
+  <br>
+  <h3><a id="bt" href="#bt" class=anchor>Mod bt</h3></a>
+  indexed table as Binary Tree.
+  These functions treat an indexed table as a binary tree
+  where root is at <span class=code>index=1</span>
+  <b>Functions</b> <ul>
+    <li><a id="bt.left" href="#bt.left" class=anchor><b>fn left</b></a><span class=code>(t, i) -&gt; t[i * 2]</span></li>
+    <li><a id="bt.right" href="#bt.right" class=anchor><b>fn right</b></a><span class=code>(t, i) -&gt; t[i * 2 + 1]</span></li>
+    <li><a id="bt.parent" href="#bt.parent" class=anchor><b>fn parent</b></a><span class=code>(t, i) -&gt; t[i // 2]</span></li>
+    <li><a id="bt.lefti" href="#bt.lefti" class=anchor><b>fn lefti</b></a><span class=code>(t, i) -&gt; i * 2</span></li>
+    <li><a id="bt.righti" href="#bt.righti" class=anchor><b>fn righti</b></a><span class=code>(t, i) -&gt; i * 2 + 1</span></li>
+    <li><a id="bt.parenti" href="#bt.parenti" class=anchor><b>fn parenti</b></a><span class=code>(t, i) -&gt; i // 2</span></li>
+  </ul>
+  <br>
+  <h4><a id="ds.BiMap" href="#ds.BiMap" class=anchor>Record BiMap</h4></a>
+  Bidirectional Map.
+  Maps both <span class=code>key -&gt; value</span> and <span class=code>value -&gt; key</span>.
+  Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = nil</span> to handle deletions.
+  <br>
+  Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
+  <br>
+  <b>Methods</b> <ul>
+    <li><a id="BiMap.remove" href="#BiMap.remove" class=anchor><b>fn remove</b></a><span class=code>(t, k) -&gt; v</span></li>
+  </ul>
+  <br>
+  <h4><a id="ds.Deq" href="#ds.Deq" class=anchor>Record Deq</h4></a>
+  <span class=code>Deq() -&gt; Deq</span>, a deque
+  Use as a first in/out with <span class=code>deq:push(v)/deq()</span>
+  <br>
+  Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp;pushRight()<br>
+&nbsp; popLeft() &nbsp; popRight()
 </div>
-* <a id="ds.bin" href="#ds.bin" class=anchor><b>fn bin</b></a><span class=code>(uint, width--[[8]], sep4--[['_']]) -&gt; str</span><br>
-
-Convert integer to binary representation (0's and 1's) <ul>
-  <li>width will be the number of bits.</li>
-  <li>sep4 will be used to separate every 4 bits, set to
-  nil to disable.</li>
+  Calling it is the same as popLeft (use as iterator)
+  <br>
+  <b>Fields:</b><ul>
+    <li><a id="ds.Deq.right" href="#ds.Deq.right" class=anchor><b>right</b></a></li>
+    <li><a id="ds.Deq.left" href="#ds.Deq.left" class=anchor><b>left</b></a></li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="Deq.pushRight" href="#Deq.pushRight" class=anchor><b>fn pushRight</b></a><span class=code>(deq, val)</span></li>
+    <li><a id="Deq.extendRight" href="#Deq.extendRight" class=anchor><b>fn extendRight</b></a><span class=code>(deq, vals) -&gt; nil</span><br>
+    
+    extend deq to right</li>
+    <li><a id="Deq.pushLeft" href="#Deq.pushLeft" class=anchor><b>fn pushLeft</b></a><span class=code>(deq, val) -&gt; nil</span></li>
+    <li><a id="Deq.extendLeft" href="#Deq.extendLeft" class=anchor><b>fn extendLeft</b></a><span class=code>(deq, vals) -&gt; nil</span><br>
+    
+    extend deq to left (<span class=code>vals[1]</span> is left-most)</li>
+    <li><a id="Deq.popLeft" href="#Deq.popLeft" class=anchor><b>fn popLeft</b></a><span class=code>(deq) -&gt; v</span></li>
+    <li><a id="Deq.popRight" href="#Deq.popRight" class=anchor><b>fn popRight</b></a><span class=code>(deq) -&gt; v</span></li>
+    <li><a id="Deq.push" href="#Deq.push" class=anchor><b>fn push</b></a><span class=code>(deq, val)</span></li>
+    <li><a id="Deq.pop" href="#Deq.pop" class=anchor><b>fn pop</b></a><span class=code>(deq) -&gt; v</span></li>
+    <li><a id="Deq.clear" href="#Deq.clear" class=anchor><b>fn clear</b></a><span class=code>(deq) -&gt; nil: clear deq</span></li>
+    <li><a id="Deq.drain" href="#Deq.drain" class=anchor><b>fn drain</b></a><span class=code>(deq) -&gt; table: get all items and clear deq</span></li>
+  </ul>
+  <br>
+  <h4><a id="ds.TWriter" href="#ds.TWriter" class=anchor>Record TWriter</h4></a>
+  <b>Methods</b> <ul>
+    <li><a id="TWriter.write" href="#TWriter.write" class=anchor><b>fn write</b></a><span class=code>(tw, ...)</span></li>
+    <li><a id="TWriter.flush" href="#TWriter.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
+    
+    function that does and returns nothing.</li>
+    <li><a id="TWriter.close" href="#TWriter.close" class=anchor><b>fn close</b></a><span class=code>()</span><br>
+    
+    function that does and returns nothing.</li>
+  </ul>
+  <br>
+  <h4><a id="ds.Error" href="#ds.Error" class=anchor>Record Error</h4></a>
+  Error message, traceback and cause
+  NOTE: you should only use this for printing/logging/etc.
+  <br>
+  <b>Fields:</b><ul>
+    <li><a id="ds.Error.msg" href="#ds.Error.msg" class=anchor><b>msg</b></a></li>
+    <li><a id="ds.Error.traceback" href="#ds.Error.traceback" class=anchor><b>traceback</b></a></li>
+    <li><a id="ds.Error.cause" href="#ds.Error.cause" class=anchor><b>cause</b></a></li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="Error.from" href="#Error.from" class=anchor><b>fn from</b></a><span class=code>(msg, tb, cause) -&gt; Error</span><br>
+    
+    create the error from the arguments.
+    tb can be one of: <span class=code>coroutine|string|table</span></li>
+    <li><a id="Error.msgh" href="#Error.msgh" class=anchor><b>fn msgh</b></a><span class=code>(msg, level) -&gt; Error</span><br>
+    
+    for use with xpcall. See: try</li>
+  </ul>
+  <br>
+  <h4><a id="Ty<Iter>" href="#Ty<Iter>" class=anchor>Record Iter</h4></a>
+  <b>Methods</b> <ul>
+    <li><a id="Iter.of" href="#Iter.of" class=anchor><b>fn of</b></a><span class=code>(T, t) -&gt; T{pairs(t)}</span><br>
+    
+    create iterable of <span class=code>pairs(t)</span></li>
+    <li><a id="Iter.ofList" href="#Iter.ofList" class=anchor><b>fn ofList</b></a><span class=code>(T, t) -&gt; T{ipairs(t)}</span><br>
+    
+    create iterable of <span class=code>ipairs(t)</span></li>
+    <li><a id="Iter.ofUnpacked" href="#Iter.ofUnpacked" class=anchor><b>fn ofUnpacked</b></a><span class=code>(T, t)</span><br>
+    
+    create an iterable that returns <span class=code>table.unpack</span> on each
+    value in <span class=code>ipairs(t)</span>.
+    
+    i.e. <span class=code>Iter:ofUnpacked{{5, 'five'}, {6, 'six'}}</span> will
+    return (5, 'five') then (6, 'six')</li>
+    <li><a id="Iter.ofOrdMap" href="#Iter.ofOrdMap" class=anchor><b>fn ofOrdMap</b></a><span class=code>(T, t, cmpFn) -&gt; sortedIter[k, v]</span><br>
+    
+    create an iterable of <span class=code>t</span> which emits keys in order.
+    <div class=info> WARNING: this first sorts the keys, which can be slow</div></li>
+    <li><a id="Iter.ofOrdList" href="#Iter.ofOrdList" class=anchor><b>fn ofOrdList</b></a><span class=code>(T, t, cmpFn) -&gt; sortedIter[i, v]</span><br>
+    
+    sort t then iterate over list</li>
+    <li><a id="Iter.ofSlc" href="#Iter.ofSlc" class=anchor><b>fn ofSlc</b></a><span class=code>(T, t, starti, endi) -&gt; iter[i, v]</span><br>
+    
+    iterate over slice of <span class=code>starti:endi</span> in <span class=code>t</span></li>
+    <li><a id="Iter.map" href="#Iter.map" class=anchor><b>fn map</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    emit <span class=code>k, v = fn(v)</span> for each non-nil result
+    
+    <div class=info>Note: if performance matters this is the most performant
+    application function since it doesn't create an internal
+    function.
+    </div></li>
+    <li><a id="Iter.mapK" href="#Iter.mapK" class=anchor><b>fn mapK</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    - emit <span class=code>fn(k), v)</span> for each non-nil result.</li>
+    <li><a id="Iter.mapV" href="#Iter.mapV" class=anchor><b>fn mapV</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    emit <span class=code>k, fn(v)</span> for each non-nil result.
+    (filtered when <span class=code>newK==nil</span>)</li>
+    <li><a id="Iter.filter" href="#Iter.filter" class=anchor><b>fn filter</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    - emit only <span class=code>if fn(k, v)</span> results</li>
+    <li><a id="Iter.filterK" href="#Iter.filterK" class=anchor><b>fn filterK</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    - emit only <span class=code>if fn(k)</span> results</li>
+    <li><a id="Iter.filterV" href="#Iter.filterV" class=anchor><b>fn filterV</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    - emit only <span class=code>if fn(v)</span> results</li>
+    <li><a id="Iter.lookup" href="#Iter.lookup" class=anchor><b>fn lookup</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit<span class=code>v, t[k]</span>, looking up the iter's values in the table's keys.</li>
+    <li><a id="Iter.lookupK" href="#Iter.lookupK" class=anchor><b>fn lookupK</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit <span class=code>t[k], v</span> for each non-nil <span class=code>t[k]</span></li>
+    <li><a id="Iter.lookupV" href="#Iter.lookupV" class=anchor><b>fn lookupV</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit <span class=code>k, $t[v]</span> for each non-nil <span class=code>t[v]</span></li>
+    <li><a id="Iter.keyIn" href="#Iter.keyIn" class=anchor><b>fn keyIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit <span class=code>k, v</span> for each non-nil <span class=code>t[k]</span></li>
+    <li><a id="Iter.keyNotIn" href="#Iter.keyNotIn" class=anchor><b>fn keyNotIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit <span class=code>k, v</span> for each nil <span class=code>t[k]</span></li>
+    <li><a id="Iter.valIn" href="#Iter.valIn" class=anchor><b>fn valIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit <span class=code>k, v</span> for each non-nil <span class=code>t[v]</span></li>
+    <li><a id="Iter.valNotIn" href="#Iter.valNotIn" class=anchor><b>fn valNotIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+    
+    emit <span class=code>k, v</span> for each nil <span class=code>t[v]</span></li>
+    <li><a id="Iter.listen" href="#Iter.listen" class=anchor><b>fn listen</b></a><span class=code>(it, fn) -&gt; it</span><br>
+    
+    emit <span class=code>k, v</span> after calling <span class=code>fn(k, v)</span>.
+    The results of the fn are ignored</li>
+    <li><a id="Iter.index" href="#Iter.index" class=anchor><b>fn index</b></a><span class=code>(it) -&gt; it</span><br>
+    
+    emit <span class=code>i, k</span>, dropping values. <span class=code>i</span> starts at <span class=code>1</span> and increments each
+    time called.
+    
+    <div class=info> Note: this is most useful for iterators which don't emit a <span class=code>v</span>.
+    i.e. getting the line number in <span class=code>file:lines()</span></div></li>
+    <li><a id="Iter.swap" href="#Iter.swap" class=anchor><b>fn swap</b></a><span class=code>(it) -&gt; it[v, k]</span><br>
+    
+    emit <span class=code>v, k</span> (swaps key and value)</li>
+    <li><a id="Iter.find" href="#Iter.find" class=anchor><b>fn find</b></a><span class=code>(it, fn) -&gt; k, v</span><br>
+    
+    run the iterator over all values, calling <span class=code>fn(k, v)</span> for each.
+    return the first <span class=code>k, v</span> where the fn returns a truthy value.</li>
+    <li><a id="Iter.all" href="#Iter.all" class=anchor><b>fn all</b></a><span class=code>(it) -&gt; not it:find(allFn)</span><br>
+    
+    return true if any of the values are truthy</li>
+    <li><a id="Iter.any" href="#Iter.any" class=anchor><b>fn any</b></a><span class=code>(it) -&gt; not not it:find(anyFn)</span><br>
+    
+    return true if any of the values are truthy</li>
+    <li><a id="Iter.run" href="#Iter.run" class=anchor><b>fn run</b></a><span class=code>(it, fn--[[noop]]) -&gt; nil</span><br>
+    
+    run the iterator over all values, calling <span class=code>fn(k, v)</span> for each.</li>
+    <li><a id="Iter.to" href="#Iter.to" class=anchor><b>fn to</b></a><span class=code>(it, to={}) -&gt; to</span><br>
+    
+    collect non-nil <span class=code>k, v</span> into table-like object <span class=code>to</span></li>
+    <li><a id="Iter.keysTo" href="#Iter.keysTo" class=anchor><b>fn keysTo</b></a><span class=code>(it, to={}) -&gt; to</span><br>
+    
+    collect emitted <span class=code>k</span> as a list (vals are dropped)</li>
+    <li><a id="Iter.valsTo" href="#Iter.valsTo" class=anchor><b>fn valsTo</b></a><span class=code>(it, to={}) -&gt; to</span><br>
+    
+    collect emitted <span class=code>v</span> as a list (keys are dropped)</li>
+    <li><a id="Iter.concat" href="#Iter.concat" class=anchor><b>fn concat</b></a><span class=code>(it, sep) -&gt; concat(it:to(), sep)</span></li>
+    <li><a id="Iter.reset" href="#Iter.reset" class=anchor><b>fn reset</b></a><span class=code>(it) -&gt; it</span><br>
+    
+    reset the iterator to run from the start</li>
+    <li><a id="Iter.single" href="#Iter.single" class=anchor><b>fn single</b></a><span class=code>(k, v) -&gt; fn(): (k, v) .. nil</span><br>
+    
+    create an iterator that returns a single value</li>
+    <li><a id="Iter.assertEq" href="#Iter.assertEq" class=anchor><b>fn assertEq</b></a><span class=code>(it1, it2)</span><br>
+    
+    Used for testing. <span class=code>Iter:assertEq(it1, it2)</span> constructs both
+    iterators using <span class=code>Iter()</span> and then asserts the results are
+    identical.</li>
+  </ul>
+  <br>
+  <h4><a id="Ty<LL>" href="#Ty<LL>" class=anchor>Record LL</h4></a>
+  <b>Fields:</b><ul>
+    <li><a id="Ty<LL>.l" href="#Ty<LL>.l" class=anchor><b>l</b></a>
+    left node</li>
+    <li><a id="Ty<LL>.r" href="#Ty<LL>.r" class=anchor><b>r</b></a>
+    right node</li>
+    <li><a id="Ty<LL>.v" href="#Ty<LL>.v" class=anchor><b>v</b></a>
+    value</li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="LL.from" href="#LL.from" class=anchor><b>fn from</b></a><span class=code>(T, list) -&gt; (head, tail) from list of vals</span></li>
+    <li><a id="LL.head" href="#LL.head" class=anchor><b>fn head</b></a><span class=code>(ll) -&gt; ll</span></li>
+    <li><a id="LL.tail" href="#LL.tail" class=anchor><b>fn tail</b></a><span class=code>(ll) -&gt; ll</span></li>
+    <li><a id="LL.tolist" href="#LL.tolist" class=anchor><b>fn tolist</b></a><span class=code>(ll) -&gt; {a.v, b.v, c.v, ...}</span></li>
+    <li><a id="LL.link" href="#LL.link" class=anchor><b>fn link</b></a><span class=code>(l, r)</span><br>
+    
+    create l -> r link</li>
+    <li><a id="LL.insert" href="#LL.insert" class=anchor><b>fn insert</b></a><span class=code>(ll, v)</span><br>
+    
+    insert LL(v) to right of ll
+    <span class=code>(h -&gt; 2); h:insert(1) ==&gt; (h -&gt; 1 -&gt; 2)</span></li>
+    <li><a id="LL.rm" href="#LL.rm" class=anchor><b>fn rm</b></a><span class=code>(ll) -&gt; head?</span><br>
+    
+    remove node ll from linked list
+    if ll was the head, returns the new head (or nil)</li>
+    <li><a id="LL.get" href="#LL.get" class=anchor><b>fn get</b></a><span class=code>(ll, i) -&gt; node? (at index +/- i)</span></li>
+  </ul>
+  <br>
+  <h3><a id="ds.path" href="#ds.path" class=anchor>Mod ds.path</h3></a>
+  working with paths
+  Call directly to convert a list|str to a list of path components.
+  <b>Functions</b> <ul>
+    <li><a id="ds.path.read" href="#ds.path.read" class=anchor><b>fn read</b></a><span class=code>(path)</span><br>
+    
+    read file at path or throw error</li>
+    <li><a id="ds.path.write" href="#ds.path.write" class=anchor><b>fn write</b></a><span class=code>(path, text)</span><br>
+    
+    write string to file at path or throw error</li>
+    <li><a id="ds.path.append" href="#ds.path.append" class=anchor><b>fn append</b></a><span class=code>(path, text)</span><br>
+    
+    append text to path, adds a newline if text doesn't end in one.</li>
+    <li><a id="ds.path.pathenv" href="#ds.path.pathenv" class=anchor><b>fn pathenv</b></a><span class=code>(var, alt)</span></li>
+    <li><a id="ds.path.cwd" href="#ds.path.cwd" class=anchor><b>fn cwd</b></a><span class=code>(dir) -&gt; /...cwd/</span><br>
+    
+    get the current working directory</li>
+    <li><a id="ds.path.cd" href="#ds.path.cd" class=anchor><b>fn cd</b></a><span class=code>(dir)</span><br>
+    
+    Set the CWD, changing the result of ds.cwd.</li>
+    <li><a id="ds.path.home" href="#ds.path.home" class=anchor><b>fn home</b></a><span class=code>() -&gt; M.pathenv('HOME', 'HOMEDIR')</span><br>
+    
+    get the user's home directory</li>
+    <li><a id="ds.path.concat" href="#ds.path.concat" class=anchor><b>fn concat</b></a><span class=code>(t, _) -&gt; string</span><br>
+    
+    join a table of path components</li>
+    <li><a id="ds.path.hasBacktrack" href="#ds.path.hasBacktrack" class=anchor><b>fn hasBacktrack</b></a><span class=code>(path) -&gt; bool. path: [str|list]</span><br>
+    
+    return whether a path has any '..' components</li>
+    <li><a id="ds.path.ext" href="#ds.path.ext" class=anchor><b>fn ext</b></a><span class=code>(path) -&gt; string. path: [str|list]</span></li>
+    <li><a id="ds.path.abs" href="#ds.path.abs" class=anchor><b>fn abs</b></a><span class=code>(path, wd) -&gt; /absolute/path</span><br>
+    
+    Ensure the path is absolute, using the wd (default=cwd()) if necessary
+    
+    This preserves the type of the input: str -> str; table -> table</li>
+    <li><a id="ds.path.resolve" href="#ds.path.resolve" class=anchor><b>fn resolve</b></a><span class=code>(path, wd) -&gt; list|str</span><br>
+    
+    resolve any `..` or `.` path components, making the path
+    /absolute if necessary.
+    The return type is the same as the input type.</li>
+    <li><a id="ds.path.canonical" href="#ds.path.canonical" class=anchor><b>fn canonical</b></a><span class=code>(path) -&gt; M.resolve(M.abs(path))</span><br>
+    
+    Get the canonical path.
+    This is a shortcut for <span class=code>resolve(abs(path))</span>.</li>
+    <li><a id="ds.path.itemeq" href="#ds.path.itemeq" class=anchor><b>fn itemeq</b></a><span class=code>(a, b) -&gt; boolean: path items are equal</span></li>
+    <li><a id="ds.path.rmleft" href="#ds.path.rmleft" class=anchor><b>fn rmleft</b></a><span class=code>(path, rm)</span><br>
+    
+    ds.rmleft for path components</li>
+    <li><a id="ds.path.nice" href="#ds.path.nice" class=anchor><b>fn nice</b></a><span class=code>(path, wd) -&gt; string</span><br>
+    
+    return a nice path (string) that is resolved and readable.
+    
+    It's 'nice' because it has no '/../' or '/./' elements
+    and has CWD stripped.</li>
+    <li><a id="ds.path.small" href="#ds.path.small" class=anchor><b>fn small</b></a><span class=code>(path, wd)</span><br>
+    
+    Return the nice path but always keep either / or ./
+    at the start.</li>
+    <li><a id="ds.path.short" href="#ds.path.short" class=anchor><b>fn short</b></a><span class=code>(path, wd)</span><br>
+    
+    Return only the parent dir and final item.
+    This is often used for documentation/etc</li>
+    <li><a id="ds.path.first" href="#ds.path.first" class=anchor><b>fn first</b></a><span class=code>(path)</span><br>
+    
+    <span class=code>first/middle/last -&gt; ("first", "middle/last")</span></li>
+    <li><a id="ds.path.last" href="#ds.path.last" class=anchor><b>fn last</b></a><span class=code>(path)</span><br>
+    
+    <span class=code>first/middle/last -&gt; ("first/middle/", "last")</span></li>
+    <li><a id="ds.path.dir" href="#ds.path.dir" class=anchor><b>fn dir</b></a><span class=code>(path)</span><br>
+    
+    Get the directory of the path or nil if it is root.</li>
+    <li><a id="ds.path.isDir" href="#ds.path.isDir" class=anchor><b>fn isDir</b></a><span class=code>(path) -&gt; path:sub(-1) == '/'</span><br>
+    
+    return whether the path looks like a dir.
+    Note: civstack tries to make all ftype='dir' paths end in '/'
+    but other libraries or APIs may not conform to this.</li>
+    <li><a id="ds.path.toDir" href="#ds.path.toDir" class=anchor><b>fn toDir</b></a><span class=code>(path) -&gt; path/</span></li>
+    <li><a id="ds.path.toNonDir" href="#ds.path.toNonDir" class=anchor><b>fn toNonDir</b></a><span class=code>(path) -&gt; path (without ending /)</span></li>
+    <li><a id="ds.path.relative" href="#ds.path.relative" class=anchor><b>fn relative</b></a><span class=code>(from, to, wd)</span><br>
+    
+    return the relative path needed to get from <span class=code>from</span> to <span class=code>to</span>.
+    
+    Note: this ignores (pops) the last item in <span class=code>from</span> if it's not a dir/.
+    
+    For example
+    T.eq(relative('/foo/bar',  '/foo/baz/bob'), 'baz/bob')
+    T.eq(relative('/foo/bar/', '/foo/baz/bob'), '../baz/bob')</li>
+    <li><a id="ds.path.cmpDirsLast" href="#ds.path.cmpDirsLast" class=anchor><b>fn cmpDirsLast</b></a><span class=code>(a, b)</span><br>
+    
+    path comparison function for <span class=code>table.sort</span> that sorts
+    dirs last, else alphabetically.</li>
+  </ul>
+  <br>
+  <h3><a id="ds.utf8" href="#ds.utf8" class=anchor>Mod ds.utf8</h3></a>
+  utf8 stream decoding.
+  Get the length by decodelen(firstbyte), then decode the whole character
+  with decode(dat)
+  <b>Functions</b> <ul>
+    <li><a id="ds.utf8.decodelen" href="#ds.utf8.decodelen" class=anchor><b>fn decodelen</b></a><span class=code>(firstbyte) -&gt; U8LEN[0xF8 &amp; firstbyte]</span><br>
+    
+    given the first byte return the number of bytes in the utf8 char</li>
+    <li><a id="ds.utf8.decode" href="#ds.utf8.decode" class=anchor><b>fn decode</b></a><span class=code>(dat) -&gt; int</span><br>
+    
+    decode utf8 data (table) into an integer.
+    Use <span class=code>utf8.char</span> (from lua's stdlib) to turn into a string.</li>
+  </ul>
+  <br>
+  <h3><a id="ds.heap" href="#ds.heap" class=anchor>Mod ds.heap</h3></a>
+  Binary Heap implementation
+  <br>
+  <b>Types: </b><a href="#ds.heap.Heap">Heap</a> 
+  <br>
+  <br>
+  <h4><a id="ds.heap.Heap" href="#ds.heap.Heap" class=anchor>Record Heap</h4></a>
+  Heap(t, cmp) binary heap using a table.
+  A binary heap is a binary tree where the value of the parent always
+  satisfies `cmp(parent, child) == true`
+  Min Heap: cmp = function(p, c) return p < c end (default)
+  Max Heap: cmp = function(p, c) return p > c end
+  <br>
+  add and push take only O(log n), making it very useful for
+  priority queues and similar problems.
+  <br>
+  <b>Fields:</b><ul>
+    <li><a id="ds.heap.Heap.cmp" href="#ds.heap.Heap.cmp" class=anchor><b>cmp</b></a> <span class=code>=ds.lt</span>
+    comparison function to use</li>
+  </ul>
+  <b>Methods</b> <ul>
+    <li><a id="Heap.add" href="#Heap.add" class=anchor><b>fn add</b></a><span class=code>(h, 1, #h, #h, h.cmp)</span><br>
+    
+    <span class=code>h:add(v)</span> add value to the heap.</li>
+    <li><a id="Heap.pop" href="#Heap.pop" class=anchor><b>fn pop</b></a><span class=code>(h) -&gt; v</span><br>
+    
+    <span class=code>h:pop() -&gt; v</span> pop the top node.</li>
+  </ul>
+  <br>
+  <h3><a id="ds.log" href="#ds.log" class=anchor>Mod ds.log</h3></a>
+  Simple logging library, set i.e. LOGLEVEL=TRACE to enable logging.
+  <br>
+  This module has the functions <span class=code>trace info warn err crit</span> with the signature:
+  <span class=code>function(fmt, ... [, data</span>)</li>
+</ul> <ul>
+  <li>the ... are the format args which behave like <span class=code>fmt.format</span> (aka <span class=code>%q</span>
+  formats tables/etc).</li>
+  <li>data is optional arbitrary data that can be serialized/formatted.</li>
 </ul>
-* <a id="ds.get" href="#ds.get" class=anchor><b>fn get</b></a><span class=code>(t, k) -&gt; value</span><br>
-
-<span class=code>t[k</span>
+<br>
+To enable logging the user should set a global (or env var) LOGLEVEL
+to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
+<br>
+This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
+which logs to stderr. This fn is called with signature
+<span class=code>function(level, srcloc, fmt, ...)</span>
+<br>
+<b>Types: </b><a href="#ds.log.LogTable">LogTable</a> 
+<br>
+<b>Functions</b> <ul>
+  <li><a id="ds.log.time" href="#ds.log.time" class=anchor><b>fn time</b></a><span class=code>() -&gt; os.date():match'%d%d:%d%d:%d%d'</span></li>
+  <li><a id="ds.log.levelInt" href="#ds.log.levelInt" class=anchor><b>fn levelInt</b></a><span class=code>(lvl)</span></li>
+  <li><a id="ds.log.levelStr" href="#ds.log.levelStr" class=anchor><b>fn levelStr</b></a><span class=code>(lvl)</span></li>
+  <li><a id="ds.log.setLevel" href="#ds.log.setLevel" class=anchor><b>fn setLevel</b></a><span class=code>(lvl)</span><br>
+  
+  set the global logging level (default=os.getenv'LOGLEVEL')</li>
+  <li><a id="ds.log.logFn" href="#ds.log.logFn" class=anchor><b>fn logFn</b></a><span class=code>(lvl, loc, fmt, ...)</span></li>
+  <li><a id="ds.log.crit" href="#ds.log.crit" class=anchor><b>fn crit</b></a><span class=code>(1, ...)</span></li>
+  <li><a id="ds.log.err" href="#ds.log.err" class=anchor><b>fn err</b></a><span class=code>(2, ...)</span></li>
+  <li><a id="ds.log.warn" href="#ds.log.warn" class=anchor><b>fn warn</b></a><span class=code>(3, ...)</span></li>
+  <li><a id="ds.log.info" href="#ds.log.info" class=anchor><b>fn info</b></a><span class=code>(4, ...)</span></li>
+  <li><a id="ds.log.trace" href="#ds.log.trace" class=anchor><b>fn trace</b></a><span class=code>(5, ...)</span></li>
+</ul>
+<br>
+<h4><a id="ds.log.LogTable" href="#ds.log.LogTable" class=anchor>Record LogTable</h4></a>
+used in tests
+<br>
+<b>Fields:</b><ul>
+  <li><a id="ds.log.LogTable.tee" href="#ds.log.LogTable.tee" class=anchor><b>tee</b></a>
+  call calls will also call tee</li>
+</ul>
+<br>
+<h4><a id="Ty<ds.Grid>" href="#Ty<ds.Grid>" class=anchor>Record ds.Grid</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<ds.Grid>.h" href="#Ty<ds.Grid>.h" class=anchor><b>h</b></a>
+  height</li>
+  <li><a id="Ty<ds.Grid>.w" href="#Ty<ds.Grid>.w" class=anchor><b>w</b></a>
+  width</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="ds.Grid.clear" href="#ds.Grid.clear" class=anchor><b>fn clear</b></a><span class=code>(g) -&gt; g</span><br>
+  
+  clear the grid</li>
+  <li><a id="ds.Grid.insert" href="#ds.Grid.insert" class=anchor><b>fn insert</b></a><span class=code>(g, l, c, str)</span><br>
+  
+  Insert the str into the Grid.
+  Any newlines will be insert starting at column c.
+  
+  This will automatically fill <span class=code>[1,c-1]</span> with spaces, but will
+  NOT clear any data after the insert text, meaning it is essentially a
+  replace.
+  FIXME: considere renaming to replace... or something.</li>
+</ul>
+<br>
+<h3><a id="ds.load" href="#ds.load" class=anchor>Mod ds.load</h3></a>
+load lua modules with custom or default environment in a sandboxed
+environment. This is extremely useful for configurations written in lua or
+writing your own config-like language.
+<br>
+The default environment (ds.load.ENV) has safe default functions which
+cannot access state and missing unsafe functions like getmetatable or the
+debug module.
+<br>
+<h2><a id="loading" href="#loading" class=anchor>loading</h2></a>
+To perform the load, call this module with:
+<div class=code-block>&nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result</div>
+inputs: <ul>
+  <li>path: path to load (lua-syntax file).</li>
+  <li>env: global environment.</li>
+  <li>envMeta: metatable of global environment. If env
+  already has a metatable this is ignored.</li>
+</ul>
+<br>
+outputs: <ul>
+  <li>ok: boolean to indicate load success or failure of script.</li>
+  <li>result: result or loading or ds.Error.</li>
+</ul>
+<br>
+Throws an error if the path is not valid lua code.
+<b>Functions</b> <ul>
+  <li><a id="ds.load.loadfile" href="#ds.load.loadfile" class=anchor><b>fn loadfile</b></a><span class=code>(path, env, envMeta) -&gt; fn?, ds.Error?</span><br>
+  
+  Similar to lua's <span class=code>loadfile</span> but follows conventions of <span class=code>ds.load(...)</span>.
+  Unlike loadfile, this throws an error if the path doesn't parse.</li>
+</ul>
+<br>
+<h4><a id="Ty<ds.IFile>" href="#Ty<ds.IFile>" class=anchor>Record ds.IFile</h4></a>
+<b>Fields:</b><ul>
+  <li><a id="Ty<ds.IFile>.f" href="#Ty<ds.IFile>.f" class=anchor><b>f</b></a></li>
+  <li><a id="Ty<ds.IFile>.path" href="#Ty<ds.IFile>.path" class=anchor><b>path</b></a></li>
+  <li><a id="Ty<ds.IFile>.mode" href="#Ty<ds.IFile>.mode" class=anchor><b>mode</b></a></li>
+  <li><a id="Ty<ds.IFile>.len" href="#Ty<ds.IFile>.len" class=anchor><b>len</b></a></li>
+  <li><a id="Ty<ds.IFile>.sz" href="#Ty<ds.IFile>.sz" class=anchor><b>sz</b></a>
+  the size of each value</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="ds.IFile.create" href="#ds.IFile.create" class=anchor><b>fn create</b></a><span class=code>(T, sz, path) -&gt; IFile?, errmsg?</span><br>
+  
+  This creates a new index file at path (path=nil uses tmpfile()).
+  Note: Use load if you want to load an existing index.</li>
+  <li><a id="ds.IFile.reload" href="#ds.IFile.reload" class=anchor><b>fn reload</b></a><span class=code>(fi) -&gt; IFile?, errmsg?</span><br>
+  
+  Reload IFile from path.</li>
+  <li><a id="ds.IFile.load" href="#ds.IFile.load" class=anchor><b>fn load</b></a><span class=code>(T, sz, path, mode) -&gt; IFile?, errmsg?</span><br>
+  
+  load an index file</li>
+  <li><a id="ds.IFile.flush" href="#ds.IFile.flush" class=anchor><b>fn flush</b></a><span class=code>(fi) -&gt; fi.f:flush()</span></li>
+  <li><a id="ds.IFile.close" href="#ds.IFile.close" class=anchor><b>fn close</b></a><span class=code>(fi)</span></li>
+  <li><a id="ds.IFile.closed" href="#ds.IFile.closed" class=anchor><b>fn closed</b></a><span class=code>(fi) -&gt; bool</span></li>
+  <li><a id="ds.IFile.getbytes" href="#ds.IFile.getbytes" class=anchor><b>fn getbytes</b></a><span class=code>(fi, i)</span><br>
+  
+  get bytes. If index out of bounds return nil.
+  Panic if there are read errors.</li>
+  <li><a id="ds.IFile.get" href="#ds.IFile.get" class=anchor><b>fn get</b></a><span class=code>(fi, i)</span><br>
+  
+  get bytes. If index out of bounds return nil.
+  Panic if there are read errors.</li>
+  <li><a id="ds.IFile.setbytes" href="#ds.IFile.setbytes" class=anchor><b>fn setbytes</b></a><span class=code>(fi, i, v)</span></li>
+  <li><a id="ds.IFile.set" href="#ds.IFile.set" class=anchor><b>fn set</b></a><span class=code>(fi, i, v)</span></li>
+  <li><a id="ds.IFile.move" href="#ds.IFile.move" class=anchor><b>fn move</b></a><span class=code>(fi, to, mvFn) -&gt; fi</span><br>
+  
+  Move the IFile's path to <span class=code>to</span>.
+  
+  <span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
+  <span class=code>civix.mv</span> will be used.
+  
+  This can be done on both closed and opened files.
+  
+  The IFile will re-open on the new file regardless of the
+  previous state.</li>
+  <li><a id="ds.IFile.reader" href="#ds.IFile.reader" class=anchor><b>fn reader</b></a><span class=code>(fi) -&gt; IFile?, err?</span><br>
+  
+  Get a new read-only instance with an independent file-descriptor.
+  
+  Warning: currently the reader's len will be static, so this should
+  be mostly used for temporary cases. This might be changed in
+  the future.</li>
+</ul>
+<br>
 </div></body>
 </html>

@@ -358,8 +358,12 @@ The writer contains: <ul>
   create <span class=code>&nbsp;[$inline code] </span></li>
   <li><a id="cxt.content" href="#cxt.content" class=anchor><b>fn content</b></a><span class=code>(p, node, isRoot, altEnd)</span><br>
   
-  parse normal content, adding to node</li>
-  <li><a id="cxt.parse" href="#cxt.parse" class=anchor><b>fn parse</b></a><span class=code>(dat, dbg)</span></li>
+  parse normal content, adding to node
+  p is a <span class=code>pegl.Parser</span>. isRoot indicates
+  it is currently parsing plain text.</li>
+  <li><a id="cxt.parse" href="#cxt.parse" class=anchor><b>fn parse</b></a><span class=code>(dat, dbg)</span><br>
+  
+  Main parsing entry point.</li>
   <li><a id="cxt.checkParse" href="#cxt.checkParse" class=anchor><b>fn checkParse</b></a><span class=code>(dat, context) -&gt; dat</span></li>
   <li><a id="cxt.parsedStrings" href="#cxt.parsedStrings" class=anchor><b>fn parsedStrings</b></a><span class=code>(p, node)</span></li>
   <li><a id="cxt.assertParse" href="#cxt.assertParse" class=anchor><b>fn assertParse</b></a><span class=code>(dat, expected, dbg) -&gt; node</span></li>
