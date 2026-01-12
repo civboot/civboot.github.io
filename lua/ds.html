@@ -14,29 +14,11 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<b>ds</b>: absurdly necessary data structures and algorithms
-<br>
-ds is a small-ish lua library which fills many of the data structure and method
-gaps (needed "batteries") in Lua's standard library. It's only dependency is
-<a href="lib/metaty">lib/metaty</a> which it uses for defining it's records and <a href="lib/fmt">lib/fmt</a> which it
-uses to define the logging interface.
-<br>
-<h3>none: "set but none" vs nil's simply "unset"</h3>
-In Lua <span class=code>nil</span> always means "unset". Certain APIs (like JSON) might distinguish
-between unset vs null/empty/none. For such APIs <span class=code>none</span> can be used to mean "set
-as none" instead of simply "unset" (which is what <span class=code>nil</span> means).
-<br>
-<span class=code>none</span> overrides <span class=code>__metatable='none'</span> so that <span class=code>getmetatable(none)=='none'</span> and
-<span class=code>metaty.ty(none) == 'none'</span>.
-<br>
-<div class=info>WARNING: <span class=code>assert(none)</span> will pass.  Use <span class=code>ds.bool</span> to make <span class=code>none</span> falsy.</div>
-<br>
-<h3>path</h3>
-<span class=code>ds.path</span> has some functions for working with paths.
-<br>
-It interacts (but does not set) the <b>globals</b> <span class=code>CWD</span> and <span class=code>HOME</span> to get the
-"current working directory" and "home directory", respectively.
-<br>
+<h1>ds: lua data structures and algorithms</h1>
+<span class=code>ds</span> is a small-ish lua library which fills many of the data structure and
+method gaps (needed "batteries") in Lua's standard library. It's only
+dependency is <a href="lib/metaty">lib/metaty</a> which it uses for defining it's records and
+<a href="lib/fmt">lib/fmt</a> which it uses to define the logging interface.
 <br>
 <h3><a id="ds" href="#ds" class=anchor>Mod ds</h3></a>
 ds: data structures and algorithms.

@@ -14,14 +14,9 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-fd: synchronous and asynchronous file descriptors
-<br>
+<h1>fd: synchronous and asynchronous file descriptors</h1>
 fd implements an API identical to lua's <span class=code>file</span> object but with support for
 async operations following the <a href="lib/lap">lib/lap</a> protocol.
-<br>
-It also contains a few simple file-backed data structures (fd.VFile and
-fd.LLFile).
-<br>
 <br>
 <h3><a id="fd" href="#fd" class=anchor>Mod fd</h3></a>
 filedescriptor: direct control of filedescriptors.
@@ -36,9 +31,14 @@ Can override default `io` module for global async mode.
   
   Given a string mode, return whether the file will be created
   if it doesn't exist.</li>
-  <li><a id="fd.newFD" href="#fd.newFD" class=anchor><b>fn newFD</b></a></li>
-  <li><a id="fd.newFDT" href="#fd.newFDT" class=anchor><b>fn newFDT</b></a></li>
-  <li><a id="fd.finishRunning" href="#fd.finishRunning" class=anchor><b>fn finishRunning</b></a><span class=code>(fd, kind, ...)</span></li>
+  <li><a id="fd.newFD" href="#fd.newFD" class=anchor><b>fn newFD</b></a><br>
+  
+  Use to explicitly create a sync file-descriptor.
+  Operations will block the current program until complete.</li>
+  <li><a id="fd.newFDT" href="#fd.newFDT" class=anchor><b>fn newFDT</b></a><br>
+  
+  Use to explicitly create a async file-descriptor.
+  Operations will yield if not yet complete.</li>
   <li><a id="fd.modifiedEq" href="#fd.modifiedEq" class=anchor><b>fn modifiedEq</b></a><span class=code>(fs1, fs2)</span><br>
   
   return whether two fstat's have equal modification times
@@ -61,9 +61,17 @@ Can override default `io` module for global async mode.
   <li><a id="fd.fileno" href="#fd.fileno" class=anchor><b>fn fileno</b></a><span class=code>(fd)</span></li>
   <li><a id="fd.ftype" href="#fd.ftype" class=anchor><b>fn ftype</b></a><span class=code>(f)</span></li>
   <li><a id="fd.isatty" href="#fd.isatty" class=anchor><b>fn isatty</b></a><span class=code>(fd)</span></li>
-  <li><a id="fd.ioStd" href="#fd.ioStd" class=anchor><b>fn ioStd</b></a><span class=code>()</span></li>
-  <li><a id="fd.ioSync" href="#fd.ioSync" class=anchor><b>fn ioSync</b></a><span class=code>()</span></li>
-  <li><a id="fd.ioAsync" href="#fd.ioAsync" class=anchor><b>fn ioAsync</b></a><span class=code>()</span></li>
+  <li><a id="fd.ioStd" href="#fd.ioStd" class=anchor><b>fn ioStd</b></a><span class=code>()</span><br>
+  
+  Switch the global <span class=code>io</span> module to use builtin functions.</li>
+  <li><a id="fd.ioSync" href="#fd.ioSync" class=anchor><b>fn ioSync</b></a><span class=code>()</span><br>
+  
+  Switch the global <span class=code>io</span> module to use sync functions from
+  this module.</li>
+  <li><a id="fd.ioAsync" href="#fd.ioAsync" class=anchor><b>fn ioAsync</b></a><span class=code>()</span><br>
+  
+  Switch the global <span class=code>io</span> module to use async functions from
+  this module.</li>
 </ul>
 <br>
 </div></body>
