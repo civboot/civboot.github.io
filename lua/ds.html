@@ -257,7 +257,7 @@ end
   (<span class=code>v</span> may be <span class=code>nil</span> for some <span class=code>i</span> values).</li>
   <li><a id="ds.slice" href="#ds.slice" class=anchor><b>fn slice</b></a><span class=code>(t, si, ei) -&gt; list</span><br>
   
-  Get a new list of indexes si-ei (inclusive).<br>
+  Get a new list of indexes <span class=code>[si-ei]</span> (inclusive).<br>
   
   Defaults: <span class=code>si=1, ei=#t</span>.</li>
   <li><a id="ds.ieq" href="#ds.ieq" class=anchor><b>fn ieq</b></a><span class=code>(a, b)</span><br>
@@ -266,9 +266,9 @@ end
   
   Note that this only compares integer keys and ignores
   others.</li>
-  <li><a id="ds.reverse" href="#ds.reverse" class=anchor><b>fn reverse</b></a><span class=code>(t) -&gt; t (reversed)</span><br>
+  <li><a id="ds.reverse" href="#ds.reverse" class=anchor><b>fn reverse</b></a><span class=code>(t) -&gt; t</span><br>
   
-  reverse a list-like table in-place (mutating it).</li>
+  Reverse a list-like table in-place (mutating it).</li>
   <li><a id="ds.extend" href="#ds.extend" class=anchor><b>fn extend</b></a><span class=code>(t, l) -&gt; t</span><br>
   
   Extend <span class=code>t</span> with list-like values from <span class=code>l</span>.
@@ -281,35 +281,50 @@ end
   
   <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
   is not allowed through a C boundary like <span class=code>table.move</span></div></li>
-  <li><a id="ds.clear" href="#ds.clear" class=anchor><b>fn clear</b></a><span class=code>(t, si, len) -&gt; t</span></li>
-  <li><a id="ds.add" href="#ds.add" class=anchor><b>fn add</b></a><span class=code>(t, ...) -&gt; t</span></li>
-  <li><a id="ds.replace" href="#ds.replace" class=anchor><b>fn replace</b></a><span class=code>(t, r) -&gt; t</span></li>
+  <li><a id="ds.clear" href="#ds.clear" class=anchor><b>fn clear</b></a><span class=code>(t, si, len) -&gt; t</span><br>
+  
+  Clear list-like elements of table.
+  default is all of it, but you can also specify a specific
+  start index and length.</li>
   <li><a id="ds.update" href="#ds.update" class=anchor><b>fn update</b></a><span class=code>(t, add) -&gt; t</span><br>
   
   return t with the key/vals of add inserted</li>
-  <li><a id="ds.flatten" href="#ds.flatten" class=anchor><b>fn flatten</b></a><span class=code>(...)</span><br>
+  <li><a id="ds.flatten" href="#ds.flatten" class=anchor><b>fn flatten</b></a><span class=code>(listOfLists) -&gt; list</span><br>
   
-  return new list which contains all elements inserted in order</li>
+  Given a list of lists return a single depth list.</li>
   <li><a id="ds.updateKeys" href="#ds.updateKeys" class=anchor><b>fn updateKeys</b></a><span class=code>(t, add, keys) -&gt; t</span><br>
   
   like update but only for specified keys</li>
-  <li><a id="ds.orderedKeys" href="#ds.orderedKeys" class=anchor><b>fn orderedKeys</b></a><span class=code>(t, cmpFn) -&gt; keys</span></li>
+  <li><a id="ds.orderedKeys" href="#ds.orderedKeys" class=anchor><b>fn orderedKeys</b></a><span class=code>(t, cmpFn) -&gt; keys</span><br>
+  
+  Get the sorted keys of t.</li>
   <li><a id="ds.pushSortedKeys" href="#ds.pushSortedKeys" class=anchor><b>fn pushSortedKeys</b></a><span class=code>(t, cmpFn) -&gt; t</span><br>
   
-  adds all <span class=code>key=index</span> to the table so the keys can
+  Adds all <span class=code>key=index</span> to the table so the keys can
   be iterated using <span class=code>for _, k in ipairs(t)</span></li>
   <li><a id="ds.merge" href="#ds.merge" class=anchor><b>fn merge</b></a><span class=code>(t, add) -&gt; t</span><br>
   
   recursively update t with add. This will call update on inner tables as
   well.
-  <div class=info>Note: treats list indexes as normal keys (does not append)</div></li>
-  <li><a id="ds.popk" href="#ds.popk" class=anchor><b>fn popk</b></a><span class=code>(t, key) -&gt; t[k]: pop key</span></li>
+  <div class=info>FIXME: currently treats list indexes as normal keys
+  (does not append)</div></li>
+  <li><a id="ds.popk" href="#ds.popk" class=anchor><b>fn popk</b></a><span class=code>(t, key) -&gt; value</span><br>
+  
+  Remove key from <span class=code>t</span> and return it's value.</li>
   <li><a id="ds.drain" href="#ds.drain" class=anchor><b>fn drain</b></a><span class=code>(t, len--[[#t]]) -&gt; table</span><br>
   
   return len items from the end of <span class=code>t</span>, removing them from <span class=code>t</span></li>
-  <li><a id="ds.getOrSet" href="#ds.getOrSet" class=anchor><b>fn getOrSet</b></a><span class=code>(t, k, newFn) -&gt; t[k] or newFn()</span></li>
-  <li><a id="ds.setIfNil" href="#ds.setIfNil" class=anchor><b>fn setIfNil</b></a><span class=code>(t, k, v) -&gt; nil</span></li>
-  <li><a id="ds.emptyTable" href="#ds.emptyTable" class=anchor><b>fn emptyTable</b></a><span class=code>() -&gt; {}</span></li>
+  <li><a id="ds.getOrSet" href="#ds.getOrSet" class=anchor><b>fn getOrSet</b></a><span class=code>(t, k, newFn) -&gt; t[k] or newFn()</span><br>
+  
+  If the key exists, return it's value.
+  Else return <span class=code>newFn()</span></li>
+  <li><a id="ds.setIfNil" href="#ds.setIfNil" class=anchor><b>fn setIfNil</b></a><span class=code>(t, k, v)</span><br>
+  
+  Set the key to a value if it is currently nil.
+  Else do not change it.</li>
+  <li><a id="ds.emptyTable" href="#ds.emptyTable" class=anchor><b>fn emptyTable</b></a><span class=code>() -&gt; {}</span><br>
+  
+  Return an empty table, useful for newFn/etc in some APIs.</li>
   <li><a id="ds.rmleft" href="#ds.rmleft" class=anchor><b>fn rmleft</b></a><span class=code>(t, rm, eq--[[ds.eq]]) -&gt; t (mutated)</span><br>
   
   remove (mutate) the left side of the table (list).
@@ -335,14 +350,12 @@ end
   set the value at path using newFn (default=ds.newTable) to create
   missing intermediate tables.
   <div class=code-block>set(t, dotpath'a.b.c', 2) -- t.a?.b?.c = 2</div></li>
-  <li><a id="ds.indexOf" href="#ds.indexOf" class=anchor><b>fn indexOf</b></a><span class=code>(t, find) -&gt; int</span></li>
-  <li><a id="ds.indexOfPat" href="#ds.indexOfPat" class=anchor><b>fn indexOfPat</b></a><span class=code>(strs, pat) -&gt; int</span></li>
-  <li><a id="ds.popit" href="#ds.popit" class=anchor><b>fn popit</b></a><span class=code>(t, i) -&gt; t[i] and length of t is reduced by 1</span><br>
+  <li><a id="ds.indexOf" href="#ds.indexOf" class=anchor><b>fn indexOf</b></a><span class=code>(t, find) -&gt; int</span><br>
   
-  popit (aka pop-index-top) will return the value at <span class=code>t[i]</span>, replacing it
-  with the value at the end (aka top) of the list.
+  Return the index where the value is == find.</li>
+  <li><a id="ds.indexOfPat" href="#ds.indexOfPat" class=anchor><b>fn indexOfPat</b></a><span class=code>(strs, pat) -&gt; int</span><br>
   
-  if <span class=code>i &gt; #t</span> returns nil and doesn't affect the size of the list.</li>
+  Return the index where <span class=code>value:match(pat)</span>.</li>
   <li><a id="ds.walk" href="#ds.walk" class=anchor><b>fn walk</b></a><span class=code>(t, fieldFn, tableFn, maxDepth, state) -&gt; nil</span><br>
   
   Walk the table up to depth maxDepth (or infinite if nil) <ul>
@@ -361,15 +374,15 @@ end
   <li><a id="ds.copy" href="#ds.copy" class=anchor><b>fn copy</b></a><span class=code>(t, add) -&gt; new t</span><br>
   
   Copy and update full table</li>
-  <li><a id="ds.deepcopy" href="#ds.deepcopy" class=anchor><b>fn deepcopy</b></a><span class=code>(t) -&gt; table</span></li>
-  <li><a id="ds.readPath" href="#ds.readPath" class=anchor><b>fn readPath</b></a><span class=code>(path)</span></li>
-  <li><a id="ds.writePath" href="#ds.writePath" class=anchor><b>fn writePath</b></a><span class=code>(path, text)</span></li>
-  <li><a id="ds.lineschunk" href="#ds.lineschunk" class=anchor><b>fn lineschunk</b></a><span class=code>(dat) -&gt; iter()</span><br>
+  <li><a id="ds.deepcopy" href="#ds.deepcopy" class=anchor><b>fn deepcopy</b></a><span class=code>(t) -&gt; table</span><br>
   
-  convert lines-like table into chunk for eval</li>
-  <li><a id="ds.eval" href="#ds.eval" class=anchor><b>fn eval</b></a><span class=code>(chunk, env, name) -&gt; (ok, ...)</span><br>
+  Recursively copy the table.</li>
+  <li><a id="ds.readPath" href="#ds.readPath" class=anchor><b>fn readPath</b></a><span class=code>(path)</span><br>
   
-  evaluate lua code</li>
+  Read the full contents of the path or throw an error.</li>
+  <li><a id="ds.writePath" href="#ds.writePath" class=anchor><b>fn writePath</b></a><span class=code>(path, text)</span><br>
+  
+  Write text to path or throw an error.</li>
   <li><a id="ds.sentinel" href="#ds.sentinel" class=anchor><b>fn sentinel</b></a><span class=code>(name, mt) -&gt; NewType</span><br>
   
   <span class=code>sentinel(name, metatable)</span>
@@ -408,7 +421,9 @@ end
   <li><a id="ds.tracelist" href="#ds.tracelist" class=anchor><b>fn tracelist</b></a><span class=code>(tbstr, level) -&gt; {traceback}</span><br>
   
   convert the string traceback into a list</li>
-  <li><a id="ds.traceback" href="#ds.traceback" class=anchor><b>fn traceback</b></a><span class=code>(level) -&gt; string</span></li>
+  <li><a id="ds.traceback" href="#ds.traceback" class=anchor><b>fn traceback</b></a><span class=code>(level) -&gt; string</span><br>
+  
+  Get the current traceback as an indented string.</li>
   <li><a id="ds.try" href="#ds.try" class=anchor><b>fn try</b></a><span class=code>(fn, ...) -&gt; (ok, ...)</span><br>
   
   try to run the fn. Similar to pcall. Return one of: <ul>
@@ -423,6 +438,8 @@ end
   Same as coroutine.resume except uses a ds.Error object for errors
   (has traceback)</li>
   <li><a id="ds.auto" href="#ds.auto" class=anchor><b>fn auto</b></a><span class=code>(mod, i) -&gt; (mod, i)</span><br>
+  
+  DEPRECATED: do not use this function.<br>
   
   auto-set nil locals using require(mod)
   <span class=code>local x, y, z; ds.auto'mm' -- sets x=mm.x; y=mm.y; z=mm.z</span></li>
@@ -854,13 +871,14 @@ Binary Heap implementation
 <br>
 <br>
 <h4><a id="ds.heap.Heap" href="#ds.heap.Heap" class=anchor>Record Heap</h4></a>
-Heap(t, cmp) binary heap using a table.
+<span class=code>Heap(t, cmp)</span> binary heap using a table.<br>
+
 A binary heap is a binary tree where the value of the parent always
-satisfies `cmp(parent, child) == true`
-Min Heap: cmp = function(p, c) return p < c end (default)
-Max Heap: cmp = function(p, c) return p > c end
-<br>
-add and push take only O(log n), making it very useful for
+satisfies <span class=code>cmp(parent, child) == true</span><ul>
+  <li>Min Heap: <span class=code>cmp = function(p, c) return p &lt; c end</span> (default)</li>
+  <li>Max Heap: <span class=code>cmp = function(p, c) return p &gt; c end</span></li>
+</ul>
+add and push take <span class=code>O(log n)</span>, making it very useful for
 priority queues and similar problems.
 <br>
 <b>Fields:</b><ul>
@@ -877,7 +895,7 @@ priority queues and similar problems.
 </ul>
 <br>
 <h3><a id="ds.log" href="#ds.log" class=anchor>Mod ds.log</h3></a>
-Simple logging library, set i.e. LOGLEVEL=TRACE to enable logging.
+Simple logging library, set i.e. LOGLEVEL=INFO to enable logging.
 <br>
 This module has the functions <span class=code>trace info warn err crit</span> with the signature:
 <span class=code>function(fmt, ... [, data])</span> <ul>
@@ -885,9 +903,9 @@ This module has the functions <span class=code>trace info warn err crit</span> w
   formats tables/etc).</li>
   <li>data is optional arbitrary data that can be serialized/formatted.</li>
 </ul>
-<br>
 To enable logging the user should set a global (or env var) LOGLEVEL
 to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
+<br>
 <br>
 This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
 which logs to stderr. This fn is called with signature
@@ -896,18 +914,31 @@ which logs to stderr. This fn is called with signature
 <b>Types: </b><a href="#ds.log.LogTable">LogTable</a> 
 <br>
 <b>Functions</b> <ul>
-  <li><a id="ds.log.time" href="#ds.log.time" class=anchor><b>fn time</b></a><span class=code>() -&gt; os.date():match'%d%d:%d%d:%d%d'</span></li>
-  <li><a id="ds.log.levelInt" href="#ds.log.levelInt" class=anchor><b>fn levelInt</b></a><span class=code>(lvl)</span></li>
-  <li><a id="ds.log.levelStr" href="#ds.log.levelStr" class=anchor><b>fn levelStr</b></a><span class=code>(lvl)</span></li>
+  <li><a id="ds.log.levelInt" href="#ds.log.levelInt" class=anchor><b>fn levelInt</b></a><span class=code>(lvl) -&gt; int</span><br>
+  
+  Get the current log-level integer.</li>
+  <li><a id="ds.log.levelStr" href="#ds.log.levelStr" class=anchor><b>fn levelStr</b></a><span class=code>(lvl)</span><br>
+  
+  Get the current log-level string.</li>
   <li><a id="ds.log.setLevel" href="#ds.log.setLevel" class=anchor><b>fn setLevel</b></a><span class=code>(lvl)</span><br>
   
-  set the global logging level (default=os.getenv'LOGLEVEL')</li>
+  Set the global logging level (default=os.getenv'LOGLEVEL')</li>
   <li><a id="ds.log.logFn" href="#ds.log.logFn" class=anchor><b>fn logFn</b></a><span class=code>(lvl, loc, fmt, ...)</span></li>
-  <li><a id="ds.log.crit" href="#ds.log.crit" class=anchor><b>fn crit</b></a><span class=code>(1, ...)</span></li>
-  <li><a id="ds.log.err" href="#ds.log.err" class=anchor><b>fn err</b></a><span class=code>(2, ...)</span></li>
-  <li><a id="ds.log.warn" href="#ds.log.warn" class=anchor><b>fn warn</b></a><span class=code>(3, ...)</span></li>
-  <li><a id="ds.log.info" href="#ds.log.info" class=anchor><b>fn info</b></a><span class=code>(4, ...)</span></li>
-  <li><a id="ds.log.trace" href="#ds.log.trace" class=anchor><b>fn trace</b></a><span class=code>(5, ...)</span></li>
+  <li><a id="ds.log.crit" href="#ds.log.crit" class=anchor><b>fn crit</b></a><span class=code>(1, ...)</span><br>
+  
+  Log at level CRIT.</li>
+  <li><a id="ds.log.err" href="#ds.log.err" class=anchor><b>fn err</b></a><span class=code>(2, ...)</span><br>
+  
+  Log at level ERROR.</li>
+  <li><a id="ds.log.warn" href="#ds.log.warn" class=anchor><b>fn warn</b></a><span class=code>(3, ...)</span><br>
+  
+  Log at level WARN.</li>
+  <li><a id="ds.log.info" href="#ds.log.info" class=anchor><b>fn info</b></a><span class=code>(4, ...)</span><br>
+  
+  Log at level INFO.</li>
+  <li><a id="ds.log.trace" href="#ds.log.trace" class=anchor><b>fn trace</b></a><span class=code>(5, ...)</span><br>
+  
+  Log at level TRACE.</li>
 </ul>
 <br>
 <h4><a id="ds.log.LogTable" href="#ds.log.LogTable" class=anchor>Record LogTable</h4></a>
@@ -949,7 +980,7 @@ The default environment (ds.load.ENV) has safe default functions which
 cannot access state and missing unsafe functions like getmetatable or the
 debug module.
 <br>
-<h2><a id="loading" href="#loading" class=anchor>loading</h2></a>
+<h4><a id="loading" href="#loading" class=anchor>loading</h4></a>
 To perform the load, call this module with:
 <div class=code-block>&nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result</div>
 inputs: <ul>
