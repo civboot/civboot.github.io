@@ -14,13 +14,100 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-<h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
-lines module, when called splits a string into lines.
-<span class=code>require'lines'(text) -&gt; table of lines</span>
+<h1>lines: view files as list of lines</h1>
+The <span class=code>lines</span> library (and it's submodules) enable line-based processing of
+text. The <a href="#lines">#lines</a> module itself exports an API that work on both a list of
+strings (aka lines) or deal with files as indexed lines (i.e. <a href="#lines.File">#lines.File</a>)
 <br>
-sub-modules include several data structures with more performant
-mechanisms to insert/remove/etc based on real-world workloads
-(i.e. editor, parser, etc)
+<br>
+<span class=code>lines</span> is the fundamental building block of civstack's <a href="ele.html">ele</a> editor
+and <a href="cxt.html">pegl></a> parsers: it is much easier as a developer to think about
+human-readable text as a list of lines then as a list of bytes and this is
+especially true for an editor. <a href="#lines.File">#lines.File</a> and <a href="#lines.EdFile">#lines.EdFile</a> use
+a separate index file to make reading and writing to files as lines
+actually performant for more real-world use-cases.
+<br>
+<h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
+The lines module, providing a uniform API for lines-like objects.
+<br>
+<div class=info>You can also call this module directly to get a table of lines
+from a string</div>
+<b>Functions</b> <ul>
+  <li><a id="lines.join" href="#lines.join" class=anchor><b>fn join</b></a><span class=code>(t) -&gt; string</span><br>
+  
+  Join a table of strings with newlines.</li>
+  <li><a id="lines.insert" href="#lines.insert" class=anchor><b>fn insert</b></a><span class=code>(t, s, l,c) -&gt; nil</span><br>
+  
+  insert string at l, c<br>
+  
+  
+  Note: this is NOT performant (O(N)) for large tables.<br>
+  
+  See: <a href="#Gap">#Gap</a> (or similar) for handling real-world workloads.</li>
+  <li><a id="lines.span" href="#lines.span" class=anchor><b>fn span</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c?, l2, c2?)</span><br>
+  
+  Enables addressing lines via either (l,l2) or (l,c, l2,c2) span.</li>
+  <li><a id="lines.sort" href="#lines.sort" class=anchor><b>fn sort</b></a><span class=code>(...) -&gt; l1, c1, l2, c2</span><br>
+  
+  sort the span</li>
+  <li><a id="lines.sub" href="#lines.sub" class=anchor><b>fn sub</b></a><span class=code>(l, ...) -&gt; string | table</span><br>
+  
+  Get the sub-span of the lines.<br>
+  
+  Returns a string if the result is a single line, else a table of lines.</li>
+  <li><a id="lines.usub" href="#lines.usub" class=anchor><b>fn usub</b></a><span class=code>(l, ...) -&gt; string | table</span><br>
+  
+  Get the UTF8 aware sub-span of the lines.<br>
+  
+  Returns a string if the result is a single line, else a table of lines.</li>
+  <li><a id="lines.map" href="#lines.map" class=anchor><b>fn map</b></a><span class=code>(lines) -&gt; table</span><br>
+  
+  create a table of lineText -> {lineNums}</li>
+  <li><a id="lines.bound" href="#lines.bound" class=anchor><b>fn bound</b></a><span class=code>(t, l, c, len, line) -&gt; l, c</span><br>
+  
+  bound the line/col for the lines table.
+  This will automatically convert negatives indexes to positive,
+  where <span class=code>-1</span> is the last item.</li>
+  <li><a id="lines.offset" href="#lines.offset" class=anchor><b>fn offset</b></a><span class=code>(t, off, l, c) -&gt; l, c</span><br>
+  
+  Get the <span class=code>l, c</span> with the +/- offset applied</li>
+  <li><a id="lines.offsetOf" href="#lines.offsetOf" class=anchor><b>fn offsetOf</b></a><span class=code>(t, l, c, l2, c2) -&gt; int</span><br>
+  
+  get the byte offset </li>
+  <li><a id="lines.find" href="#lines.find" class=anchor><b>fn find</b></a><span class=code>(t, pat, l, c) -&gt; (l, c, c2)</span><br>
+  
+  find the pattern starting at l/c
+  Note: matches are only within a single line.</li>
+  <li><a id="lines.findBack" href="#lines.findBack" class=anchor><b>fn findBack</b></a><span class=code>(t, pat, l, c)</span><br>
+  
+  find the pattern (backwards) starting at l/c</li>
+  <li><a id="lines.remove" href="#lines.remove" class=anchor><b>fn remove</b></a><span class=code>(t, ...) -&gt; string|table</span><br>
+  
+  remove span (l, c) -> (l2, c2), return what was removed</li>
+  <li><a id="lines.box" href="#lines.box" class=anchor><b>fn box</b></a><span class=code>(t, l1, c1, l2, c2, fill) -&gt; lines</span><br>
+  
+  return the box of the lines.
+  
+  <div class=code-block>Outside the box is not returned.<br>
+***1------------------------+**<br>
+***|l1,c1 = top left &nbsp; &nbsp; &nbsp; &nbsp;|**<br>
+***| &nbsp; &nbsp; &nbsp; bot right = l2,c2|<br>
+***+------------------------2**<br>
+*So no '*' chars are returned.*
+</div></li>
+  <li><a id="lines.load" href="#lines.load" class=anchor><b>fn load</b></a><span class=code>(f, close) -&gt; (table?, errstr?)</span><br>
+  
+  load lines from file or path. On error return (nil, errstr)</li>
+  <li><a id="lines.dump" href="#lines.dump" class=anchor><b>fn dump</b></a><span class=code>(t, f, close, chunk)</span><br>
+  
+  write lines <span class=code>t</span> to file <span class=code>f</span> in chunks (default = 16KiB)
+  if f is a string then it is opened as a file and closed when done</li>
+  <li><a id="lines.write" href="#lines.write" class=anchor><b>fn write</b></a><span class=code>(t, ...) -&gt; true</span><br>
+  
+  Logic to make a table behave like a <span class=code>file:write(...)</span> method.
+  
+  This is NOT performant, especially for large lines.</li>
+</ul>
 <br>
 <h3><a id="lines.diff" href="#lines.diff" class=anchor>Mod lines.diff</h3></a>
 Diffing module and command
@@ -82,7 +169,11 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
   and must define the <span class=code>parse</span> method.</li>
-  <li><a id="lines.Writer.write" href="#lines.Writer.write" class=anchor><b>fn write</b></a></li>
+  <li><a id="lines.Writer.write" href="#lines.Writer.write" class=anchor><b>fn write</b></a><span class=code>(t, ...) -&gt; true</span><br>
+  
+  Logic to make a table behave like a <span class=code>file:write(...)</span> method.
+  
+  This is NOT performant, especially for large lines.</li>
   <li><a id="lines.Writer.flush" href="#lines.Writer.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
   
   function that does and returns nothing.</li>
@@ -122,13 +213,16 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="Gap.set" href="#Gap.set" class=anchor><b>fn set</b></a><span class=code>(g, i, v)</span></li>
   <li><a id="Gap.inset" href="#Gap.inset" class=anchor><b>fn inset</b></a><span class=code>(g, i, values, rmlen) -&gt; rm?</span><br>
   
-  See lines.inset for documentation.</li>
+  See ds.inset for documentation.</li>
   <li><a id="Gap.extend" href="#Gap.extend" class=anchor><b>fn extend</b></a><span class=code>(g, l)</span></li>
   <li><a id="Gap.setGap" href="#Gap.setGap" class=anchor><b>fn setGap</b></a><span class=code>(g, l)</span><br>
   
   set the gap to the line number, making <span class=code>l == #g.bot</span>.</li>
   <li><a id="Gap.write" href="#Gap.write" class=anchor><b>fn write</b></a><span class=code>(g, ...)</span></li>
-  <li><a id="Gap.dumpf" href="#Gap.dumpf" class=anchor><b>fn dumpf</b></a></li>
+  <li><a id="Gap.dumpf" href="#Gap.dumpf" class=anchor><b>fn dumpf</b></a><span class=code>(t, f, close, chunk)</span><br>
+  
+  write lines <span class=code>t</span> to file <span class=code>f</span> in chunks (default = 16KiB)
+  if f is a string then it is opened as a file and closed when done</li>
 </ul>
 <br>
 <h4><a id="Ty<lines.U3File>" href="#Ty<lines.U3File>" class=anchor>Record lines.U3File</h4></a>
