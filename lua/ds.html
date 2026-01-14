@@ -494,10 +494,6 @@ Immutable table
   <li><a id="ds.Epoch.ns" href="#ds.Epoch.ns" class=anchor><b>ns</b></a>
   nanoseconds</li>
 </ul>
-<b>Methods</b> <ul>
-  <li><a id="Epoch.fromSeconds" href="#Epoch.fromSeconds" class=anchor><b>fn fromSeconds</b></a></li>
-  <li><a id="Epoch.asSeconds" href="#Epoch.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
-</ul>
 <br>
 <h4><a id="ds.Set" href="#ds.Set" class=anchor>Record Set</h4></a>
 <b>Methods</b> <ul>
@@ -555,8 +551,6 @@ Calling it is the same as popLeft (use as iterator)
   extend deq to left (<span class=code>vals[1]</span> is left-most)</li>
   <li><a id="Deq.popLeft" href="#Deq.popLeft" class=anchor><b>fn popLeft</b></a><span class=code>(deq) -&gt; v</span></li>
   <li><a id="Deq.popRight" href="#Deq.popRight" class=anchor><b>fn popRight</b></a><span class=code>(deq) -&gt; v</span></li>
-  <li><a id="Deq.push" href="#Deq.push" class=anchor><b>fn push</b></a><span class=code>(deq, val)</span></li>
-  <li><a id="Deq.pop" href="#Deq.pop" class=anchor><b>fn pop</b></a><span class=code>(deq) -&gt; v</span></li>
   <li><a id="Deq.clear" href="#Deq.clear" class=anchor><b>fn clear</b></a><span class=code>(deq) -&gt; nil: clear deq</span></li>
   <li><a id="Deq.drain" href="#Deq.drain" class=anchor><b>fn drain</b></a><span class=code>(deq) -&gt; table: get all items and clear deq</span></li>
 </ul>
@@ -565,9 +559,6 @@ Calling it is the same as popLeft (use as iterator)
 <b>Methods</b> <ul>
   <li><a id="TWriter.write" href="#TWriter.write" class=anchor><b>fn write</b></a><span class=code>(tw, ...)</span></li>
   <li><a id="TWriter.flush" href="#TWriter.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
-  
-  function that does and returns nothing.</li>
-  <li><a id="TWriter.close" href="#TWriter.close" class=anchor><b>fn close</b></a><span class=code>()</span><br>
   
   function that does and returns nothing.</li>
 </ul>
@@ -1012,12 +1003,7 @@ Throws an error if the path is not valid lua code.
   
   get bytes. If index out of bounds return nil.
   Panic if there are read errors.</li>
-  <li><a id="ds.IFile.get" href="#ds.IFile.get" class=anchor><b>fn get</b></a><span class=code>(fi, i)</span><br>
-  
-  get bytes. If index out of bounds return nil.
-  Panic if there are read errors.</li>
   <li><a id="ds.IFile.setbytes" href="#ds.IFile.setbytes" class=anchor><b>fn setbytes</b></a><span class=code>(fi, i, v)</span></li>
-  <li><a id="ds.IFile.set" href="#ds.IFile.set" class=anchor><b>fn set</b></a><span class=code>(fi, i, v)</span></li>
   <li><a id="ds.IFile.move" href="#ds.IFile.move" class=anchor><b>fn move</b></a><span class=code>(fi, to, mvFn) -&gt; fi</span><br>
   
   Move the IFile's path to <span class=code>to</span>.

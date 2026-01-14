@@ -365,22 +365,6 @@ not performant (<span class=code>O(N)</span> vs Key's <span class=code>O(1)</spa
   <li><a id="pegl.Or.name" href="#pegl.Or.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Or.set" href="#Or.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="Or.get" href="#Or.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="Or.extend" href="#Or.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
-  
-  This is used by types implementing <span class=code>:extend</span>.
-  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
-  extend in a for loop.
-  
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
-  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="Or.parse" href="#Or.parse" class=anchor><b>fn parse</b></a><span class=code>(or_, p)</span></li>
 </ul>
 <br>
@@ -434,22 +418,6 @@ PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
   <li><a id="pegl.Seq.name" href="#pegl.Seq.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Seq.set" href="#Seq.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="Seq.get" href="#Seq.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="Seq.extend" href="#Seq.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
-  
-  This is used by types implementing <span class=code>:extend</span>.
-  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
-  extend in a for loop.
-  
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
-  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="Seq.parse" href="#Seq.parse" class=anchor><b>fn parse</b></a><span class=code>(seq, p) -&gt; M.parseSeq(p, seq)</span></li>
 </ul>
 <br>
@@ -459,22 +427,6 @@ PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
   <li><a id="pegl.Not.name" href="#pegl.Not.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Not.set" href="#Not.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="Not.get" href="#Not.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="Not.extend" href="#Not.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
-  
-  This is used by types implementing <span class=code>:extend</span>.
-  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
-  extend in a for loop.
-  
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
-  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="Not.parse" href="#Not.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p) -&gt; not M.parseSeq(p, self)</span></li>
 </ul>
 <br>

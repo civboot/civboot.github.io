@@ -41,23 +41,69 @@ with <span class=code>doc'mymod'</span>.
 <br>
 <h4><a id="doc-cmd" href="#doc-cmd" class=anchor>Command doc-cmd</h4></a>
 Usage: <span class=code>doc some.symbol</span>
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="doc-cmd.to" href="#doc-cmd.to" class=anchor><b>to</b></a>
   where to write output.</li>
 </ul>
-<b>Methods</b> <ul>
+<br>
+<b>Types: </b><a href="#doc-cmd.Doc">Doc</a> 
+<br>
+<b>Methods and Functions</b> <ul>
   <li><a id="doc-cmd.tryfind" href="#doc-cmd.tryfind" class=anchor><b>fn tryfind</b></a><span class=code>(obj) -&gt; any?</span><br>
   
   Find the object/name or return nil.</li>
   <li><a id="doc-cmd.find" href="#doc-cmd.find" class=anchor><b>fn find</b></a><span class=code>(obj) -&gt; any</span><br>
   
   Find the object/name.</li>
-  <li><a id="doc-cmd.Doc" href="#doc-cmd.Doc" class=anchor><b>fn Doc</b></a><br>
+</ul>
+<br>
+<h4><a id="doc-cmd.Doc" href="#doc-cmd.Doc" class=anchor>Record Doc</h4></a>
+Object passed to __doc methods.
+Aids in writing cxt.
+<br>
+<b>Fields:</b><ul>
+  <li><a id="doc-cmd.Doc.to" href="#doc-cmd.Doc.to" class=anchor><b>to</b></a>
+  file to write to.</li>
+  <li><a id="doc-cmd.Doc.indent" href="#doc-cmd.Doc.indent" class=anchor><b>indent</b></a> <span class=code>=" &nbsp;"</span></li>
+  <li><a id="doc-cmd.Doc.done" href="#doc-cmd.Doc.done" class=anchor><b>done</b></a>
+  already documented items</li>
+  <li><a id="doc-cmd.Doc.modHeader" href="#doc-cmd.Doc.modHeader" class=anchor><b>modHeader</b></a> <span class=code>=3</span>
+  mod header lvl</li>
+  <li><a id="doc-cmd.Doc.tyHeader" href="#doc-cmd.Doc.tyHeader" class=anchor><b>tyHeader</b></a> <span class=code>=4</span>
+  type/record header lvl</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Doc.level" href="#Doc.level" class=anchor><b>fn:level</b></a><span class=code>(add) -&gt; int: current level</span><br>
   
-  Object passed to __doc methods.
-  Aids in writing cxt.</li>
+  Add to the indent level and get the new value
+  call with <span class=code>add=nil</span> to just get the current level</li>
+  <li><a id="Doc.write" href="#Doc.write" class=anchor><b>fn:write</b></a><span class=code>(...)</span><br>
+  
+  Same as <span class=code>file:write</span>.</li>
+  <li><a id="Doc.flush" href="#Doc.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span></li>
+  <li><a id="Doc.close" href="#Doc.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
+  <li><a id="Doc.check" href="#Doc.check" class=anchor><b>fn:check</b></a><span class=code>(name, lns)</span><br>
+  
+  Check that lines parse.</li>
+  <li><a id="Doc.bold" href="#Doc.bold" class=anchor><b>fn:bold</b></a><span class=code>('[*%s]', text)</span></li>
+  <li><a id="Doc.code" href="#Doc.code" class=anchor><b>fn:code</b></a><span class=code>(code)</span></li>
+  <li><a id="Doc.link" href="#Doc.link" class=anchor><b>fn:link</b></a><span class=code>(link, text)</span></li>
+  <li><a id="Doc.named" href="#Doc.named" class=anchor><b>fn:named</b></a><span class=code>(name, id)</span></li>
+  <li><a id="Doc.header" href="#Doc.header" class=anchor><b>fn:header</b></a><span class=code>(lvl, content, name)</span></li>
+  <li><a id="Doc.anyExtract" href="#Doc.anyExtract" class=anchor><b>fn:anyExtract</b></a><span class=code>(obj) -&gt; name, loc, cmt, code</span></li>
+  <li><a id="Doc.extractCode" href="#Doc.extractCode" class=anchor><b>fn:extractCode</b></a><span class=code>(loc) -&gt; (commentLines, codeLines)</span></li>
+  <li><a id="Doc.fnsig" href="#Doc.fnsig" class=anchor><b>fn:fnsig</b></a><span class=code>(code) -&gt; (string, isMethod)</span><br>
+  
+  Extract the function signature from the lines of code.</li>
+  <li><a id="Doc.declfn" href="#Doc.declfn" class=anchor><b>fn:declfn</b></a><span class=code>(fn, name, id) -&gt; (cmt, sig, isMethod)</span><br>
+  
+  Declare the function definition</li>
+  <li><a id="Doc.mod" href="#Doc.mod" class=anchor><b>fn:mod</b></a><span class=code>(m)</span><br>
+  
+  Document the module.</li>
+  <li><a id="Doc.endmod" href="#Doc.endmod" class=anchor><b>fn:endmod</b></a><span class=code>(m, fnsName)</span><br>
+  
+  Document the end (not header+comments) of module.</li>
 </ul>
 <br>
 <h3><a id="doc.lua" href="#doc.lua" class=anchor>Mod doc.lua</h3></a>
@@ -331,13 +377,13 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   <li><a id="doc.lua.string.packsize" href="#doc.lua.string.packsize" class=anchor><b>fn string.packsize</b></a><br>
   
   Get the size which is used by strtys.</li>
+  <li><a id="doc.lua.string.lower" href="#doc.lua.string.lower" class=anchor><b>fn string.lower</b></a><br>
+  
+  not documented: see <span class=code>string</span> module</li>
   <li><a id="doc.lua.string.dump" href="#doc.lua.string.dump" class=anchor><b>fn string.dump</b></a><br>
   
   not documented: see <span class=code>string</span> module</li>
   <li><a id="doc.lua.string.upper" href="#doc.lua.string.upper" class=anchor><b>fn string.upper</b></a><br>
-  
-  not documented: see <span class=code>string</span> module</li>
-  <li><a id="doc.lua.string.lower" href="#doc.lua.string.lower" class=anchor><b>fn string.lower</b></a><br>
   
   not documented: see <span class=code>string</span> module</li>
   <li><a id="doc.lua.string.reverse" href="#doc.lua.string.reverse" class=anchor><b>fn string.reverse</b></a><br>
@@ -405,34 +451,34 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
     <li><span class=code>os.execute()</span>: docs on file:close()</li>
     <li><a href="lib/civix">lib/civix</a><span class=code>.sh()</span>: ergonomic blocking shell.</li>
   </ul></li>
-  <li><a id="doc.lua.io.lines" href="#doc.lua.io.lines" class=anchor><b>fn io.lines</b></a><br>
+  <li><a id="doc.lua.io.close" href="#doc.lua.io.close" class=anchor><b>fn io.close</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
   <li><a id="doc.lua.io.tmpfile" href="#doc.lua.io.tmpfile" class=anchor><b>fn io.tmpfile</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
-  <li><a id="doc.lua.io.input" href="#doc.lua.io.input" class=anchor><b>fn io.input</b></a><br>
-  
-  not documented: see <span class=code>io</span> module</li>
-  <li><a id="doc.lua.io.type" href="#doc.lua.io.type" class=anchor><b>fn io.type</b></a><br>
-  
-  not documented: see <span class=code>io</span> module</li>
-  <li><a id="doc.lua.io.flush" href="#doc.lua.io.flush" class=anchor><b>fn io.flush</b></a><br>
-  
-  not documented: see <span class=code>io</span> module</li>
-  <li><a id="doc.lua.io.close" href="#doc.lua.io.close" class=anchor><b>fn io.close</b></a><br>
+  <li><a id="doc.lua.io.open" href="#doc.lua.io.open" class=anchor><b>fn io.open</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
   <li><a id="doc.lua.io.output" href="#doc.lua.io.output" class=anchor><b>fn io.output</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.input" href="#doc.lua.io.input" class=anchor><b>fn io.input</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.lines" href="#doc.lua.io.lines" class=anchor><b>fn io.lines</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
+  <li><a id="doc.lua.io.flush" href="#doc.lua.io.flush" class=anchor><b>fn io.flush</b></a><br>
+  
+  not documented: see <span class=code>io</span> module</li>
   <li><a id="doc.lua.io.read" href="#doc.lua.io.read" class=anchor><b>fn io.read</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
-  <li><a id="doc.lua.io.write" href="#doc.lua.io.write" class=anchor><b>fn io.write</b></a><br>
+  <li><a id="doc.lua.io.type" href="#doc.lua.io.type" class=anchor><b>fn io.type</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
-  <li><a id="doc.lua.io.open" href="#doc.lua.io.open" class=anchor><b>fn io.open</b></a><br>
+  <li><a id="doc.lua.io.write" href="#doc.lua.io.write" class=anchor><b>fn io.write</b></a><br>
   
   not documented: see <span class=code>io</span> module</li>
   <li><a id="doc.lua.os.execute" href="#doc.lua.os.execute" class=anchor><b>fn os.execute</b></a><span class=code>(string) -&gt; (ok, "exit", rc)</span><br>
@@ -452,19 +498,16 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   
   Recommendation:
   For all but the simplest cases use io.popen instead</li>
-  <li><a id="doc.lua.os.time" href="#doc.lua.os.time" class=anchor><b>fn os.time</b></a><br>
+  <li><a id="doc.lua.os.rename" href="#doc.lua.os.rename" class=anchor><b>fn os.rename</b></a><br>
   
   not documented: see <span class=code>os</span> module</li>
-  <li><a id="doc.lua.os.tmpname" href="#doc.lua.os.tmpname" class=anchor><b>fn os.tmpname</b></a><br>
+  <li><a id="doc.lua.os.remove" href="#doc.lua.os.remove" class=anchor><b>fn os.remove</b></a><span class=code>(path) -&gt; nil</span><br>
+  
+  remove file.</li>
+  <li><a id="doc.lua.os.setlocale" href="#doc.lua.os.setlocale" class=anchor><b>fn os.setlocale</b></a><br>
   
   not documented: see <span class=code>os</span> module</li>
   <li><a id="doc.lua.os.getenv" href="#doc.lua.os.getenv" class=anchor><b>fn os.getenv</b></a><br>
-  
-  not documented: see <span class=code>os</span> module</li>
-  <li><a id="doc.lua.os.date" href="#doc.lua.os.date" class=anchor><b>fn os.date</b></a><br>
-  
-  not documented: see <span class=code>os</span> module</li>
-  <li><a id="doc.lua.os.rename" href="#doc.lua.os.rename" class=anchor><b>fn os.rename</b></a><br>
   
   not documented: see <span class=code>os</span> module</li>
   <li><a id="doc.lua.os.difftime" href="#doc.lua.os.difftime" class=anchor><b>fn os.difftime</b></a><br>
@@ -473,12 +516,15 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   <li><a id="doc.lua.os.exit" href="#doc.lua.os.exit" class=anchor><b>fn os.exit</b></a><br>
   
   not documented: see <span class=code>os</span> module</li>
-  <li><a id="doc.lua.os.setlocale" href="#doc.lua.os.setlocale" class=anchor><b>fn os.setlocale</b></a><br>
+  <li><a id="doc.lua.os.tmpname" href="#doc.lua.os.tmpname" class=anchor><b>fn os.tmpname</b></a><br>
   
   not documented: see <span class=code>os</span> module</li>
-  <li><a id="doc.lua.os.remove" href="#doc.lua.os.remove" class=anchor><b>fn os.remove</b></a><span class=code>(path) -&gt; nil</span><br>
+  <li><a id="doc.lua.os.time" href="#doc.lua.os.time" class=anchor><b>fn os.time</b></a><br>
   
-  remove file.</li>
+  not documented: see <span class=code>os</span> module</li>
+  <li><a id="doc.lua.os.date" href="#doc.lua.os.date" class=anchor><b>fn os.date</b></a><br>
+  
+  not documented: see <span class=code>os</span> module</li>
   <li><a id="doc.lua.os.clock" href="#doc.lua.os.clock" class=anchor><b>fn os.clock</b></a><br>
   
   not documented: see <span class=code>os</span> module</li>
@@ -492,53 +538,19 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   <li><a id="doc.lua.math.asin" href="#doc.lua.math.asin" class=anchor><b>fn math.asin</b></a><span class=code>(x) -&gt; arcsin(x) in radians</span></li>
   <li><a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span></li>
   <li><a id="doc.lua.math.exp" href="#doc.lua.math.exp" class=anchor><b>fn math.exp</b></a><span class=code>(x) -&gt; e^x (where e is the natural log base)</span></li>
-  <li><a id="doc.lua.math.frexp" href="#doc.lua.math.frexp" class=anchor><b>fn math.frexp</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.deg" href="#doc.lua.math.deg" class=anchor><b>fn math.deg</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.tointeger" href="#doc.lua.math.tointeger" class=anchor><b>fn math.tointeger</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.sqrt" href="#doc.lua.math.sqrt" class=anchor><b>fn math.sqrt</b></a><br>
-  
-  currently not documented</li>
   <li><a id="doc.lua.math.randomseed" href="#doc.lua.math.randomseed" class=anchor><b>fn math.randomseed</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.random" href="#doc.lua.math.random" class=anchor><b>fn math.random</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.floor" href="#doc.lua.math.floor" class=anchor><b>fn math.floor</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.ult" href="#doc.lua.math.ult" class=anchor><b>fn math.ult</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.sinh" href="#doc.lua.math.sinh" class=anchor><b>fn math.sinh</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.abs" href="#doc.lua.math.abs" class=anchor><b>fn math.abs</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.log" href="#doc.lua.math.log" class=anchor><b>fn math.log</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span></li>
-  <li><a id="doc.lua.math.tanh" href="#doc.lua.math.tanh" class=anchor><b>fn math.tanh</b></a><br>
-  
-  currently not documented</li>
-  <li><a id="doc.lua.math.cosh" href="#doc.lua.math.cosh" class=anchor><b>fn math.cosh</b></a><br>
   
   currently not documented</li>
   <li><a id="doc.lua.math.modf" href="#doc.lua.math.modf" class=anchor><b>fn math.modf</b></a><br>
   
   currently not documented</li>
-  <li><a id="doc.lua.math.fmod" href="#doc.lua.math.fmod" class=anchor><b>fn math.fmod</b></a><br>
+  <li><a id="doc.lua.math.deg" href="#doc.lua.math.deg" class=anchor><b>fn math.deg</b></a><br>
   
   currently not documented</li>
-  <li><a id="doc.lua.math.ceil" href="#doc.lua.math.ceil" class=anchor><b>fn math.ceil</b></a><br>
+  <li><a id="doc.lua.math.ldexp" href="#doc.lua.math.ldexp" class=anchor><b>fn math.ldexp</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.frexp" href="#doc.lua.math.frexp" class=anchor><b>fn math.frexp</b></a><br>
   
   currently not documented</li>
   <li><a id="doc.lua.math.log10" href="#doc.lua.math.log10" class=anchor><b>fn math.log10</b></a><br>
@@ -547,10 +559,44 @@ T.eq({2, 7, 'is'}, {find(' bob is nice', '%w+ (%w+)')})
   <li><a id="doc.lua.math.pow" href="#doc.lua.math.pow" class=anchor><b>fn math.pow</b></a><br>
   
   currently not documented</li>
-  <li><a id="doc.lua.math.ldexp" href="#doc.lua.math.ldexp" class=anchor><b>fn math.ldexp</b></a><br>
+  <li><a id="doc.lua.math.rad" href="#doc.lua.math.rad" class=anchor><b>fn math.rad</b></a><br>
   
   currently not documented</li>
-  <li><a id="doc.lua.math.rad" href="#doc.lua.math.rad" class=anchor><b>fn math.rad</b></a><br>
+  <li><a id="doc.lua.math.floor" href="#doc.lua.math.floor" class=anchor><b>fn math.floor</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.random" href="#doc.lua.math.random" class=anchor><b>fn math.random</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.sqrt" href="#doc.lua.math.sqrt" class=anchor><b>fn math.sqrt</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.atan2" href="#doc.lua.math.atan2" class=anchor><b>fn math.atan2</b></a><span class=code>(n, d) -&gt; arctan(n / d) in radians</span></li>
+  <li><a id="doc.lua.math.ult" href="#doc.lua.math.ult" class=anchor><b>fn math.ult</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.abs" href="#doc.lua.math.abs" class=anchor><b>fn math.abs</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.cosh" href="#doc.lua.math.cosh" class=anchor><b>fn math.cosh</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.log" href="#doc.lua.math.log" class=anchor><b>fn math.log</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.sinh" href="#doc.lua.math.sinh" class=anchor><b>fn math.sinh</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.ceil" href="#doc.lua.math.ceil" class=anchor><b>fn math.ceil</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.fmod" href="#doc.lua.math.fmod" class=anchor><b>fn math.fmod</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.tanh" href="#doc.lua.math.tanh" class=anchor><b>fn math.tanh</b></a><br>
+  
+  currently not documented</li>
+  <li><a id="doc.lua.math.tointeger" href="#doc.lua.math.tointeger" class=anchor><b>fn math.tointeger</b></a><br>
   
   currently not documented</li>
   <li><a id="doc.lua.for" href="#doc.lua.for" class=anchor><b>fn for</b></a><span class=code>()</span><br>

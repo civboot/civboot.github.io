@@ -227,8 +227,6 @@ Usage: <span class=code>pvc init dir --branch=main</span><br>
 
 Initialize the current directory as a pvc directory.
 This will create <span class=code>.pvc/</span> and <span class=code>.pvcpaths</span>
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.init.branch" href="#pvc.init.branch" class=anchor><b>branch</b></a> <span class=code>="main"</span>
   the initial branch name</li>
@@ -242,8 +240,6 @@ current commit) vs <span class=code>local</span> (the local working directory).<
 <br>
 This command accepts either <span class=code>branch#id</span> names or <span class=code>paths/to/dir/</span>, where
 that dir/ has a <span class=code>.pvcpaths</span> file.
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.diff.paths" href="#pvc.diff.paths" class=anchor><b>paths</b></a>
   show only changed paths</li>
@@ -256,8 +252,6 @@ a new id.
 <br>
 If no message is given this uses the COMMIT file
 for the message, if it exists.
-<br>
-<br>
 <h4><a id="at" href="#at" class=anchor>Subcmd at</h4></a>
 Usage: <span class=code>pvc at branchId --hard</span><br>
 
@@ -270,8 +264,6 @@ cause any local changes to be overwritten.
 <br>
 <div class=info><span class=code>at branch</span> is called a "checkout" in other version
 control systems.</div>
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.at.force" href="#pvc.at.force" class=anchor><b>force</b></a>
   overwrite local changes.
@@ -281,8 +273,6 @@ control systems.</div>
 Usage: <span class=code>pvc tip [branch=current]</span><br>
 
 Get the tip id of branch.
-<br>
-<br>
 <h4><a id="branch" href="#branch" class=anchor>Subcmd branch</h4></a>
 Usage: <span class=code>pvc branch name [from=current]</span><br>
 
@@ -291,8 +281,6 @@ Start new branch <span class=code>name</span> branching off of <span class=code>
 If <span class=code>from</span> is a <span class=code>path/to/dir</span> then it will graft
 those changes into the local repo as the named <span class=code>branch</span>.
 (often used by maintainers to accept patches).
-<br>
-<br>
 <h4><a id="show" href="#show" class=anchor>Subcmd show</h4></a>
 Usage: <span class=code>pvc show [branch#id] --before=10</span><br>
 
@@ -300,8 +288,6 @@ Show the commits before/after <span class=code>branch#id</span>.<br>
 
 <br>
 If <span class=code>branch#id</span> is not given, print all branches.
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.show.before" href="#pvc.show.before" class=anchor><b>before</b></a>
   number of records before id to show</li>
@@ -318,8 +304,6 @@ Get or set the description for a single branch id.<br>
 <br>
 The new description can be passed via <span class=code>to/new.cxt</span> or
 after <span class=code>--</span> (like commit).
-<br>
-<br>
 <h4><a id="squash" href="#squash" class=anchor>Subcmd squash</h4></a>
 Usage: <span class=code>pvc squash [name#id]</span><br>
 
@@ -331,8 +315,6 @@ into a single commit. You can then edit the description using
 This enables making lots of small commits and then
 "squashing" them into a single commit once they are
 in a good state.
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.squash.branch" href="#pvc.squash.branch" class=anchor><b>branch</b></a> <span class=code>="current"</span>
   the branch to squash</li>
@@ -346,8 +328,6 @@ Change the base of <span class=code>branch</span> to <span class=code>id</span>.
 Rebase is a fundamental operation. It allows you to make or accept changes
 on your "main" branch while you work on development branches which are
 behind the main. See <a href="#basic">#basic</a> for more details.
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.rebase.id" href="#pvc.rebase.id" class=anchor><b>id</b></a>
   the id of base to change to</li>
@@ -358,8 +338,6 @@ Usage: <span class=code>grow --branch=current [from]</span><br>
 Copy changes in <span class=code>from</span> onto <span class=code>branch</span>.
 <div class=info>In other version control systems this is called a
 "fast forward merge"</div>
-<br>
-<br>
 <b>Arguments:</b><ul>
   <li><a id="pvc.grow.branch" href="#pvc.grow.branch" class=anchor><b>branch</b></a>
   the branch to mutate</li>
@@ -369,8 +347,6 @@ Usage: <span class=code>prune branch#id</span><ul>
   <li>if <span class=code>#id</span>: delete ids <span class=code>id -&gt; tip</span> (inclusive).</li>
   <li>else: delete branch</li>
 </ul>
-<br>
-<br>
 <h4><a id="export" href="#export" class=anchor>Subcmd export</h4></a>
 Usage: <span class=code>export branch to/</span><br>
 
@@ -379,8 +355,6 @@ Copy all patch files in the branch to <span class=code>to/</span>.
 <span class=code>tar -zcvf branch.tar.gz path/</span> and then <span class=code>branch.tar.gz</span> sent to a
 maintainer to be merged.
 </div>
-<br>
-<br>
 <h4><a id="snap" href="#snap" class=anchor>Subcmd snap</h4></a>
 Usage: <span class=code>snap [branch#id=current]</span><br>
 
@@ -388,24 +362,8 @@ Get the snapshot directory of branch#id.
 <br>
 The snapshot contains a copy of files at that commit.
 <br>
+<b>Types: </b><a href="#pvc.Diff">Diff</a> 
 <br>
-<h4><a id="pvc.Diff" href="#pvc.Diff" class=anchor>Record Diff</h4></a>
-<span class=code>Diff:of(dir1, dir2)</span> returns what changed between two pvc dirs.
-<br>
-<b>Fields:</b><ul>
-  <li><a id="pvc.Diff.dir1" href="#pvc.Diff.dir1" class=anchor><b>dir1</b></a></li>
-  <li><a id="pvc.Diff.dir2" href="#pvc.Diff.dir2" class=anchor><b>dir2</b></a></li>
-  <li><a id="pvc.Diff.equal" href="#pvc.Diff.equal" class=anchor><b>equal</b></a></li>
-  <li><a id="pvc.Diff.changed" href="#pvc.Diff.changed" class=anchor><b>changed</b></a></li>
-  <li><a id="pvc.Diff.deleted" href="#pvc.Diff.deleted" class=anchor><b>deleted</b></a></li>
-  <li><a id="pvc.Diff.created" href="#pvc.Diff.created" class=anchor><b>created</b></a></li>
-</ul>
-<b>Methods</b> <ul>
-  <li><a id="Diff.of" href="#Diff.of" class=anchor><b>fn of</b></a><span class=code>(T, d1, d2)</span></li>
-  <li><a id="Diff.hasDiff" href="#Diff.hasDiff" class=anchor><b>fn hasDiff</b></a><span class=code>(d)</span></li>
-  <li><a id="Diff.format" href="#Diff.format" class=anchor><b>fn format</b></a><span class=code>(d, fmt, full)</span></li>
-  <li><a id="Diff.patch" href="#Diff.patch" class=anchor><b>fn patch</b></a><span class=code>(d) -&gt; patchText</span></li>
-</ul>
 <b>Functions</b> <ul>
   <li><a id="pvc.branchDir" href="#pvc.branchDir" class=anchor><b>fn branchDir</b></a><span class=code>(P, branch, dot)</span><br>
   
@@ -446,6 +404,24 @@ The snapshot contains a copy of files at that commit.
   <li><a id="pvc.backupDir" href="#pvc.backupDir" class=anchor><b>fn backupDir</b></a><span class=code>(P, name) -&gt; string</span><br>
   
   return a backup directory (uses the timestamp)</li>
+</ul>
+<br>
+<h4><a id="pvc.Diff" href="#pvc.Diff" class=anchor>Record Diff</h4></a>
+<span class=code>Diff:of(dir1, dir2)</span> returns what changed between two pvc dirs.
+<br>
+<b>Fields:</b><ul>
+  <li><a id="pvc.Diff.dir1" href="#pvc.Diff.dir1" class=anchor><b>dir1</b></a></li>
+  <li><a id="pvc.Diff.dir2" href="#pvc.Diff.dir2" class=anchor><b>dir2</b></a></li>
+  <li><a id="pvc.Diff.equal" href="#pvc.Diff.equal" class=anchor><b>equal</b></a></li>
+  <li><a id="pvc.Diff.changed" href="#pvc.Diff.changed" class=anchor><b>changed</b></a></li>
+  <li><a id="pvc.Diff.deleted" href="#pvc.Diff.deleted" class=anchor><b>deleted</b></a></li>
+  <li><a id="pvc.Diff.created" href="#pvc.Diff.created" class=anchor><b>created</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Diff.of" href="#Diff.of" class=anchor><b>fn of</b></a><span class=code>(T, d1, d2)</span></li>
+  <li><a id="Diff.hasDiff" href="#Diff.hasDiff" class=anchor><b>fn hasDiff</b></a><span class=code>(d)</span></li>
+  <li><a id="Diff.format" href="#Diff.format" class=anchor><b>fn format</b></a><span class=code>(d, fmt, full)</span></li>
+  <li><a id="Diff.patch" href="#Diff.patch" class=anchor><b>fn patch</b></a><span class=code>(d) -&gt; patchText</span></li>
 </ul>
 <br>
 <h3><a id="pvc.unix" href="#pvc.unix" class=anchor>Mod pvc.unix</h3></a>

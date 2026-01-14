@@ -190,72 +190,8 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
   <li><a id="lson.Lson.listEnd" href="#lson.Lson.listEnd" class=anchor><b>listEnd</b></a> <span class=code>="]"</span></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Lson.toPretty" href="#Lson.toPretty" class=anchor><b>fn:toPretty</b></a><span class=code>()</span></li>
   <li><a id="Lson.pretty" href="#Lson.pretty" class=anchor><b>fn pretty</b></a><span class=code>(E, t)</span></li>
-  <li><a id="Lson.level" href="#Lson.level" class=anchor><b>fn:level</b></a><span class=code>(add) -&gt; int: current level</span><br>
-  
-  Add to the indent level and get the new value
-  call with <span class=code>add=nil</span> to just get the current level</li>
-  <li><a id="Lson.write" href="#Lson.write" class=anchor><b>fn:write</b></a><span class=code>(...)</span><br>
-  
-  Same as <span class=code>file:write</span>.</li>
-  <li><a id="Lson.flush" href="#Lson.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span></li>
-  <li><a id="Lson.close" href="#Lson.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
-  <li><a id="Lson.styled" href="#Lson.styled" class=anchor><b>fn:styled</b></a><span class=code>(style, text, ...)</span><br>
-  
-  Call <span class=code>to:styled(...)</span> if it is enabled, else simply <span class=code>self:write(text, ...)</span>.
-  This allows for configurable styling of output, both for objects as well
-  as command-line utilities/etc.</li>
-  <li><a id="Lson.tableKey" href="#Lson.tableKey" class=anchor><b>fn tableKey</b></a><span class=code>(f, v, podder, pod)</span></li>
-  <li><a id="Lson.nil" href="#Lson.nil" class=anchor><b>fn nil</b></a><span class=code>(self)</span><br>
-  
-  format a nil value.</li>
-  <li><a id="Lson.boolean" href="#Lson.boolean" class=anchor><b>fn:boolean</b></a><span class=code>(b)</span><br>
-  
-  format a boolean value.</li>
-  <li><a id="Lson.number" href="#Lson.number" class=anchor><b>fn:number</b></a><span class=code>(n)</span><br>
-  
-  format a number value.</li>
   <li><a id="Lson.string" href="#Lson.string" class=anchor><b>fn string</b></a><span class=code>(f, s)</span></li>
-  <li><a id="Lson.thread" href="#Lson.thread" class=anchor><b>fn:thread</b></a><span class=code>(th)</span><br>
-  
-  format a thread value.</li>
-  <li><a id="Lson.userdata" href="#Lson.userdata" class=anchor><b>fn:userdata</b></a><span class=code>(ud)</span><br>
-  
-  format a userdata value.</li>
-  <li><a id="Lson.function" href="#Lson.function" class=anchor><b>fn function</b></a><span class=code>(self, fn)</span><br>
-  
-  format a function value.</li>
-  <li><a id="Lson.items" href="#Lson.items" class=anchor><b>fn:items</b></a><span class=code>(t, hasKeys, listEnd)</span><br>
-  
-  format items in table "list"</li>
-  <li><a id="Lson.keyvals" href="#Lson.keyvals" class=anchor><b>fn:keyvals</b></a><span class=code>(t, keys)</span><br>
-  
-  format key/vals in table "map".</li>
-  <li><a id="Lson.list" href="#Lson.list" class=anchor><b>fn:list</b></a><span class=code>(t)</span><br>
-  
-  Format only the list-elements of a table.</li>
-  <li><a id="Lson.rawtable" href="#Lson.rawtable" class=anchor><b>fn:rawtable</b></a><span class=code>(t)</span></li>
-  <li><a id="Lson.table" href="#Lson.table" class=anchor><b>fn table</b></a><span class=code>(f, t)</span></li>
-  <li><a id="Lson.format" href="#Lson.format" class=anchor><b>fn:format</b></a><span class=code>(fmt, ...) -&gt; varargsUsed</span><br>
-  
-  like string.format but use <span class=code>Fmt</span> for <span class=code>%q</span>.
-  Doesn't return the string, instead writes to <span class=code>Fmt</span></li>
-  <li><a id="Lson.concat" href="#Lson.concat" class=anchor><b>fn:concat</b></a><span class=code>(sep, ...) -&gt; self</span><br>
-  
-  fmt ... separated by sep</li>
-  <li><a id="Lson.tabulated" href="#Lson.tabulated" class=anchor><b>fn:tabulated</b></a><span class=code>('\t', ...)</span><br>
-  
-  fmt ... separated by tabs</li>
-  <li><a id="Lson.lined" href="#Lson.lined" class=anchor><b>fn:lined</b></a><span class=code>('\n', ...)</span><br>
-  
-  fmt ... separated by newlines</li>
-  <li><a id="Lson.tostring" href="#Lson.tostring" class=anchor><b>fn:tostring</b></a><span class=code>()</span><br>
-  
-  Returns the concattenated string written to the
-  formatter.<br>
-  
-  Error if <span class=code>to</span> is set.</li>
 </ul>
 <br>
 <h4><a id="lson.De" href="#lson.De" class=anchor>Record De</h4></a>

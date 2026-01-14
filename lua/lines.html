@@ -109,38 +109,52 @@ from a string</div>
   This is NOT performant, especially for large lines.</li>
 </ul>
 <br>
-<h3><a id="lines.diff" href="#lines.diff" class=anchor>Mod lines.diff</h3></a>
-Diffing module and command
-Example command: <span class=code>lines.diff{'file/path1.txt', 'file/path2.txt'}</span>
-Note: the arguments can be a string (path) or list of lines.
+<h4><a id="lines.diff" href="#lines.diff" class=anchor>Command lines.diff</h4></a>
+Diffing module and command<br>
+
+Cmd Usage: <span class=code>ldiff 'file/path1.txt' 'file/path2.txt'</span><br>
+
+Lib Usage: <span class=code>io.fmt(ldiff.Diff(linesA, linesB))</span><br>
+
+<br>
+This library/cmd creates readable diffs using the "patience diff" alorithm.
+The code was written from scratch referencing only the algorithm outline
+below, but I want to give special thanks to James Coglan for his
+<a href="https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm">
+excellent blog post</a>.
+<br>
+<br>
+Fundamentals of patience diff: <ul>
+  <li>Skip unchanged lines on both top and bottom.</li>
+  <li>Find unique lines in both sets and "align" them using "longest increasing
+  sequence".</li>
+  <li>Repeat for each aligned section.</li>
+</ul>
 <br>
 <b>Types: </b><a href="#lines.diff.Diff">Diff</a> 
 <br>
-<b>Functions</b> <ul>
-  <li><a id="lines.diff.main" href="#lines.diff.main" class=anchor><b>fn main</b></a><span class=code>(args)</span></li>
-</ul>
 <br>
 <h4><a id="lines.diff.Diff" href="#lines.diff.Diff" class=anchor>Record Diff</h4></a>
-Line-based diff.
-The default algorithm uses patience diff. Special thanks to:
-<a href="https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm">https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm</a>
+Datastructure which holds the result of computing the difference
+between two lists of lines.<br>
+
 <br>
-The basic algorithm on before/after line lists: <ul>
-  <li>skip unchanged lines on both top and bottom</li>
-  <li>find unique lines in both sets and "align" them with
-  using "longest increasing sequence"</li>
-  <li>repeat for each aligned section</li>
-</ul>
+Fields <span class=code>b</span> and <span class=code>c</span> are just the original base/change lines.
 <br>
-Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
+<span class=code>noc</span>, <span class=code>rem</span> and <span class=code>add</span> are lists of integers which represent the length
+of a block. For instance, if for a given index <span class=code>rem=3</span> and <span class=code>add=2</span> it
+means that three lines were removed from <span class=code>b</span> and two were added to
+<span class=code>c</span>. If <span class=code>noc=10</span> that means that there is a block of 10 identical lines.
 <br>
 <b>Fields:</b><ul>
   <li><a id="lines.diff.Diff.b" href="#lines.diff.Diff.b" class=anchor><b>b</b></a>
-  base, aka original lines</li>
+  base, aka raw original lines</li>
   <li><a id="lines.diff.Diff.c" href="#lines.diff.Diff.c" class=anchor><b>c</b></a>
-  change, aka new lines</li>
-  <li><a id="lines.diff.Diff.di" href="#lines.diff.Diff.di" class=anchor><b>di</b></a>
-  len of noc/rem/add</li>
+  change, aka raw new lines</li>
+  <li><a id="lines.diff.Diff.len" href="#lines.diff.Diff.len" class=anchor><b>len</b></a>
+  len of diff blocks (aka len of below fields).
+  It's not possible to use # for below, since some values
+  are nil.</li>
   <li><a id="lines.diff.Diff.noc" href="#lines.diff.Diff.noc" class=anchor><b>noc</b></a>
   nochange range (in both)</li>
   <li><a id="lines.diff.Diff.rem" href="#lines.diff.Diff.rem" class=anchor><b>rem</b></a>
@@ -149,9 +163,9 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   added from c</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Diff.map" href="#Diff.map" class=anchor><b>fn map</b></a><span class=code>(d, nocFn, chgFn)</span><br>
+  <li><a id="Diff.map" href="#Diff.map" class=anchor><b>fn:map</b></a><span class=code>(nocFn, chgFn)</span><br>
   
-  iterate through nochange and change blocks, calling the functions for each
+  Iterate through nochange and change blocks, calling the functions for each
   <ul>
     <li><span class=code>nocFn(baseStart, numUnchanged, changeStart, numUnchanged)</span></li>
     <li><span class=code>chgFn(baseStart, numRemoved, &nbsp; changeStart, numAdded)</span></li>
@@ -159,7 +173,14 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   Note that the num removed/added will be nil if none were added/removed.</li>
 </ul>
 <br>
-<h4><a id="Ty<lines.Writer>" href="#Ty<lines.Writer>" class=anchor>Record lines.Writer</h4></a>
+<h4><a id="lines.Writer" href="#lines.Writer" class=anchor>Record lines.Writer</h4></a>
+<b>Deprecated: use ds.bytearray instead. This will be removed.</b>
+<br>
+A lines table with a write method and a few other file-like methods.
+This is NOT performant, especially for small writes or large lines. It is
+useful for tests and cases where simplicity is more important than
+performance.
+<br>
 <b>Methods</b> <ul>
   <li><a id="lines.Writer.set" href="#lines.Writer.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
   
@@ -190,35 +211,53 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
-<h4><a id="Ty<Gap>" href="#Ty<Gap>" class=anchor>Record Gap</h4></a>
+<h4><a id="Gap" href="#Gap" class=anchor>Record Gap</h4></a>
+Line-based gap buffer. The buffer is composed of two lists (stacks) of
+lines <ul>
+  <li>The "bot" (aka bottom) contains line 1 -> curLine.
+  curLine is at #bot. Data gets added to bot.</li>
+  <li>The "top" buffer is used to store data in lines
+  after "bot" (aka after curLine). If the cursor is
+  moved to a previous line then data is moved from top to bot</li>
+</ul>
+<br>
+<div class=info>Gap gives a file-like write API which may not be the most performant
+for some workloads (writing single characters)</div>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="Ty<Gap>.bot" href="#Ty<Gap>.bot" class=anchor><b>bot</b></a></li>
-  <li><a id="Ty<Gap>.top" href="#Ty<Gap>.top" class=anchor><b>top</b></a></li>
-  <li><a id="Ty<Gap>.path" href="#Ty<Gap>.path" class=anchor><b>path</b></a></li>
-  <li><a id="Ty<Gap>.readonly" href="#Ty<Gap>.readonly" class=anchor><b>readonly</b></a></li>
+  <li><a id="Gap.top" href="#Gap.top" class=anchor><b>top</b></a>
+  array of lines on the top (near start).</li>
+  <li><a id="Gap.bot" href="#Gap.bot" class=anchor><b>bot</b></a>
+  array of lines on the bottom (near end).</li>
+  <li><a id="Gap.path" href="#Gap.path" class=anchor><b>path</b></a>
+  the path this was read from or nil.</li>
+  <li><a id="Gap.readonly" href="#Gap.readonly" class=anchor><b>readonly</b></a>
+  whether to throw errors on write.</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Gap.flush" href="#Gap.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
+  <li><a id="Gap.icopy" href="#Gap.icopy" class=anchor><b>fn:icopy</b></a><span class=code>() -&gt; list</span><br>
   
-  function that does and returns nothing.</li>
-  <li><a id="Gap.close" href="#Gap.close" class=anchor><b>fn close</b></a><span class=code>()</span><br>
-  
-  function that does and returns nothing.</li>
-  <li><a id="Gap.icopy" href="#Gap.icopy" class=anchor><b>fn icopy</b></a><span class=code>(g) -&gt; list</span></li>
+  Make a copy of the gap to a lua list.</li>
   <li><a id="Gap.load" href="#Gap.load" class=anchor><b>fn load</b></a><span class=code>(T, f, close) -&gt; Gap?, err?</span><br>
   
   Load gap from file, which can be a path.
-  returns nil, err on error</li>
-  <li><a id="Gap.get" href="#Gap.get" class=anchor><b>fn get</b></a><span class=code>(g, l)</span></li>
-  <li><a id="Gap.set" href="#Gap.set" class=anchor><b>fn set</b></a><span class=code>(g, i, v)</span></li>
-  <li><a id="Gap.inset" href="#Gap.inset" class=anchor><b>fn inset</b></a><span class=code>(g, i, values, rmlen) -&gt; rm?</span><br>
+  returns <span class=code>nil, err</span> on error</li>
+  <li><a id="Gap.get" href="#Gap.get" class=anchor><b>fn:get</b></a><span class=code>(l) -&gt; string</span><br>
+  
+  Get a specific line index.</li>
+  <li><a id="Gap.set" href="#Gap.set" class=anchor><b>fn:set</b></a><span class=code>(l, v)</span><br>
+  
+  Set a specific line index with the value.</li>
+  <li><a id="Gap.inset" href="#Gap.inset" class=anchor><b>fn:inset</b></a><span class=code>(i, values, rmlen) -&gt; rm?</span><br>
   
   See ds.inset for documentation.</li>
-  <li><a id="Gap.extend" href="#Gap.extend" class=anchor><b>fn extend</b></a><span class=code>(g, l)</span></li>
-  <li><a id="Gap.setGap" href="#Gap.setGap" class=anchor><b>fn setGap</b></a><span class=code>(g, l)</span><br>
+  <li><a id="Gap.extend" href="#Gap.extend" class=anchor><b>fn:extend</b></a><span class=code>(lns) -&gt; self</span><br>
+  
+  Extend gap with the lines.</li>
+  <li><a id="Gap.setGap" href="#Gap.setGap" class=anchor><b>fn:setGap</b></a><span class=code>(l)</span><br>
   
   set the gap to the line number, making <span class=code>l == #g.bot</span>.</li>
-  <li><a id="Gap.write" href="#Gap.write" class=anchor><b>fn write</b></a><span class=code>(g, ...)</span></li>
+  <li><a id="Gap.write" href="#Gap.write" class=anchor><b>fn:write</b></a><span class=code>(...)</span></li>
   <li><a id="Gap.dumpf" href="#Gap.dumpf" class=anchor><b>fn dumpf</b></a><span class=code>(t, f, close, chunk)</span><br>
   
   write lines <span class=code>t</span> to file <span class=code>f</span> in chunks (default = 16KiB)
@@ -272,17 +311,6 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   Warning: currently the reader's len will be static, so this should
   be mostly used for temporary cases. This might be changed in
   the future.</li>
-  <li><a id="lines.U3File.extend" href="#lines.U3File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
-  
-  This is used by types implementing <span class=code>:extend</span>.
-  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
-  extend in a for loop.
-  
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
-  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
-  <li><a id="lines.U3File.icopy" href="#lines.U3File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
-  
-  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h4><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h4></a>
@@ -313,17 +341,6 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="File.reader" href="#File.reader" class=anchor><b>fn reader</b></a><span class=code>(lf) -&gt; lines.File?, err?</span><br>
   
   Get a new read-only instance with an independent file-descriptor.</li>
-  <li><a id="File.extend" href="#File.extend" class=anchor><b>fn extend</b></a><span class=code>(r, l) -&gt; r</span><br>
-  
-  This is used by types implementing <span class=code>:extend</span>.
-  It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
-  extend in a for loop.
-  
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
-  is not allowed through a C boundary like <span class=code>table.move</span></div></li>
-  <li><a id="File.icopy" href="#File.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
-  
-  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h4><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h4></a>
@@ -363,9 +380,6 @@ Example: <span class=code>io.fmt(Diff(linesA, linesB))</span>
   <li><a id="EdFile.inset" href="#EdFile.inset" class=anchor><b>fn inset</b></a><span class=code>(ef, i, values, rmlen) -&gt; rm?</span><br>
   
   insert into EdFile's dats.</li>
-  <li><a id="EdFile.icopy" href="#EdFile.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
-  
-  For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
 <br>
 <h3><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h3></a>
@@ -382,35 +396,35 @@ utilities for file loading of lines.
   load or reindex the file at path to/from idxpath.</li>
 </ul>
 <br>
-<h3><a id="rebuf.motion" href="#rebuf.motion" class=anchor>Mod rebuf.motion</h3></a>
+<h3><a id="lines.motion" href="#lines.motion" class=anchor>Mod lines.motion</h3></a>
 module with helper methods for moving a cursor
 around a lines-like 2D grid.
 <b>Functions</b> <ul>
-  <li><a id="rebuf.motion.decDistance" href="#rebuf.motion.decDistance" class=anchor><b>fn decDistance</b></a><span class=code>(s, e) -&gt; int</span><br>
+  <li><a id="lines.motion.decDistance" href="#lines.motion.decDistance" class=anchor><b>fn decDistance</b></a><span class=code>(s, e) -&gt; int</span><br>
   
   decrease distance (start -> end) by 1</li>
-  <li><a id="rebuf.motion.lcLe" href="#rebuf.motion.lcLe" class=anchor><b>fn lcLe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
+  <li><a id="lines.motion.lcLe" href="#lines.motion.lcLe" class=anchor><b>fn lcLe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
   
   return whether l.c is <= l2.c2</li>
-  <li><a id="rebuf.motion.lcGe" href="#rebuf.motion.lcGe" class=anchor><b>fn lcGe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
+  <li><a id="lines.motion.lcGe" href="#lines.motion.lcGe" class=anchor><b>fn lcGe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
   
   return whether l.c is >= l2.c2</li>
-  <li><a id="rebuf.motion.topLeft" href="#rebuf.motion.topLeft" class=anchor><b>fn topLeft</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c)</span><br>
+  <li><a id="lines.motion.topLeft" href="#lines.motion.topLeft" class=anchor><b>fn topLeft</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c)</span><br>
   
   return the top-left of two points</li>
-  <li><a id="rebuf.motion.lcWithin" href="#rebuf.motion.lcWithin" class=anchor><b>fn lcWithin</b></a><span class=code>(l, c, l1, c1, l2, c2) -&gt; bool</span></li>
-  <li><a id="rebuf.motion.wordKind" href="#rebuf.motion.wordKind" class=anchor><b>fn wordKind</b></a><span class=code>(ch) -&gt; ws|sym|let</span></li>
-  <li><a id="rebuf.motion.pathKind" href="#rebuf.motion.pathKind" class=anchor><b>fn pathKind</b></a><span class=code>(ch) -&gt; ws|sym|path</span></li>
-  <li><a id="rebuf.motion.forword" href="#rebuf.motion.forword" class=anchor><b>fn forword</b></a><span class=code>(s, begin, getKind) -&gt; int</span><br>
+  <li><a id="lines.motion.lcWithin" href="#lines.motion.lcWithin" class=anchor><b>fn lcWithin</b></a><span class=code>(l, c, l1, c1, l2, c2) -&gt; bool</span></li>
+  <li><a id="lines.motion.wordKind" href="#lines.motion.wordKind" class=anchor><b>fn wordKind</b></a><span class=code>(ch) -&gt; ws|sym|let</span></li>
+  <li><a id="lines.motion.pathKind" href="#lines.motion.pathKind" class=anchor><b>fn pathKind</b></a><span class=code>(ch) -&gt; ws|sym|path</span></li>
+  <li><a id="lines.motion.forword" href="#lines.motion.forword" class=anchor><b>fn forword</b></a><span class=code>(s, begin, getKind) -&gt; int</span><br>
   
   Go forward to find the start of the next word</li>
-  <li><a id="rebuf.motion.backword" href="#rebuf.motion.backword" class=anchor><b>fn backword</b></a><span class=code>(s, end_, getKind) -&gt; int</span><br>
+  <li><a id="lines.motion.backword" href="#lines.motion.backword" class=anchor><b>fn backword</b></a><span class=code>(s, end_, getKind) -&gt; int</span><br>
   
   Go backward to find the start of this (or previous) word</li>
-  <li><a id="rebuf.motion.getRange" href="#rebuf.motion.getRange" class=anchor><b>fn getRange</b></a><span class=code>(s, i, getKind) -&gt; si,ei</span><br>
+  <li><a id="lines.motion.getRange" href="#lines.motion.getRange" class=anchor><b>fn getRange</b></a><span class=code>(s, i, getKind) -&gt; si,ei</span><br>
   
   get the <span class=code>range[si,ei]</span> of whatever is at <span class=code>s[i]</span>.</li>
-  <li><a id="rebuf.motion.findBack" href="#rebuf.motion.findBack" class=anchor><b>fn findBack</b></a><span class=code>(s, pat, end_, plain) -&gt; int</span><br>
+  <li><a id="lines.motion.findBack" href="#lines.motion.findBack" class=anchor><b>fn findBack</b></a><span class=code>(s, pat, end_, plain) -&gt; int</span><br>
   
   find backwards
   this searches for the pattern and returns the LAST one found.
