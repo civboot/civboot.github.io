@@ -264,13 +264,19 @@ for some workloads (writing single characters)</div>
   if f is a string then it is opened as a file and closed when done</li>
 </ul>
 <br>
-<h4><a id="Ty<lines.U3File>" href="#Ty<lines.U3File>" class=anchor>Record lines.U3File</h4></a>
+<h4><a id="lines.U3File" href="#lines.U3File" class=anchor>Record lines.U3File</h4></a>
+A file of 3 byte (24 bit) integers. These are commonly
+used for indexing lines.
+<br>
+This object supports get/set index operations including appending. Every
+operation (except consecutive reads/writes) requires a file seek.
+<br>
 <b>Fields:</b><ul>
-  <li><a id="Ty<lines.U3File>.f" href="#Ty<lines.U3File>.f" class=anchor><b>f</b></a></li>
-  <li><a id="Ty<lines.U3File>.path" href="#Ty<lines.U3File>.path" class=anchor><b>path</b></a></li>
-  <li><a id="Ty<lines.U3File>.mode" href="#Ty<lines.U3File>.mode" class=anchor><b>mode</b></a></li>
-  <li><a id="Ty<lines.U3File>.len" href="#Ty<lines.U3File>.len" class=anchor><b>len</b></a></li>
-  <li><a id="Ty<lines.U3File>.sz" href="#Ty<lines.U3File>.sz" class=anchor><b>sz</b></a>
+  <li><a id="lines.U3File.f" href="#lines.U3File.f" class=anchor><b>f</b></a></li>
+  <li><a id="lines.U3File.path" href="#lines.U3File.path" class=anchor><b>path</b></a></li>
+  <li><a id="lines.U3File.mode" href="#lines.U3File.mode" class=anchor><b>mode</b></a></li>
+  <li><a id="lines.U3File.len" href="#lines.U3File.len" class=anchor><b>len</b></a></li>
+  <li><a id="lines.U3File.sz" href="#lines.U3File.sz" class=anchor><b>sz</b></a>
   the size of each value</li>
 </ul>
 <b>Methods</b> <ul>
@@ -286,11 +292,11 @@ for some workloads (writing single characters)</div>
   
   get bytes. If index out of bounds return nil.
   Panic if there are read errors.</li>
-  <li><a id="lines.U3File.get" href="#lines.U3File.get" class=anchor><b>fn get</b></a><span class=code>(u3, i)</span><br>
+  <li><a id="lines.U3File.get" href="#lines.U3File.get" class=anchor><b>fn:get</b></a><span class=code>(i)</span><br>
   
   get value at index</li>
   <li><a id="lines.U3File.setbytes" href="#lines.U3File.setbytes" class=anchor><b>fn setbytes</b></a><span class=code>(fi, i, v)</span></li>
-  <li><a id="lines.U3File.set" href="#lines.U3File.set" class=anchor><b>fn set</b></a><span class=code>(u3, i, v)</span><br>
+  <li><a id="lines.U3File.set" href="#lines.U3File.set" class=anchor><b>fn:set</b></a><span class=code>(i, v)</span><br>
   
   set value at index</li>
   <li><a id="lines.U3File.move" href="#lines.U3File.move" class=anchor><b>fn move</b></a><span class=code>(fi, to, mvFn) -&gt; fi</span><br>
@@ -313,34 +319,45 @@ for some workloads (writing single characters)</div>
   the future.</li>
 </ul>
 <br>
-<h4><a id="Ty<File>" href="#Ty<File>" class=anchor>Record File</h4></a>
+<h4><a id="File" href="#File" class=anchor>Record File</h4></a>
+Usage: <span class=code>File{path='path/to/file.txt', mode='r'}</span><br>
+
+Indexed file of lines supporting read and append.
+<br>
+<div class=info>use EdFile instead if you need to do non-append edits</div>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="Ty<File>.path" href="#Ty<File>.path" class=anchor><b>path</b></a></li>
-  <li><a id="Ty<File>.mode" href="#Ty<File>.mode" class=anchor><b>mode</b></a></li>
-  <li><a id="Ty<File>.f" href="#Ty<File>.f" class=anchor><b>f</b></a>
-  open file</li>
-  <li><a id="Ty<File>.idx" href="#Ty<File>.idx" class=anchor><b>idx</b></a>
+  <li><a id="File.path" href="#File.path" class=anchor><b>path</b></a>
+  path of this file.</li>
+  <li><a id="File.mode" href="#File.mode" class=anchor><b>mode</b></a>
+  'r', 'a' or 'a+'</li>
+  <li><a id="File.f" href="#File.f" class=anchor><b>f</b></a>
+  open (normal) file object</li>
+  <li><a id="File.idx" href="#File.idx" class=anchor><b>idx</b></a>
   line index of f</li>
-  <li><a id="Ty<File>.cache" href="#Ty<File>.cache" class=anchor><b>cache</b></a>
+  <li><a id="File.cache" href="#File.cache" class=anchor><b>cache</b></a>
   cache of lines</li>
-  <li><a id="Ty<File>.loadIdxFn" href="#Ty<File>.loadIdxFn" class=anchor><b>loadIdxFn</b></a>
+  <li><a id="File.loadIdxFn" href="#File.loadIdxFn" class=anchor><b>loadIdxFn</b></a>
   default=lines.futils.loadIdx</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="File.close" href="#File.close" class=anchor><b>fn close</b></a><span class=code>(lf)</span></li>
-  <li><a id="File.flush" href="#File.flush" class=anchor><b>fn flush</b></a><span class=code>(lf) -&gt; ok, errmsg?</span></li>
-  <li><a id="File.write" href="#File.write" class=anchor><b>fn write</b></a><span class=code>(lf, ...) -&gt; ok, errmsg?</span><br>
+  <li><a id="File.close" href="#File.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
+  <li><a id="File.flush" href="#File.flush" class=anchor><b>fn:flush</b></a><span class=code>() -&gt; ok, errmsg?</span></li>
+  <li><a id="File.write" href="#File.write" class=anchor><b>fn:write</b></a><span class=code>(...) -&gt; ok, errmsg?</span><br>
   
   append to file</li>
-  <li><a id="File.get" href="#File.get" class=anchor><b>fn get</b></a><span class=code>(lf, i) -&gt; line</span><br>
+  <li><a id="File.get" href="#File.get" class=anchor><b>fn:get</b></a><span class=code>(i) -&gt; line</span><br>
   
   Get line at index</li>
-  <li><a id="File.set" href="#File.set" class=anchor><b>fn set</b></a><span class=code>(lf, i, v)</span><br>
+  <li><a id="File.set" href="#File.set" class=anchor><b>fn:set</b></a><span class=code>(i, v)</span><br>
   
   Set line at index</li>
-  <li><a id="File.reader" href="#File.reader" class=anchor><b>fn reader</b></a><span class=code>(lf) -&gt; lines.File?, err?</span><br>
+  <li><a id="File.reader" href="#File.reader" class=anchor><b>fn:reader</b></a><span class=code>() -&gt; lines.File?, err?</span><br>
   
-  Get a new read-only instance with an independent file-descriptor.</li>
+  Get a new read-only instance with an independent file-descriptor.
+  
+  This allows reading the file while another coroutine writes it (via
+  <a href="lap.html">lap.html</a>).</li>
 </ul>
 <br>
 <h4><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h4></a>
