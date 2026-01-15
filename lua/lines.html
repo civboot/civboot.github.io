@@ -30,8 +30,12 @@ actually performant for more real-world use-cases.
 <h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
 The lines module, providing a uniform API for lines-like objects.
 <br>
+<br>
+<br>
 <div class=info>You can also call this module directly to get a table of lines
+<br>
 from a string</div>
+<br>
 <b>Functions</b> <ul>
   <li><a id="lines.join" href="#lines.join" class=anchor><b>fn join</b></a><span class=code>(t) -&gt; string</span><br>
   
@@ -320,9 +324,9 @@ operation (except consecutive reads/writes) requires a file seek.
 </ul>
 <br>
 <h4><a id="File" href="#File" class=anchor>Record File</h4></a>
-Usage: <span class=code>File{path='path/to/file.txt', mode='r'}</span><br>
+Usage: <span class=code>File{'path/to/file.txt', mode='r'}</span><br>
 
-Indexed file of lines supporting read and append.
+Indexed file of lines supporting modes 'r' and 'a+'.
 <br>
 <div class=info>use EdFile instead if you need to do non-append edits</div>
 <br>
@@ -360,47 +364,60 @@ Indexed file of lines supporting read and append.
   <a href="lap.html">lap.html</a>).</li>
 </ul>
 <br>
-<h4><a id="Ty<EdFile>" href="#Ty<EdFile>" class=anchor>Record EdFile</h4></a>
+<h4><a id="EdFile" href="#EdFile" class=anchor>Record EdFile</h4></a>
+EdFile: an editable line-based file object, optimized for
+indexed and consequitive reads and writes
+<br>
+<b>Usage:</b><div class=code-block>local ed = EdFile(path, mode);<br>
+ed:set(1, 'first line')<br>
+ed:set(2, 'second line')<br>
+ed:set(1, 'changed first line')<br>
+ed:close()
+</div>
+<br>
 <b>Fields:</b><ul>
-  <li><a id="Ty<EdFile>.lf" href="#Ty<EdFile>.lf" class=anchor><b>lf</b></a>
-  indexed file</li>
-  <li><a id="Ty<EdFile>.dats" href="#Ty<EdFile>.dats" class=anchor><b>dats</b></a>
-  list of Slc | Gap</li>
-  <li><a id="Ty<EdFile>.lens" href="#Ty<EdFile>.lens" class=anchor><b>lens</b></a>
-  rolling sum of dat lengths</li>
+  <li><a id="EdFile.lf" href="#EdFile.lf" class=anchor><b>lf</b></a>
+  indexed append-only file.</li>
+  <li><a id="EdFile.dats" href="#EdFile.dats" class=anchor><b>dats</b></a>
+  list of Slc | Gap objects.</li>
+  <li><a id="EdFile.lens" href="#EdFile.lens" class=anchor><b>lens</b></a>
+  rolling sum of dat lengths.</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="EdFile.get" href="#EdFile.get" class=anchor><b>fn get</b></a><span class=code>(ef, i) -&gt; line</span><br>
+  <li><a id="EdFile.get" href="#EdFile.get" class=anchor><b>fn:get</b></a><span class=code>(i) -&gt; line</span><br>
   
   Get line at index</li>
-  <li><a id="EdFile.write" href="#EdFile.write" class=anchor><b>fn write</b></a><span class=code>(ef, ...) -&gt; self?, errmsg?</span></li>
-  <li><a id="EdFile.set" href="#EdFile.set" class=anchor><b>fn set</b></a><span class=code>(ef, i, v)</span><br>
+  <li><a id="EdFile.write" href="#EdFile.write" class=anchor><b>fn:write</b></a><span class=code>(...) -&gt; self?, errmsg?</span></li>
+  <li><a id="EdFile.set" href="#EdFile.set" class=anchor><b>fn:set</b></a><span class=code>(i, v)</span><br>
   
   Set line at index.</li>
-  <li><a id="EdFile.reader" href="#EdFile.reader" class=anchor><b>fn reader</b></a><span class=code>(ef)</span><br>
+  <li><a id="EdFile.reader" href="#EdFile.reader" class=anchor><b>fn:reader</b></a><span class=code>()</span><br>
   
   Return a read-only view of the EdFile which shares the
   associated data structures.</li>
-  <li><a id="EdFile.flush" href="#EdFile.flush" class=anchor><b>fn flush</b></a><span class=code>(ef) -&gt; ef.lf:flush()</span><br>
+  <li><a id="EdFile.flush" href="#EdFile.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span><br>
   
   Flush the .lf member (which can only be extended).
-  To write all data to disk use :dumpf()</li>
-  <li><a id="EdFile.close" href="#EdFile.close" class=anchor><b>fn close</b></a><span class=code>(ef) -&gt; ef.lf:close()</span><br>
+  To write all data to disk you must call <span class=code>:dumpf()</span>.</li>
+  <li><a id="EdFile.close" href="#EdFile.close" class=anchor><b>fn:close</b></a><span class=code>()</span><br>
   
-  Note: this does NOT necessarily flush what you expect.</li>
-  <li><a id="EdFile.dumpf" href="#EdFile.dumpf" class=anchor><b>fn dumpf</b></a><span class=code>(ef, f)</span><br>
+  Note: to write all data to disk you must call <span class=code>:dumpf()</span>.</li>
+  <li><a id="EdFile.dumpf" href="#EdFile.dumpf" class=anchor><b>fn:dumpf</b></a><span class=code>(f)</span><br>
   
-  Dump EdFile to file or path</li>
-  <li><a id="EdFile.extend" href="#EdFile.extend" class=anchor><b>fn extend</b></a><span class=code>(ef, values)</span><br>
+  Dump contents to file or path.</li>
+  <li><a id="EdFile.extend" href="#EdFile.extend" class=anchor><b>fn:extend</b></a><span class=code>(values)</span><br>
   
-  appends to lf for extend when possible.</li>
-  <li><a id="EdFile.inset" href="#EdFile.inset" class=anchor><b>fn inset</b></a><span class=code>(ef, i, values, rmlen) -&gt; rm?</span><br>
+  Appends to lf for extend when possible.</li>
+  <li><a id="EdFile.inset" href="#EdFile.inset" class=anchor><b>fn:inset</b></a><span class=code>(i, values, rmlen) -&gt; rm?</span><br>
   
   insert into EdFile's dats.</li>
 </ul>
 <br>
 <h3><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h3></a>
-utilities for file loading of lines.
+utilities for file loading of lines. Generally users shouldn't
+<br>
+need to use this file.
+<br>
 <b>Functions</b> <ul>
   <li><a id="lines.futils.forceLoadIdx" href="#lines.futils.forceLoadIdx" class=anchor><b>fn forceLoadIdx</b></a><span class=code>(f, idxpath)</span><br>
   
@@ -414,38 +431,52 @@ utilities for file loading of lines.
 </ul>
 <br>
 <h3><a id="lines.motion" href="#lines.motion" class=anchor>Mod lines.motion</h3></a>
-module with helper methods for moving a cursor
-around a lines-like 2D grid.
+Helper methods for moving a cursor around a lines-like 2D grid.
+<br>
+The notation <span class=code>l.c</span> is used to refer to line, column where
+<br>
+both are indexed by 1.
+<br>
 <b>Functions</b> <ul>
   <li><a id="lines.motion.decDistance" href="#lines.motion.decDistance" class=anchor><b>fn decDistance</b></a><span class=code>(s, e) -&gt; int</span><br>
   
-  decrease distance (start -> end) by 1</li>
+  Move <span class=code>s</span> closer to <span class=code>e</span> by 1.<br>
+  
+  If they are equal do nothing.</li>
   <li><a id="lines.motion.lcLe" href="#lines.motion.lcLe" class=anchor><b>fn lcLe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
   
-  return whether l.c is <= l2.c2</li>
+  Return whether <span class=code>l.c</span> is equal to or before <span class=code>l2.c2</span>.</li>
   <li><a id="lines.motion.lcGe" href="#lines.motion.lcGe" class=anchor><b>fn lcGe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
   
-  return whether l.c is >= l2.c2</li>
+  Return whether <span class=code>l.c</span> is equal to or after <span class=code>l2.c2</span></li>
   <li><a id="lines.motion.topLeft" href="#lines.motion.topLeft" class=anchor><b>fn topLeft</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c)</span><br>
   
-  return the top-left of two points</li>
+  Return the top-left (aka the minimum) of two points.</li>
   <li><a id="lines.motion.lcWithin" href="#lines.motion.lcWithin" class=anchor><b>fn lcWithin</b></a><span class=code>(l, c, l1, c1, l2, c2) -&gt; bool</span></li>
-  <li><a id="lines.motion.wordKind" href="#lines.motion.wordKind" class=anchor><b>fn wordKind</b></a><span class=code>(ch) -&gt; ws|sym|let</span></li>
-  <li><a id="lines.motion.pathKind" href="#lines.motion.pathKind" class=anchor><b>fn pathKind</b></a><span class=code>(ch) -&gt; ws|sym|path</span></li>
-  <li><a id="lines.motion.forword" href="#lines.motion.forword" class=anchor><b>fn forword</b></a><span class=code>(s, begin, getKind) -&gt; int</span><br>
+  <li><a id="lines.motion.wordKind" href="#lines.motion.wordKind" class=anchor><b>fn wordKind</b></a><span class=code>(ch) -&gt; ws|sym|let</span><br>
   
-  Go forward to find the start of the next word</li>
-  <li><a id="lines.motion.backword" href="#lines.motion.backword" class=anchor><b>fn backword</b></a><span class=code>(s, end_, getKind) -&gt; int</span><br>
+  Given a character, return it's word-kind:
+  ws (whitespace), sym (symbol), let (letter).</li>
+  <li><a id="lines.motion.pathKind" href="#lines.motion.pathKind" class=anchor><b>fn pathKind</b></a><span class=code>(ch) -&gt; ws|sym|path</span><br>
   
-  Go backward to find the start of this (or previous) word</li>
+  Given a character, return it's path-kind:
+  ws (whitespace), sym (symbol), path (path)</li>
+  <li><a id="lines.motion.forword" href="#lines.motion.forword" class=anchor><b>fn forword</b></a><span class=code>(s, si, getKind) -&gt; int</span><br>
+  
+  Get the start of the next word from si (start-index).</li>
+  <li><a id="lines.motion.backword" href="#lines.motion.backword" class=anchor><b>fn backword</b></a><span class=code>(s, ei, getKind) -&gt; int</span><br>
+  
+  Get the start of the previous word from ei (end-index).</li>
   <li><a id="lines.motion.getRange" href="#lines.motion.getRange" class=anchor><b>fn getRange</b></a><span class=code>(s, i, getKind) -&gt; si,ei</span><br>
   
   get the <span class=code>range[si,ei]</span> of whatever is at <span class=code>s[i]</span>.</li>
-  <li><a id="lines.motion.findBack" href="#lines.motion.findBack" class=anchor><b>fn findBack</b></a><span class=code>(s, pat, end_, plain) -&gt; int</span><br>
+  <li><a id="lines.motion.findBack" href="#lines.motion.findBack" class=anchor><b>fn findBack</b></a><span class=code>(s, pat, ei, plain) -&gt; int</span><br>
   
-  find backwards
-  this searches for the pattern and returns the LAST one found.
-  This is HORRIBLY non-performant, only use for small amounts of data</li>
+  find backwards from ei (end index).<br>
+  
+  This searches for the pattern and returns the LAST one found.
+  This is HORRIBLY non-performant, only use for small amounts of data (like a
+  line).</li>
 </ul>
 <br>
 <b>table</b>: raw <span class=code>table</span>
@@ -453,15 +484,26 @@ around a lines-like 2D grid.
 <h3><a id="lines.kev" href="#lines.kev" class=anchor>Mod lines.kev</h3></a>
 kev: "Key Equal Value" serialization format.
 <br>
+<br>
+<br>
 This is an extremely common format in many unix utilities, "good enough"
+<br>
 for a large number of configuration use cases. The format is simple: a file
+<br>
 containing lines of <span class=code>key=value</span>. The input and output are a table of
-key,val strings (though tostring is called for <span class=code>to()</span>). Lines which don't
-have <span class=code>=</span> in them are ignored.
+<br>
+key,val strings (though tostring is called for <span class=code>to()</span>). Lines which start
+<br>
+with <span class=code>#</span> or don't have <span class=code>=</span> in them are ignored.
+<br>
+<br>
 <br>
 Nested data is absolutely not supported. Spaces are treated as literal both
+<br>
 before and after <span class=code>=</span>. If you want a key containing <span class=code>=</span> or key/value
-containing newline then use a different format.
+<br>
+containing newline then use a different format (or write your own).
+<br>
 <b>Functions</b> <ul>
   <li><a id="lines.kev.to" href="#lines.kev.to" class=anchor><b>fn to</b></a><span class=code>(t)</span><br>
   

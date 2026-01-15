@@ -379,6 +379,7 @@ to a variable name. However, they can be accessed directly.
 <h3><a id="iA" href="#iA" class=anchor>Mod iA</h3></a>
 intermediate Assembly
 <br>
+<br>
 <b>Types: </b><a href="#iA.mod">mod</a> <a href="#iA.core">core</a> <a href="#iA.array">array</a> <a href="#iA.Ty">Ty</a> <a href="#iA.Var">Var</a> <a href="#iA.Literal">Literal</a> <a href="#iA.Expr1">Expr1</a> <a href="#iA.Assign">Assign</a> <a href="#iA.Cmp">Cmp</a> <a href="#iA.CondBlock">CondBlock</a> <a href="#iA.If">If</a> <a href="#iA.Loc">Loc</a> <a href="#iA.Goto">Goto</a> <a href="#iA.Switch">Switch</a> <a href="#iA.While">While</a> 
 <br>
 <b>Functions</b> <ul>
@@ -392,19 +393,26 @@ intermediate Assembly
 <br>
 <h3><a id="iA.mod" href="#iA.mod" class=anchor>Mod iA.mod</h3></a>
 iA submodule containing all modules
+<br>
 (both user-defined and native).
 <br>
+<br>
+<br>
 Modules contain their own types.
+<br>
 <br>
 <b>Types: </b><a href="#iA.mod.array">array</a> <a href="#iA.mod.core">core</a> 
 <br>
 <br>
 <h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
 iA array module, containing all array types used in code.
+<br>
 Get or fetch an array type by calling it with the inner type.
+<br>
 <br>
 <h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
 iA default core module, containing core types and functions.
+<br>
 <b>Functions</b> <ul>
   <li><a id="iA.core.enum" href="#iA.core.enum" class=anchor><b>fn enum</b></a><span class=code>(t)</span><br>
   
@@ -413,6 +421,7 @@ iA default core module, containing core types and functions.
 <br>
 <h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
 iA default core module, containing core types and functions.
+<br>
 <b>Functions</b> <ul>
   <li><a id="iA.core.enum" href="#iA.core.enum" class=anchor><b>fn enum</b></a><span class=code>(t)</span><br>
   
@@ -421,7 +430,9 @@ iA default core module, containing core types and functions.
 <br>
 <h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
 iA array module, containing all array types used in code.
+<br>
 Get or fetch an array type by calling it with the inner type.
+<br>
 <br>
 <h4><a id="iA.Ty" href="#iA.Ty" class=anchor>Record Ty</h4></a>
 iA Type, either user-defined (i.e. struct, enum) or native.
@@ -562,6 +573,7 @@ The block is stored in the While list.
 <br>
 <h3><a id="iA.parse" href="#iA.parse" class=anchor>Mod iA.parse</h3></a>
 parse intermediate assembly
+<br>
 <b>Functions</b> <ul>
   <li><a id="iA.parse.toIa" href="#iA.parse.toIa" class=anchor><b>fn toIa</b></a><span class=code>(tok)</span></li>
 </ul>

@@ -23,6 +23,7 @@ dependency is <a href="lib/metaty">lib/metaty</a> which it uses for defining it'
 <h3><a id="ds" href="#ds" class=anchor>Mod ds</h3></a>
 ds: data structures and algorithms.
 <br>
+<br>
 <b>Types: </b><a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
 <br>
 <b>Functions</b> <ul>
@@ -505,8 +506,11 @@ Immutable table
 <br>
 <h3><a id="bt" href="#bt" class=anchor>Mod bt</h3></a>
 indexed table as Binary Tree.
+<br>
 These functions treat an indexed table as a binary tree
+<br>
 where root is at <span class=code>index=1</span>
+<br>
 <b>Functions</b> <ul>
   <li><a id="bt.left" href="#bt.left" class=anchor><b>fn left</b></a><span class=code>(t, i) -&gt; t[i * 2]</span></li>
   <li><a id="bt.right" href="#bt.right" class=anchor><b>fn right</b></a><span class=code>(t, i) -&gt; t[i * 2 + 1]</span></li>
@@ -732,7 +736,9 @@ NOTE: you should only use this for printing/logging/etc.
 <br>
 <h3><a id="ds.path" href="#ds.path" class=anchor>Mod ds.path</h3></a>
 working with paths
+<br>
 Call directly to convert a list|str to a list of path components.
+<br>
 <b>Functions</b> <ul>
   <li><a id="ds.path.read" href="#ds.path.read" class=anchor><b>fn read</b></a><span class=code>(path)</span><br>
   
@@ -825,8 +831,11 @@ Call directly to convert a list|str to a list of path components.
 <br>
 <h3><a id="ds.utf8" href="#ds.utf8" class=anchor>Mod ds.utf8</h3></a>
 utf8 stream decoding.
+<br>
 Get the length by decodelen(firstbyte), then decode the whole character
+<br>
 with decode(dat)
+<br>
 <b>Functions</b> <ul>
   <li><a id="ds.utf8.decodelen" href="#ds.utf8.decodelen" class=anchor><b>fn decodelen</b></a><span class=code>(firstbyte) -&gt; U8LEN[0xF8 &amp; firstbyte]</span><br>
   
@@ -839,6 +848,7 @@ with decode(dat)
 <br>
 <h3><a id="ds.heap" href="#ds.heap" class=anchor>Mod ds.heap</h3></a>
 Binary Heap implementation
+<br>
 <br>
 <b>Types: </b><a href="#ds.heap.Heap">Heap</a> 
 <br>
@@ -870,19 +880,31 @@ priority queues and similar problems.
 <h3><a id="ds.log" href="#ds.log" class=anchor>Mod ds.log</h3></a>
 Simple logging library, set i.e. LOGLEVEL=INFO to enable logging.
 <br>
+<br>
+<br>
 This module has the functions <span class=code>trace info warn err crit</span> with the signature:
+<br>
 <span class=code>function(fmt, ... [, data])</span> <ul>
   <li>the ... are the format args which behave like <span class=code>fmt.format</span> (aka <span class=code>%q</span>
+  <br>
   formats tables/etc).</li>
   <li>data is optional arbitrary data that can be serialized/formatted.</li>
 </ul>
+<br>
 To enable logging the user should set a global (or env var) LOGLEVEL
+<br>
 to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
 <br>
 <br>
+<br>
+<br>
+<br>
 This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
+<br>
 which logs to stderr. This fn is called with signature
+<br>
 <span class=code>function(level, srcloc, fmt, ...)</span>
+<br>
 <br>
 <b>Types: </b><a href="#ds.log.LogTable">LogTable</a> 
 <br>
@@ -946,29 +968,49 @@ used in tests
 <br>
 <h3><a id="ds.load" href="#ds.load" class=anchor>Mod ds.load</h3></a>
 load lua modules with custom or default environment in a sandboxed
+<br>
 environment. This is extremely useful for configurations written in lua or
+<br>
 writing your own config-like language.
 <br>
+<br>
+<br>
 The default environment (ds.load.ENV) has safe default functions which
+<br>
 cannot access state and missing unsafe functions like getmetatable or the
+<br>
 debug module.
 <br>
+<br>
+<br>
 <h4><a id="loading" href="#loading" class=anchor>loading</h4></a>
+<br>
 To perform the load, call this module with:
-<div class=code-block>&nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result</div>
+<br>
+<div class=code-block><br>
+&nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result<br>
+
+</div>
+<br>
 inputs: <ul>
   <li>path: path to load (lua-syntax file).</li>
   <li>env: global environment.</li>
   <li>envMeta: metatable of global environment. If env
+  <br>
   already has a metatable this is ignored.</li>
 </ul>
+<br>
+<br>
 <br>
 outputs: <ul>
   <li>ok: boolean to indicate load success or failure of script.</li>
   <li>result: result or loading or ds.Error.</li>
 </ul>
 <br>
+<br>
+<br>
 Throws an error if the path is not valid lua code.
+<br>
 <b>Functions</b> <ul>
   <li><a id="ds.load.loadfile" href="#ds.load.loadfile" class=anchor><b>fn loadfile</b></a><span class=code>(path, env, envMeta) -&gt; fn?, ds.Error?</span><br>
   
