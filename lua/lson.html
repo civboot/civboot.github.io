@@ -14,19 +14,10 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-JSON+ de/serializer in pure lua
+<h1>JSON+ de/serializer in pure lua</h1>
 <br>
 This folder defines an LSON spec and an example public domain pure-lua
 implementation of LSON/JSON encoder and decoder.
-<br>
-<h3>Lua Library</h3>
-lson is a pure-lua JSON+ de/serialization library. The main functions are
-the encoding functions <span class=code>json()</span> and <span class=code>lson()</span> and the  <span class=code>decode()</span> function
-(which decodes either encoder's output).
-<br>
-See also the types <a href="#lson.Json">#lson.Json</a>, <a href="#lson.Lson">#lson.Lson</a> and <a href="#lson.Decoder">#lson.Decoder</a> and
-their documentation to have more control of the usage, including pretty printing
-and a decoding iterator.
 <br>
 <div class=info>Note: If you want highly performant or compliant JSON library then use a
 different one. This library is part of the civstack project and is optimized for
@@ -38,34 +29,43 @@ versa. The difference is: <ul>
   <li>LSON ignores commas (it treats them as whitespace). List and map entries can
   be separated by any whitespace (including commas). This makes it easier for
   a human to write and vcs to diff.</li>
-  <li>LSON adds binary syntax for bytes <span class=code>|any binary data|</span>. The data within</li>
-  <li><span class=code>|...|</span> is arbitrary bytes except the following will be converted:
+  <li>LSON adds binary syntax for bytes <span class=code>|any binary data|</span>. The data within
+  <span class=code>|...|</span> is arbitrary bytes except the following will be converted:
   <span class=code>\\ -&gt; \ &nbsp; \| -&gt; | &nbsp; &nbsp;\n -&gt; newline</span>
   Other "escapes" are preserved, i.e. <span class=code>\d -&gt; \d</span>. This makes encoding binary
   data in LSON MUCH more compact (and possible) than JSON.</li>
 </ul>
 <br>
-<h3><a id="lson" href="#lson" class=anchor>Mod lson</h3></a>
+<h4><a id="lson" href="#lson" class=anchor>Command lson</h4></a>
+lson JSON+ command and library.
+<br>
+<b>Cmd usage:</b> <span class=code>lson path/to/file.json</span><br>
+
+The command pretty-prints JSON+ as a lua object.
+<br>
+<br>
+<b>Lib usage:</b> <span class=code>tbl = lson.decode('{1: 2}')</span><br>
+
+As a library it allows de/serialization of JSON+ to/from
+Lua values.
 <br>
 <b>Types: </b><a href="#lson.Json">Json</a> <a href="#lson.Lson">Lson</a> <a href="#lson.De">De</a> 
 <br>
-<b>Functions</b> <ul>
+<b>Methods and Functions</b> <ul>
   <li><a id="lson.json" href="#lson.json" class=anchor><b>fn json</b></a><span class=code>(v, pretty) -&gt; string</span><br>
   
   Encode lua value to JSON string</li>
   <li><a id="lson.lson" href="#lson.lson" class=anchor><b>fn lson</b></a><span class=code>(v, pretty) -&gt; string</span><br>
   
   Encode lua value to LSON string</li>
-  <li><a id="lson.decode" href="#lson.decode" class=anchor><b>fn decode</b></a><span class=code>(s, podder, pset) -&gt; obj</span></li>
-  <li><a id="lson.bytes" href="#lson.bytes" class=anchor><b>fn bytes</b></a><span class=code>(f, s)</span></li>
-  <li><a id="lson.deNull" href="#lson.deNull" class=anchor><b>fn deNull</b></a><span class=code>(de) -&gt; de.null</span></li>
-  <li><a id="lson.deTrue" href="#lson.deTrue" class=anchor><b>fn deTrue</b></a><span class=code>(de) -&gt; true</span></li>
-  <li><a id="lson.deFalse" href="#lson.deFalse" class=anchor><b>fn deFalse</b></a><span class=code>(de) -&gt; false</span></li>
-  <li><a id="lson.deNumber" href="#lson.deNumber" class=anchor><b>fn deNumber</b></a><span class=code>(de)</span></li>
-  <li><a id="lson.deString" href="#lson.deString" class=anchor><b>fn deString</b></a><span class=code>(de)</span></li>
-  <li><a id="lson.deBytes" href="#lson.deBytes" class=anchor><b>fn deBytes</b></a><span class=code>(de)</span></li>
-  <li><a id="lson.deArray" href="#lson.deArray" class=anchor><b>fn deArray</b></a><span class=code>(de)</span></li>
-  <li><a id="lson.deObject" href="#lson.deObject" class=anchor><b>fn deObject</b></a><span class=code>(de)</span></li>
+  <li><a id="lson.decode" href="#lson.decode" class=anchor><b>fn decode</b></a><span class=code>(s, podder, pset) -&gt; value</span><br>
+  
+  Decode JSON/LSON string or lines object to a lua value.</li>
+  <li><a id="lson.bytes" href="#lson.bytes" class=anchor><b>fn bytes</b></a><span class=code>(f, s)</span><br>
+  
+  The bytes type-encoder. Encodes as <span class=code>|bytes|</span> instead of <span class=code>"string"</span> for
+  lson You can set <span class=code>Enc.string = lson.bytes</span> for this behavior (or use the
+  Lson type).</li>
 </ul>
 <br>
 <h4><a id="lson.Json" href="#lson.Json" class=anchor>Record Json</h4></a>
@@ -191,7 +191,11 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Lson.pretty" href="#Lson.pretty" class=anchor><b>fn pretty</b></a><span class=code>(E, t)</span></li>
-  <li><a id="Lson.string" href="#Lson.string" class=anchor><b>fn string</b></a><span class=code>(f, s)</span></li>
+  <li><a id="Lson.string" href="#Lson.string" class=anchor><b>fn string</b></a><span class=code>(f, s)</span><br>
+  
+  The bytes type-encoder. Encodes as <span class=code>|bytes|</span> instead of <span class=code>"string"</span> for
+  lson You can set <span class=code>Enc.string = lson.bytes</span> for this behavior (or use the
+  Lson type).</li>
 </ul>
 <br>
 <h4><a id="lson.De" href="#lson.De" class=anchor>Record De</h4></a>
