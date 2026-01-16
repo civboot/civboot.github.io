@@ -14,38 +14,30 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-write scripts for Lua, execute from shell. This is a tiny Lua module that makes
-it easy to write utilities that work from either bash or Lua.
+<h1>shim: command line library for lua.</h1>
+Write scripts as Lua libraries, execute them in the shell.
 <br>
-Example script (see also: <a href="#pkg-script">#pkg-script</a>) <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
-local G = G or _G -- typosafe globals<br>
 <br>
---- module documentation<br>
-local M = G.mod and mod'myCmdName' or {} -- self-documenting module<br>
-G.MAIN = G.MAIN or M<br>
+This is a tiny Lua module that makes it easy to write utilities
+that work from either bash or Lua.
 <br>
-local mty = require'metaty'<br>
+<b>Usage:</b> <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
 local shim = require'shim'<br>
 <br>
---- Comamnd documentation<br>
-M.Args = mty'Args' {<br>
-&nbsp; 'name [string]: the name to say hello to', name='World',<br>
+local M = shim.cmd'myModName' {<br>
+&nbsp; 'arg [type]: documentation',<br>
+&nbsp; &nbsp; arg = 'default-value',<br>
 }<br>
 <br>
-M.main = function(args)<br>
-&nbsp; args = M.Args(shim.parseStr(args))<br>
-&nbsp; print('Hello '..args.name..'!')<br>
-end<br>
+-- ... nomral lua module<br>
+function M.someFunction() ... end<br>
 <br>
-if M == MAIN then M.main(G.arg) end<br>
+if shim.isMain(M) then M:main(arg) end<br>
 return M -- return as library
 </div>
 <br>
-Then in <span class=code>PKG.luk</span> add <span class=code>main = 'myCmdName.Main'</span> to enable better
-documentation formatting. Get documentation with <span class=code>doc 'myCmdName'</span>.
-<br>
 <h3><a id="shim" href="#shim" class=anchor>Mod shim</h3></a>
-shim: use a lua module in lua OR in the shell.
+shim: command line library for lua.
 <br>
 <b>Functions</b> <ul>
   <li><a id="shim.parse" href="#shim.parse" class=anchor><b>fn parse</b></a><span class=code>(v) -&gt; args</span><br>
@@ -87,8 +79,13 @@ shim: use a lua module in lua OR in the shell.
   Duck type: always return a string
   This is useful for some APIs where you want to convert
   number/true/false to strings
-  Converts nil to ''</li>
-  <li><a id="shim.list" href="#shim.list" class=anchor><b>fn list</b></a><span class=code>(val, default, empty)</span></li>
+  <div class=info>Converts nil to ''</div></li>
+  <li><a id="shim.list" href="#shim.list" class=anchor><b>fn list</b></a><span class=code>(val, default, empty)</span><br>
+  
+  Duck type: always return a list.<ul>
+    <li>default controls val==nil</li>
+    <li>empty   controls val==''</li>
+  </ul></li>
   <li><a id="shim.listSplit" href="#shim.listSplit" class=anchor><b>fn listSplit</b></a><span class=code>(val, sep)</span><br>
   
   Duck type: if val is a string then splits it
@@ -101,7 +98,9 @@ shim: use a lua module in lua OR in the shell.
   
   expand string keys into <span class=code>--key=value</span>, ordered alphabetically.
   This is mostly useful for interfacing with non-lua shells.</li>
-  <li><a id="shim.getEnvBool" href="#shim.getEnvBool" class=anchor><b>fn getEnvBool</b></a><span class=code>(k)</span></li>
+  <li><a id="shim.getEnvBool" href="#shim.getEnvBool" class=anchor><b>fn getEnvBool</b></a><span class=code>(k)</span><br>
+  
+  return nil if env var does not exist, else boolean (true for 'true' or '1')</li>
   <li><a id="shim.popRaw" href="#shim.popRaw" class=anchor><b>fn popRaw</b></a><span class=code>(args, to) -&gt; to</span><br>
   
   pop raw arguments after '--'
