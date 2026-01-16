@@ -14,25 +14,62 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
+<h1>Luk: Lua Konfig Language</h1>
+Luk is a config language written in Lua... actually it <i>is</i> lua, just with
+different globals!
+<br>
+Most of luk's globals come from ds.dload. In addition to those globals, Luk
+provides an (overrideable) <span class=code>import'name'</span> function which can import other Luk
+files (by path).
+<br>
+<b>Usage:</b><div class=code-block>local flowers = import'path/to/flowers.luk'<br>
+<br>
+-- Do normal lua stuff.<br>
+local count = {}<br>
+for _, flower in pairs(flowers) do<br>
+&nbsp; count[flower.kind] = (count[flower.kind] or 0) + 1<br>
+end<br>
+<br>
+return {<br>
+&nbsp; name = 'flower metrics',<br>
+&nbsp; kind_count = count,<br>
+}
+</div>
+<br>
+Each luk module runs in it's <i>own hermetic environment</i> - that means it cannot
+access globals from other modules, though it can of course see the table they
+return.
+<br>
+Note that in the future, luk will likely force all values returned by a luk
+module to also be immutable, meaning you won't be able to change them.
+<br>
 <h3><a id="luk" href="#luk" class=anchor>Mod luk</h3></a>
-luk: lua config language.
+luk: lua config language.<br>
+
 <br>
 <br>
 <b>Types: </b><a href="#luk.Table">Table</a> <a href="#luk.Luk">Luk</a> 
 <br>
 <b>Functions</b> <ul>
-  <li><a id="luk.checkCycle" href="#luk.checkCycle" class=anchor><b>fn checkCycle</b></a><span class=code>(cycle, path)</span></li>
   <li><a id="luk.value" href="#luk.value" class=anchor><b>fn value</b></a><span class=code>(v)</span><br>
   
-  Convert value to luk-value</li>
+  Convert value to luk-value. This is mostly used internally,
+  but feel free to use it as well.</li>
 </ul>
 <br>
 <h4><a id="luk.Table" href="#luk.Table" class=anchor>Record Table</h4></a>
-A luk table object
+A normal table except if you set <span class=code>__call</span> it will make
+the table callable (since luk doesn't support setmetatable).
+<br>
+In addition, this will likely be frozen (made immutable)
+after being returned from a luk module.
 <br>
 <br>
 <h4><a id="luk.Luk" href="#luk.Luk" class=anchor>Record Luk</h4></a>
-The luk loader.
+Usage: <span class=code>Luk{}:import'path/to/file.luk'</span><br>
+
+The luk loader. Allows (recursively) importing a luk
+module. Keeps a cache of already imported paths files.
 <br>
 <b>Fields:</b><ul>
   <li><a id="luk.Luk.imported" href="#luk.Luk.imported" class=anchor><b>imported</b></a>

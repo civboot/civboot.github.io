@@ -109,8 +109,12 @@ pod: plain old data
 <b>Types: </b><a href="#pod.Pod">Pod</a> <a href="#pod.Podder">Podder</a> <a href="#pod.key">key</a> <a href="#pod.builtin">builtin</a> <a href="#pod.List">List</a> <a href="#pod.Map">Map</a> 
 <br>
 <b>Functions</b> <ul>
-  <li><a id="pod.isConcrete" href="#pod.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span></li>
-  <li><a id="pod.isBuiltin" href="#pod.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span></li>
+  <li><a id="pod.isConcrete" href="#pod.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span><br>
+  
+  Return whether v is a nil, boolean, number or string.</li>
+  <li><a id="pod.isBuiltin" href="#pod.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span><br>
+  
+  Return whether v is concrete or a table with no metatable.</li>
   <li><a id="pod.serRaw" href="#pod.serRaw" class=anchor><b>fn serRaw</b></a></li>
   <li><a id="pod.deserRaw" href="#pod.deserRaw" class=anchor><b>fn deserRaw</b></a></li>
   <li><a id="pod.isPod" href="#pod.isPod" class=anchor><b>fn isPod</b></a></li>

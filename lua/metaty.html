@@ -14,31 +14,82 @@
 <!DOCTYPE html>
 <html>
 <body><div class=doc>
-simple but effective Lua type system using metatables
-<br>
-Metatype is a library and specification for creating performant, documented, and
-typo-safe Lua record-types which can be formatted.
+<h1>metaty: typosafe types using Lua metatables</h1>
+Metatype is a library and specification for creating performant, documented,
+and typo-safe Lua record-types which can be formatted.
 <br>
 <div class=info> Turn off typo checking by setting the global <span class=code>LUA_OPT=3</span> or higher.</div>
 <br>
-<div class=code-block>local G = G or _G<br>
+<h2><a id="record" href="#record" class=anchor>Mod and Record</h2></a>
+Below is a simple example using <span class=code>metaty.mod</span> to create a module and calling
+metatype directly to create a record (the same as <span class=code>metaty.record</span>).
+<br>
+<div class=code-block>local mty = require'metaty'<br>
+<br>
 --- module documentation<br>
-local M = G.mod and mod'myMod' or {} -- (see pkg)<br>
+local M = mty.mod'myMod'<br>
 <br>
-local mty = require'metaty'<br>
-<br>
--- Documentation for Pos (position)<br>
+--- Documentation for Pos (position)<br>
 M.Pos = mty'Pos' {<br>
+&nbsp; -- fields are a string of form "name[type]: documentation",<br>
 &nbsp; 'x[int]: x coordinate',<br>
 &nbsp; 'y[int]: y coordinate', y = 0,<br>
 }<br>
 <br>
 local p1 = Pos{x=4}<br>
-local p1 = Pos{x=4, y=3, z=5} -- error if checking turned on
+local p1 = Pos{x=4, y=3, z=5} -- ERROR: does not have field z
 </div>
 <br>
-The above expands to the following. Note that the "typosafe" elements
-are removed when <span class=code>LUA_OPT &gt; 3</span>
+<h2><a id="enum" href="#enum" class=anchor>Enum Type</h2></a>
+Metaty also supports creating typosafe enum types with
+<span class=code>metaty.enum</span>. An enum is typosafe both when creating the variant
+(i.e. <span class=code>v = MyEnum.VARIANT</span>) and when matching using the <span class=code>matcher</span> method
+below. It also allows using checked enums in <a href="pod.html">pod.html</a>.
+<br>
+One of the main benefits of using an enum is to ensure that when you are
+matching you don't make a typo mistake (i.e. WOKER instead of WORKER). In
+lua there is no native <span class=code>switch</span> statement (or similar), but table lookup
+on functions can be equally as good -- see the example below.
+<br>
+<div class=code-block>M.Job = enum'Job' {<br>
+&nbsp; OWNER &nbsp; = 1,<br>
+&nbsp; MANAGER = 2,<br>
+&nbsp; COOK &nbsp; &nbsp;= 3,<br>
+&nbsp; WAITER &nbsp;= 4,<br>
+}<br>
+<br>
+assert('OWNER', M.Job.OWNER)<br>
+<br>
+-- string or id input returns string<br>
+assert('OWNER', M.Job.name(1))<br>
+assert('OWNER', M.Job.name('OWNER'))<br>
+<br>
+-- string or id input returns id<br>
+assert(1, M.Job.id(1))<br>
+assert(1, M.Job.id('OWNER'))<br>
+<br>
+-- create a table that converts a variant (name or id) -&gt; function.<br>
+local doJob = M.Job:matcher {<br>
+&nbsp; OWNER &nbsp; = function() print'tell them to get to work' end,<br>
+&nbsp; MANAGER = function() print'get to work!' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end,<br>
+&nbsp; COOK &nbsp; &nbsp;= function() print'order up!' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end,<br>
+&nbsp; WAITER &nbsp;= function() print'they want spam and eggs' &nbsp;end,<br>
+<br>
+&nbsp; -- Removing any of the above will cause an error that not all variants<br>
+&nbsp; -- are covered. You can use :partialMatcher if you want to<br>
+&nbsp; -- return nil instead.<br>
+&nbsp; --<br>
+&nbsp; -- Below will cause an error: no variant DISHWASHER<br>
+&nbsp; DISHWASHER = function() end<br>
+}<br>
+<br>
+-- call in your own function like:<br>
+doJob[job](my, args)
+</div>
+<br>
+<h2><a id="Record_Equivalent" href="#Record_Equivalent" class=anchor>Record Equivalent</h2></a>
+The example in <a href="#record">#record</a> expands to the following. Note that the "typosafe"
+elements are removed when <span class=code>LUA_OPT &gt; 3</span>.
 <div class=code-block>local M = {}<br>
 local metaty = require'metaty'<br>
 <br>
@@ -79,9 +130,7 @@ PKG_LOOKUP['myMod.Pos'] = M.Pos
   </ul></li>
 </ul>
 <br>
-See also: <a href="#Package_fmt">#Package_fmt</a>
-<br>
-<h3><a id="metaty-why" href="#metaty-why" class=anchor>Why?</h3></a>
+<h2><a id="metaty-why" href="#metaty-why" class=anchor>Why?</h2></a>
 <br>
 Lua is a fast and fun language. However it often lacks the ability to express
 intent when it comes to the structure of data. Also, not only is it not
@@ -92,7 +141,7 @@ unit-test suite.
 Checking for typos incurrs a small performance cost, so it is disabled by
 default. However, it is well-worth the cost in your unit tests.
 <br>
-<h3><a id="metaty-spec" href="#metaty-spec" class=anchor>Spec</h3></a>
+<h2><a id="metaty-spec" href="#metaty-spec" class=anchor>Spec</h2></a>
 For a type to be considered a "metaty" the only requirement is that it has a
 metatable set and that metatable has a <span class=code>__name</span> field.
 <br>
@@ -113,7 +162,7 @@ The following fields can optionally be set on the metatable: <ul>
 <br>
 In addition, there is runtime type specification defined below.
 <br>
-<h3><a id="metaty-typoe-check" href="#metaty-typoe-check" class=anchor>Runtime typo checking (optional)</h3></a>
+<h2><a id="metaty-typoe-check" href="#metaty-typoe-check" class=anchor>Runtime typo checking (optional)</h2></a>
 <div class=info>Note: Runtime typo checking has a cost and can be disabled with
 LUA_OPT=3 or higher.</div>
 <br>
@@ -122,7 +171,7 @@ getmetatable(MyType).__index = myIndex<br>
 MyType.__newindex &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;= myNewIndex
 </div>
 <br>
-<h3><a id="lua_opt" href="#lua_opt" class=anchor>LUA_OPT</h3></a>
+<h2><a id="lua_opt" href="#lua_opt" class=anchor>LUA_OPT</h2></a>
 <span class=code>LUA_OPT</span> is an integer from 0-3 which is intended to have the following
 semantic meanings: <ul>
   <li><span class=code>4</span>: may be used for more optimization of certain library functions with
@@ -139,37 +188,51 @@ semantic meanings: <ul>
 metaty: simple but effective Lua type system using metatable
 <br>
 <b>Functions</b> <ul>
-  <li><a id="metaty.isMod" href="#metaty.isMod" class=anchor><b>fn isMod</b></a><span class=code>(t) -&gt; boolean</span></li>
+  <li><a id="metaty.isMod" href="#metaty.isMod" class=anchor><b>fn isMod</b></a><span class=code>(t) -&gt; boolean</span><br>
+  
+  Return whether the value is a module.</li>
   <li><a id="metaty.setup" href="#metaty.setup" class=anchor><b>fn setup</b></a><span class=code>()</span><br>
   
   Setup lua's global environment to meet metaty protocol.
   
   Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
   not previously set).</li>
-  <li><a id="metaty.isConcrete" href="#metaty.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span></li>
-  <li><a id="metaty.isBuiltin" href="#metaty.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span></li>
+  <li><a id="metaty.isConcrete" href="#metaty.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span><br>
+  
+  Return whether v is a nil, boolean, number or string.</li>
+  <li><a id="metaty.isBuiltin" href="#metaty.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span><br>
+  
+  Return whether v is concrete or a table with no metatable.</li>
   <li><a id="metaty.isEnv" href="#metaty.isEnv" class=anchor><b>fn isEnv</b></a><span class=code>(var)</span><br>
   
-  isEnv: returns boolean for below values, else nil</li>
-  <li><a id="metaty.isEnvG" href="#metaty.isEnvG" class=anchor><b>fn isEnvG</b></a><span class=code>(var)</span></li>
+  Given a string return whether os.getenv returns 'true' or '1'.</li>
+  <li><a id="metaty.isEnvG" href="#metaty.isEnvG" class=anchor><b>fn isEnvG</b></a><span class=code>(var)</span><br>
+  
+  Same as isEnv but first checks globals.</li>
   <li><a id="metaty.getmethod" href="#metaty.getmethod" class=anchor><b>fn getmethod</b></a><span class=code>(t, method)</span><br>
   
-  get method of table if it exists.
-  This first looks for the item directly on the table, then the item
-  in the table's metatable. It does NOT use the table's normal <span class=code>__index</span>.</li>
-  <li><a id="metaty.ty" href="#metaty.ty" class=anchor><b>fn ty</b></a><span class=code>(v) -&gt; type: string or metatable</span><br>
+  Get method of table if it exists.<br>
   
-  Get the type of the value.</li>
+  This first looks for the item directly on the table, then the item in the
+  table's metatable. It does NOT use the table's normal <span class=code>__index</span>.</li>
+  <li><a id="metaty.ty" href="#metaty.ty" class=anchor><b>fn ty</b></a><span class=code>(v) -&gt; type</span><br>
+  
+  Get the type of the value which is either the values metatable or the
+  string result of <span class=code>type(v)</span>.</li>
   <li><a id="metaty.tyName" href="#metaty.tyName" class=anchor><b>fn tyName</b></a><span class=code>(T, default) -&gt; string</span><br>
   
-  Given a type return it's name</li>
+  Given a type return it's name.</li>
   <li><a id="metaty.name" href="#metaty.name" class=anchor><b>fn name</b></a><span class=code>(o)</span><br>
   
   Given an object (function, table, userdata) return its name.
-  return nil if it's not one of the above types</li>
-  <li><a id="metaty.callable" href="#metaty.callable" class=anchor><b>fn callable</b></a><span class=code>(obj) -&gt; bool: return if obj is callable</span></li>
-  <li><a id="metaty.metaget" href="#metaty.metaget" class=anchor><b>fn metaget</b></a><span class=code>(t, k) -&gt; rawget(getmt(t), k)</span></li>
-  <li><a id="metaty.validKey" href="#metaty.validKey" class=anchor><b>fn validKey</b></a><span class=code>(s) -&gt; boolean: s=value is valid syntax</span></li>
+  Return it's string type if it's not one of the above types.</li>
+  <li><a id="metaty.callable" href="#metaty.callable" class=anchor><b>fn callable</b></a><span class=code>(obj) -&gt; bool</span><br>
+  
+  Return whether obj is callable (function or has <span class=code>mt.__call</span>).</li>
+  <li><a id="metaty.validKey" href="#metaty.validKey" class=anchor><b>fn validKey</b></a><span class=code>(s) -&gt; boolean</span><br>
+  
+  Return whether s can be used directly as a key
+  in syntax.</li>
   <li><a id="metaty.fninfo" href="#metaty.fninfo" class=anchor><b>fn fninfo</b></a><span class=code>(fn) -&gt; name, loc</span><br>
   
   Extract name,loc from function value.</li>
@@ -200,92 +263,76 @@ end
   
   <div class=info>d is of type <span class=code>doc.Documenter</span>.
   Tests are in cmd/doc/test.lua </div></li>
-  <li><a id="metaty.nativeEq" href="#metaty.nativeEq" class=anchor><b>fn nativeEq</b></a><span class=code>(a, b) -&gt; a == b</span></li>
-  <li><a id="metaty.eqDeep" href="#metaty.eqDeep" class=anchor><b>fn eqDeep</b></a><span class=code>(a, b)</span></li>
   <li><a id="metaty.eq" href="#metaty.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b) -&gt; bool</span><br>
   
-  compare tables or anything else</li>
-  <li><a id="metaty.indexError" href="#metaty.indexError" class=anchor><b>fn indexError</b></a><span class=code>(R, k, lvl)</span></li>
-  <li><a id="metaty.index" href="#metaty.index" class=anchor><b>fn index</b></a><span class=code>(R, k)</span></li>
-  <li><a id="metaty.hardIndex" href="#metaty.hardIndex" class=anchor><b>fn hardIndex</b></a><span class=code>(R, k)</span></li>
-  <li><a id="metaty.newindex" href="#metaty.newindex" class=anchor><b>fn newindex</b></a><span class=code>(r, k, v)</span></li>
-  <li><a id="metaty.hardNewindex" href="#metaty.hardNewindex" class=anchor><b>fn hardNewindex</b></a><span class=code>(r, k, v)</span></li>
-  <li><a id="metaty.fieldsCheck" href="#metaty.fieldsCheck" class=anchor><b>fn fieldsCheck</b></a><span class=code>(T, fields, t)</span></li>
-  <li><a id="metaty.construct" href="#metaty.construct" class=anchor><b>fn construct</b></a><span class=code>(T, t)</span></li>
-  <li><a id="metaty.constructUnchecked" href="#metaty.constructUnchecked" class=anchor><b>fn constructUnchecked</b></a><span class=code>(T, t)</span></li>
-  <li><a id="metaty.construct" href="#metaty.construct" class=anchor><b>fn construct</b></a><span class=code>(T, t)</span></li>
-  <li><a id="metaty.extendFields" href="#metaty.extendFields" class=anchor><b>fn extendFields</b></a><span class=code>(fields, ids, docs, R)</span></li>
-  <li><a id="metaty.namedRecord" href="#metaty.namedRecord" class=anchor><b>fn namedRecord</b></a><span class=code>(name, R, loc)</span></li>
+  Compare two values (any values) for equality. This will
+  recursively check tables for equality.</li>
+  <li><a id="metaty.indexError" href="#metaty.indexError" class=anchor><b>fn indexError</b></a><span class=code>(R, k, lvl)</span><br>
+  
+  Throws a formatted index error when called.</li>
+  <li><a id="metaty.index" href="#metaty.index" class=anchor><b>fn index</b></a><span class=code>(R, k)</span><br>
+  
+  Usage: <span class=code>getmetable(MyType).__index = mty.index</span><br>
+  
+  Allows integers to be insert into your value. This is the default __index.</li>
+  <li><a id="metaty.hardIndex" href="#metaty.hardIndex" class=anchor><b>fn hardIndex</b></a><span class=code>(R, k)</span><br>
+  
+  Usage: <span class=code>getmetable(MyType).__index = mty.index</span><br>
+  
+  Allows nothing except your type's fields to be insert into
+  your value.</li>
+  <li><a id="metaty.newindex" href="#metaty.newindex" class=anchor><b>fn newindex</b></a><span class=code>(r, k, v)</span><br>
+  
+  Usage: <span class=code>MyType.__newindex = mty.newindex</span><br>
+  
+  This allows non-string keys to always be insert and is the default.</li>
+  <li><a id="metaty.hardNewindex" href="#metaty.hardNewindex" class=anchor><b>fn hardNewindex</b></a><span class=code>(r, k, v)</span><br>
+  
+  Usage: <span class=code>MyType.__newindex = mty.hardNewindex</span><br>
+  
+  This allows only registered fields to be insert.</li>
+  <li><a id="metaty.construct" href="#metaty.construct" class=anchor><b>fn construct</b></a><span class=code>(T, t)</span><br>
+  
+  Usage: <span class=code>getmetatable(MyType).__call = mty.constructChecked</span>
+  
+  Check type with field typochecking. This is the default when
+  <span class=code>LUA_OPT &lt;= 2</span></li>
+  <li><a id="metaty.constructUnchecked" href="#metaty.constructUnchecked" class=anchor><b>fn constructUnchecked</b></a><span class=code>(T, t)</span><br>
+  
+  Usage: <span class=code>getmetatable(MyType).__call = mty.constructUnchecked</span>
+  
+  Check type with field typochecking. This is the default when
+  <span class=code>LUA_OPT &gt;= 3</span>.</li>
+  <li><a id="metaty.construct" href="#metaty.construct" class=anchor><b>fn construct</b></a><span class=code>(T, t)</span><br>
+  
+  Usage: <span class=code>getmetatable(MyType).__call = mty.constructChecked</span>
+  
+  Check type with field typochecking. This is the default when
+  <span class=code>LUA_OPT &lt;= 2</span></li>
   <li><a id="metaty.record" href="#metaty.record" class=anchor><b>fn record</b></a><span class=code>(name)</span><br>
   
-  Start a new record.
-  Alternatively, call the metaty module directly.</li>
+  Usage: <span class=code>record'name'{ 'field [type]: documentation' }</span>
+  
+  Start a new record. See module documentation for details.</li>
   <li><a id="metaty.recordMod" href="#metaty.recordMod" class=anchor><b>fn recordMod</b></a><span class=code>(name)</span><br>
   
-  Start a new record which acts as a lua module (i.e. the file doesn't use
-  <span class=code>metaty.mod</span>)</li>
-  <li><a id="metaty.isRecord" href="#metaty.isRecord" class=anchor><b>fn isRecord</b></a><span class=code>(t)</span></li>
+  Start a new record which acts as a lua module (i.e. the file returns it).</li>
+  <li><a id="metaty.isRecord" href="#metaty.isRecord" class=anchor><b>fn isRecord</b></a><span class=code>(t)</span><br>
+  
+  Return true if <span class=code>t</span> is a record value.</li>
   <li><a id="metaty.extend" href="#metaty.extend" class=anchor><b>fn extend</b></a><span class=code>(Type, name, fields)</span><br>
+  
+  Usage: <span class=code>mty.extend(MyBase, 'NewName', {...new fields...})</span>
   
   Extend the Type with (optional) new name and (optional) additional fields.</li>
   <li><a id="metaty.extendMod" href="#metaty.extendMod" class=anchor><b>fn extendMod</b></a><span class=code>(T, name, fields)</span><br>
   
   Extend the type with new name and use as a module.</li>
-  <li><a id="metaty.enum_tostring" href="#metaty.enum_tostring" class=anchor><b>fn enum_tostring</b></a><span class=code>(E) -&gt; E.__name</span></li>
-  <li><a id="metaty.enum_toPod" href="#metaty.enum_toPod" class=anchor><b>fn enum_toPod</b></a><span class=code>(E, pset, e)</span></li>
-  <li><a id="metaty.enum_fromPod" href="#metaty.enum_fromPod" class=anchor><b>fn enum_fromPod</b></a><span class=code>(E, pset, e) -&gt; E.name(e)</span></li>
-  <li><a id="metaty.enum_partialMatcher" href="#metaty.enum_partialMatcher" class=anchor><b>fn enum_partialMatcher</b></a><span class=code>(E, fnMap)</span></li>
-  <li><a id="metaty.enum_matcher" href="#metaty.enum_matcher" class=anchor><b>fn enum_matcher</b></a><span class=code>(E, fnMap)</span></li>
-  <li><a id="metaty.namedEnum" href="#metaty.namedEnum" class=anchor><b>fn namedEnum</b></a><span class=code>(ename, nameIds)</span></li>
   <li><a id="metaty.enum" href="#metaty.enum" class=anchor><b>fn enum</b></a><span class=code>(name)</span><br>
   
-  Create an enum type which can convert between string and integers.
+  Usage: <span class=code>mty.enum'name' { A = 1, B = 2, ... }</span><br>
   
-  This "type" is mainly to allow typosafe enums, both when creating the variant
-  (i.e. <span class=code>v = MyEnum.VARIANT</span>) and when matching using the <span class=code>matcher</span> method below.
-  It also allows using checked enums in <span class=code>ds.pod</span>.
-  
-  One of the main benefits of using an enum is to ensure that when you are
-  matching you don't make a typo mistake (i.e. WOKER instead of WORKER). In
-  lua there is no native <span class=code>switch</span> statement (or similar), but table lookup
-  on functions can be equally as good -- see the example below.
-  
-  <h2>Example</h2>
-  <div class=code-block>M.Job = enum'Job' {<br>
-&nbsp; OWNER &nbsp; = 1,<br>
-&nbsp; MANAGER = 2,<br>
-&nbsp; COOK &nbsp; &nbsp;= 3,<br>
-&nbsp; WAITER &nbsp;= 4,<br>
-}<br>
-<br>
-assert('OWNER', M.Job.OWNER)<br>
-<br>
--- either string or id will return string<br>
-assert('OWNER', M.Job.name(1))<br>
-assert('OWNER', M.Job.name('OWNER'))<br>
-<br>
--- either string or id will return id<br>
-assert(1, M.Job.id(1))<br>
-assert(1, M.Job.id('OWNER'))<br>
-<br>
--- create a table that converts a variant (name or id) -&gt; function.<br>
-local doJob = M.Job:matcher {<br>
-&nbsp; OWNER &nbsp; = function() print'tell them to get to work' end,<br>
-&nbsp; MANAGER = function() print'get to work!' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end,<br>
-&nbsp; COOK &nbsp; &nbsp;= function() print'order up!' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end,<br>
-&nbsp; WAITER &nbsp;= function() print'they want spam and eggs' &nbsp;end,<br>
-<br>
-&nbsp; -- Removing any of the above will cause an error that not all variants<br>
-&nbsp; -- are covered. You can use :partialMatcher if you want to<br>
-&nbsp; -- return nil instead.<br>
-&nbsp; --<br>
-&nbsp; -- Below will cause an error: no variant DISHWASHER<br>
-&nbsp; DISHWASHER = function() end<br>
-}<br>
-<br>
--- call in your own function like:<br>
-doJob[job](my, args)
-</div></li>
+  Create an enum type. See module documentation.</li>
 </ul>
 <br>
 </div></body>
