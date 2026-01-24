@@ -16,12 +16,12 @@
 <body><div class=doc>
 <h1>shim: command line library for lua.</h1>
 Write scripts as Lua libraries, execute them in the shell.
-<br>
-<br>
-This is a tiny Lua module that makes it easy to write utilities
+
+<p>
+<p>This is a tiny Lua module that makes it easy to write utilities
 that work from either bash or Lua.
-<br>
-<b>Usage:</b> <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
+
+<p><b>Usage:</b> <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
 local shim = require'shim'<br>
 <br>
 local M = shim.cmd'myModName' {<br>
@@ -35,11 +35,11 @@ function M.someFunction() ... end<br>
 if shim.isMain(M) then M:main(arg) end<br>
 return M -- return as library
 </div>
-<br>
-<h3><a id="shim" href="#shim" class=anchor>Mod shim</h3></a>
+
+<p><h3><a id="shim" href="#shim" class=anchor>Mod shim</h3></a>
 shim: command line library for lua.
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="shim.parse" href="#shim.parse" class=anchor><b>fn parse</b></a><span class=code>(v) -&gt; args</span><br>
   
   Parse either a string or list and convert them to key=value table.
@@ -139,6 +139,7 @@ return M
   
   Usage: <span class=code>if shim.isMain(M) then os.exit(M:main(arg)) end</span></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

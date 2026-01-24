@@ -15,43 +15,45 @@
 <html>
 <body><div class=doc>
 <h1>JSON+ de/serializer in pure lua</h1>
-<br>
-This folder defines an LSON spec and an example public domain pure-lua
+
+<p>This folder defines an LSON spec and an example public domain pure-lua
 implementation of LSON/JSON encoder and decoder.
-<br>
-<div class=info>Note: If you want highly performant or compliant JSON library then use a
+
+<p><div class=info>Note: If you want highly performant or compliant JSON library then use a
 different one. This library is part of the civstack project and is optimized for
 simplicy and improved features.</div>
-<br>
-<h3><a id="lson-spec" href="#lson-spec" class=anchor>LSON spec</h3></a>
+
+<p><h3><a id="lson-spec" href="#lson-spec" class=anchor>LSON spec</h3></a>
 LSON is a strict superset of JSON: all valid JSON is valid LSON but not vice
 versa. The difference is: <ul>
   <li>LSON ignores commas (it treats them as whitespace). List and map entries can
   be separated by any whitespace (including commas). This makes it easier for
-  a human to write and vcs to diff.</li>
+  a human to write and vcs to diff.
+  
+  <p></li>
   <li>LSON adds binary syntax for bytes <span class=code>|any binary data|</span>. The data within
   <span class=code>|...|</span> is arbitrary bytes except the following will be converted:
   <span class=code>\\ -&gt; \ &nbsp; \| -&gt; | &nbsp; &nbsp;\n -&gt; newline</span>
   Other "escapes" are preserved, i.e. <span class=code>\d -&gt; \d</span>. This makes encoding binary
   data in LSON MUCH more compact (and possible) than JSON.</li>
 </ul>
-<br>
-<h4><a id="lson" href="#lson" class=anchor>Command lson</h4></a>
+
+<p><h4><a id="lson" href="#lson" class=anchor>Command lson</h4></a>
 lson JSON+ command and library.
-<br>
-<b>Cmd usage:</b> <span class=code>lson path/to/file.json</span><br>
+
+<p><b>Cmd usage:</b> <span class=code>lson path/to/file.json</span><br>
 
 The command pretty-prints JSON+ as a lua object.
-<br>
-<br>
-<b>Lib usage:</b> <span class=code>tbl = lson.decode('{1: 2}')</span><br>
+
+<p>
+<p><b>Lib usage:</b> <span class=code>tbl = lson.decode('{1: 2}')</span><br>
 
 As a library it allows de/serialization of JSON+ to/from
 Lua values.
-<br>
-<b>Types: </b><a href="#lson.Json">Json</a> <a href="#lson.Lson">Lson</a> <a href="#lson.De">De</a> 
-<br>
-<b>Methods and Functions</b> <ul>
+
+<p><b>Types: </b><a href="#lson.Json">Json</a> <a href="#lson.Lson">Lson</a> <a href="#lson.De">De</a> 
+
+<p><b>Methods and Functions</b> <ul>
   <li><a id="lson.json" href="#lson.json" class=anchor><b>fn json</b></a><span class=code>(v, pretty) -&gt; string</span><br>
   
   Encode lua value to JSON string</li>
@@ -67,13 +69,13 @@ Lua values.
   lson You can set <span class=code>Enc.string = lson.bytes</span> for this behavior (or use the
   Lson type).</li>
 </ul>
-<br>
-<h4><a id="lson.Json" href="#lson.Json" class=anchor>Record Json</h4></a>
+
+<p><h4><a id="lson.Json" href="#lson.Json" class=anchor>Record Json</h4></a>
 Json Encoder (via fmt.Fmt)
 This works identically to metaty.Fmt except it overrides
 how tables are formatted to use JSON instead of printing them.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lson.Json.style" href="#lson.Json.style" class=anchor><b>style</b></a>
   enable styling. If true, set <span class=code>to=Styler</span></li>
   <li><a id="lson.Json.to" href="#lson.Json.to" class=anchor><b>to</b></a>
@@ -163,11 +165,11 @@ how tables are formatted to use JSON instead of printing them.
   
   Error if <span class=code>to</span> is set.</li>
 </ul>
-<br>
-<h4><a id="lson.Lson" href="#lson.Lson" class=anchor>Record Lson</h4></a>
+
+<p><h4><a id="lson.Lson" href="#lson.Lson" class=anchor>Record Lson</h4></a>
 Similar to JSON but no commas and strings are encoded as <span class=code>|bytes|</span>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lson.Lson.style" href="#lson.Lson.style" class=anchor><b>style</b></a>
   enable styling. If true, set <span class=code>to=Styler</span></li>
   <li><a id="lson.Lson.to" href="#lson.Lson.to" class=anchor><b>to</b></a>
@@ -197,12 +199,12 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
   lson You can set <span class=code>Enc.string = lson.bytes</span> for this behavior (or use the
   Lson type).</li>
 </ul>
-<br>
-<h4><a id="lson.De" href="#lson.De" class=anchor>Record De</h4></a>
+
+<p><h4><a id="lson.De" href="#lson.De" class=anchor>Record De</h4></a>
 <span class=code>De(string or lines) -&gt; value-iter</span>
 <span class=code>for val in De'["my", "lson"]' do ... end</span>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lson.De.dat" href="#lson.De.dat" class=anchor><b>dat</b></a>
   lines-like data to parse</li>
   <li><a id="lson.De.null" href="#lson.De.null" class=anchor><b>null</b></a> <span class=code>=ds.none</span>
@@ -216,6 +218,7 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
   <li><a id="De.skipWs" href="#De.skipWs" class=anchor><b>fn skipWs</b></a><span class=code>(de, eofOkay)</span></li>
   <li><a id="De.consume" href="#De.consume" class=anchor><b>fn consume</b></a><span class=code>(de, pat, context)</span></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

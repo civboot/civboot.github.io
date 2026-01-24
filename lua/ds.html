@@ -19,14 +19,14 @@
 method gaps (needed "batteries") in Lua's standard library. It's only
 dependency is <a href="lib/metaty">lib/metaty</a> which it uses for defining it's records and
 <a href="lib/fmt">lib/fmt</a> which it uses to define the logging interface.
-<br>
-<h3><a id="ds" href="#ds" class=anchor>Mod ds</h3></a>
+
+<p><h3><a id="ds" href="#ds" class=anchor>Mod ds</h3></a>
 ds: data structures and algorithms.
-<br>
-<br>
-<b>Types: </b><a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="ds.setup" href="#ds.setup" class=anchor><b>fn setup</b></a><span class=code>(args)</span><br>
   
   Default LUA_SETUP, though vt100 is recommended for most users.</li>
@@ -445,21 +445,21 @@ end
   
   Print to io.sderr</li>
 </ul>
-<br>
-<h4><a id="ds.PlainStyler" href="#ds.PlainStyler" class=anchor>Record PlainStyler</h4></a>
-<br>
-<h4><a id="ds.TypoSafe" href="#ds.TypoSafe" class=anchor>Record TypoSafe</h4></a>
+
+<p><h4><a id="ds.PlainStyler" href="#ds.PlainStyler" class=anchor>Record PlainStyler</h4></a>
+
+<p><h4><a id="ds.TypoSafe" href="#ds.TypoSafe" class=anchor>Record TypoSafe</h4></a>
 A typo-safe table, typically used in libraries for storing constants.
-<br>
-Adding keys is always allowed but getting non-existant keys is an error.
-<br>
-<br>
-<h4><a id="ds.Slc" href="#ds.Slc" class=anchor>Record Slc</h4></a>
+
+<p>Adding keys is always allowed but getting non-existant keys is an error.
+
+<p>
+<p><h4><a id="ds.Slc" href="#ds.Slc" class=anchor>Record Slc</h4></a>
 A slice of anything with start and end indexes.
 <div class=info>Note: This object does not hold a reference to the object being
 sliced.</div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ds.Slc.si" href="#ds.Slc.si" class=anchor><b>si</b></a>
   start index</li>
   <li><a id="ds.Slc.ei" href="#ds.Slc.ei" class=anchor><b>ei</b></a>
@@ -470,12 +470,12 @@ sliced.</div>
   
   return either a single (new) merged or two sorted Slcs.</li>
 </ul>
-<br>
-<h4><a id="ds.Imm" href="#ds.Imm" class=anchor>Record Imm</h4></a>
+
+<p><h4><a id="ds.Imm" href="#ds.Imm" class=anchor>Record Imm</h4></a>
 Immutable table
-<br>
-<br>
-<h4><a id="ds.Duration" href="#ds.Duration" class=anchor>Record Duration</h4></a>
+
+<p>
+<p><h4><a id="ds.Duration" href="#ds.Duration" class=anchor>Record Duration</h4></a>
 <b>Fields:</b><ul>
   <li><a id="ds.Duration.s" href="#ds.Duration.s" class=anchor><b>s</b></a>
   seconds</li>
@@ -487,31 +487,31 @@ Immutable table
   <li><a id="Duration.fromMs" href="#Duration.fromMs" class=anchor><b>fn fromMs</b></a></li>
   <li><a id="Duration.asSeconds" href="#Duration.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
 </ul>
-<br>
-<h4><a id="ds.Epoch" href="#ds.Epoch" class=anchor>Record Epoch</h4></a>
+
+<p><h4><a id="ds.Epoch" href="#ds.Epoch" class=anchor>Record Epoch</h4></a>
 <b>Fields:</b><ul>
   <li><a id="ds.Epoch.s" href="#ds.Epoch.s" class=anchor><b>s</b></a>
   seconds</li>
   <li><a id="ds.Epoch.ns" href="#ds.Epoch.ns" class=anchor><b>ns</b></a>
   nanoseconds</li>
 </ul>
-<br>
-<h4><a id="ds.Set" href="#ds.Set" class=anchor>Record Set</h4></a>
+
+<p><h4><a id="ds.Set" href="#ds.Set" class=anchor>Record Set</h4></a>
 <b>Methods</b> <ul>
   <li><a id="Set.union" href="#Set.union" class=anchor><b>fn union</b></a><span class=code>(self, s) -&gt; Set</span></li>
   <li><a id="Set.diff" href="#Set.diff" class=anchor><b>fn diff</b></a><span class=code>(self, s) -&gt; Set</span><br>
   
   items in self but not in s</li>
 </ul>
-<br>
-<h3><a id="bt" href="#bt" class=anchor>Mod bt</h3></a>
+
+<p><h3><a id="bt" href="#bt" class=anchor>Mod bt</h3></a>
 indexed table as Binary Tree.
-<br>
-These functions treat an indexed table as a binary tree
-<br>
-where root is at <span class=code>index=1</span>
-<br>
-<b>Functions</b> <ul>
+
+<p>These functions treat an indexed table as a binary tree
+
+<p>where root is at <span class=code>index=1</span>
+
+<p><b>Functions</b> <ul>
   <li><a id="bt.left" href="#bt.left" class=anchor><b>fn left</b></a><span class=code>(t, i) -&gt; t[i * 2]</span></li>
   <li><a id="bt.right" href="#bt.right" class=anchor><b>fn right</b></a><span class=code>(t, i) -&gt; t[i * 2 + 1]</span></li>
   <li><a id="bt.parent" href="#bt.parent" class=anchor><b>fn parent</b></a><span class=code>(t, i) -&gt; t[i // 2]</span></li>
@@ -519,28 +519,28 @@ where root is at <span class=code>index=1</span>
   <li><a id="bt.righti" href="#bt.righti" class=anchor><b>fn righti</b></a><span class=code>(t, i) -&gt; i * 2 + 1</span></li>
   <li><a id="bt.parenti" href="#bt.parenti" class=anchor><b>fn parenti</b></a><span class=code>(t, i) -&gt; i // 2</span></li>
 </ul>
-<br>
-<h4><a id="ds.BiMap" href="#ds.BiMap" class=anchor>Record BiMap</h4></a>
+
+<p><h4><a id="ds.BiMap" href="#ds.BiMap" class=anchor>Record BiMap</h4></a>
 Bidirectional Map.
 Maps both <span class=code>key -&gt; value</span> and <span class=code>value -&gt; key</span>.
 Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = nil</span> to handle deletions.
-<br>
-Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
-<br>
-<b>Methods</b> <ul>
+
+<p>Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
+
+<p><b>Methods</b> <ul>
   <li><a id="BiMap.remove" href="#BiMap.remove" class=anchor><b>fn remove</b></a><span class=code>(t, k) -&gt; v</span></li>
 </ul>
-<br>
-<h4><a id="ds.Deq" href="#ds.Deq" class=anchor>Record Deq</h4></a>
+
+<p><h4><a id="ds.Deq" href="#ds.Deq" class=anchor>Record Deq</h4></a>
 <span class=code>Deq() -&gt; Deq</span>, a deque
 Use as a first in/out with <span class=code>deq:push(v)/deq()</span>
-<br>
-Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp;pushRight()<br>
+
+<p>Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp;pushRight()<br>
 &nbsp; popLeft() &nbsp; popRight()
 </div>
 Calling it is the same as popLeft (use as iterator)
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ds.Deq.right" href="#ds.Deq.right" class=anchor><b>right</b></a></li>
   <li><a id="ds.Deq.left" href="#ds.Deq.left" class=anchor><b>left</b></a></li>
 </ul>
@@ -558,20 +558,20 @@ Calling it is the same as popLeft (use as iterator)
   <li><a id="Deq.clear" href="#Deq.clear" class=anchor><b>fn clear</b></a><span class=code>(deq) -&gt; nil: clear deq</span></li>
   <li><a id="Deq.drain" href="#Deq.drain" class=anchor><b>fn drain</b></a><span class=code>(deq) -&gt; table: get all items and clear deq</span></li>
 </ul>
-<br>
-<h4><a id="ds.TWriter" href="#ds.TWriter" class=anchor>Record TWriter</h4></a>
+
+<p><h4><a id="ds.TWriter" href="#ds.TWriter" class=anchor>Record TWriter</h4></a>
 <b>Methods</b> <ul>
   <li><a id="TWriter.write" href="#TWriter.write" class=anchor><b>fn write</b></a><span class=code>(tw, ...)</span></li>
   <li><a id="TWriter.flush" href="#TWriter.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
   
   function that does and returns nothing.</li>
 </ul>
-<br>
-<h4><a id="ds.Error" href="#ds.Error" class=anchor>Record Error</h4></a>
+
+<p><h4><a id="ds.Error" href="#ds.Error" class=anchor>Record Error</h4></a>
 Error message, traceback and cause
 NOTE: you should only use this for printing/logging/etc.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ds.Error.msg" href="#ds.Error.msg" class=anchor><b>msg</b></a></li>
   <li><a id="ds.Error.traceback" href="#ds.Error.traceback" class=anchor><b>traceback</b></a></li>
   <li><a id="ds.Error.cause" href="#ds.Error.cause" class=anchor><b>cause</b></a></li>
@@ -585,8 +585,8 @@ NOTE: you should only use this for printing/logging/etc.
   
   for use with xpcall. See: try</li>
 </ul>
-<br>
-<h4><a id="Ty<Iter>" href="#Ty<Iter>" class=anchor>Record Iter</h4></a>
+
+<p><h4><a id="Ty<Iter>" href="#Ty<Iter>" class=anchor>Record Iter</h4></a>
 <b>Methods</b> <ul>
   <li><a id="Iter.of" href="#Iter.of" class=anchor><b>fn of</b></a><span class=code>(T, t) -&gt; T{pairs(t)}</span><br>
   
@@ -705,8 +705,8 @@ NOTE: you should only use this for printing/logging/etc.
   iterators using <span class=code>Iter()</span> and then asserts the results are
   identical.</li>
 </ul>
-<br>
-<h4><a id="Ty<LL>" href="#Ty<LL>" class=anchor>Record LL</h4></a>
+
+<p><h4><a id="Ty<LL>" href="#Ty<LL>" class=anchor>Record LL</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<LL>.l" href="#Ty<LL>.l" class=anchor><b>l</b></a>
   left node</li>
@@ -733,13 +733,13 @@ NOTE: you should only use this for printing/logging/etc.
   if ll was the head, returns the new head (or nil)</li>
   <li><a id="LL.get" href="#LL.get" class=anchor><b>fn get</b></a><span class=code>(ll, i) -&gt; node? (at index +/- i)</span></li>
 </ul>
-<br>
-<h3><a id="ds.path" href="#ds.path" class=anchor>Mod ds.path</h3></a>
+
+<p><h3><a id="ds.path" href="#ds.path" class=anchor>Mod ds.path</h3></a>
 working with paths
-<br>
-Call directly to convert a list|str to a list of path components.
-<br>
-<b>Functions</b> <ul>
+
+<p>Call directly to convert a list|str to a list of path components.
+
+<p><b>Functions</b> <ul>
   <li><a id="ds.path.read" href="#ds.path.read" class=anchor><b>fn read</b></a><span class=code>(path)</span><br>
   
   read file at path or throw error</li>
@@ -828,15 +828,15 @@ Call directly to convert a list|str to a list of path components.
   path comparison function for <span class=code>table.sort</span> that sorts
   dirs last, else alphabetically.</li>
 </ul>
-<br>
-<h3><a id="ds.utf8" href="#ds.utf8" class=anchor>Mod ds.utf8</h3></a>
+
+<p><h3><a id="ds.utf8" href="#ds.utf8" class=anchor>Mod ds.utf8</h3></a>
 utf8 stream decoding.
-<br>
-Get the length by decodelen(firstbyte), then decode the whole character
-<br>
-with decode(dat)
-<br>
-<b>Functions</b> <ul>
+
+<p>Get the length by decodelen(firstbyte), then decode the whole character
+
+<p>with decode(dat)
+
+<p><b>Functions</b> <ul>
   <li><a id="ds.utf8.decodelen" href="#ds.utf8.decodelen" class=anchor><b>fn decodelen</b></a><span class=code>(firstbyte) -&gt; U8LEN[0xF8 &amp; firstbyte]</span><br>
   
   given the first byte return the number of bytes in the utf8 char</li>
@@ -845,15 +845,15 @@ with decode(dat)
   decode utf8 data (table) into an integer.
   Use <span class=code>utf8.char</span> (from lua's stdlib) to turn into a string.</li>
 </ul>
-<br>
-<h3><a id="ds.heap" href="#ds.heap" class=anchor>Mod ds.heap</h3></a>
+
+<p><h3><a id="ds.heap" href="#ds.heap" class=anchor>Mod ds.heap</h3></a>
 Binary Heap implementation
-<br>
-<br>
-<b>Types: </b><a href="#ds.heap.Heap">Heap</a> 
-<br>
-<br>
-<h4><a id="ds.heap.Heap" href="#ds.heap.Heap" class=anchor>Record Heap</h4></a>
+
+<p>
+<p><b>Types: </b><a href="#ds.heap.Heap">Heap</a> 
+
+<p>
+<p><h4><a id="ds.heap.Heap" href="#ds.heap.Heap" class=anchor>Record Heap</h4></a>
 <span class=code>Heap(t, cmp)</span> binary heap using a table.<br>
 
 A binary heap is a binary tree where the value of the parent always
@@ -863,8 +863,8 @@ satisfies <span class=code>cmp(parent, child) == true</span><ul>
 </ul>
 add and push take <span class=code>O(log n)</span>, making it very useful for
 priority queues and similar problems.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ds.heap.Heap.cmp" href="#ds.heap.Heap.cmp" class=anchor><b>cmp</b></a> <span class=code>=ds.lt</span>
   comparison function to use</li>
 </ul>
@@ -876,39 +876,43 @@ priority queues and similar problems.
   
   <span class=code>h:pop() -&gt; v</span> pop the top node.</li>
 </ul>
-<br>
-<h3><a id="ds.log" href="#ds.log" class=anchor>Mod ds.log</h3></a>
+
+<p><h3><a id="ds.log" href="#ds.log" class=anchor>Mod ds.log</h3></a>
 Simple logging library, set i.e. LOGLEVEL=INFO to enable logging.
-<br>
-<br>
-<br>
-This module has the functions <span class=code>trace info warn err crit</span> with the signature:
-<br>
-<span class=code>function(fmt, ... [, data])</span> <ul>
+
+<p>
+<p>
+<p>This module has the functions <span class=code>trace info warn err crit</span> with the signature:
+
+<p><span class=code>function(fmt, ... [, data])</span> <ul>
   <li>the ... are the format args which behave like <span class=code>fmt.format</span> (aka <span class=code>%q</span>
-  <br>
-  formats tables/etc).</li>
-  <li>data is optional arbitrary data that can be serialized/formatted.</li>
+  
+  <p>formats tables/etc).
+  
+  <p></li>
+  <li>data is optional arbitrary data that can be serialized/formatted.
+  
+  <p></li>
 </ul>
-<br>
-To enable logging the user should set a global (or env var) LOGLEVEL
-<br>
-to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
-<br>
-<br>
-<br>
-<br>
-<br>
-This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
-<br>
-which logs to stderr. This fn is called with signature
-<br>
-<span class=code>function(level, srcloc, fmt, ...)</span>
-<br>
-<br>
-<b>Types: </b><a href="#ds.log.LogTable">LogTable</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>To enable logging the user should set a global (or env var) LOGLEVEL
+
+<p>to oneof: C/CRIT/1 E/ERROR/2 W/WARN/3 I/INFO/4 T/TRACE/5
+
+<p>
+<p>
+<p>
+<p>
+<p>This module also sets (if not already set) the global LOGFN to <span class=code>ds.logFn</span>
+
+<p>which logs to stderr. This fn is called with signature
+
+<p><span class=code>function(level, srcloc, fmt, ...)</span>
+
+<p>
+<p><b>Types: </b><a href="#ds.log.LogTable">LogTable</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="ds.log.levelInt" href="#ds.log.levelInt" class=anchor><b>fn levelInt</b></a><span class=code>(lvl) -&gt; int</span><br>
   
   Get the current log-level integer.</li>
@@ -935,16 +939,16 @@ which logs to stderr. This fn is called with signature
   
   Log at level TRACE.</li>
 </ul>
-<br>
-<h4><a id="ds.log.LogTable" href="#ds.log.LogTable" class=anchor>Record LogTable</h4></a>
+
+<p><h4><a id="ds.log.LogTable" href="#ds.log.LogTable" class=anchor>Record LogTable</h4></a>
 used in tests
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ds.log.LogTable.tee" href="#ds.log.LogTable.tee" class=anchor><b>tee</b></a>
   call calls will also call tee</li>
 </ul>
-<br>
-<h4><a id="Ty<ds.Grid>" href="#Ty<ds.Grid>" class=anchor>Record ds.Grid</h4></a>
+
+<p><h4><a id="Ty<ds.Grid>" href="#Ty<ds.Grid>" class=anchor>Record ds.Grid</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<ds.Grid>.h" href="#Ty<ds.Grid>.h" class=anchor><b>h</b></a>
   height</li>
@@ -965,60 +969,70 @@ used in tests
   replace.
   FIXME: considere renaming to replace... or something.</li>
 </ul>
-<br>
-<h3><a id="ds.load" href="#ds.load" class=anchor>Mod ds.load</h3></a>
+
+<p><h3><a id="ds.load" href="#ds.load" class=anchor>Mod ds.load</h3></a>
 load lua modules with custom or default environment in a sandboxed
-<br>
-environment. This is extremely useful for configurations written in lua or
-<br>
-writing your own config-like language.
-<br>
-<br>
-<br>
-The default environment (ds.load.ENV) has safe default functions which
-<br>
-cannot access state and missing unsafe functions like getmetatable or the
-<br>
-debug module.
-<br>
-<br>
-<br>
-<h4><a id="loading" href="#loading" class=anchor>loading</h4></a>
-<br>
-To perform the load, call this module with:
-<br>
-<div class=code-block><br>
+
+<p>environment. This is extremely useful for configurations written in lua or
+
+<p>writing your own config-like language.
+
+<p>
+<p>
+<p>The default environment (ds.load.ENV) has safe default functions which
+
+<p>cannot access state and missing unsafe functions like getmetatable or the
+
+<p>debug module.
+
+<p>
+<p>
+<p><h4><a id="loading" href="#loading" class=anchor>loading</h4></a>
+
+<p>To perform the load, call this module with:
+
+<p><div class=code-block><br>
 &nbsp; (path, env={}, envMeta=ds.load.ENV) -&gt; ok, result<br>
 
 </div>
-<br>
-inputs: <ul>
-  <li>path: path to load (lua-syntax file).</li>
-  <li>env: global environment.</li>
+
+<p>inputs: <ul>
+  <li>path: path to load (lua-syntax file).
+  
+  <p></li>
+  <li>env: global environment.
+  
+  <p></li>
   <li>envMeta: metatable of global environment. If env
-  <br>
-  already has a metatable this is ignored.</li>
+  
+  <p>already has a metatable this is ignored.
+  
+  <p></li>
 </ul>
-<br>
-<br>
-<br>
-outputs: <ul>
-  <li>ok: boolean to indicate load success or failure of script.</li>
-  <li>result: result or loading or ds.Error.</li>
+
+<p>
+<p>
+<p>outputs: <ul>
+  <li>ok: boolean to indicate load success or failure of script.
+  
+  <p></li>
+  <li>result: result or loading or ds.Error.
+  
+  <p></li>
 </ul>
-<br>
-<br>
-<br>
-Throws an error if the path is not valid lua code.
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p>
+<p>Throws an error if the path is not valid lua code.
+
+<p><b>Functions</b> <ul>
   <li><a id="ds.load.loadfile" href="#ds.load.loadfile" class=anchor><b>fn loadfile</b></a><span class=code>(path, env, envMeta) -&gt; fn?, ds.Error?</span><br>
   
   Similar to lua's <span class=code>loadfile</span> but follows conventions of <span class=code>ds.load(...)</span>.
   Unlike loadfile, this throws an error if the path doesn't parse.</li>
 </ul>
-<br>
-<h4><a id="Ty<ds.IFile>" href="#Ty<ds.IFile>" class=anchor>Record ds.IFile</h4></a>
+
+<p><h4><a id="Ty<ds.IFile>" href="#Ty<ds.IFile>" class=anchor>Record ds.IFile</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<ds.IFile>.f" href="#Ty<ds.IFile>.f" class=anchor><b>f</b></a></li>
   <li><a id="Ty<ds.IFile>.path" href="#Ty<ds.IFile>.path" class=anchor><b>path</b></a></li>
@@ -1065,6 +1079,7 @@ Throws an error if the path is not valid lua code.
   be mostly used for temporary cases. This might be changed in
   the future.</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

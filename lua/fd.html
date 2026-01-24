@@ -17,17 +17,17 @@
 <h1>fd: synchronous and asynchronous file descriptors</h1>
 fd implements an API identical to lua's <span class=code>file</span> object but with support for
 async operations following the <a href="lib/lap">lib/lap</a> protocol.
-<br>
-<h3><a id="fd" href="#fd" class=anchor>Mod fd</h3></a>
+
+<p><h3><a id="fd" href="#fd" class=anchor>Mod fd</h3></a>
 filedescriptor: direct control of filedescriptors.
-<br>
-async operations support the LAP (see lib/lap) protocol.
-<br>
-<br>
-<br>
-Can override default `io` module for global async mode.
-<br>
-<b>Functions</b> <ul>
+
+<p>async operations support the LAP (see lib/lap) protocol.
+
+<p>
+<p>
+<p>Can override default `io` module for global async mode.
+
+<p><b>Functions</b> <ul>
   <li><a id="fd.isTrunc" href="#fd.isTrunc" class=anchor><b>fn isTrunc</b></a><span class=code>(mode) -&gt; bool</span><br>
   
   Given a string mode, return whether the file will be truncated.</li>
@@ -77,6 +77,7 @@ Can override default `io` module for global async mode.
   Switch the global <span class=code>io</span> module to use async functions from
   this module.</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

@@ -15,49 +15,49 @@
 <html>
 <body><div class=doc>
 PEG like recursive descent Parser for Lua.
-<br>
-PEG stands for "Parsing Expression Grammar" and is one of the simplest parsing
+
+<p>PEG stands for "Parsing Expression Grammar" and is one of the simplest parsing
 grammars since it maps very-closesly to recursive descent -- which is a
 hand-rolled parser that uses recursion. This library is a pure-LUA
 recursive-descent parser which exports types and functions to create a PEG-like
 DSL that is still just recursive descent under the hood.
-<br>
-The benefits of this library are: <ul>
+
+<p>The benefits of this library are: <ul>
   <li><i>vs hand-rolled recursive descent</i> is more concise and readable, as well as
   providing automatic error messages (i.e. symbol locations in your stack) and
   debugging.</li>
   <li><i>vs PEG</i> is nearly as concise while maintaining the ability to hand-roll any
   logic needed.</li>
 </ul>
-<br>
-<h2><a id="pegl-resources" href="#pegl-resources" class=anchor>Resources</h2></a>
+
+<p><h2><a id="pegl-resources" href="#pegl-resources" class=anchor>Resources</h2></a>
 If you are completely new to parsers and especially if you want to write your
 own language with an AST then I cannot recommend
 <a href="http://www.craftinginterpreters.com">http://www.craftinginterpreters.com</a> enough. It might be a better place to
 start than this library.
-<br>
-<h2><a id="pegl-intro" href="#pegl-intro" class=anchor>Introduction</h2></a>
+
+<p><h2><a id="pegl-intro" href="#pegl-intro" class=anchor>Introduction</h2></a>
 A parser is a way to convert text into structured node objects so that the text
 can be compiled or annotated by a program. For example you might want to convert
 some source code like:
-<br>
-<div class=code-block>x = 1 + 2</div>
-<br>
-Into something like:
-<br>
-<div class=code-block>{'x', '=', {'1', '+', '2', kind='op'}, kind='assign'}</div>
-<br>
-A recursive descent parser does so via hand-rolled functions which typically
+
+<p><div class=code-block>x = 1 + 2</div>
+
+<p>Into something like:
+
+<p><div class=code-block>{'x', '=', {'1', '+', '2', kind='op'}, kind='assign'}</div>
+
+<p>A recursive descent parser does so via hand-rolled functions which typically
 <i>recurse</i> into eachother. Each function attempts to parse from the current
 parser position using its spec (which may be composed of calling other parsing
 functions) and returns either the successfully parsed node or <span class=code>nil</span> (or
 returns/throws an error if it finds a syntax error).
-<br>
-PEGL is a Lua library for writing the common-cases of a recursive descent parser
+
+<p>PEGL is a Lua library for writing the common-cases of a recursive descent parser
 in a (pure Lua) syntax similar to PEG, while still being able to easily fallback
 to hand-rolled recursive descent when needed.
-<br>
-Most traditional PEG parsers (as well as other parsers) struggle with
+
+<p>Most traditional PEG parsers (as well as other parsers) struggle with
 complicated syntax such as Lua's <span class=code>[===[raw string syntax]===]</span>, python's
 whitespace denoted syntax or C's lookahead requirements (<span class=code>(U2)*c**h</span> --
 recursive descent can solve a lot of these problems relatively easily and
@@ -65,10 +65,10 @@ performantly.  However, recursive descent parsers can be very verbose and
 sometimes difficult to understand. Below is a comparison of the above example
 in both PEG, PEGL and a "traditional" (though not very good) recursive descent
 implementation.
-<br>
-<h3>Examples</h3>
-<br>
-<b>PEG</b>: most concise but harder to fallback to hand-rolled recursive descent
+
+<p><h3>Examples</h3>
+
+<p><b>PEG</b>: most concise but harder to fallback to hand-rolled recursive descent
 <div class=code-block>grammar = [[<br>
 num &nbsp; &nbsp;&lt;- '%d'<br>
 name &nbsp; &lt;- '%w'<br>
@@ -77,12 +77,12 @@ expr &nbsp; &lt;- setVar / ... other valid expressions<br>
 ]]<br>
 p:parse(grammar)
 </div>
-<br>
-<b>PEGL</b>: very concise and easy to fallback to hand-rolled recursive descent.
+
+<p><b>PEGL</b>: very concise and easy to fallback to hand-rolled recursive descent.
 Things like `kind` and `name` make debug printing easier. Simply name your
 specs, putting them together into a root spec and parsing:
-<br>
-<div class=code-block>num &nbsp; &nbsp;= Pat{'%d+', kind='num'} -- kind=num sets the node name<br>
+
+<p><div class=code-block>num &nbsp; &nbsp;= Pat{'%d+', kind='num'} -- kind=num sets the node name<br>
 name &nbsp; = Pat{'%w+', kind='name'}<br>
 -- Note: UNPIN and PIN are used for when errors should be raised<br>
 setVar = {UNPIN, name, '=', PIN, num, kind='setVar'}<br>
@@ -129,16 +129,16 @@ end<br>
 <br>
 expression(p)
 </div>
-<br>
-See <a href="#pegl.Seq">#pegl.Seq</a> for the basic API of parsing specs.
-<br>
-<h3><a id="pegl" href="#pegl" class=anchor>Mod pegl</h3></a>
+
+<p>See <a href="#pegl.Seq">#pegl.Seq</a> for the basic API of parsing specs.
+
+<p><h3><a id="pegl" href="#pegl" class=anchor>Mod pegl</h3></a>
 pegl: peg-like lua parser
-<br>
-<br>
-<b>Types: </b><a href="#pegl.Token">Token</a> <a href="#pegl.Config">Config</a> <a href="#pegl.Parser">Parser</a> <a href="#pegl.Pat">Pat</a> <a href="#pegl.Key">Key</a> <a href="#pegl.Or">Or</a> <a href="#pegl.Many">Many</a> <a href="#pegl.Seq">Seq</a> <a href="#pegl.Not">Not</a> <a href="#pegl.common">common</a> <a href="#pegl.FmtPegl">FmtPegl</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#pegl.Token">Token</a> <a href="#pegl.Config">Config</a> <a href="#pegl.Parser">Parser</a> <a href="#pegl.Pat">Pat</a> <a href="#pegl.Key">Key</a> <a href="#pegl.Or">Or</a> <a href="#pegl.Many">Many</a> <a href="#pegl.Seq">Seq</a> <a href="#pegl.Not">Not</a> <a href="#pegl.common">common</a> <a href="#pegl.FmtPegl">FmtPegl</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="pegl.encodeSpan" href="#pegl.encodeSpan" class=anchor><b>fn encodeSpan</b></a><span class=code>(l1, c1, l2, c2)</span></li>
   <li><a id="pegl.decodeSpan" href="#pegl.decodeSpan" class=anchor><b>fn decodeSpan</b></a><span class=code>(s)</span></li>
   <li><a id="pegl.firstToken" href="#pegl.firstToken" class=anchor><b>fn firstToken</b></a><span class=code>(list) -&gt; t, listWithToken</span></li>
@@ -175,8 +175,8 @@ pegl: peg-like lua parser
   <li><a id="pegl.assertParseError" href="#pegl.assertParseError" class=anchor><b>fn assertParseError</b></a><span class=code>(t)</span></li>
   <li><a id="pegl.isKeyword" href="#pegl.isKeyword" class=anchor><b>fn isKeyword</b></a><span class=code>(t) -&gt; #t == 1 and t.kind == t[1]</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Token" href="#pegl.Token" class=anchor>Record Token</h4></a>
+
+<p><h4><a id="pegl.Token" href="#pegl.Token" class=anchor>Record Token</h4></a>
 <b>Fields:</b><ul>
   <li><a id="pegl.Token.kind" href="#pegl.Token.kind" class=anchor><b>kind</b></a>
   optional, used for debugging</li>
@@ -186,12 +186,12 @@ pegl: peg-like lua parser
   <li><a id="Token.encode" href="#Token.encode" class=anchor><b>fn encode</b></a><span class=code>(ty_, p, l, c, l2, c2, kind)</span></li>
   <li><a id="Token.decode" href="#Token.decode" class=anchor><b>fn decode</b></a><span class=code>(t, dat) -&gt; lines.sub(dat, M.decodeSpan(t[1]))</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Config" href="#pegl.Config" class=anchor>Record Config</h4></a>
+
+<p><h4><a id="pegl.Config" href="#pegl.Config" class=anchor>Record Config</h4></a>
 The config spec defines custom behavior when parsing. It's attributes
 can be set to change how the parser skips empty (whitespace) and handles comments.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Config.skipEmpty" href="#pegl.Config.skipEmpty" class=anchor><b>skipEmpty</b></a> <span class=code>=pegl.skipEmpty</span>
   default=skip whitespace <ul>
     <li>must be a function that accepts the `Parser`
@@ -224,16 +224,16 @@ can be set to change how the parser skips empty (whitespace) and handles comment
   <li><a id="Config.tokenizer" href="#Config.tokenizer" class=anchor><b>fn tokenizer</b></a><span class=code>(p)</span></li>
   <li><a id="Config.newFmt" href="#Config.newFmt" class=anchor><b>fn newFmt</b></a><span class=code>()</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Parser" href="#pegl.Parser" class=anchor>Record Parser</h4></a>
+
+<p><h4><a id="pegl.Parser" href="#pegl.Parser" class=anchor>Record Parser</h4></a>
 The parser tracks the current position of parsing in `dat` and has several
 convienience methods for hand-rolling your own recursive descent functions.
-<br>
-<div class=info> Note: the location is **line/col based** (not position based) because it
+
+<p><div class=info> Note: the location is **line/col based** (not position based) because it
 is designed to work with an application that stores the strings as lines
 (a text editor) </div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Parser.dat" href="#pegl.Parser.dat" class=anchor><b>dat</b></a>
   reference to the underlying data.
   Must look like a table of lines</li>
@@ -297,12 +297,12 @@ is designed to work with an application that stores the strings as lines
   <li><a id="Parser.dbgUnpack" href="#Parser.dbgUnpack" class=anchor><b>fn dbgUnpack</b></a><span class=code>(p, spec, t)</span></li>
   <li><a id="Parser.dbg" href="#Parser.dbg" class=anchor><b>fn dbg</b></a><span class=code>(p, fmtstr, ...)</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Pat" href="#pegl.Pat" class=anchor>Record Pat</h4></a>
+
+<p><h4><a id="pegl.Pat" href="#pegl.Pat" class=anchor>Record Pat</h4></a>
 <span class=code>Pat{'%w+', kind='word'}</span> will create a Token with the span matching the
 <span class=code>%w+</span> pattern and the kind of <span class=code>word</span> when matched.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Pat.kind" href="#pegl.Pat.kind" class=anchor><b>kind</b></a></li>
   <li><a id="pegl.Pat.name" href="#pegl.Pat.name" class=anchor><b>name</b></a></li>
 </ul>
@@ -325,21 +325,21 @@ is designed to work with an application that stores the strings as lines
   is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="Pat.parse" href="#Pat.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p)</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Key" href="#pegl.Key" class=anchor>Record Key</h4></a>
+
+<p><h4><a id="pegl.Key" href="#pegl.Key" class=anchor>Record Key</h4></a>
 The table given to <span class=code>Key</span> forms a Trie which is extremely performant. Key depends
 strongly on the <span class=code>tokenizer</span> passed to Config.
-<br>
-Example: <span class=code>Key{{'myKeword', ['+']={'+'=true}}, kind='kw'}</span> will match
+
+<p>Example: <span class=code>Key{{'myKeword', ['+']={'+'=true}}, kind='kw'}</span> will match
 tokens "myKeyword" and "+" followed by "+" (but not "+" not followed by
 "+").
-<br>
-To also match "+" use <span class=code>['+']={true, '+'=true}</span>
-<br>
-<div class=info>Note: The `Key` constructor converts all list items into
+
+<p>To also match "+" use <span class=code>['+']={true, '+'=true}</span>
+
+<p><div class=info>Note: The `Key` constructor converts all list items into
 <span class=code>value=true</span>, so <span class=code>{'a', 'b'}</span> is converted to <span class=code>{a=true, b=true}</span></div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Key.keys" href="#pegl.Key.keys" class=anchor><b>keys</b></a></li>
   <li><a id="pegl.Key.name" href="#pegl.Key.name" class=anchor><b>name</b></a></li>
   <li><a id="pegl.Key.kind" href="#pegl.Key.kind" class=anchor><b>kind</b></a></li>
@@ -347,35 +347,35 @@ To also match "+" use <span class=code>['+']={true, '+'=true}</span>
 <b>Methods</b> <ul>
   <li><a id="Key.parse" href="#Key.parse" class=anchor><b>fn parse</b></a><span class=code>(key, p)</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Or" href="#pegl.Or" class=anchor>Record Or</h4></a>
+
+<p><h4><a id="pegl.Or" href="#pegl.Or" class=anchor>Record Or</h4></a>
 choose one spec
-<br>
-Example: <span class=code>Or{'keyword', OtherSpec, Empty}</span> will match one of the three
+
+<p>Example: <span class=code>Or{'keyword', OtherSpec, Empty}</span> will match one of the three
 specs given.  Note that <span class=code>Empty</span> will always match (and return
 <span class=code>pegl.EMPTY</span>).  Without <span class=code>Empty</span> this could return <span class=code>nil</span>, causing a
 parent <span class=code>Or</span> to match a different spec.
-<br>
-<div class=info>Note: <span class=code>Maybe(spec)</span> literally expands to <span class=code>Or{spec, Empty}</span></div>
-<br>
-Prefer <span class=code>Key</span> if selecting among multiple string or token paths as <span class=code>Or</span> is
+
+<p><div class=info>Note: <span class=code>Maybe(spec)</span> literally expands to <span class=code>Or{spec, Empty}</span></div>
+
+<p>Prefer <span class=code>Key</span> if selecting among multiple string or token paths as <span class=code>Or</span> is
 not performant (<span class=code>O(N)</span> vs Key's <span class=code>O(1)</span>)
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Or.kind" href="#pegl.Or.kind" class=anchor><b>kind</b></a></li>
   <li><a id="pegl.Or.name" href="#pegl.Or.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Or.parse" href="#Or.parse" class=anchor><b>fn parse</b></a><span class=code>(or_, p)</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Many" href="#pegl.Many" class=anchor>Record Many</h4></a>
+
+<p><h4><a id="pegl.Many" href="#pegl.Many" class=anchor>Record Many</h4></a>
 match a Spec multiple times
 Example: <span class=code>Many{'keyword', OtherSpec, min=1, kind='myMany'}</span> will match the
 given sequence one or more times (<span class=code>min=0</span> times by default). The parse
 result is a list with <span class=code>kind='myMany'</span>.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Many.min" href="#pegl.Many.min" class=anchor><b>min</b></a> <span class=code>=0</span></li>
   <li><a id="pegl.Many.kind" href="#pegl.Many.kind" class=anchor><b>kind</b></a></li>
   <li><a id="pegl.Many.name" href="#pegl.Many.name" class=anchor><b>name</b></a></li>
@@ -383,46 +383,52 @@ result is a list with <span class=code>kind='myMany'</span>.
 <b>Methods</b> <ul>
   <li><a id="Many.parse" href="#Many.parse" class=anchor><b>fn parse</b></a><span class=code>(many, p)</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Seq" href="#pegl.Seq" class=anchor>Record Seq</h4></a>
+
+<p><h4><a id="pegl.Seq" href="#pegl.Seq" class=anchor>Record Seq</h4></a>
 A Sequence of parsers. Note that <span class=code>Parser</span> treats <span class=code>Seq{'a'}</span> and <span class=code>{'a'}</span>
 identically (you can use plain tables instead).
-<br>
-Raw strings are treated as keywords (the are parsed literally and have
+
+<p>Raw strings are treated as keywords (the are parsed literally and have
 <span class=code>key</span> set to themselves). Functions are called with the <span class=code>parser</span> as the
 only argument and must return the node/s they parsed or <span class=code>nil</span> for a
 non-error match.
-<br>
-A sequence is a list of either other parsers
+
+<p>A sequence is a list of either other parsers
 (<span class=code>Seq, {}, "keyword", fn(p), Not, Or, etc</span>} and/or plain strings which are
 treated as keywords and will have <span class=code>kind</span> be set to themselves when parsed.
-<br>
-If the first spec matches but a later one doesn't an <span class=code>error</span> will be thrown
+
+<p>If the first spec matches but a later one doesn't an <span class=code>error</span> will be thrown
 (instead of <span class=code>nil</span> returned) unless <span class=code>UNPIN</span> is used. See the PIN/UNPIN
 docs for details.
-<br>
-<h4>PIN/UNPIN: Syntax Error Reporting</h4>
+
+<p><h4>PIN/UNPIN: Syntax Error Reporting</h4>
 PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
 `{...}`) by throwing an <span class=code>error</span> if a "pinned" spec is missing. <ul>
   <li>By default, no error will be raised if the first spec is missing. After the
-  first spec, <span class=code>pin=true</span> and any missing specs to throw an error with context.</li>
+  first spec, <span class=code>pin=true</span> and any missing specs to throw an error with context.
+  
+  <p></li>
   <li><span class=code>PIN</span> can be used to force <span class=code>pin=true</span> until <span class=code>UNPIN</span> is (optionally)
-  specified.</li>
+  specified.
+  
+  <p></li>
   <li><span class=code>UNPIN</span> can be used to force <span class=code>pin=false</span> until <span class=code>PIN</span> is (optionally)
-  specified.</li>
+  specified.
+  
+  <p></li>
   <li>PIN / UNPIN only affect the <i>current</i> sequence (they do not pin
   sub-sequences).</li>
 </ul>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pegl.Seq.kind" href="#pegl.Seq.kind" class=anchor><b>kind</b></a></li>
   <li><a id="pegl.Seq.name" href="#pegl.Seq.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Seq.parse" href="#Seq.parse" class=anchor><b>fn parse</b></a><span class=code>(seq, p) -&gt; M.parseSeq(p, seq)</span></li>
 </ul>
-<br>
-<h4><a id="pegl.Not" href="#pegl.Not" class=anchor>Record Not</h4></a>
+
+<p><h4><a id="pegl.Not" href="#pegl.Not" class=anchor>Record Not</h4></a>
 <b>Fields:</b><ul>
   <li><a id="pegl.Not.kind" href="#pegl.Not.kind" class=anchor><b>kind</b></a></li>
   <li><a id="pegl.Not.name" href="#pegl.Not.name" class=anchor><b>name</b></a></li>
@@ -430,29 +436,30 @@ PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
 <b>Methods</b> <ul>
   <li><a id="Not.parse" href="#Not.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p) -&gt; not M.parseSeq(p, self)</span></li>
 </ul>
-<br>
-<h3><a id="pegl.common" href="#pegl.common" class=anchor>Mod pegl.common</h3></a>
-<br>
-<h4><a id="pegl.FmtPegl" href="#pegl.FmtPegl" class=anchor>Record FmtPegl</h4></a>
+
+<p><h3><a id="pegl.common" href="#pegl.common" class=anchor>Mod pegl.common</h3></a>
+
+<p><h4><a id="pegl.FmtPegl" href="#pegl.FmtPegl" class=anchor>Record FmtPegl</h4></a>
 <b>Fields:</b><ul>
   <li><a id="pegl.FmtPegl.kinds" href="#pegl.FmtPegl.kinds" class=anchor><b>kinds</b></a> <span class=code>=pegl.fmtKinds</span>
   kind -> fmtFn</li>
 </ul>
-<br>
-<h3><a id="pegl.lua" href="#pegl.lua" class=anchor>Mod pegl.lua</h3></a>
+
+<p><h3><a id="pegl.lua" href="#pegl.lua" class=anchor>Mod pegl.lua</h3></a>
 Lua syntax in PEGL
-<br>
-<br>
-<br>
-http://parrot.github.io/parrot-docs0/0.4.7/html/languages/lua/doc/lua51.bnf.html
-<br>
-was used as a reference.
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p>
+<p>http://parrot.github.io/parrot-docs0/0.4.7/html/languages/lua/doc/lua51.bnf.html
+
+<p>was used as a reference.
+
+<p><b>Functions</b> <ul>
   <li><a id="pegl.lua.skipComment" href="#pegl.lua.skipComment" class=anchor><b>fn skipComment</b></a><span class=code>(t, add) -&gt; t</span><br>
   
   return t with the key/vals of add inserted</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

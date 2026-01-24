@@ -15,21 +15,21 @@
 <html>
 <body><div class=doc>
 <h1>Ele: Extendable Lua Editor</h1>
-<br>
-Ele is an (<b>In Development</b>) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor written to be easy
+
+<p>Ele is an (<b>In Development</b>) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor written to be easy
 to understand, extend and modify. It is the primary editor and shell for the
 Civstack project, and also the core framework for the devleopment of
 Civstack's text-based learning games.
-<br>
-To install: follow <a href="civ.html#install">civ.html#install</a>, ele will be installed by default.
-<br>
-<h1>Architecture</h1>
-<br>
-Ele is architected using the MVI (model-view-intent) architecture, also
+
+<p>To install: follow <a href="civ.html#install">civ.html#install</a>, ele will be installed by default.
+
+<p><h1>Architecture</h1>
+
+<p>Ele is architected using the MVI (model-view-intent) architecture, also
 known as the "React architecture" from the web library of the same
 name.
-<br>
-<div class=code-block>&nbsp; &nbsp;,_____________________________________________<br>
+
+<p><div class=code-block>&nbsp; &nbsp;,_____________________________________________<br>
 &nbsp; &nbsp;| intent(): keyboard, timer, executor, etc &nbsp; &nbsp;|<br>
 &nbsp; &nbsp;`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'<br>
 &nbsp; &nbsp;/\ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|| Data + events<br>
@@ -38,8 +38,8 @@ name.
 &nbsp; | view(): paint &nbsp; &nbsp;| &lt;================ | model(): keybind, actions &nbsp;|<br>
 &nbsp; `~~~~~~~~~~~~~~~~~~' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 </div>
-<br>
-In practice, this is accomplished in four coroutines spawned
+
+<p>In practice, this is accomplished in four coroutines spawned
 by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
   <li>A coroutine that listens to stdin for vt100 key sequences
   and sends event (plain-old-table values) to the <span class=code>keys</span>
@@ -55,12 +55,12 @@ by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
   having them write the relevant text to a vt100.Term object,
   which gets flushed to the display at the end.</li>
 </ul>
-<br>
-This roughly implements the MVI architecture because ALL actions
+
+<p>This roughly implements the MVI architecture because ALL actions
 are performed sequentially based on the ordering in the <span class=code>events</span>
 channel.
-<br>
-Actions or plugins have the option to spawn their own coroutine. However,
+
+<p>Actions or plugins have the option to spawn their own coroutine. However,
 this behavior should be extremely rare, and reserved mostly for things that
 really can happen concurrently with no user feedback needed, such as saving a
 file, finding file lints, or updating syntax highlighting. Most real-world
@@ -69,34 +69,36 @@ then they should consider not being included as an editor operation. Some
 exceptions such as searching for patterns in a recursive tree should be
 spawned as a coroutine but be cancelled if the user modifies the buffer
 that the results are being written to in any way.
-<br>
-<h1>Adding Bindings</h1>
+
+<p><h1>Adding Bindings</h1>
 Adding simple bindings is easy. Simply insert the space-separated chord
 of keys you want to go to your binding to one of ele's default modes, or
 create your own.  ele.bindings's <span class=code>command</span>, <span class=code>insert</span> and/or <span class=code>system</span>
 entries are where you will find the default modes. For instance,
 the following will insert the expected text at the cursor position
 from command mode:
-<br>
-<div class=code-block>local B = require'ele.bindings'<br>
+
+<p><div class=code-block>local B = require'ele.bindings'<br>
 B.command['y y'] = {action='insert', 'Why oh why did I bind this?\n'},
 </div>
-<br>
-To write your own action you must: <ul>
+
+<p>To write your own action you must: <ul>
   <li>Add a callable to <h3>Mod ele.actions</h3> which implements the intended behavior. The
   signature is: <span class=code>fn(Editor, event, Channel[event])</span>. You may
   modify the Editor in the appropriate way for your action.  You are
   recommended to handle <span class=code>event.times</span> to do your action multiple times (if
   that makes sense for your action). Note that you are free to throw errors --
-  any errors will be caught and logged.</li>
+  any errors will be caught and logged.
+  
+  <p></li>
   <li>Add a binding to an editor mode. The binding can either be a plain table,
   which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
   Using the callable API is slightly complex but allows for complex key
   interactions where you build-up a command with a chaing (aka "chord") of
   multiple key inputs. Refer to the ele.bindings documentation.</li>
 </ul>
-<br>
-<h1>Editor API</h1>
+
+<p><h1>Editor API</h1>
 ele.Editor is the main object most custom actions or Ele scripts will
 interact with. It has several fields, but the fields and methods that most
 folks will care about are: <ul>
@@ -112,34 +114,34 @@ folks will care about are: <ul>
   <li><span class=code>:focus(idOrPath) --&gt; Edit</span> focus on a buffer, replacing
   the current one.</li>
 </ul>
-<br>
-Most plugins will simply get <span class=code>edit</span> and then insert/remove/search its <span class=code>buf</span>
+
+<p>Most plugins will simply get <span class=code>edit</span> and then insert/remove/search its <span class=code>buf</span>
 data using its APIs and/or change its <span class=code>l,c</span> (line,column) values. They are
 free to use any lua API to do so, but should avoid large amounts
 of work as much as possible.
-<br>
-<br>
-<h4><a id="ele" href="#ele" class=anchor>Command ele</h4></a>
+
+<p>
+<p><h4><a id="ele" href="#ele" class=anchor>Command ele</h4></a>
 Usage: <span class=code>ele path/to/file.txt</span><br>
 
 The ele commandline editor.
-<br>
-<h3><a id="ele.types" href="#ele.types" class=anchor>Mod ele.types</h3></a>
-<br>
-<b>Types: </b><a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p><h3><a id="ele.types" href="#ele.types" class=anchor>Mod ele.types</h3></a>
+
+<p><b>Types: </b><a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="ele.types.uniqueId" href="#ele.types.uniqueId" class=anchor><b>fn uniqueId</b></a><span class=code>()</span></li>
   <li><a id="ele.types.checkBinding" href="#ele.types.checkBinding" class=anchor><b>fn checkBinding</b></a><span class=code>(b)</span></li>
   <li><a id="ele.types.checkBindings" href="#ele.types.checkBindings" class=anchor><b>fn checkBindings</b></a><span class=code>(btable, path)</span></li>
   <li><a id="ele.types.checkMode" href="#ele.types.checkMode" class=anchor><b>fn checkMode</b></a><span class=code>(data, mode) -&gt; errstring</span></li>
   <li><a id="ele.types.checkAction" href="#ele.types.checkAction" class=anchor><b>fn checkAction</b></a><span class=code>(data, action) -&gt; errstring</span></li>
 </ul>
-<br>
-<h4><a id="ele.types.VSplit" href="#ele.types.VSplit" class=anchor>Record VSplit</h4></a>
+
+<p><h4><a id="ele.types.VSplit" href="#ele.types.VSplit" class=anchor>Record VSplit</h4></a>
 A container with windows split vertically (i.e. tall windows)
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ele.types.VSplit.container" href="#ele.types.VSplit.container" class=anchor><b>container</b></a>
   parent container</li>
   <li><a id="ele.types.VSplit.tl" href="#ele.types.VSplit.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
@@ -156,11 +158,11 @@ A container with windows split vertically (i.e. tall windows)
   <li><a id="VSplit.remove" href="#VSplit.remove" class=anchor><b>fn remove</b></a><span class=code>(sp, v) -&gt; v</span></li>
   <li><a id="VSplit.draw" href="#VSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
 </ul>
-<br>
-<h4><a id="ele.types.HSplit" href="#ele.types.HSplit" class=anchor>Record HSplit</h4></a>
+
+<p><h4><a id="ele.types.HSplit" href="#ele.types.HSplit" class=anchor>Record HSplit</h4></a>
 A container with windows split horizontally (i.e. wide windows)
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ele.types.HSplit.container" href="#ele.types.HSplit.container" class=anchor><b>container</b></a>
   parent container</li>
   <li><a id="ele.types.HSplit.tl" href="#ele.types.HSplit.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
@@ -171,12 +173,12 @@ A container with windows split horizontally (i.e. wide windows)
 <b>Methods</b> <ul>
   <li><a id="HSplit.draw" href="#HSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
 </ul>
-<br>
-<h3><a id="ele.keys" href="#ele.keys" class=anchor>Mod ele.keys</h3></a>
-<br>
-<b>Types: </b><a href="#ele.keys.KeySt">KeySt</a> <a href="#ele.keys.KeyBindings">KeyBindings</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p><h3><a id="ele.keys" href="#ele.keys" class=anchor>Mod ele.keys</h3></a>
+
+<p><b>Types: </b><a href="#ele.keys.KeySt">KeySt</a> <a href="#ele.keys.KeyBindings">KeyBindings</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="ele.keys.chord" href="#ele.keys.chord" class=anchor><b>fn chord</b></a><span class=code>(str) -&gt; keylist</span></li>
   <li><a id="ele.keys.literal" href="#ele.keys.literal" class=anchor><b>fn literal</b></a><span class=code>(key)</span></li>
   <li><a id="ele.keys.chordstr" href="#ele.keys.chordstr" class=anchor><b>fn chordstr</b></a><span class=code>(chord)</span></li>
@@ -231,14 +233,14 @@ A container with windows split horizontally (i.e. wide windows)
   <li><a id="ele.keys.install" href="#ele.keys.install" class=anchor><b>fn install</b></a><span class=code>(ed)</span></li>
   <li><a id="ele.keys.keyactions" href="#ele.keys.keyactions" class=anchor><b>fn keyactions</b></a><span class=code>(ed, keyrecv, evsend)</span></li>
 </ul>
-<br>
-<h4><a id="ele.keys.KeySt" href="#ele.keys.KeySt" class=anchor>Record KeySt</h4></a>
+
+<p><h4><a id="ele.keys.KeySt" href="#ele.keys.KeySt" class=anchor>Record KeySt</h4></a>
 The state of the keyboard input (chord).
 Some bindings are a simple action to perform, whereas callable bindings
 can update the KeySt to affect future ones, such as decimals causing
 later actions to be repeated a <span class=code>num</span> of times.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ele.keys.KeySt.chord" href="#ele.keys.KeySt.chord" class=anchor><b>chord</b></a>
   list of keys which led to this binding, i.e. {'space', 'a'}</li>
   <li><a id="ele.keys.KeySt.event" href="#ele.keys.KeySt.event" class=anchor><b>event</b></a>
@@ -253,21 +255,21 @@ later actions to be repeated a <span class=code>num</span> of times.
   
   Check the current Key State.</li>
 </ul>
-<br>
-<h4><a id="ele.keys.KeyBindings" href="#ele.keys.KeyBindings" class=anchor>Record KeyBindings</h4></a>
+
+<p><h4><a id="ele.keys.KeyBindings" href="#ele.keys.KeyBindings" class=anchor>Record KeyBindings</h4></a>
 A map of key -> binding.
 The name and doc can be provided for the user.
-<br>
-Other "fields" must be valid chords. They will be automatically
+
+<p>Other "fields" must be valid chords. They will be automatically
 split (by whitespace) to create sub-KeyBindings as-needed.
-<br>
-The value must be one of: <ul>
+
+<p>The value must be one of: <ul>
   <li>KeyBindings instance to explicitly create chorded bindings.</li>
   <li>plain event table to fire off a simple event</li>
   <li>callable <span class=code>event(ev, keySt)</span> for more complex bindings.</li>
 </ul>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="ele.keys.KeyBindings.name" href="#ele.keys.KeyBindings.name" class=anchor><b>name</b></a>
   the name of the group for documentation</li>
   <li><a id="ele.keys.KeyBindings.doc" href="#ele.keys.KeyBindings.doc" class=anchor><b>doc</b></a>
@@ -279,13 +281,13 @@ The value must be one of: <ul>
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
   and must define the <span class=code>parse</span> method.</li>
 </ul>
-<br>
-<h3><a id="ele.edit" href="#ele.edit" class=anchor>Mod ele.edit</h3></a>
-<br>
-<b>Types: </b><a href="#ele.edit.Edit">Edit</a> 
-<br>
-<br>
-<h4><a id="ele.edit.Edit" href="#ele.edit.Edit" class=anchor>Record Edit</h4></a>
+
+<p><h3><a id="ele.edit" href="#ele.edit" class=anchor>Mod ele.edit</h3></a>
+
+<p><b>Types: </b><a href="#ele.edit.Edit">Edit</a> 
+
+<p>
+<p><h4><a id="ele.edit.Edit" href="#ele.edit.Edit" class=anchor>Record Edit</h4></a>
 <b>Fields:</b><ul>
   <li><a id="ele.edit.Edit.id" href="#ele.edit.Edit.id" class=anchor><b>id</b></a></li>
   <li><a id="ele.edit.Edit.container" href="#ele.edit.Edit.container" class=anchor><b>container</b></a></li>
@@ -342,12 +344,12 @@ The value must be one of: <ul>
   Return the resulting split.</li>
   <li><a id="Edit.path" href="#Edit.path" class=anchor><b>fn path</b></a><span class=code>(e) -&gt; path?</span></li>
 </ul>
-<br>
-<h3><a id="ele.actions" href="#ele.actions" class=anchor>Mod ele.actions</h3></a>
-<br>
-<b>Types: </b><a href="#ele.actions.nav">nav</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p><h3><a id="ele.actions" href="#ele.actions" class=anchor>Mod ele.actions</h3></a>
+
+<p><b>Types: </b><a href="#ele.actions.nav">nav</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="ele.actions.keyinput" href="#ele.actions.keyinput" class=anchor><b>fn keyinput</b></a><span class=code>(ed, ev, evsend)</span></li>
   <li><a id="ele.actions.merge" href="#ele.actions.merge" class=anchor><b>fn merge</b></a><span class=code>(ed, ev)</span></li>
   <li><a id="ele.actions.chain" href="#ele.actions.chain" class=anchor><b>fn chain</b></a><span class=code>(ed, ev, evsend)</span></li>
@@ -372,8 +374,8 @@ The value must be one of: <ul>
   
   Window operations like split and close</li>
 </ul>
-<br>
-<h3><a id="ele.actions.nav" href="#ele.actions.nav" class=anchor>Mod ele.actions.nav</h3></a>
+
+<p><h3><a id="ele.actions.nav" href="#ele.actions.nav" class=anchor>Mod ele.actions.nav</h3></a>
 <b>Functions</b> <ul>
   <li><a id="ele.actions.nav.getFocus" href="#ele.actions.nav.getFocus" class=anchor><b>fn getFocus</b></a><span class=code>(line)</span></li>
   <li><a id="ele.actions.nav.getEntry" href="#ele.actions.nav.getEntry" class=anchor><b>fn getEntry</b></a><span class=code>(line) -&gt; (indent, kind, entry)</span></li>
@@ -412,8 +414,8 @@ The value must be one of: <ul>
   
   perform the entry operation</li>
 </ul>
-<br>
-<h4><a id="Ty<Editor>" href="#Ty<Editor>" class=anchor>Record Editor</h4></a>
+
+<p><h4><a id="Ty<Editor>" href="#Ty<Editor>" class=anchor>Record Editor</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<Editor>.s" href="#Ty<Editor>.s" class=anchor><b>s</b></a></li>
   <li><a id="Ty<Editor>.mode" href="#Ty<Editor>.mode" class=anchor><b>mode</b></a>
@@ -486,8 +488,8 @@ The value must be one of: <ul>
   Replace the current edit view with the new <span class=code>ed:buffer(b)</span>.
   Return the new edit view being focused.</li>
 </ul>
-<br>
-<h4><a id="Ty<Session>" href="#Ty<Session>" class=anchor>Record Session</h4></a>
+
+<p><h4><a id="Ty<Session>" href="#Ty<Session>" class=anchor>Record Session</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<Session>.ed" href="#Ty<Session>.ed" class=anchor><b>ed</b></a></li>
   <li><a id="Ty<Session>.events" href="#Ty<Session>.events" class=anchor><b>events</b></a></li>
@@ -505,11 +507,12 @@ The value must be one of: <ul>
   <li><a id="Session.handleEvents" href="#Session.handleEvents" class=anchor><b>fn handleEvents</b></a><span class=code>(s)</span></li>
   <li><a id="Session.draw" href="#Session.draw" class=anchor><b>fn draw</b></a><span class=code>(s)</span></li>
 </ul>
-<br>
-<h3><a id="ele.testing" href="#ele.testing" class=anchor>Mod ele.testing</h3></a>
+
+<p><h3><a id="ele.testing" href="#ele.testing" class=anchor>Mod ele.testing</h3></a>
 <b>Functions</b> <ul>
   <li><a id="ele.testing.newSession" href="#ele.testing.newSession" class=anchor><b>fn newSession</b></a><span class=code>(text)</span></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

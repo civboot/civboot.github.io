@@ -19,15 +19,15 @@
 Use at your own risk and always back up work that you are using pvc
 to track (aka use <a href="#git">git and pvc together</a>).
 </div>
-<br>
-<h2><a id="about" href="#about" class=anchor>About</h2></a>
+
+<p><h2><a id="about" href="#about" class=anchor>About</h2></a>
 <b>pvc</b> is a version control system similar to git or mercurial, but is ultra
 simple: branches are simply a <span class=code>base</span> followed by a set of unix patches with
 incrementing id. The only fundamental disadvantage (or advantage) of using pvc
 instead of git is that pvc supports only fast-forward merges, which are the
 cleanest and simplest to understand.
-<br>
-<h2><a id="basic" href="#basic" class=anchor>Basic Operation</h2></a>
+
+<p><h2><a id="basic" href="#basic" class=anchor>Basic Operation</h2></a>
 The <span class=code>pvc</span> command works very similar to git:<ul>
   <li><a href="#init">initialize your repo</a> with pvc.init.</li>
   <li>Whenever you have modified files you add them to
@@ -48,27 +48,35 @@ all the development tools.
 </div>
 <h2><a id="init" href="#init" class=anchor>Initiaize your pvc repo</h2></a>
 <div class=info>You may also want to see <a href="#git">#git</a> to use git for backups</div>
-<br>
-With <span class=code>civ install .#</span> you will have pvc installed.
-<br>
-To track an existing directory:<ul>
-  <li><span class=code>cd path/to/your/project</span> to navigate to your project</li>
-  <li><span class=code>pvc init</span> to initialize pvc</li>
+
+<p>With <span class=code>civ install .#</span> you will have pvc installed.
+
+<p>To track an existing directory:<ul>
+  <li><span class=code>cd path/to/your/project</span> to navigate to your project
+  
+  <p></li>
+  <li><span class=code>pvc init</span> to initialize pvc
+  
+  <p></li>
   <li><span class=code>pvc diff --paths</span> shows what paths pvc wants to track. Add any path
-  prefixes you don't want tracked to <span class=code>.pvcignore</span>.</li>
+  prefixes you don't want tracked to <span class=code>.pvcignore</span>.
+  
+  <p></li>
   <li><span class=code>pvc diff --paths &gt;&gt; .pvcpaths</span> will update non-ignored paths.
   Alternative, edit the file manually to add the paths you want
-  tracked.</li>
+  tracked.
+  
+  <p></li>
   <li><span class=code>pvc commit -- initial pvc commit</span> will commit your changes to
   <span class=code>.pvc/main/commit/.../1.p</span>.</li>
 </ul>
-<br>
-<h3><a id="pvcignore" href="#pvcignore" class=anchor>pvcignore</h3></a>
+
+<p><h3><a id="pvcignore" href="#pvcignore" class=anchor>pvcignore</h3></a>
 The <span class=code>.pvcignore</span> file should contain a line-separated list of <a href="#string.find">#string.find</a>
 patterns that should be ignored. Items ending in <span class=code>/</span> will apply to whole
 directories. A common pvc ignore file might look like:
-<br>
-<div class=code-block># directories<br>
+
+<p><div class=code-block># directories<br>
 %.git/<br>
 %.out/<br>
 <br>
@@ -78,29 +86,31 @@ directories. A common pvc ignore file might look like:
 # binary files<br>
 %./path/to/some_binary
 </div>
-<br>
-<h3><a id="git" href="#git" class=anchor>Use with git</h3></a>
+
+<p><h3><a id="git" href="#git" class=anchor>Use with git</h3></a>
 pvc is still in early development, so there is no hosting service which
 ergonomically supports backing-up development. The following is how pvc
 (and civstack) itself is developed and seems to work well.
-<br>
-Basically, we are going to have two git repositories. I will use
+
+<p>Basically, we are going to have two git repositories. I will use
 civstack as the example:<ul>
   <li><a href="https://github.com/civboot/civstack">https://github.com/civboot/civstack</a>: your "main" one that hosts your released
   versions and documentation. This should NOT contain any <span class=code>.pvc/</span> files (but
-  should contain i.e.  <span class=code>.pvcpaths</span>).</li>
+  should contain i.e.  <span class=code>.pvcpaths</span>).
+  
+  <p></li>
   <li><a href="https://github.com/vitiral/civstack.pvc/commits/main/">https://github.com/vitiral/civstack.pvc/commits/main/</a>: is literally the git
   repository for your <span class=code>.pvc/</span> directory. While developing we can push
   commits/branches/whatever here.</li>
 </ul>
-<br>
-<b>First</b>, put <span class=code>.pvc/</span> in your main repo's <span class=code>.gitignore</span>
+
+<p><b>First</b>, put <span class=code>.pvc/</span> in your main repo's <span class=code>.gitignore</span>
 <div class=code-block>echo .pvc &gt;&gt; .gitignore</div>
-<br>
-<b>Second</b>, follow the <a href="#init">#init</a> section above. This should include adding
+
+<p><b>Second</b>, follow the <a href="#init">#init</a> section above. This should include adding
 all your files to pvc and making your first pvc commit.
-<br>
-<b>Third</b>, <span class=code>cd .pvc/</span> and create your git repository <i>inside the .pvc/
+
+<p><b>Third</b>, <span class=code>cd .pvc/</span> and create your git repository <i>inside the .pvc/
 directory</i>. This will literally track your patch files themselves. Use the
 following as your <span class=code>.pvc/.gitignore</span>. You may also want to add a <span class=code>README.md</span>
 directing folks to your main git repo.
@@ -108,8 +118,8 @@ directing folks to your main git repo.
 **/*.snap/<br>
 backup/
 </div>
-<br>
-Finally, add the following to your <span class=code>.bashrc</span>
+
+<p>Finally, add the following to your <span class=code>.bashrc</span>
 <div class=code-block># Note: you must also have pvc aliased<br>
 function pvcp() {<br>
 &nbsp; desc="$(pvc at): $(pvc desc --full)"<br>
@@ -119,19 +129,19 @@ function pvcp() {<br>
 &nbsp; &nbsp; git push origin main)<br>
 }
 </div>
-<br>
-Now you can hack using <span class=code>pvc commit</span> etc and push to your <span class=code>repo.pvc</span> by
+
+<p>Now you can hack using <span class=code>pvc commit</span> etc and push to your <span class=code>repo.pvc</span> by
 simply calling <span class=code>pvcp</span>. Your git commit log will be your current <span class=code>at</span>
 location followed by the commit message. When you want to push your
 documentation or releases to git, simply do so -- your main commit log
 won't be polluted by commiting pvc files.
-<br>
-<h1><a id="arch" href="#arch" class=anchor>Architecture</h1></a>
+
+<p><h1><a id="arch" href="#arch" class=anchor>Architecture</h1></a>
 This architecture is given both so users can debug or fix any errors as well as
 to make it easier to create other implementations of pvc (i.e. in bash).
-<br>
-<br>
-pvc is composed of the following components: <ul>
+
+<p>
+<p>pvc is composed of the following components: <ul>
   <li><b>repo</b>: the pvc repo (repository) is stored in the <span class=code>.pvc/</span> directory inside of
   a <b>project</b>. It contains directories (which are the branches) and the plaintext file
   <span class=code>at</span> which defines the "current commit" as a <b>commit reference</b> (i.e. <span class=code>branch#123</span>).
@@ -139,44 +149,66 @@ pvc is composed of the following components: <ul>
     <li><span class=code>backup/</span> directory, which contain <span class=code>name-&lt;epochsec&gt;/</span> directories for backups. In
     general, pvc should not delete things but should instead move things to a backup
     directory, reporting these operations to the user (and possibly a log file as well).</li>
-  </ul></li>
+  </ul>
+  
+  <p></li>
   <li><b>pvcpaths</b> is the project-local <span class=code>.pvcpaths</span> file which contains a
   newline-separated list of project-relative paths.  This is used by pvc to
   determine which paths are tracked. It's contents are tracked as a normal file
-  (it is included in the patch diff).</li>
+  (it is included in the patch diff).
+  
+  <p></li>
   <li><b>branch</b>: a branch is a directory inside the repo (i.e. <span class=code>.pvc/main/</span>). It
   contains the <span class=code>commit/</span> directory (described in <b>commit</b>) and the plain-text files:
   <ul>
     <li><b>base</b>: contains <span class=code>branch#123</span>. This file is not present if the branch is
     the trunk.</li>
     <li><b>tip</b>: contains an ascii decimal number, representing the last commit id.</li>
-  </ul></li>
+  </ul>
+  
+  <p></li>
   <li><b>branch (action)</b>: to "create a branch" means to create a new directory
   inside <span class=code>.pvc/</span> and initialize it with the proper <span class=code>base</span> and <span class=code>tip</span> files.
-  The base branch must already exist.</li>
+  The base branch must already exist.
+  
+  <p></li>
   <li><b>commit (noun)</b>: refers to a single patch file (i.e. <span class=code>.pvc/branch/commit/.../123.p</span>). <ul>
     <li>The length of <span class=code>commit/.../</span> is stored in <span class=code>commit/depth</span> which is an ascii
     decimal number, always divisible by 2. Each sub-directory has exactly two
     digits. For instance, a depth of 4 would store <span class=code>12.p</span> in
-    <span class=code>commit/00/00/12.p</span> and store <span class=code>123456.p</span> in <span class=code>12/34/123456.p</span>.</li>
+    <span class=code>commit/00/00/12.p</span> and store <span class=code>123456.p</span> in <span class=code>12/34/123456.p</span>.
+    
+    <p></li>
     <li><b>description</b>: the top of the patch file (before the first unidiff)
-    contains a plain-text description of the commit.</li>
+    contains a plain-text description of the commit.
+    
+    <p></li>
     <li><b>diffs</b>: the rest of the patch file contains a series of file differences
-    from the previous patch version in the <a href="https://en.wikipedia.org/wiki/Diff#Unified_format">unidiff</a> (aka <span class=code>diff -u</span>) format.</li>
+    from the previous patch version in the <a href="https://en.wikipedia.org/wiki/Diff#Unified_format">unidiff</a> (aka <span class=code>diff -u</span>) format.
+    
+    <p></li>
     <li><b>commit</b> is often shorthand for the <span class=code>commit reference</span> (i.e.
     <span class=code>branch#123</span>), which refers uniquely to a specific branch and patch file
     or snapshot directory.</li>
-  </ul></li>
+  </ul>
+  
+  <p></li>
   <li><b>commit (action)</b>: "making a commit" means to take the difference of the
   current directory and store it as a patch file in the branch's <span class=code>commit/</span>
-  directory.</li>
+  directory.
+  
+  <p></li>
   <li><b>snapshot</b>: a snapshot is the local directory state at a specific commit. It
   is a directory which uses the extension <span class=code>.snap/</span> inside of the <span class=code>commit/</span>
-  directory, i.e. <span class=code>commit/00/123.snap/</span>.</li>
+  directory, i.e. <span class=code>commit/00/123.snap/</span>.
+  
+  <p></li>
   <li><b>checkout (action)</b>: to "checkout a commit" means to make the local project
   directory the same as the commit. This is performed by finding the closest
   <b>snapshot</b> and applying commit patches (either forwards or backwards) in
-  order to make the snapshot reflect the commit's state.</li>
+  order to make the snapshot reflect the commit's state.
+  
+  <p></li>
   <li><b>rebase (action)</b>: to "rebase a branch" means to increase the id of it's
   <b>base</b>. This is accomplished by making a copy of the new id's snapshot and
   repeatedly applying the unix <span class=code>merge</span> command (or equivalent) on each change,
@@ -185,39 +217,49 @@ pvc is composed of the following components: <ul>
   the base. <ul>
     <li>the software should detect if conflicts are unresolveable and exit, telling the
     user how to fix them. The software should be able to resume the rebase once
-    the conflicts are resolved.</li>
+    the conflicts are resolved.
+    
+    <p></li>
     <li>For example, the reference implementation creates a new branch called
     <span class=code>branch__rebase</span> to perform this action. When calling rebase, it first
     checks for this branch and attempts to resume from it. On failure,
     it tells the user where the failing files that need to be fixed are
-    located.</li>
+    located.
+    
+    <p></li>
     <li>when the rebase is complete, the old branch should be moved to <span class=code>.pvc/backup</span>
     then replaced with the rebased version.</li>
-  </ul></li>
+  </ul>
+  
+  <p></li>
   <li><b>merge</b>: merges a branch onto another one. The branch must already be
   rebased to the tip (also called a "fast forward merge"), so this is literally
-  just copying the patch files and incrementing the <b>tip</b>.</li>
+  just copying the patch files and incrementing the <b>tip</b>.
+  
+  <p></li>
   <li><b>squash</b>: combines multiple commits into one, moving larger commits down.
   The descriptions should be concatenated, and can be edited separately by the
-  user.</li>
+  user.
+  
+  <p></li>
   <li><b>export</b>: simply copies a <b>branch</b> without it's snapshot directories to a
   separate directory, which can be sent to a maintainer to be merged.</li>
 </ul>
-<br>
-<h2>Other Operations</h2>
+
+<p><h2>Other Operations</h2>
 Other operations, such as showing commit messages or ammending a commit, are
 not defined explicitly, but you can see the reference implementation for
 details. Typically their implementation is either straightforward or can be
 performed by variations of the above operations.
-<br>
-Also, operations which mutate the meaning of a commit (such as squash or
+
+<p>Also, operations which mutate the meaning of a commit (such as squash or
 rebase) should check to make sure that no branches depend on the branch being
 mutated.
-<br>
+
+<p>
 
 
-<br>
-<h3><a id="pvc" href="#pvc" class=anchor>Command pvc</h3></a>
+<p><h3><a id="pvc" href="#pvc" class=anchor>Command pvc</h3></a>
 Usage: <span class=code>pvc &lt;subcmd&gt; --help</span><br>
 
 This is the <span class=code>pvc</span> command-line tool which can also be called directly from
@@ -237,8 +279,8 @@ Usage: <span class=code>pvc diff branch1=at branch2=local</span><br>
 Show the difference between two branches.  The default is <span class=code>at</span> (the
 current commit) vs <span class=code>local</span> (the local working directory).<br>
 
-<br>
-This command accepts either <span class=code>branch#id</span> names or <span class=code>paths/to/dir/</span>, where
+
+<p>This command accepts either <span class=code>branch#id</span> names or <span class=code>paths/to/dir/</span>, where
 that dir/ has a <span class=code>.pvcpaths</span> file.
 <b>Arguments:</b><ul>
   <li><a id="pvc.diff.paths" href="#pvc.diff.paths" class=anchor><b>paths</b></a>
@@ -249,20 +291,20 @@ Usage: <span class=code>pvc commit -- my message</span><br>
 
 Commit local changes to the current branch, creating
 a new id.
-<br>
-If no message is given this uses the COMMIT file
+
+<p>If no message is given this uses the COMMIT file
 for the message, if it exists.
 <h4><a id="at" href="#at" class=anchor>Subcmd at</h4></a>
 Usage: <span class=code>pvc at branchId --hard</span><br>
 
 If <span class=code>branchId</span> is not given, just returns current branch#id.
-<br>
-Otherwise, sets the active <span class=code>branch#id</span>, causing the local
+
+<p>Otherwise, sets the active <span class=code>branch#id</span>, causing the local
 directory to be updated to be that content.
 This will , this will fail (unless <span class=code>force=true</span>) if it would
 cause any local changes to be overwritten.
-<br>
-<div class=info><span class=code>at branch</span> is called a "checkout" in other version
+
+<p><div class=info><span class=code>at branch</span> is called a "checkout" in other version
 control systems.</div>
 <b>Arguments:</b><ul>
   <li><a id="pvc.at.force" href="#pvc.at.force" class=anchor><b>force</b></a>
@@ -277,8 +319,8 @@ Get the tip id of branch.
 Usage: <span class=code>pvc branch name [from=current]</span><br>
 
 Start new branch <span class=code>name</span> branching off of <span class=code>from</span>.
-<br>
-If <span class=code>from</span> is a <span class=code>path/to/dir</span> then it will graft
+
+<p>If <span class=code>from</span> is a <span class=code>path/to/dir</span> then it will graft
 those changes into the local repo as the named <span class=code>branch</span>.
 (often used by maintainers to accept patches).
 <h4><a id="show" href="#show" class=anchor>Subcmd show</h4></a>
@@ -286,8 +328,8 @@ Usage: <span class=code>pvc show [branch#id] --before=10</span><br>
 
 Show the commits before/after <span class=code>branch#id</span>.<br>
 
-<br>
-If <span class=code>branch#id</span> is not given, print all branches.
+
+<p>If <span class=code>branch#id</span> is not given, print all branches.
 <b>Arguments:</b><ul>
   <li><a id="pvc.show.before" href="#pvc.show.before" class=anchor><b>before</b></a>
   number of records before id to show</li>
@@ -301,8 +343,8 @@ Usage: <span class=code>pvc desc branch#id=current [$to/new.cxt]</span><br>
 
 Get or set the description for a single branch id.<br>
 
-<br>
-The new description can be passed via <span class=code>to/new.cxt</span> or
+
+<p>The new description can be passed via <span class=code>to/new.cxt</span> or
 after <span class=code>--</span> (like commit).
 <h4><a id="squash" href="#squash" class=anchor>Subcmd squash</h4></a>
 Usage: <span class=code>pvc squash [name#id]</span><br>
@@ -311,8 +353,8 @@ Combine changes and descriptions from <span class=code>branch id -&gt; endId</sp
 into a single commit. You can then edit the description using
 <span class=code>pvc desc branch#id</span>.<br>
 
-<br>
-This enables making lots of small commits and then
+
+<p>This enables making lots of small commits and then
 "squashing" them into a single commit once they are
 in a good state.
 <b>Arguments:</b><ul>
@@ -324,8 +366,8 @@ Usage: <span class=code>rebase [branch=current] --id=10</span><br>
 
 Change the base of <span class=code>branch</span> to <span class=code>id</span>.<br>
 
-<br>
-Rebase is a fundamental operation. It allows you to make or accept changes
+
+<p>Rebase is a fundamental operation. It allows you to make or accept changes
 on your "main" branch while you work on development branches which are
 behind the main. See <a href="#basic">#basic</a> for more details.
 <b>Arguments:</b><ul>
@@ -359,12 +401,12 @@ maintainer to be merged.
 Usage: <span class=code>snap [branch#id=current]</span><br>
 
 Get the snapshot directory of branch#id.
-<br>
-The snapshot contains a copy of files at that commit.
-<br>
-<b>Types: </b><a href="#pvc.Diff">Diff</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>The snapshot contains a copy of files at that commit.
+
+<p><b>Types: </b><a href="#pvc.Diff">Diff</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="pvc.branchDir" href="#pvc.branchDir" class=anchor><b>fn branchDir</b></a><span class=code>(P, branch, dot)</span><br>
   
   return the branch path in project regardless of whether it exists</li>
@@ -405,11 +447,11 @@ The snapshot contains a copy of files at that commit.
   
   return a backup directory (uses the timestamp)</li>
 </ul>
-<br>
-<h4><a id="pvc.Diff" href="#pvc.Diff" class=anchor>Record Diff</h4></a>
+
+<p><h4><a id="pvc.Diff" href="#pvc.Diff" class=anchor>Record Diff</h4></a>
 <span class=code>Diff:of(dir1, dir2)</span> returns what changed between two pvc dirs.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pvc.Diff.dir1" href="#pvc.Diff.dir1" class=anchor><b>dir1</b></a></li>
   <li><a id="pvc.Diff.dir2" href="#pvc.Diff.dir2" class=anchor><b>dir2</b></a></li>
   <li><a id="pvc.Diff.equal" href="#pvc.Diff.equal" class=anchor><b>equal</b></a></li>
@@ -423,8 +465,8 @@ The snapshot contains a copy of files at that commit.
   <li><a id="Diff.format" href="#Diff.format" class=anchor><b>fn format</b></a><span class=code>(d, fmt, full)</span></li>
   <li><a id="Diff.patch" href="#Diff.patch" class=anchor><b>fn patch</b></a><span class=code>(d) -&gt; patchText</span></li>
 </ul>
-<br>
-<h3><a id="pvc.unix" href="#pvc.unix" class=anchor>Mod pvc.unix</h3></a>
+
+<p><h3><a id="pvc.unix" href="#pvc.unix" class=anchor>Mod pvc.unix</h3></a>
 <b>Functions</b> <ul>
   <li><a id="pvc.unix.diff" href="#pvc.unix.diff" class=anchor><b>fn diff</b></a><span class=code>(a,al, b,bl) -&gt; string?</span><br>
   
@@ -436,6 +478,7 @@ The snapshot contains a copy of files at that commit.
   
   incorporate all changes that went into going from base to change into to</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

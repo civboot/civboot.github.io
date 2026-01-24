@@ -15,30 +15,32 @@
 <html>
 <body><div class=doc>
 
-<br>
-<h2>Civstack</h2>
+
+<p><h2>Civstack</h2>
 Let's work together to create and refine a public domain tech stack which
 enables learning through simple but powerful software. This project is for
 students, teachers, professionals, and creators to use for learning and
 to supercharge their personal development stack.
-<br>
-<br>
-The Civstack is a complete and well documented software development tech stack
+
+<p>Fork the <a href="https://github.com/civboot/civstack">github repo</a> and join us on
+<a href="https://discord.gg/YVqYjCFG">discord</a>.
+
+<p>The Civstack is a complete and well documented software development tech stack
 built from scratch. It encompases an <a href="lua/ele.html">editor</a>,
 <a href="lua/pvc.html">version control</a>, <a href="lua/civ.html">build system and package
 manager</a>, and <a href="lua/cxt.html">documentation language</a>. Soon it will have
 educational games and tutorials, a custom assembly language, and its own
 implementation of Lua -- which civstack's high-level software is implemented
 in.
-<br>
-<h3><a id="install" href="#install" class=anchor>Installation</h3></a>
+
+<p><h3><a id="install" href="#install" class=anchor>Installation</h3></a>
 <b>First</b>, install Lua5.4 with <span class=code>apt-get install lua</span> (Ubuntu), <span class=code>brew lua</span>
 (Mac), <span class=code>pkgin install lua5.4</span> (NetBSD) or however you normally install
 software, or follow directions at
 <a href="https://lua.org/start.html">https://lua.org/start.html</a>. You will also need a C compiler.
-<br>
-<br>
-<b>Then</b> run the following (or equivalent). Make certain to follow the
+
+<p>
+<p><b>Then</b> run the following (or equivalent). Make certain to follow the
 directions for <span class=code>PATH</span> variables.
 <div class=code-block>lua bootstrap.lua init &nbsp; &nbsp; &nbsp; &nbsp; # create .civconfig.lua<br>
 lua bootstrap.lua boot-test &nbsp; &nbsp;# run tests for your system<br>
@@ -60,52 +62,84 @@ documentation using <span class=code>luadoc &lt;cmd&gt;</span>.
   <li><a href="lua/civ.html"><b>civ</b></a>: the civ build system. Modeled off of
   <a href="https://bazel.build">bazel</a>, it is simpler than Make but <i>much</i> more
   ergonomic and powerful. All of the <span class=code>PKG.luk</span> files exist for the civ build
-  system.</li>
-  <li><a href="lua/pvc.html"><b>pvc</b></a>: patch version control -- like git but in ~1k LoC.</li>
+  system.
+  
+  <p></li>
+  <li><a href="lua/pvc.html"><b>pvc</b></a>: patch version control -- like git but in ~1k LoC.
+  
+  <p></li>
   <li><a href="lua/ele.html"><b>Ele</b></a>: Extendable Lua Editor and Lua-first shell --
-  not quite ready for full use.</li>
+  not quite ready for full use.
+  
+  <p></li>
   <li><a href="lua/doc.html"><b>luadoc</b></a>: get help on any package or lua object as cxt or
-  rendered with color on the terminal.</li>
+  rendered with color on the terminal.
+  
+  <p></li>
   <li><a href="lua/cxt.html"><b>cxt</b></a>: this document and all code documentation is written in
   <b>cxt</b>, a powerful ultra-simple markup language which is designed to be as
   easy as possible to parse (for computers <i>and</i> humans) while maintaining
-  conciseness.</li>
+  conciseness.
+  
+  <p></li>
   <li><a href="lua/ff.html"><b>ff</b></a>: find and fix utility, like a superchanged find+grep
   from unix land, being able to search and replace source code is an essential
   developer tool.</li>
 </ul>
-<br>
-<h3><a id="lib" href="#lib" class=anchor>Core Libraries</h3></a>
+
+<p><h3><a id="lib" href="#lib" class=anchor>Core Libraries</h3></a>
 The following are the "core libraries" and represent the "batteries included"
 of Civlua. They maintain minimalism but enable ergonomic programming, powerful
 scripting, asynchronous file access and other goodies.
 <ul>
   <li><a href="lua/shim.html"><b>shim</b></a>: write scripts for Lua, execute from shell. Think
-  python's <span class=code>argparse</span> but cleaner and allows for Lua OR shell execution.</li>
+  python's <span class=code>argparse</span> but cleaner and allows for Lua OR shell execution.
+  
+  <p></li>
   <li><a href="lua/metaty.html"><b>metaty</b></a>: enable typosafe, self documenting records (aka
-  structs) which utilize Lua metatables.</li>
+  structs) which utilize Lua metatables.
+  
+  <p></li>
   <li><a href="lua/fmt.html"><b>fmt</b></a>: format strings and lua nested types with an (optional)
-  style interface.</li>
+  style interface.
+  
+  <p></li>
   <li><a href="lua/ds.html"><b>ds</b></a>: Data Structures and algnorithms. This module is
   packed with tons of tiny functions, types and interfaces which enable ergonomic
   scripting as well as creating applications such as editors and version
-  control systems in pure Lua.</li>
+  control systems in pure Lua.
+  
+  <p></li>
   <li><a href="lua/lines.html"><b>lines</b></a>: treat files like tables of lines and apply
   algorithms for that interface. The <span class=code>lines.File</span> and <span class=code>lines.EdFile</span> are
-  especially worth checking out.</li>
+  especially worth checking out.
+  
+  <p></li>
   <li><a href="lua/civix.html"><b>civix</b></a>: unix system interface: ergonomic unix <span class=code>sh</span>,
-  time and file modification are here.</li>
+  time and file modification are here.
+  
+  <p></li>
   <li><a href="lua/lap.html"><b>lap</b></a>: Lua Asynchronous Protocol, for advanced users who want
-  concurrency in pure-lua.</li>
+  concurrency in pure-lua.
+  
+  <p></li>
   <li><a href="lua/fd.html"><b>fd</b></a>: file-descriptor library for async files and other file
-  operations.</li>
+  operations.
+  
+  <p></li>
   <li><a href="lua/pegl.html"><b>pegl</b></a>: general-purpose PEG-like parser library, used
-  for <a href="#Package_cxt">cxt</a> and will help provide syntax-highlighting in ele.</li>
+  for <a href="#Package_cxt">cxt</a> and will help provide syntax-highlighting in ele.
+  
+  <p></li>
   <li><a href="lua/lson.html"><b>lson</b></a>: implements de/serialization of arbitrary
-  concrete data (including tables) to/from JSON and an extension called LSON.</li>
+  concrete data (including tables) to/from JSON and an extension called LSON.
+  
+  <p></li>
   <li><a href="lua/asciicolor.html"><b>asciicolor</b></a>: specify color and styles using
   ascii characters, i.e. <span class=code>"BW"</span> is bold+underlined black text on white
-  background.</li>
+  background.
+  
+  <p></li>
   <li><a href="lua/vt100.html"><b>vt100</b></a>: defines common VT100 (aka standard unix)
   terminal input and output.</li>
 </ul>
@@ -113,8 +147,8 @@ scripting, asynchronous file access and other goodies.
 All software, tests, documentation, notes and anything else in this repository
 is released into the public domain (<a href="LICENSE">LICENSE</a>) unless otherwise noted in the
 given source file.
-<br>
-If you find any of this software helpful or copy large parts of it, please give
+
+<p>If you find any of this software helpful or copy large parts of it, please give
 us a a shoutout in your own projects and let us know by opening an
 <a href="https://github.com/civboot/civstack/issues">issue</a>. Please note that this is not
 required but is highly appreciated, thanks!

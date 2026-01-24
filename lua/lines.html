@@ -18,25 +18,25 @@
 The <span class=code>lines</span> library (and it's submodules) enable line-based processing of
 text. The <a href="#lines">#lines</a> module itself exports an API that work on both a list of
 strings (aka lines) or deal with files as indexed lines (i.e. <a href="#lines.File">#lines.File</a>)
-<br>
-<br>
-<span class=code>lines</span> is the fundamental building block of civstack's <a href="ele.html">ele</a> editor
+
+<p>
+<p><span class=code>lines</span> is the fundamental building block of civstack's <a href="ele.html">ele</a> editor
 and <a href="cxt.html">pegl></a> parsers: it is much easier as a developer to think about
 human-readable text as a list of lines then as a list of bytes and this is
 especially true for an editor. <a href="#lines.File">#lines.File</a> and <a href="#lines.EdFile">#lines.EdFile</a> use
 a separate index file to make reading and writing to files as lines
 actually performant for more real-world use-cases.
-<br>
-<h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
+
+<p><h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
 The lines module, providing a uniform API for lines-like objects.
-<br>
-<br>
-<br>
-<div class=info>You can also call this module directly to get a table of lines
-<br>
-from a string</div>
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p>
+<p><div class=info>You can also call this module directly to get a table of lines
+
+<p>from a string</div>
+
+<p><b>Functions</b> <ul>
   <li><a id="lines.join" href="#lines.join" class=anchor><b>fn join</b></a><span class=code>(t) -&gt; string</span><br>
   
   Join a table of strings with newlines.</li>
@@ -112,45 +112,45 @@ from a string</div>
   
   This is NOT performant, especially for large lines.</li>
 </ul>
-<br>
-<h4><a id="lines.diff" href="#lines.diff" class=anchor>Command lines.diff</h4></a>
+
+<p><h4><a id="lines.diff" href="#lines.diff" class=anchor>Command lines.diff</h4></a>
 Diffing module and command<br>
 
 Cmd Usage: <span class=code>ldiff 'file/path1.txt' 'file/path2.txt'</span><br>
 
 Lib Usage: <span class=code>io.fmt(ldiff.Diff(linesA, linesB))</span><br>
 
-<br>
-This library/cmd creates readable diffs using the "patience diff" alorithm.
+
+<p>This library/cmd creates readable diffs using the "patience diff" alorithm.
 The code was written from scratch referencing only the algorithm outline
 below, but I want to give special thanks to James Coglan for his
 <a href="https://blog.jcoglan.com/2017/09/19/the-patience-diff-algorithm">
 excellent blog post</a>.
-<br>
-<br>
-Fundamentals of patience diff: <ul>
+
+<p>
+<p>Fundamentals of patience diff: <ul>
   <li>Skip unchanged lines on both top and bottom.</li>
   <li>Find unique lines in both sets and "align" them using "longest increasing
   sequence".</li>
   <li>Repeat for each aligned section.</li>
 </ul>
-<br>
-<b>Types: </b><a href="#lines.diff.Diff">Diff</a> 
-<br>
-<br>
-<h4><a id="lines.diff.Diff" href="#lines.diff.Diff" class=anchor>Record Diff</h4></a>
+
+<p><b>Types: </b><a href="#lines.diff.Diff">Diff</a> 
+
+<p>
+<p><h4><a id="lines.diff.Diff" href="#lines.diff.Diff" class=anchor>Record Diff</h4></a>
 Datastructure which holds the result of computing the difference
 between two lists of lines.<br>
 
-<br>
-Fields <span class=code>b</span> and <span class=code>c</span> are just the original base/change lines.
-<br>
-<span class=code>noc</span>, <span class=code>rem</span> and <span class=code>add</span> are lists of integers which represent the length
+
+<p>Fields <span class=code>b</span> and <span class=code>c</span> are just the original base/change lines.
+
+<p><span class=code>noc</span>, <span class=code>rem</span> and <span class=code>add</span> are lists of integers which represent the length
 of a block. For instance, if for a given index <span class=code>rem=3</span> and <span class=code>add=2</span> it
 means that three lines were removed from <span class=code>b</span> and two were added to
 <span class=code>c</span>. If <span class=code>noc=10</span> that means that there is a block of 10 identical lines.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lines.diff.Diff.b" href="#lines.diff.Diff.b" class=anchor><b>b</b></a>
   base, aka raw original lines</li>
   <li><a id="lines.diff.Diff.c" href="#lines.diff.Diff.c" class=anchor><b>c</b></a>
@@ -176,16 +176,16 @@ means that three lines were removed from <span class=code>b</span> and two were 
   </ul>
   Note that the num removed/added will be nil if none were added/removed.</li>
 </ul>
-<br>
-<h4><a id="lines.Writer" href="#lines.Writer" class=anchor>Record lines.Writer</h4></a>
+
+<p><h4><a id="lines.Writer" href="#lines.Writer" class=anchor>Record lines.Writer</h4></a>
 <b>Deprecated: use ds.bytearray instead. This will be removed.</b>
-<br>
-A lines table with a write method and a few other file-like methods.
+
+<p>A lines table with a write method and a few other file-like methods.
 This is NOT performant, especially for small writes or large lines. It is
 useful for tests and cases where simplicity is more important than
 performance.
-<br>
-<b>Methods</b> <ul>
+
+<p><b>Methods</b> <ul>
   <li><a id="lines.Writer.set" href="#lines.Writer.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
   
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
@@ -214,8 +214,8 @@ performance.
   
   For types implementing <span class=code>:copy()</span> method.</li>
 </ul>
-<br>
-<h4><a id="Gap" href="#Gap" class=anchor>Record Gap</h4></a>
+
+<p><h4><a id="Gap" href="#Gap" class=anchor>Record Gap</h4></a>
 Line-based gap buffer. The buffer is composed of two lists (stacks) of
 lines <ul>
   <li>The "bot" (aka bottom) contains line 1 -> curLine.
@@ -224,11 +224,11 @@ lines <ul>
   after "bot" (aka after curLine). If the cursor is
   moved to a previous line then data is moved from top to bot</li>
 </ul>
-<br>
-<div class=info>Gap gives a file-like write API which may not be the most performant
+
+<p><div class=info>Gap gives a file-like write API which may not be the most performant
 for some workloads (writing single characters)</div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="Gap.top" href="#Gap.top" class=anchor><b>top</b></a>
   array of lines on the top (near start).</li>
   <li><a id="Gap.bot" href="#Gap.bot" class=anchor><b>bot</b></a>
@@ -267,15 +267,15 @@ for some workloads (writing single characters)</div>
   write lines <span class=code>t</span> to file <span class=code>f</span> in chunks (default = 16KiB)
   if f is a string then it is opened as a file and closed when done</li>
 </ul>
-<br>
-<h4><a id="lines.U3File" href="#lines.U3File" class=anchor>Record lines.U3File</h4></a>
+
+<p><h4><a id="lines.U3File" href="#lines.U3File" class=anchor>Record lines.U3File</h4></a>
 A file of 3 byte (24 bit) integers. These are commonly
 used for indexing lines.
-<br>
-This object supports get/set index operations including appending. Every
+
+<p>This object supports get/set index operations including appending. Every
 operation (except consecutive reads/writes) requires a file seek.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lines.U3File.f" href="#lines.U3File.f" class=anchor><b>f</b></a></li>
   <li><a id="lines.U3File.path" href="#lines.U3File.path" class=anchor><b>path</b></a></li>
   <li><a id="lines.U3File.mode" href="#lines.U3File.mode" class=anchor><b>mode</b></a></li>
@@ -322,15 +322,15 @@ operation (except consecutive reads/writes) requires a file seek.
   be mostly used for temporary cases. This might be changed in
   the future.</li>
 </ul>
-<br>
-<h4><a id="File" href="#File" class=anchor>Record File</h4></a>
+
+<p><h4><a id="File" href="#File" class=anchor>Record File</h4></a>
 Usage: <span class=code>File{'path/to/file.txt', mode='r'}</span><br>
 
 Indexed file of lines supporting modes 'r' and 'a+'.
-<br>
-<div class=info>use EdFile instead if you need to do non-append edits</div>
-<br>
-<b>Fields:</b><ul>
+
+<p><div class=info>use EdFile instead if you need to do non-append edits</div>
+
+<p><b>Fields:</b><ul>
   <li><a id="File.path" href="#File.path" class=anchor><b>path</b></a>
   path of this file.</li>
   <li><a id="File.mode" href="#File.mode" class=anchor><b>mode</b></a>
@@ -363,19 +363,19 @@ Indexed file of lines supporting modes 'r' and 'a+'.
   This allows reading the file while another coroutine writes it (via
   <a href="lap.html">lap.html</a>).</li>
 </ul>
-<br>
-<h4><a id="EdFile" href="#EdFile" class=anchor>Record EdFile</h4></a>
+
+<p><h4><a id="EdFile" href="#EdFile" class=anchor>Record EdFile</h4></a>
 EdFile: an editable line-based file object, optimized for
 indexed and consequitive reads and writes
-<br>
-<b>Usage:</b><div class=code-block>local ed = EdFile(path, mode);<br>
+
+<p><b>Usage:</b><div class=code-block>local ed = EdFile(path, mode);<br>
 ed:set(1, 'first line')<br>
 ed:set(2, 'second line')<br>
 ed:set(1, 'changed first line')<br>
 ed:close()
 </div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="EdFile.lf" href="#EdFile.lf" class=anchor><b>lf</b></a>
   indexed append-only file.</li>
   <li><a id="EdFile.dats" href="#EdFile.dats" class=anchor><b>dats</b></a>
@@ -412,13 +412,13 @@ ed:close()
   
   insert into EdFile's dats.</li>
 </ul>
-<br>
-<h3><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h3></a>
+
+<p><h3><a id="lines.futils" href="#lines.futils" class=anchor>Mod lines.futils</h3></a>
 utilities for file loading of lines. Generally users shouldn't
-<br>
-need to use this file.
-<br>
-<b>Functions</b> <ul>
+
+<p>need to use this file.
+
+<p><b>Functions</b> <ul>
   <li><a id="lines.futils.forceLoadIdx" href="#lines.futils.forceLoadIdx" class=anchor><b>fn forceLoadIdx</b></a><span class=code>(f, idxpath)</span><br>
   
   Can be usd instead of loadIdx to force a reload of the index,
@@ -429,15 +429,15 @@ need to use this file.
   
   load or reindex the file at path to/from idxpath.</li>
 </ul>
-<br>
-<h3><a id="lines.motion" href="#lines.motion" class=anchor>Mod lines.motion</h3></a>
+
+<p><h3><a id="lines.motion" href="#lines.motion" class=anchor>Mod lines.motion</h3></a>
 Helper methods for moving a cursor around a lines-like 2D grid.
-<br>
-The notation <span class=code>l.c</span> is used to refer to line, column where
-<br>
-both are indexed by 1.
-<br>
-<b>Functions</b> <ul>
+
+<p>The notation <span class=code>l.c</span> is used to refer to line, column where
+
+<p>both are indexed by 1.
+
+<p><b>Functions</b> <ul>
   <li><a id="lines.motion.decDistance" href="#lines.motion.decDistance" class=anchor><b>fn decDistance</b></a><span class=code>(s, e) -&gt; int</span><br>
   
   Move <span class=code>s</span> closer to <span class=code>e</span> by 1.<br>
@@ -478,33 +478,33 @@ both are indexed by 1.
   This is HORRIBLY non-performant, only use for small amounts of data (like a
   line).</li>
 </ul>
-<br>
-<b>table</b>: raw <span class=code>table</span>
-<br>
-<h3><a id="lines.kev" href="#lines.kev" class=anchor>Mod lines.kev</h3></a>
+
+<p><b>table</b>: raw <span class=code>table</span>
+
+<p><h3><a id="lines.kev" href="#lines.kev" class=anchor>Mod lines.kev</h3></a>
 kev: "Key Equal Value" serialization format.
-<br>
-<br>
-<br>
-This is an extremely common format in many unix utilities, "good enough"
-<br>
-for a large number of configuration use cases. The format is simple: a file
-<br>
-containing lines of <span class=code>key=value</span>. The input and output are a table of
-<br>
-key,val strings (though tostring is called for <span class=code>to()</span>). Lines which start
-<br>
-with <span class=code>#</span> or don't have <span class=code>=</span> in them are ignored.
-<br>
-<br>
-<br>
-Nested data is absolutely not supported. Spaces are treated as literal both
-<br>
-before and after <span class=code>=</span>. If you want a key containing <span class=code>=</span> or key/value
-<br>
-containing newline then use a different format (or write your own).
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p>
+<p>This is an extremely common format in many unix utilities, "good enough"
+
+<p>for a large number of configuration use cases. The format is simple: a file
+
+<p>containing lines of <span class=code>key=value</span>. The input and output are a table of
+
+<p>key,val strings (though tostring is called for <span class=code>to()</span>). Lines which start
+
+<p>with <span class=code>#</span> or don't have <span class=code>=</span> in them are ignored.
+
+<p>
+<p>
+<p>Nested data is absolutely not supported. Spaces are treated as literal both
+
+<p>before and after <span class=code>=</span>. If you want a key containing <span class=code>=</span> or key/value
+
+<p>containing newline then use a different format (or write your own).
+
+<p><b>Functions</b> <ul>
   <li><a id="lines.kev.to" href="#lines.kev.to" class=anchor><b>fn to</b></a><span class=code>(t)</span><br>
   
   convert to a table of <span class=code>key=value</span> lines.</li>
@@ -514,6 +514,7 @@ containing newline then use a different format (or write your own).
   <li><a id="lines.kev.load" href="#lines.kev.load" class=anchor><b>fn load</b></a><span class=code>(f, to) -&gt; M.from(lines.load(f), to)</span></li>
   <li><a id="lines.kev.dump" href="#lines.kev.dump" class=anchor><b>fn dump</b></a><span class=code>(t, f) -&gt; lines.dump(M.to(t), f)</span></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

@@ -15,13 +15,13 @@
 <html>
 <body><div class=doc>
 <h1>pod: plain-old-data library and serialization</h1>
-<br>
-A Lua library for specifying and converting types to/from "plain old data" and
+
+<p>A Lua library for specifying and converting types to/from "plain old data" and
 methods to serialize/deserialize those types to/from bytes. In Lua, the 5
 supported types considered "plain old data" are: nil, boolean, integer, string
 and any table of only these types.
-<br>
-<div class=code-block>local M = mod'mymod'<br>
+
+<p><div class=code-block>local M = mod'mymod'<br>
 local mty = require'metaty'<br>
 local pod = require'pod'<br>
 <br>
@@ -45,70 +45,82 @@ M.Schedule = pod(mty'Schedule' {<br>
 local serialized = pod.ser(M.Worker{...}) &nbsp; -- convert to string<br>
 local worker = pod.de(serialized, M.Worker) -- convert from string
 </div>
-<br>
-Explanation of above:<ul>
-  <li><span class=code>metaty.enum</span> are already plain-old-data (no need to call <span class=code>pod()</span> on them).</li>
+
+<p>Explanation of above:<ul>
+  <li><span class=code>metaty.enum</span> are already plain-old-data (no need to call <span class=code>pod()</span> on them).
+  
+  <p></li>
   <li><span class=code>metaty</span> record types can be made plain old data by calling the
   <span class=code>pod()</span> module on them.
-  <br>
-  This simply implements the <span class=code>__toPod</span> and <span class=code>__fromPod</span> methods on them --
-  you can do this yourself if you prefer!</li>
+  
+  <p>This simply implements the <span class=code>__toPod</span> and <span class=code>__fromPod</span> methods on them --
+  you can do this yourself if you prefer!
+  
+  <p></li>
   <li>pod parses the metaty field type stanza as <span class=code>[singleType]</span>, <span class=code>{listType}</span> or
   <span class=code>{map: type}</span> repsecitively. The collection types are converted to
   <span class=code>pod.List</span> and <span class=code>pod.Map</span> respectively.</li>
 </ul>
-<br>
-<h2>Serialization Best Practices</h2>
+
+<p><h2>Serialization Best Practices</h2>
 <ul>
   <li>Only make a type pod if it is actually plain-old-data -- the type must be
   always convert to/from Lua concrete types <i>even if called on a different
   machine or on a future date</i>. For instance don't implement pod on a type with
   a file inside it (even if you're using a path to reload it) since another
-  machine might not have that specific path!</li>
+  machine might not have that specific path!
+  
+  <p></li>
   <li>If a type may be serialized anywhere (even by an older version of the
   software), do not change or reuse the <span class=code>#id</span> of a field (changing the name is
   okay if you can fix your dependencies).
-  <br>
-  <div class=info>If you need to delete the field then add it to <span class=code>__fieldIds={...}</span> to
+  
+  <p><div class=info>If you need to delete the field then add it to <span class=code>__fieldIds={...}</span> to
   ensure future you doesn't use the field id.</div></li>
 </ul>
-<br>
-<h2>Usecases</h2>
+
+<p><h2>Usecases</h2>
 Usecases of pod are:<ul>
   <li>database schema: The primary intended usecase of pod is to be used in
   civdb -- each "row" is simply a pod record.
-  <br>
-  <div class=info>This is likely the only usecase civstack will use</div></li>
+  
+  <p><div class=info>This is likely the only usecase civstack will use</div>
+  
+  <p></li>
   <li>general data storage: use <b>fn load</b> and <b>fn dump</b> to de/serialize
-  values to/from a file.</li>
-  <li>cross-language communication, see <a href="#xlang">Cross Language Tooling</a>.</li>
+  values to/from a file.
+  
+  <p></li>
+  <li>cross-language communication, see <a href="#xlang">Cross Language Tooling</a>.
+  
+  <p></li>
   <li>RPC framework: pod could be used in a similar capacity as JSON RPC to
   communicate with other services (i.e. frontend <-> backend).</li>
 </ul>
-<br>
-<h2>library support</h2>
+
+<p><h2>library support</h2>
 In addition to providing methods to de/serialize data to a compact binary form,
 pod exports the <span class=code>toPod()</span> and <span class=code>fromPod()</span> functions to help other libraries
 (i.e. lson) de/serialize arbitrary lua types.
-<br>
-<h2><a id="xlang" href="#xlang" class=anchor>Cross Language Tooling</h2></a>
+
+<p><h2><a id="xlang" href="#xlang" class=anchor>Cross Language Tooling</h2></a>
 pod is designed to (eventually) serve the same need as
 <a href="https://protobuf.dev">protobuf</a>: it can and will generate code for other
 languages to read/write pod's binary serialization format.
-<br>
-At this time, support for other languages has not started -- but the design of
+
+<p>At this time, support for other languages has not started -- but the design of
 pod is meant to mimick protobuf as much as possible so that such a goal can be
 met in the future. Work on supporting multiple languages will likely not be
 part of the civstack project but the civstack project will support such work.
-<br>
-<br>
-<h3><a id="pod" href="#pod" class=anchor>Mod pod</h3></a>
+
+<p>
+<p><h3><a id="pod" href="#pod" class=anchor>Mod pod</h3></a>
 pod: plain old data
-<br>
-<br>
-<b>Types: </b><a href="#pod.Pod">Pod</a> <a href="#pod.Podder">Podder</a> <a href="#pod.key">key</a> <a href="#pod.builtin">builtin</a> <a href="#pod.List">List</a> <a href="#pod.Map">Map</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#pod.Pod">Pod</a> <a href="#pod.Podder">Podder</a> <a href="#pod.key">key</a> <a href="#pod.builtin">builtin</a> <a href="#pod.List">List</a> <a href="#pod.Map">Map</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="pod.isConcrete" href="#pod.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span><br>
   
   Return whether v is a nil, boolean, number or string.</li>
@@ -148,11 +160,11 @@ pod: plain old data
   
   load <span class=code>deser(f:read'a', ...)</span>, f can be a path or file.</li>
 </ul>
-<br>
-<h4><a id="pod.Pod" href="#pod.Pod" class=anchor>Record Pod</h4></a>
+
+<p><h4><a id="pod.Pod" href="#pod.Pod" class=anchor>Record Pod</h4></a>
 Pod: configuration for converting values to/from POD.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pod.Pod.fieldIds" href="#pod.Pod.fieldIds" class=anchor><b>fieldIds</b></a>
   if true use the fieldIds when possible</li>
   <li><a id="pod.Pod.mtPodFn" href="#pod.Pod.mtPodFn" class=anchor><b>mtPodFn</b></a> <span class=code>=function() instance</span>
@@ -160,39 +172,40 @@ Pod: configuration for converting values to/from POD.
   <li><a id="pod.Pod.enumIds" href="#pod.Pod.enumIds" class=anchor><b>enumIds</b></a>
   if true use enum id variants, else name variants</li>
 </ul>
-<br>
-<h4><a id="pod.Podder" href="#pod.Podder" class=anchor>Record Podder</h4></a>
+
+<p><h4><a id="pod.Podder" href="#pod.Podder" class=anchor>Record Podder</h4></a>
 A type who's sole job is converting values to/from POD.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pod.Podder.name" href="#pod.Podder.name" class=anchor><b>name</b></a></li>
 </ul>
-<br>
-<h4><a id="pod.key" href="#pod.key" class=anchor>Record key</h4></a>
+
+<p><h4><a id="pod.key" href="#pod.key" class=anchor>Record key</h4></a>
 Handles concrete non-nil types (boolean, number, string)
-<br>
-<br>
-<h4><a id="pod.builtin" href="#pod.builtin" class=anchor>Record builtin</h4></a>
+
+<p>
+<p><h4><a id="pod.builtin" href="#pod.builtin" class=anchor>Record builtin</h4></a>
 Handles all native types (nil, boolean, number, string, table)
-<br>
-<br>
-<h4><a id="pod.List" href="#pod.List" class=anchor>Record List</h4></a>
+
+<p>
+<p><h4><a id="pod.List" href="#pod.List" class=anchor>Record List</h4></a>
 Poder for a list of items with a type.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pod.List.I" href="#pod.List.I" class=anchor><b>I</b></a>
   the type of each list item</li>
 </ul>
-<br>
-<h4><a id="pod.Map" href="#pod.Map" class=anchor>Record Map</h4></a>
+
+<p><h4><a id="pod.Map" href="#pod.Map" class=anchor>Record Map</h4></a>
 Poder for a map of key/value pairs.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="pod.Map.K" href="#pod.Map.K" class=anchor><b>K</b></a> <span class=code>=pod.key</span>
   keys type</li>
   <li><a id="pod.Map.V" href="#pod.Map.V" class=anchor><b>V</b></a>
   values type</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

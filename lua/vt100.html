@@ -17,8 +17,8 @@
 This is Civboot's VT100 terminal interface library. It implements (and also
 defines) the API that civboot terminal emulators must implement to be
 considered Civboot compliant.
-<br>
-It has the following core types and constants: <ul>
+
+<p>It has the following core types and constants: <ul>
   <li><span class=code>Term</span> object, see below</li>
   <li><span class=code>AsciiColor</span> which is a map from single ascii lowercase characters to the
   color name (i.e. <span class=code>w -&gt; white</span>). These can be used in Term.fg and Term.bg to
@@ -28,8 +28,8 @@ It has the following core types and constants: <ul>
   <li>Various key utility functions and maps for checking and working with the
   values sent by <span class=code>Term:input()</span></li>
 </ul>
-<br>
-To be civboot compliant the <span class=code>Term</span> type exported must have the following API: <ul>
+
+<p>To be civboot compliant the <span class=code>Term</span> type exported must have the following API: <ul>
   <li><span class=code>ds.Grid</span> fields <span class=code>text, fg, bg</span> for terminal text, foreground color and
   background color respectively</li>
   <li><span class=code>l, c</span> fields for setting the cursor location (which is drawn)</li>
@@ -42,14 +42,14 @@ To be civboot compliant the <span class=code>Term</span> type exported must have
   <li><span class=code>run</span> boolean (default=true) which can be set to false to stop related
   coroutines (best effort)</li>
 </ul>
-<br>
-<br>
-<h3><a id="vt100" href="#vt100" class=anchor>Mod vt100</h3></a>
+
+<p>
+<p><h3><a id="vt100" href="#vt100" class=anchor>Mod vt100</h3></a>
 Civboot vt100 Terminal library that supports LAP protocol.
-<br>
-Module for interacting with the vt100 via keys and AsciiColors.
-<br>
-<div class=code-block><br>
+
+<p>Module for interacting with the vt100 via keys and AsciiColors.
+
+<p><div class=code-block><br>
 License CC0 / UNLICENSE<br>
 <br>
 Originally written 2022 Phil Leblanc, modified 2023 Rett Berg (Civboot.org)<br>
@@ -57,11 +57,11 @@ Originally written 2022 Phil Leblanc, modified 2023 Rett Berg (Civboot.org)<br>
 Authorized for relicense in: http://github.com/philanc/plterm/issues/4<br>
 
 </div>
-<br>
-<br>
-<b>Types: </b><a href="#vt100.ctrl">ctrl</a> <a href="#vt100.Term">Term</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#vt100.ctrl">ctrl</a> <a href="#vt100.Term">Term</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="vt100.key" href="#vt100.key" class=anchor><b>fn key</b></a></li>
   <li><a id="vt100.ctrlChar" href="#vt100.ctrlChar" class=anchor><b>fn ctrlChar</b></a></li>
   <li><a id="vt100.literal" href="#vt100.literal" class=anchor><b>fn literal</b></a><span class=code>(key) -&gt; literalstring?</span><br>
@@ -104,42 +104,42 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4<br>
   The recommended setup function, enables color in the terminal in civstack
   libraries (and those that adhere to them).</li>
 </ul>
-<br>
-<h3><a id="vt100.ctrl" href="#vt100.ctrl" class=anchor>Mod vt100.ctrl</h3></a>
+
+<p><h3><a id="vt100.ctrl" href="#vt100.ctrl" class=anchor>Mod vt100.ctrl</h3></a>
 Direct terminal control functions
-<br>
-<b>Functions</b> <ul>
-  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.right" href="#vt100.ctrl.right" class=anchor><b>fn right</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(name, fmt)</span></li>
+
+<p><b>Functions</b> <ul>
   <li><a id="vt100.ctrl.colorFB" href="#vt100.ctrl.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(name, fmt)</span></li>
   <li><a id="vt100.ctrl.up" href="#vt100.ctrl.up" class=anchor><b>fn up</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.right" href="#vt100.ctrl.right" class=anchor><b>fn right</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(name, fmt)</span></li>
   <li><a id="vt100.ctrl.size" href="#vt100.ctrl.size" class=anchor><b>fn size</b></a><span class=code>(f)</span><br>
   
   causes terminal to send size as (escaped) cursor position</li>
 </ul>
-<br>
-<h4><a id="vt100.Term" href="#vt100.Term" class=anchor>Record Term</h4></a>
+
+<p><h4><a id="vt100.Term" href="#vt100.Term" class=anchor>Record Term</h4></a>
 VT100 Terminal Emulator <ul>
   <li>Write the text to display</li>
   <li>Write the foreground/background colors to fg/bg</li>
   <li>Then call :draw() to draw to terminal.</li>
 </ul>
-<br>
-Requires <span class=code>vt100.start()</span> have been called to initiate raw mode.
-<br>
-<b>Fields:</b><ul>
+
+<p>Requires <span class=code>vt100.start()</span> have been called to initiate raw mode.
+
+<p><b>Fields:</b><ul>
   <li><a id="vt100.Term.fd" href="#vt100.Term.fd" class=anchor><b>fd</b></a>
   file to write output to in draw()</li>
   <li><a id="vt100.Term.l" href="#vt100.Term.l" class=anchor><b>l</b></a> <span class=code>=1</span>
@@ -175,8 +175,8 @@ Requires <span class=code>vt100.start()</span> have been called to initiate raw 
   function to run in a (LAP) coroutine.
   <span class=code>send()</span> is called with each key recieved. Typically this is a lap.Send.</li>
 </ul>
-<br>
-<h4><a id="Ty<vt100.AcWriter>" href="#Ty<vt100.AcWriter>" class=anchor>Record vt100.AcWriter</h4></a>
+
+<p><h4><a id="Ty<vt100.AcWriter>" href="#Ty<vt100.AcWriter>" class=anchor>Record vt100.AcWriter</h4></a>
 <b>Fields:</b><ul>
   <li><a id="Ty<vt100.AcWriter>.f" href="#Ty<vt100.AcWriter>.f" class=anchor><b>f</b></a></li>
   <li><a id="Ty<vt100.AcWriter>.fg" href="#Ty<vt100.AcWriter>.fg" class=anchor><b>fg</b></a> <span class=code>="z"</span>
@@ -193,14 +193,14 @@ Requires <span class=code>vt100.start()</span> have been called to initiate raw 
   
   write plain</li>
 </ul>
-<br>
-<h3><a id="vt100.testing" href="#vt100.testing" class=anchor>Mod vt100.testing</h3></a>
+
+<p><h3><a id="vt100.testing" href="#vt100.testing" class=anchor>Mod vt100.testing</h3></a>
 helpers for testing/demoing vt100
-<br>
-<br>
-<b>Types: </b><a href="#vt100.testing.Fake">Fake</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#vt100.testing.Fake">Fake</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="vt100.testing.startTmp" href="#vt100.testing.startTmp" class=anchor><b>fn startTmp</b></a><span class=code>() -&gt; out, err</span><br>
   
   start rawmode using tmpfiles</li>
@@ -209,8 +209,8 @@ helpers for testing/demoing vt100
   Run function in a LAP environment with terminal started
   and std in/out set correctly.</li>
 </ul>
-<br>
-<h4><a id="vt100.testing.Fake" href="#vt100.testing.Fake" class=anchor>Record Fake</h4></a>
+
+<p><h4><a id="vt100.testing.Fake" href="#vt100.testing.Fake" class=anchor>Record Fake</h4></a>
 <b>Fields:</b><ul>
   <li><a id="vt100.testing.Fake.fd" href="#vt100.testing.Fake.fd" class=anchor><b>fd</b></a>
   file to write output to in draw()</li>
@@ -240,6 +240,7 @@ helpers for testing/demoing vt100
   Function that indicates an API is not supported for a type.
   Throws <span class=code>error'not supported'</span>.</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

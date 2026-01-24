@@ -16,39 +16,39 @@
 <body><div class=doc>
 <h1>LAP: Lua Asynchronous Protocol</h1>
 Write libraries to work for either blocking or non blocking IO.
-<br>
-<br>
-Lua has one of the coolest yet most underutilized asynchronous programming
+
+<p>
+<p>Lua has one of the coolest yet most underutilized asynchronous programming
 tools: the <span class=code>coroutine</span> module, specifically <span class=code>coroutine.yield</span>. Lua's <span class=code>yield</span>
 can be called from any depth, resuming execution at the callsite upon
 <span class=code>coroutine.resume</span>. This means that if we swap out traditionally blocking APIs
 like <span class=code>file:read</span> with ones that are non-blocking and yielding (i.e. by running
 IO in a separate thread or using unix's <span class=code>aio</span> interface) we use most libraries
 asynchronously without changing a single line of code.
-<br>
-<div class=info>For an example of implementing the LAP protocol see <a href="#Package_fd">#Package_fd</a></div>
-<br>
-LAP is a lightweight zero-dependency asynchronous protocol which aims to take
+
+<p><div class=info>For an example of implementing the LAP protocol see <a href="#Package_fd">#Package_fd</a></div>
+
+<p>LAP is a lightweight zero-dependency asynchronous protocol which aims to take
 advantage of Lua's awesomeness. It is architected to allow libraries to provide
 a lightweight "asynchronous mode" so that they can be used asynchronously by a
 coroutine executor. This allows users and library authors to write code that
 looks synchronous but which can be executed asynchronously at the application
 author's discression.
-<br>
-<br>
-This folder also contains the <span class=code>lap.lua</span> library, see the Library section.
+
+<p>
+<p>This folder also contains the <span class=code>lap.lua</span> library, see the Library section.
 Library authors <b>do not</b> need to depend on this library to work with the LAP
 protocol.
-<br>
-<br>
-The LAP protocol has two components: <ul>
+
+<p>
+<p>The LAP protocol has two components: <ul>
   <li>yielding protocol: An ultra simple yet optionally-performant to communicate
   with the executor loop (example: see <span class=code>lap.Lap</span>)</li>
   <li>two global tables which libraries can use to schedule coroutines (<span class=code>LAP_READY</span>)
   and register their asynchronous API (<span class=code>LAP_FNS_ASYNC</span> and <span class=code>LAP_FNS_SYNC</span>)</li>
 </ul>
-<br>
-Library authors can fully support the protocol by following the
+
+<p>Library authors can fully support the protocol by following the
 Yielding Protocol below and copy/pasting the following:
 <div class=code-block>LAP_FNS_SYNC &nbsp;= LAP_FNS_SYNC &nbsp;or {}<br>
 LAP_FNS_ASYNC = LAP_FNS_ASYNC or {}<br>
@@ -59,42 +59,48 @@ table.insert(LAP_FNS_ASYNC, function() ... end)<br>
 <br>
 // implement your asynchronous functions by following the protocol.
 </div>
-<br>
-Library authors should make their default API <b>synchronous</b> (blocking) by
+
+<p>Library authors should make their default API <b>synchronous</b> (blocking) by
 default, except for items that cannot be used synchronously.
-<br>
-<h3>LAP_READY Global Table</h3>
+
+<p><h3>LAP_READY Global Table</h3>
 <span class=code>LAP_READY</span> is a global key/value table where the keys are the coroutines which
 should be run at some later time (by the executor). The values are arbitrary
 (typically a string identifier for debugging).
-<br>
-<br>
-This means that a coroutine can schedule another coroutine <span class=code>cor</span> by simply doing
+
+<p>
+<p>This means that a coroutine can schedule another coroutine <span class=code>cor</span> by simply doing
 <span class=code>LAP_READY[cor] = "my_identifier"</span>. This simple feature can be used for many
 purposes such as creating Channel datastructures as well as handling any/all
 behavior. See the Library section for details.
-<br>
-<h3><a id="lap-protocol" href="#lap-protocol" class=anchor>Yielding Protocol</h3></a>
+
+<p><h3><a id="lap-protocol" href="#lap-protocol" class=anchor>Yielding Protocol</h3></a>
 LAP's yielding protocol makes it trivial for Lua libraries to interface with
 executors. Libraries can simply call <span class=code>coroutine.yield</span> with one of the
 following and a compliant executor will perform the behavior specified if it is
 supported (else it will run the coroutine on the next loop). <ul>
   <li><span class=code>yield(nil)</span> or <span class=code>yield(false)</span>: forget the coroutine, the executor will not
-  run it.</li>
+  run it.
+  
+  <p></li>
   <li><span class=code>yield(true)</span>: run the corroutine again as soon as possible. <ul>
     <li>Should prevent the executor loop from sleeping.</li>
     <li>Equivalent to: <span class=code>LAP_READY[coroutine.running()] = true; coroutine.yield()</span></li>
   </ul></li>
   <li><span class=code>yield("sleep", sleepSec)</span>: run the coroutine again after <span class=code>sleepSec</span> seconds
-  (a float).</li>
+  (a float).
+  
+  <p></li>
   <li><span class=code>yield("poll", fileno, events)</span>: tell the coroutine to use unix's
-  <span class=code>poll(fileno, events)</span> syscall to determine when ready.</li>
+  <span class=code>poll(fileno, events)</span> syscall to determine when ready.
+  
+  <p></li>
   <li>Other yield values may be defined by application-specific executors.
   If the executor doesn't recognize a value it can either throw an error or
   treat it as <span class=code>true</span> (aka "ready"), depending on the application requirements.</li>
 </ul>
-<br>
-<h4><a id="lap-globals" href="#lap-globals" class=anchor>Global Variables</h4></a>
+
+<p><h4><a id="lap-globals" href="#lap-globals" class=anchor>Global Variables</h4></a>
 There are four global variables defined by the LAP protocol: <ul>
   <li><span class=code>LAP_READY</span>: contains the currently ready coroutines for the executor loop to
   resume.</li>
@@ -103,12 +109,12 @@ There are four global variables defined by the LAP protocol: <ul>
   <li><span class=code>LAP_ASYNC</span>: is set to true when in async mode to determine behavior at
   runtime.</li>
 </ul>
-<br>
-The sync/async tables allows a user to write code in a blocking style yet it
+
+<p>The sync/async tables allows a user to write code in a blocking style yet it
 can be run asynchronously, such as the following. You can even switch back and
 forth so that tests can be run in both modes.
-<br>
-<div class=code-block>function getLines(path, fn)<br>
+
+<p><div class=code-block>function getLines(path, fn)<br>
 &nbsp; local lines = {}<br>
 &nbsp; -- File API can be configured to either block or yield.<br>
 &nbsp; for line in io.lines(path) do<br>
@@ -117,18 +123,18 @@ forth so that tests can be run in both modes.
 &nbsp; return lines<br>
 end
 </div>
-<br>
-<div class=info>Recomendation: use <a href="#lap.async">#lap.async</a> and <a href="#lap.sync">#lap.sync</a> to switch modes</div>
-<br>
-<h3><a id="lap" href="#lap" class=anchor>Mod lap</h3></a>
+
+<p><div class=info>Recomendation: use <a href="#lap.async">#lap.async</a> and <a href="#lap.sync">#lap.sync</a> to switch modes</div>
+
+<p><h3><a id="lap" href="#lap" class=anchor>Mod lap</h3></a>
 Lua module importing the LAP protocol so that libraries can
-<br>
-support both blocking and non-blocking IO.
-<br>
-<br>
-<b>Types: </b><a href="#lap.Recv">Recv</a> <a href="#lap.Send">Send</a> <a href="#lap.Any">Any</a> <a href="#lap.Lap">Lap</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>support both blocking and non-blocking IO.
+
+<p>
+<p><b>Types: </b><a href="#lap.Recv">Recv</a> <a href="#lap.Send">Send</a> <a href="#lap.Any">Any</a> <a href="#lap.Lap">Lap</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="lap.reset" href="#lap.reset" class=anchor><b>fn reset</b></a><span class=code>()</span><br>
   
   Clear all lap globals.</li>
@@ -155,8 +161,8 @@ support both blocking and non-blocking IO.
   
   Resume when all of the functions complete.</li>
 </ul>
-<br>
-<h4><a id="lap.Recv" href="#lap.Recv" class=anchor>Record Recv</h4></a>
+
+<p><h4><a id="lap.Recv" href="#lap.Recv" class=anchor>Record Recv</h4></a>
 Create the receive side of a channel.<ul>
   <li>Use <span class=code>recv:sender()</span> to create a sender. You can create
   multiple senders.</li>
@@ -168,8 +174,8 @@ Create the receive side of a channel.<ul>
   <li><span class=code>recv:isDone()</span> returns true when either recv is closed
   OR all senders are closed and <span class=code>#recv == 0</span></li>
 </ul>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lap.Recv.deq" href="#lap.Recv.deq" class=anchor><b>deq</b></a></li>
   <li><a id="lap.Recv.cor" href="#lap.Recv.cor" class=anchor><b>cor</b></a></li>
 </ul>
@@ -200,14 +206,14 @@ Create the receive side of a channel.<ul>
   drain the recv of all current values it has.
   This does NOT wait for new items.</li>
 </ul>
-<br>
-<h4><a id="lap.Send" href="#lap.Send" class=anchor>Record Send</h4></a>
+
+<p><h4><a id="lap.Send" href="#lap.Send" class=anchor>Record Send</h4></a>
 Sender, created through <span class=code>recv:sender()</span><br>
 
 This is considered closed if the receiver is closed. The receiver will
 automatically close if it is garbage collected.
-<br>
-<b>Methods</b> <ul>
+
+<p><b>Methods</b> <ul>
   <li><a id="Send.close" href="#Send.close" class=anchor><b>fn close</b></a><span class=code>(send)</span><br>
   
   Close this sender. Will also awaken the receiver coroutine.</li>
@@ -221,8 +227,8 @@ automatically close if it is garbage collected.
   <li><a id="Send.pushLeft" href="#Send.pushLeft" class=anchor><b>fn pushLeft</b></a><span class=code>(send, val)</span></li>
   <li><a id="Send.extendLeft" href="#Send.extendLeft" class=anchor><b>fn extendLeft</b></a><span class=code>(send, vals)</span></li>
 </ul>
-<br>
-<h4><a id="lap.Any" href="#lap.Any" class=anchor>Record Any</h4></a>
+
+<p><h4><a id="lap.Any" href="#lap.Any" class=anchor>Record Any</h4></a>
 <b>Fields:</b><ul>
   <li><a id="lap.Any.cor" href="#lap.Any.cor" class=anchor><b>cor</b></a>
   the coroutine this is running on.</li>
@@ -245,14 +251,14 @@ automatically close if it is garbage collected.
   
   restart fn at index</li>
 </ul>
-<br>
-<h4><a id="lap.Lap" href="#lap.Lap" class=anchor>Record Lap</h4></a>
+
+<p><h4><a id="lap.Lap" href="#lap.Lap" class=anchor>Record Lap</h4></a>
 Default implementation of an executor, see civix.Lap for
 a more complete one.
-<br>
-"A single lap of the executor loop"
-<br>
-Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedule other fns<br>
+
+<p>"A single lap of the executor loop"
+
+<p>Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedule other fns<br>
 &nbsp; lap.schedule(myMainFn)<br>
 <br>
 &nbsp; -- create a Lap instance with the necessary configs<br>
@@ -268,8 +274,8 @@ Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedul
 &nbsp; &nbsp; -- do other things in your application's executor loop<br>
 &nbsp; end
 </div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="lap.Lap.sleepFn" href="#lap.Lap.sleepFn" class=anchor><b>sleepFn</b></a></li>
   <li><a id="lap.Lap.monoFn" href="#lap.Lap.monoFn" class=anchor><b>monoFn</b></a></li>
   <li><a id="lap.Lap.monoHeap" href="#lap.Lap.monoHeap" class=anchor><b>monoHeap</b></a></li>
@@ -303,6 +309,7 @@ Example <div class=code-block>&nbsp; -- schedule your main fn, which may schedul
   Executes a single coroutine, used inside <span class=code>:run()</span></li>
   <li><a id="Lap.isDone" href="#Lap.isDone" class=anchor><b>fn:isDone</b></a><span class=code>()</span></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

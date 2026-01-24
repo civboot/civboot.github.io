@@ -20,16 +20,16 @@ library such as <span class=code>sleep</span>, <span class=code>epoch</span> etc
 type and convieience <span class=code>sh()</span> function for executing system shell commands,
 either synchronously or asynchronously using the LAP protocol (see
 <a href="lap.html">lap.html</a>.
-<br>
-<div class=info>TODO: better docs to come once the ele shell is finished</div>
-<br>
-<h3><a id="civix" href="#civix" class=anchor>Mod civix</h3></a>
+
+<p><div class=info>TODO: better docs to come once the ele shell is finished</div>
+
+<p><h3><a id="civix" href="#civix" class=anchor>Mod civix</h3></a>
 civix: unix-like OS utilities.
-<br>
-<br>
-<b>Types: </b><a href="#civix.Walk">Walk</a> <a href="#civix.Sh">Sh</a> <a href="#civix.ShFin">ShFin</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#civix.Walk">Walk</a> <a href="#civix.Sh">Sh</a> <a href="#civix.ShFin">ShFin</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="civix.mkdir" href="#civix.mkdir" class=anchor><b>fn mkdir</b></a><br>
   
   make a new directory, the parent must exist.</li>
@@ -207,15 +207,15 @@ civix: unix-like OS utilities.
   </table></div></li>
   <li><a id="civix.isRoot" href="#civix.isRoot" class=anchor><b>fn isRoot</b></a><span class=code>() -&gt; os.getenv'EUID' == '0'</span></li>
 </ul>
-<br>
-<h4><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h4></a>
+
+<p><h4><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h4></a>
 Walk the directory tree as a iterator of <span class=code>path, ftype</span>. Can walk either a
 single path <span class=code>Walk'path/'</span> or a list of paths <span class=code>Walk{'a/', 'b.txt'}</span>. <ul>
   <li>Note: all <span class=code>ftype=='dir'</span> paths end in <span class=code>/</span>.</li>
   <li>Warning: you may want to handle <span class=code>ftype=='error'</span></li>
 </ul>
-<br>
-<b>Usage:</b><div class=code-block>local ix = require'civix'<br>
+
+<p><b>Usage:</b><div class=code-block>local ix = require'civix'<br>
 local w = ix.Walk{'path/', 'path2/', 'file.txt'}<br>
 for path, pathTy in w do<br>
 &nbsp; if pathTy == 'dir' and path:match'skipMe' do<br>
@@ -224,8 +224,8 @@ for path, pathTy in w do<br>
 &nbsp; -- ... do something with each path.<br>
 end
 </div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="civix.Walk.maxDepth" href="#civix.Walk.maxDepth" class=anchor><b>maxDepth</b></a>
   maximum depth to walk (default=infinite)</li>
   <li><a id="civix.Walk.pi" href="#civix.Walk.pi" class=anchor><b>pi</b></a> <span class=code>=0</span>
@@ -239,20 +239,20 @@ end
   
   skip the current directory level</li>
 </ul>
-<br>
-<h4><a id="civix.Sh" href="#civix.Sh" class=anchor>Record Sh</h4></a>
+
+<p><h4><a id="civix.Sh" href="#civix.Sh" class=anchor>Record Sh</h4></a>
 Start args on the shell
 <div class=info>Suggestion: use civix.sh instead.</div>
-<br>
-<span class=code>Sh:start()</span> kicks off a subprocess which start the shell using the fds
+
+<p><span class=code>Sh:start()</span> kicks off a subprocess which start the shell using the fds
 you pass in or creating them if you set them to true. Created file
 descriptors will be stored in the associated name.
-<br>
-<div class=info>Why? This means that <span class=code>:close()</span> will only close filedescriptors created
+
+<p><div class=info>Why? This means that <span class=code>:close()</span> will only close filedescriptors created
 by the shell itself, and you won't accidentially close
 io.stdout/etc.</div>
-<br>
-Examples (see civix.sh for more examples): <div class=table><table>
+
+<p>Examples (see civix.sh for more examples): <div class=table><table>
   <tr>
     <th>Lua</th>
     <th>Bash</th>
@@ -266,8 +266,8 @@ Examples (see civix.sh for more examples): <div class=table><table>
     <td><span class=code>v=$(ls foo/bar)</span></td>
   </tr>
 </table></div>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="civix.Sh.args" href="#civix.Sh.args" class=anchor><b>args</b></a>
   arguments to pass to shell</li>
   <li><a id="civix.Sh.stdin" href="#civix.Sh.stdin" class=anchor><b>stdin</b></a>
@@ -299,22 +299,22 @@ Examples (see civix.sh for more examples): <div class=table><table>
   <li><a id="Sh.write" href="#Sh.write" class=anchor><b>fn write</b></a><span class=code>(sh, ...) -&gt; sh.stdin:write(...)</span></li>
   <li><a id="Sh.read" href="#Sh.read" class=anchor><b>fn read</b></a><span class=code>(sh, ...) -&gt; sh.stdout:read(...)</span></li>
 </ul>
-<br>
-<h4><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h4></a>
+
+<p><h4><a id="civix.ShFin" href="#civix.ShFin" class=anchor>Record ShFin</h4></a>
 Argument for <a href="#civix.Sh.finish">#civix.Sh.finish</a>.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="civix.ShFin.stdin" href="#civix.ShFin.stdin" class=anchor><b>stdin</b></a></li>
   <li><a id="civix.ShFin.stdout" href="#civix.ShFin.stdout" class=anchor><b>stdout</b></a></li>
   <li><a id="civix.ShFin.stderr" href="#civix.ShFin.stderr" class=anchor><b>stderr</b></a></li>
   <li><a id="civix.ShFin.input" href="#civix.ShFin.input" class=anchor><b>input</b></a>
   write to then close stdin (either self's or shell's)</li>
 </ul>
-<br>
-<h3><a id="civix.testing" href="#civix.testing" class=anchor>Mod civix.testing</h3></a>
+
+<p><h3><a id="civix.testing" href="#civix.testing" class=anchor>Mod civix.testing</h3></a>
 test runners and helpers for civix
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="civix.testing.runAsyncTest" href="#civix.testing.runAsyncTest" class=anchor><b>fn runAsyncTest</b></a><span class=code>(fn)</span><br>
   
   Typically an entire test file is wrapped in a function,
@@ -325,6 +325,7 @@ test runners and helpers for civix
   equivalent for that.
   </div></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

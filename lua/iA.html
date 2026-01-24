@@ -15,41 +15,41 @@
 <html>
 <body><div class=doc>
 <h1>iA: intermediate Assembly programming language</h1>
-<br>
-<div class=info>WARNING: this library is in the design phase and is
+
+<p><div class=info>WARNING: this library is in the design phase and is
 not even remotely useable.</div>
-<br>
-iA (intermediate Assembly) is a programming language for writing (and
+
+<p>iA (intermediate Assembly) is a programming language for writing (and
 dis-assembling) straightforward cross-platform assembly. It exists as a kind of
 "typed assembly", something more useful/powerful than traditional assembly but
 less powerful than a language like C. It's primary design goal is to directly
 and straightfowardly map to assembly while still helping the programmer avoid
 most footguns.
-<br>
-<br>
-It does this with the following features: <ul>
+
+<p>
+<p>It does this with the following features: <ul>
   <li>Type safety including structs, pointers, arrays and mutability.</li>
   <li>Protection from "corrupted" registers.</li>
   <li>Implicit and efficient stack de/construction for function calls.</li>
   <li>Is implemented as a "Lua library", allowing limitless meta-programming
   capabilities (aka macros).</li>
 </ul>
-<br>
-<h2><a id="Core_Concepts" href="#Core_Concepts" class=anchor>Core Concepts</h2></a>
-<br>
-<h3>Registers and values</h3>
+
+<p><h2><a id="Core_Concepts" href="#Core_Concepts" class=anchor>Core Concepts</h2></a>
+
+<p><h3>Registers and values</h3>
 iA operates directly on registers, which are letters between A - T
 (20 registers).  It can also operate on local values (V) which are stored
 on the return stack, and "universal" values (U) which are on the heap.
 W, X, Y and Z are reserved for future use (probably thread-local values and
 flags).
-<br>
-<br>
-Any value can be declared "corruptable" (aka mutable) with $, which means that
+
+<p>
+<p>Any value can be declared "corruptable" (aka mutable) with $, which means that
 it can be modified within the scope declared. If it is ever declared
 "uncorruptable" (without $) then it cannot be modified within that scope.
-<br>
-You can declare a named variable and its type with:
+
+<p>You can declare a named variable and its type with:
 <div class=code-block>const answer: Int = 42 &nbsp;\ a constant, not stored anywhere.<br>
 <br>
 &nbsp;A val1: Int = 41 &nbsp; &nbsp; \ register A, pre-initialized with 41, non-mutable<br>
@@ -57,160 +57,186 @@ $B val2: Int = answer \ register B, pre-initialized with const, mutable<br>
 $V val3: Int = val1 &nbsp; \ mutable local value, increases return stack size<br>
 $U val4: Int = 0 &nbsp; &nbsp; &nbsp;\ mutable universal value, stored on heap
 </div>
-<br>
-<h3><a id="Functions" href="#Functions" class=anchor>Functions</h3></a>
+
+<p><h3><a id="Functions" href="#Functions" class=anchor>Functions</h3></a>
 iA supports defining functions. Unlike many languages, function arguments must
 specify exactly what registers the function will be operating on (or V) and
 which registers should be considered "return" values of the function. Functions
 cannot return local values (but can modify passed-in pointers or arrays).
-<br>
-<br>
-The simplest way to specify a function is via the #auto attribute.
-<br>
-<div class=code-block>\ &nbsp; &nbsp; &nbsp; &nbsp;name &nbsp;inputs &nbsp; &nbsp; &nbsp;outputs<br>
+
+<p>
+<p>The simplest way to specify a function is via the #auto attribute.
+
+<p><div class=code-block>\ &nbsp; &nbsp; &nbsp; &nbsp;name &nbsp;inputs &nbsp; &nbsp; &nbsp;outputs<br>
 #auto fn fib &nbsp;(V i: Int) -&gt; Int &nbsp; &nbsp;do<br>
 &nbsp; ... expr1 or multi-assiment statements ...<br>
 end
 </div>
-<br>
-This function declares the following: <ul>
+
+<p>This function declares the following: <ul>
   <li>The name of the function, <span class=code>fib</span> in this case.</li>
   <li>The inputs you must pass it when calling it</li>
   <li>The output types of the function.</li>
 </ul>
-<br>
-If the fn is #auto then the whole function must never specify specific
+
+<p>If the fn is #auto then the whole function must never specify specific
 registers (only use V inputs and locals). iA will automatically convert these
 to iA-reg-common standards and may replace other V used with registers for
 optimizations.
-<br>
-Some notes: <ul>
+
+<p>Some notes: <ul>
   <li>#auto can be replaced with #link, which uses the platform-defined
   calling convention instead of iA standards, which carries several
   performance and usability disadvantages.</li>
   <li>only #auto or #link functions can be stored as a pointer and called.</li>
 </ul>
-<br>
-Without #auto, you may specify the specific registers to use and whether
+
+<p>Without #auto, you may specify the specific registers to use and whether
 they are corruptable:
 <div class=code-block>\ &nbsp;name &nbsp;inputs &nbsp; &nbsp; &nbsp; &nbsp;outputs &nbsp; corrupts<br>
 fn fib &nbsp;($A i: Int) -&gt; C: Int &nbsp; &nbsp;$$BD &nbsp; &nbsp; do<br>
 &nbsp; ... expr1 or multi-assignment statements ...<br>
 end
 </div>
-<br>
-A few notes: <ul>
+
+<p>A few notes: <ul>
   <li>The output registers will use the default ordering (C D A B) if
   unspecified.</li>
 </ul>
-<br>
-<h3>Expressions</h3>
+
+<p><h3>Expressions</h3>
 There are 3 types of what are called "single expressions" (expr1): <ul>
   <li><b>val</b>: a named variable <span class=code>var</span> or literal value such as 42, 0x4F, "string",
-  c"counted", etc</li>
+  c"counted", etc
+  
+  <p></li>
   <li><b>eq1</b> single-assignment <span class=code>expr1 = expr1</span>, i.e. <span class=code>A val1: Int = 4</span>. The
   register and type are optional if <span class=code>val1</span> is already defined.
   i.e. <span class=code>A val1: Int = 41</span> declares it in register A and of type Int.<ul>
     <li>the right-hand expression can be _ (an underscore), which does the
     operation with itself.</li>
     <li><span class=code>expr1 += expr1</span> where an operation is after = is also eq1.</li>
-  </ul></li>
+  </ul>
+  
+  <p></li>
   <li><b>fn1</b>: <span class=code>fn foo(...) -&gt; Int</span>, calls to functions which return a single
   register.</li>
 </ul>
-<br>
-expr1's effectively "return" their leftmost value, so you can write something
+
+<p>expr1's effectively "return" their leftmost value, so you can write something
 like below. Note that you can be explicit about the registers like below,
 or they can be inferred.
-<br>
-<br>
-All expressions are evaluate from right to left (TODO: I think this will be
+
+<p>
+<p>All expressions are evaluate from right to left (TODO: I think this will be
 changed to left->right and an optional <span class=code>&gt;&gt;</span> left-to-right assignment operator
 will be added, stay tuned). Once a variable is assigned as a function input it
 is considered "locked" and attempts to mutate it will result in a corruption
 error.
-<br>
-<div class=code-block>(a=10) += (C c: Int = foo($A a=5, $B b = bar($A a=6)))</div>
+
+<p><div class=code-block>(a=10) += (C c: Int = foo($A a=5, $B b = bar($A a=6)))</div>
 In the example above the A register is modified twice but is not locked until
 <span class=code>a=5</span>, so the above code compiles. The above code is very explicit with
 what registers are modified and could be rewritten as:
-<br>
-<div class=code-block>(a=10) += foo(5, bar(a))</div>
-<br>
-An example of a corruption error is below. Register B is locked with
+
+<p><div class=code-block>(a=10) += foo(5, bar(a))</div>
+
+<p>An example of a corruption error is below. Register B is locked with
 <span class=code>b=3</span> (remember, right-to-left evaluation) and then is corrupted
 by <span class=code>bar(a=1, b=2)</span>.
-<br>
-<div class=code-block>foo(a=bar(a=1, b=2), b=3)</div>
+
+<p><div class=code-block>foo(a=bar(a=1, b=2), b=3)</div>
 From the above you can see the general rule when calling functions in iA:
 the functions called must be progressively simpler as they go from right to
 left, since more registers will be locked.
-<br>
-<h3>Types</h3>
+
+<p><h3>Types</h3>
 iA supports the following native types: <ul>
-  <li>Int: processor-defined integer with the width of one register.</li>
-  <li>UInt: processor-defined unsigned integer with the width of one register.</li>
-  <li>I1 I2 I4 I8: signed integer of a specific byte-width.</li>
-  <li>U1 U2 U4 U8: unsigned integer of a specific byte-width.</li>
-  <li><span class=code>&amp;Type</span>: pointer to Type. <span class=code>&amp;&amp;Type</span> is a double-pointer, etc.</li>
+  <li>Int: processor-defined integer with the width of one register.
+  
+  <p></li>
+  <li>UInt: processor-defined unsigned integer with the width of one register.
+  
+  <p></li>
+  <li>I1 I2 I4 I8: signed integer of a specific byte-width.
+  
+  <p></li>
+  <li>U1 U2 U4 U8: unsigned integer of a specific byte-width.
+  
+  <p></li>
+  <li><span class=code>&amp;Type</span>: pointer to Type. <span class=code>&amp;&amp;Type</span> is a double-pointer, etc.
+  
+  <p></li>
   <li><span class=code>[Type]</span>: array of Type, which is len and capacity U4 values directly
   followed by the data (the data itself, NOT a pointer). Used for function
-  arguments or when allocating on the heap.</li>
+  arguments or when allocating on the heap.
+  
+  <p></li>
   <li><span class=code>[Type, 16]</span>: array of Type with a declared maximum capacity of 16 (the
   capacity is still stored in a slot though), used for declaring array
-  variables on the local stack.</li>
+  variables on the local stack.
+  
+  <p></li>
   <li>CStr: counted string. A byte length and byte capacity followed by 0-254 bytes
   of binary data and a 0 byte. Commonly used for efficient storage of names and
   many cases where long strings are not necessary.</li>
 </ul>
-<br>
-<div class=info>Note that a conventional Str is just <span class=code>[U1]</span>.</div>
-<br>
-In addition, users can define enums (named integer values) and structs composed
+
+<p><div class=info>Note that a conventional Str is just <span class=code>[U1]</span>.</div>
+
+<p>In addition, users can define enums (named integer values) and structs composed
 of known-size typed fields.
-<br>
-<h2>Lua Metaprogramming</h2>
+
+<p><h2>Lua Metaprogramming</h2>
 iA is implemented as a Lua library and it can be extended by other Lua
 libraries.
-<br>
-<br>
-iA code can be defined in one of two types of files: <ul>
+
+<p>
+<p>iA code can be defined in one of two types of files: <ul>
   <li>If ending in <span class=code>.iA</span> it is 100% iA syntax. It should define
   the modules it requires and use iA syntax to define functions,
-  globals, etc. It can call to Lua code via $macros</li>
+  globals, etc. It can call to Lua code via $macros
+  
+  <p></li>
   <li>If ending in <span class=code>.lua</span> it is a Lua file which can directly compile
   iA code, but also extend the iA compiler with macros or inspect
   previously compiled code to perform other operations (such as converting
   it into a target platforms actual assembly).</li>
 </ul>
-<br>
-Symbols prefixed with # such as #auto are considered "macros". They are defined
+
+<p>Symbols prefixed with # such as #auto are considered "macros". They are defined
 in Lua and are passed a single expression (which can be (inside, parens)). They
 are executed from right -> left, so <span class=code>#mymacro #auto fn myFn()</span> would first
 execute #auto and then execute #mymacro.
-<br>
-<br>
-Macros modify the AST directly, including: adding flags or debugigng info,
+
+<p>
+<p>Macros modify the AST directly, including: adding flags or debugigng info,
 reorganizing nodes, changing operations, re-organizing registers, etc. A
 common use for macros is to inline code.  Macro expansion happens before type
 or corruption checking, but all macros must be valid code.
-<br>
-<h3>iA package API</h3>
+
+<p><h3>iA package API</h3>
 Use <span class=code>local iA = require"iA"</span> to get the iA Lua package. It has the following
 methods and values: <ul>
   <li><span class=code>S: State</span> is the current compilation state. It has builtin symbols and
-  modules (builtin and user-defined) attached to it.</li>
+  modules (builtin and user-defined) attached to it.
+  
+  <p></li>
   <li><span class=code>M: Mod</span> the current module being compiled. This is where new functions and
-  globals are automatically added.</li>
+  globals are automatically added.
+  
+  <p></li>
   <li><span class=code>F: Fn</span> the current function being compiled. This is where locals are defined
-  and compiled statements are written to.</li>
+  and compiled statements are written to.
+  
+  <p></li>
   <li><span class=code>function compile(str) --&gt; Block</span>: compiles the string expression to
   a Block instance, which contains any defined locals and compiled nodes.
   Note that these are NOT added to the <span class=code>F</span> instance (you must call
   <span class=code>F:add(block)</span>).</li>
 </ul>
-<br>
-It also has the following types: <ul>
+
+<p>It also has the following types: <ul>
   <li><b>Var</b> encapsulates a variable (register, local, etc).</li>
   <li><b>Expr1</b> encapsulates a single-assignment expression.</li>
   <li><b>Multi</b> encapsulates a multi-assignment function call expression.</li>
@@ -218,8 +244,8 @@ It also has the following types: <ul>
   <li><b>Mod</b> encapsulates a module.</li>
   <li><b>State</b> encapsulates the total compilation state.</li>
 </ul>
-<br>
-<h3>Building</h3>
+
+<p><h3>Building</h3>
 When building your iA project, you typically specify the dependencies you
 need, which will include both Lua and iA dependencies. On the Lua side,
 the architecture is roughly thus: <ul>
@@ -230,16 +256,16 @@ the architecture is roughly thus: <ul>
   <li>In iA when you want to use iA code from a package you simply do
   <span class=code>require"somePkg"</span>, which will automatically call <span class=code>:iA()</span> as well.</li>
 </ul>
-<br>
-Basically, iA is built by calling the top-most <span class=code>pkg:iA()</span>, which recursively
+
+<p>Basically, iA is built by calling the top-most <span class=code>pkg:iA()</span>, which recursively
 calls the rest. This is handed to the build-script, which converts the
 intermediate assembly to actual machine bytecode and packages it into a binary
 depending on the configuration.
-<br>
-<h2>Code</h2>
+
+<p><h2>Code</h2>
 Overview of writing iA code.
-<br>
-<h3>Operations</h3>
+
+<p><h3>Operations</h3>
 iA supports the following builtin assignment operations which
 modify only val. All names are expr1. <ul>
   <li><span class=code>val = v</span> direct assignment</li>
@@ -253,11 +279,11 @@ modify only val. All names are expr1. <ul>
   <li><span class=code>val &gt;&gt;= shr</span> shift right</li>
   <li>... to be continued</li>
 </ul>
-<br>
-<div class=info>See also iA-reg-common for the integer multiply and division
+
+<p><div class=info>See also iA-reg-common for the integer multiply and division
 operations.</div>
-<br>
-iA supports the following compare operations, which evaluate
+
+<p>iA supports the following compare operations, which evaluate
 two expressions as a boolean, which can be assigned to
 a register or used for control flow: <ul>
   <li><span class=code>a == b</span> equal.</li>
@@ -266,10 +292,10 @@ a register or used for control flow: <ul>
   <li><span class=code>a &gt; b</span>, <span class=code>a &gt;= b</span> greater than, greater than equal.</li>
   <li><span class=code>not a</span> <span class=code>a or b</span> <span class=code>a and b</span>: logical operations</li>
 </ul>
-<br>
-<h3>Control Flow</h3>
-<br>
-These are used in control flow structures. For each, the last statement is
+
+<p><h3>Control Flow</h3>
+
+<p>These are used in control flow structures. For each, the last statement is
 evaluated for a non-zero value to determine when to jump.
 <div class=code-block><br>
 ::my_location:: \ define a location<br>
@@ -313,76 +339,86 @@ else<br>
 &nbsp; ...<br>
 end
 </div>
-<br>
-<h2><a id="Register_Common_Practice" href="#Register_Common_Practice" class=anchor>Register Common Practice</h2></a>
+
+<p><h2><a id="Register_Common_Practice" href="#Register_Common_Practice" class=anchor>Register Common Practice</h2></a>
 Below are the registers and their common usage. Note that although iA allows
 specifying any register as corruptable or saved; sticking to the below
 conventions for your public API will help most code behave faster and more
 cleanly.
-<br>
-<br>
-<b>Input/output corruptable registers</b> A B C D. By convention these
+
+<p>
+<p><b>Input/output corruptable registers</b> A B C D. By convention these
 registers are used for both inputs and outputs of functions,
 and will therefore be corrupted.
-<br>
-<br>
-A B D: inputs should use these registers, in this order, then non-corruptable
+
+<p>
+<p>A B D: inputs should use these registers, in this order, then non-corruptable
 registers or local values.
-<br>
-<br>
-Outputs should use C A B D (in that order). These are the only registers that
+
+<p>
+<p>Outputs should use C A B D (in that order). These are the only registers that
 can be function outputs (unless the platform is constrained), additional
 outputs must be represented as mutable pointer inputs.
-<br>
-<br>
-Additionally, these registers should be chosen to work with the following: <ul>
+
+<p>
+<p>Additionally, these registers should be chosen to work with the following: <ul>
   <li><span class=code>A low: int, D high: int = mul($A a: int, V b: int)</span> defines
-  cross-platform multiplication.</li>
+  cross-platform multiplication.
+  
+  <p></li>
   <li><span class=code>A quot: int, D rem: int = div($D high: int, $A low: int, V div: int)</span>
-  defines cross-platform division.</li>
+  defines cross-platform division.
+  
+  <p></li>
   <li><span class=code>A</span> should be the "accumulator" register, or the most common result of
-  arithmetic operations.</li>
+  arithmetic operations.
+  
+  <p></li>
   <li><span class=code>C</span> should be the "count" register capable of jumping based on its
   value (i.e. JRCXZ in x86-64).  Many programs return a value in C where zero
   represents something special (i.e. null, ok, etc), so having it be the most
-  common output reduces cmp instructions.</li>
+  common output reduces cmp instructions.
+  
+  <p></li>
   <li><span class=code>S</span> and <span class=code>T</span> should be used for memory instrutions like memcpy. Note that T
   is "to" (aka destination) and S is "source".</li>
 </ul>
 <div class=info>Note: On some supported architectures like the Z80 there are only 4 general
 purpose registers, so the rest of these will be converted to V</div>
-<br>
-E F G H: corruptable registers, commonly used as additional function
+
+<p>E F G H: corruptable registers, commonly used as additional function
 inputs after A B D.
-<br>
-<br>
-I J K L M N O P: non-corruptable registers for general use. I J K are
+
+<p>
+<p>I J K L M N O P: non-corruptable registers for general use. I J K are
 very common for loop registers.
-<br>
-<br>
-Q R S T: corruptable registers, typically used for temporary values.
-<br>
-<br>
-<b>Other registers</b>: the following are special registers and cannot be assigned
+
+<p>
+<p>Q R S T: corruptable registers, typically used for temporary values.
+
+<p>
+<p><b>Other registers</b>: the following are special registers and cannot be assigned
 to a variable name. However, they can be accessed directly.
 <ul>
   <li>sp: holds the "top" of the stack (at low memory). Local variables are
   referenced by offseting from this value and the return address is stored
   above them in memory. You should not typically reference or modify this
   register. If you do modify it, local values are not permitted in the
-  function.</li>
+  function.
+  
+  <p></li>
   <li>fs: the floating point stack, used for floating point operations. Typically
   you should call the relevant function-like macros instead of using this
   directly.</li>
 </ul>
-<br>
-<h3><a id="iA" href="#iA" class=anchor>Mod iA</h3></a>
+
+<p><h3><a id="iA" href="#iA" class=anchor>Mod iA</h3></a>
 intermediate Assembly
-<br>
-<br>
-<b>Types: </b><a href="#iA.mod">mod</a> <a href="#iA.core">core</a> <a href="#iA.array">array</a> <a href="#iA.Ty">Ty</a> <a href="#iA.Var">Var</a> <a href="#iA.Literal">Literal</a> <a href="#iA.Expr1">Expr1</a> <a href="#iA.Assign">Assign</a> <a href="#iA.Cmp">Cmp</a> <a href="#iA.CondBlock">CondBlock</a> <a href="#iA.If">If</a> <a href="#iA.Loc">Loc</a> <a href="#iA.Goto">Goto</a> <a href="#iA.Switch">Switch</a> <a href="#iA.While">While</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#iA.mod">mod</a> <a href="#iA.core">core</a> <a href="#iA.array">array</a> <a href="#iA.Ty">Ty</a> <a href="#iA.Var">Var</a> <a href="#iA.Literal">Literal</a> <a href="#iA.Expr1">Expr1</a> <a href="#iA.Assign">Assign</a> <a href="#iA.Cmp">Cmp</a> <a href="#iA.CondBlock">CondBlock</a> <a href="#iA.If">If</a> <a href="#iA.Loc">Loc</a> <a href="#iA.Goto">Goto</a> <a href="#iA.Switch">Switch</a> <a href="#iA.While">While</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="iA.struct" href="#iA.struct" class=anchor><b>fn struct</b></a><span class=code>(t)</span><br>
   
   Create a new struct type</li>
@@ -390,54 +426,54 @@ intermediate Assembly
   
   Create a Literal</li>
 </ul>
-<br>
-<h3><a id="iA.mod" href="#iA.mod" class=anchor>Mod iA.mod</h3></a>
+
+<p><h3><a id="iA.mod" href="#iA.mod" class=anchor>Mod iA.mod</h3></a>
 iA submodule containing all modules
-<br>
-(both user-defined and native).
-<br>
-<br>
-<br>
-Modules contain their own types.
-<br>
-<br>
-<b>Types: </b><a href="#iA.mod.array">array</a> <a href="#iA.mod.core">core</a> 
-<br>
-<br>
-<h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
+
+<p>(both user-defined and native).
+
+<p>
+<p>
+<p>Modules contain their own types.
+
+<p>
+<p><b>Types: </b><a href="#iA.mod.array">array</a> <a href="#iA.mod.core">core</a> 
+
+<p>
+<p><h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
 iA array module, containing all array types used in code.
-<br>
-Get or fetch an array type by calling it with the inner type.
-<br>
-<br>
-<h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
+
+<p>Get or fetch an array type by calling it with the inner type.
+
+<p>
+<p><h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
 iA default core module, containing core types and functions.
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="iA.core.enum" href="#iA.core.enum" class=anchor><b>fn enum</b></a><span class=code>(t)</span><br>
   
   Create a new enum type</li>
 </ul>
-<br>
-<h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
+
+<p><h3><a id="iA.core" href="#iA.core" class=anchor>Mod iA.core</h3></a>
 iA default core module, containing core types and functions.
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="iA.core.enum" href="#iA.core.enum" class=anchor><b>fn enum</b></a><span class=code>(t)</span><br>
   
   Create a new enum type</li>
 </ul>
-<br>
-<h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
+
+<p><h3><a id="iA.array" href="#iA.array" class=anchor>Mod iA.array</h3></a>
 iA array module, containing all array types used in code.
-<br>
-Get or fetch an array type by calling it with the inner type.
-<br>
-<br>
-<h4><a id="iA.Ty" href="#iA.Ty" class=anchor>Record Ty</h4></a>
+
+<p>Get or fetch an array type by calling it with the inner type.
+
+<p>
+<p><h4><a id="iA.Ty" href="#iA.Ty" class=anchor>Record Ty</h4></a>
 iA Type, either user-defined (i.e. struct, enum) or native.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Ty.mod" href="#iA.Ty.mod" class=anchor><b>mod</b></a>
   the module the type is defined in.</li>
   <li><a id="iA.Ty.name" href="#iA.Ty.name" class=anchor><b>name</b></a>
@@ -451,11 +487,11 @@ iA Type, either user-defined (i.e. struct, enum) or native.
   <li><a id="iA.Ty.field" href="#iA.Ty.field" class=anchor><b>field</b></a>
   STRUCT/ENUM only, map of name -> idx.</li>
 </ul>
-<br>
-<h4><a id="iA.Var" href="#iA.Var" class=anchor>Record Var</h4></a>
+
+<p><h4><a id="iA.Var" href="#iA.Var" class=anchor>Record Var</h4></a>
 Named register or memory location and its type.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Var.imm" href="#iA.Var.imm" class=anchor><b>imm</b></a>
   whether this is immutable</li>
   <li><a id="iA.Var.reg" href="#iA.Var.reg" class=anchor><b>reg</b></a>
@@ -470,113 +506,114 @@ Named register or memory location and its type.
   <li><a id="iA.Var.cap" href="#iA.Var.cap" class=anchor><b>cap</b></a>
   the max capacity of a non-ref array type, or nil</li>
 </ul>
-<br>
-<h4><a id="iA.Literal" href="#iA.Literal" class=anchor>Record Literal</h4></a>
+
+<p><h4><a id="iA.Literal" href="#iA.Literal" class=anchor>Record Literal</h4></a>
 A literal value.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Literal.ty" href="#iA.Literal.ty" class=anchor><b>ty</b></a></li>
 </ul>
-<br>
-<h4><a id="iA.Expr1" href="#iA.Expr1" class=anchor>Record Expr1</h4></a>
+
+<p><h4><a id="iA.Expr1" href="#iA.Expr1" class=anchor>Record Expr1</h4></a>
 An expression which returns a single value or register. The number
 of items in the list will depend on the kind: <ul>
   <li>VAL: will contain one item, the Var or Literal.</li>
   <li>EQ1: will contain two items on both sides of equal and an op.</li>
   <li>FN1: will contain the function arguments and fn.</li>
 </ul>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Expr1.kind" href="#iA.Expr1.kind" class=anchor><b>kind</b></a></li>
   <li><a id="iA.Expr1.op" href="#iA.Expr1.op" class=anchor><b>op</b></a>
   the operation being performed for EQ1</li>
   <li><a id="iA.Expr1.fn" href="#iA.Expr1.fn" class=anchor><b>fn</b></a>
   the function being called</li>
 </ul>
-<br>
-<h4><a id="iA.Assign" href="#iA.Assign" class=anchor>Record Assign</h4></a>
+
+<p><h4><a id="iA.Assign" href="#iA.Assign" class=anchor>Record Assign</h4></a>
 Multi assignment statement.
 <span class=code>a, b, c = myfn()</span> where: <ul>
   <li><span class=code>to</span> is the right side of the fn.</li>
   <li>values are stored in assign list.</li>
 </ul>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Assign.eq" href="#iA.Assign.eq" class=anchor><b>eq</b></a>
   expr1</li>
 </ul>
-<br>
-<h4><a id="iA.Cmp" href="#iA.Cmp" class=anchor>Record Cmp</h4></a>
+
+<p><h4><a id="iA.Cmp" href="#iA.Cmp" class=anchor>Record Cmp</h4></a>
 Cmp operation between left and right
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Cmp.op" href="#iA.Cmp.op" class=anchor><b>op</b></a></li>
   <li><a id="iA.Cmp.l" href="#iA.Cmp.l" class=anchor><b>l</b></a>
   left expr</li>
   <li><a id="iA.Cmp.r" href="#iA.Cmp.r" class=anchor><b>r</b></a>
   right expr</li>
 </ul>
-<br>
-<h4><a id="iA.CondBlock" href="#iA.CondBlock" class=anchor>Record CondBlock</h4></a>
+
+<p><h4><a id="iA.CondBlock" href="#iA.CondBlock" class=anchor>Record CondBlock</h4></a>
 A block of statements gated by a condition,
 used in If and Loop.
-<br>
-Note: a normal block is just a list (no type)
-<br>
-<b>Fields:</b><ul>
+
+<p>Note: a normal block is just a list (no type)
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.CondBlock.cond" href="#iA.CondBlock.cond" class=anchor><b>cond</b></a>
   the final must be cmp</li>
 </ul>
-<br>
-<h4><a id="iA.If" href="#iA.If" class=anchor>Record If</h4></a>
+
+<p><h4><a id="iA.If" href="#iA.If" class=anchor>Record If</h4></a>
 if-elif-else statement (not if-goto)
 The list is a series of CondBlocks with an optional
 else block.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.If.else_" href="#iA.If.else_" class=anchor><b>else_</b></a></li>
 </ul>
-<br>
-<h4><a id="iA.Loc" href="#iA.Loc" class=anchor>Record Loc</h4></a>
+
+<p><h4><a id="iA.Loc" href="#iA.Loc" class=anchor>Record Loc</h4></a>
 A local #loc location statement.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Loc.name" href="#iA.Loc.name" class=anchor><b>name</b></a></li>
 </ul>
-<br>
-<h4><a id="iA.Goto" href="#iA.Goto" class=anchor>Record Goto</h4></a>
+
+<p><h4><a id="iA.Goto" href="#iA.Goto" class=anchor>Record Goto</h4></a>
 <span class=code>if cond goto to</span>
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Goto.to" href="#iA.Goto.to" class=anchor><b>to</b></a></li>
 </ul>
-<br>
-<h4><a id="iA.Switch" href="#iA.Switch" class=anchor>Record Switch</h4></a>
+
+<p><h4><a id="iA.Switch" href="#iA.Switch" class=anchor>Record Switch</h4></a>
 <span class=code>switch of do case 0 do ... default ... end</span>
 Type is <span class=code>&nbsp;map[int, list[stmt]] </span>
 0 - highest MUST be filled out.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.Switch.of" href="#iA.Switch.of" class=anchor><b>of</b></a>
   last expr1 is jmp</li>
   <li><a id="iA.Switch.default" href="#iA.Switch.default" class=anchor><b>default</b></a></li>
 </ul>
-<br>
-<h4><a id="iA.While" href="#iA.While" class=anchor>Record While</h4></a>
+
+<p><h4><a id="iA.While" href="#iA.While" class=anchor>Record While</h4></a>
 <span class=code>while cond [atend] do block end</span>
 The block is stored in the While list.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="iA.While.cond" href="#iA.While.cond" class=anchor><b>cond</b></a></li>
   <li><a id="iA.While.atend" href="#iA.While.atend" class=anchor><b>atend</b></a></li>
 </ul>
-<br>
-<h3><a id="iA.parse" href="#iA.parse" class=anchor>Mod iA.parse</h3></a>
+
+<p><h3><a id="iA.parse" href="#iA.parse" class=anchor>Mod iA.parse</h3></a>
 parse intermediate assembly
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="iA.parse.toIa" href="#iA.parse.toIa" class=anchor><b>fn toIa</b></a><span class=code>(tok)</span></li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

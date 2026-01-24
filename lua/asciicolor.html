@@ -19,20 +19,20 @@ asciicolor is a library and protocol which encodes text color in terminals and
 (in future) elsewhere using only a single ascii character: i.e. <span class=code>b</span> for black,
 <span class=code>w</span> for white and <span class=code>n</span> for navy blue, etc. Capitalizing the character encodes
 a style (bold for foreground, underlined for background).
-<br>
-<br>
-<a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a> enables <a href="fmt.html">fmt.html</a> to function ergonomically you
+
+<p>
+<p><a href="#asciicolor.style.Styler">#asciicolor.style.Styler</a> enables <a href="fmt.html">fmt.html</a> to function ergonomically you
 can color text by simply writing <span class=code>io.fmt:styled('error', 'some error message')</span>
 and it will automatically load the user's configuration (see <a href="shim.html">shim.html</a> for
 details on how).
-<br>
-<h2><a id="Codes" href="#Codes" class=anchor>Codes</h2></a>
+
+<p><h2><a id="Codes" href="#Codes" class=anchor>Codes</h2></a>
 The codes are as follows and are specified as two characters (foreground +
 background), captial means bold/underline. Additionally, <span class=code>'z'</span> <span class=code>' '</span> <span class=code>''</span>
 all mean "zero", aka the default code. <span class=code>z</span> can be capitalized to mean default
 with bold/underline.
-<br>
-<a id="codes" href="#codes" class=anchor><b>Codes</b></a>: <div class=table><table>
+
+<p><a id="codes" href="#codes" class=anchor><b>Codes</b></a>: <div class=table><table>
   <tr>
     <th>dark</th>
     <th>light</th>
@@ -75,13 +75,13 @@ Examples:<ul>
   <li><span class=code>Rc</span> foreground bold-red, background cyan</li>
   <li><span class=code>yP</span> foreground yellow, background underlined-pink.</li>
 </ul>
-<br>
-<h2><a id="Styles" href="#Styles" class=anchor>Styles</h2></a>
+
+<p><h2><a id="Styles" href="#Styles" class=anchor>Styles</h2></a>
 The following are the builtin styles and their descriptions, which
 are intended for a "darkmode" black-background terminal. These can
 be overriden by (TODO: allow override again).
-<br>
-<a id="codes" href="#codes" class=anchor><b>Codes</b></a>: <div class=table><table>
+
+<p><a id="codes" href="#codes" class=anchor><b>Codes</b></a>: <div class=table><table>
   <tr>
     <th><b>Name</b></th>
     <th><b>Description</b></th>
@@ -89,8 +89,8 @@ be overriden by (TODO: allow override again).
   <tr>
     <td>bg</td>
     <td>special: defines the default background color.
-    <br>
-    </td>
+    
+    <p></td>
   </tr>
   <tr>
     <th></th>
@@ -155,8 +155,8 @@ be overriden by (TODO: allow override again).
   <tr>
     <td>ref</td>
     <td>Denote a reference (i.e. to code, docs, etc)
-    <br>
-    </td>
+    
+    <p></td>
   </tr>
   <tr>
     <th></th>
@@ -181,8 +181,8 @@ be overriden by (TODO: allow override again).
   <tr>
     <td>h1, h2, h3, h4</td>
     <td>headers
-    <br>
-    </td>
+    
+    <p></td>
   </tr>
   <tr>
     <th></th>
@@ -253,12 +253,12 @@ be overriden by (TODO: allow override again).
     <td>object.method called: <span class=code>obj.foo()</span>, <span class=code>obj:foo()</span> }</td>
   </tr>
 </table></div>
-<br>
-<h3><a id="asciicolor" href="#asciicolor" class=anchor>Mod asciicolor</h3></a>
-<br>
-<b>Types: </b><a href="#asciicolor.Ascii">Ascii</a> <a href="#asciicolor.Styler">Styler</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p><h3><a id="asciicolor" href="#asciicolor" class=anchor>Mod asciicolor</h3></a>
+
+<p><b>Types: </b><a href="#asciicolor.Ascii">Ascii</a> <a href="#asciicolor.Styler">Styler</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="asciicolor.assertcode" href="#asciicolor.assertcode" class=anchor><b>fn assertcode</b></a><span class=code>(ac) -&gt; single leter (or error)</span></li>
   <li><a id="asciicolor.mode" href="#asciicolor.mode" class=anchor><b>fn mode</b></a><span class=code>() -&gt; G.CLIMODE or os.getenv'CLIMODE'</span></li>
   <li><a id="asciicolor.stylePath" href="#asciicolor.stylePath" class=anchor><b>fn stylePath</b></a><span class=code>() -&gt; pth.concat{pth.home(), CONFIG_PATH}</span></li>
@@ -267,18 +267,18 @@ be overriden by (TODO: allow override again).
   
   Setup standard formatters (io.fmt and io.user).</li>
 </ul>
-<br>
-<h3><a id="Ascii" href="#Ascii" class=anchor>Mod Ascii</h3></a>
+
+<p><h3><a id="Ascii" href="#Ascii" class=anchor>Mod Ascii</h3></a>
 typosafe mapping of fullname -> asciichar
-<br>
-<br>
-<h4><a id="asciicolor.Styler" href="#asciicolor.Styler" class=anchor>Record Styler</h4></a>
+
+<p>
+<p><h4><a id="asciicolor.Styler" href="#asciicolor.Styler" class=anchor>Record Styler</h4></a>
 Create a styler
-<br>
-Note: pass f (file) to create the default AcWriter with the file.
+
+<p>Note: pass f (file) to create the default AcWriter with the file.
 Note: pass mode, stylepath to control loadStyle
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="asciicolor.Styler.acwriter" href="#asciicolor.Styler.acwriter" class=anchor><b>acwriter</b></a></li>
   <li><a id="asciicolor.Styler.style" href="#asciicolor.Styler.style" class=anchor><b>style</b></a> <span class=code>=asciicolor.dark</span>
   default=loadStyle() in Fmt</li>
@@ -296,6 +296,7 @@ Note: pass mode, stylepath to control loadStyle
   
   write as plain</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

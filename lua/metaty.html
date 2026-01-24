@@ -17,14 +17,14 @@
 <h1>metaty: typosafe types using Lua metatables</h1>
 Metatype is a library and specification for creating performant, documented,
 and typo-safe Lua record-types which can be formatted.
-<br>
-<div class=info> Turn off typo checking by setting the global <span class=code>LUA_OPT=3</span> or higher.</div>
-<br>
-<h2><a id="record" href="#record" class=anchor>Mod and Record</h2></a>
+
+<p><div class=info> Turn off typo checking by setting the global <span class=code>LUA_OPT=3</span> or higher.</div>
+
+<p><h2><a id="record" href="#record" class=anchor>Mod and Record</h2></a>
 Below is a simple example using <span class=code>metaty.mod</span> to create a module and calling
 metatype directly to create a record (the same as <span class=code>metaty.record</span>).
-<br>
-<div class=code-block>local mty = require'metaty'<br>
+
+<p><div class=code-block>local mty = require'metaty'<br>
 <br>
 --- module documentation<br>
 local M = mty.mod'myMod'<br>
@@ -39,19 +39,19 @@ M.Pos = mty'Pos' {<br>
 local p1 = Pos{x=4}<br>
 local p1 = Pos{x=4, y=3, z=5} -- ERROR: does not have field z
 </div>
-<br>
-<h2><a id="enum" href="#enum" class=anchor>Enum Type</h2></a>
+
+<p><h2><a id="enum" href="#enum" class=anchor>Enum Type</h2></a>
 Metaty also supports creating typosafe enum types with
 <span class=code>metaty.enum</span>. An enum is typosafe both when creating the variant
 (i.e. <span class=code>v = MyEnum.VARIANT</span>) and when matching using the <span class=code>matcher</span> method
 below. It also allows using checked enums in <a href="pod.html">pod.html</a>.
-<br>
-One of the main benefits of using an enum is to ensure that when you are
+
+<p>One of the main benefits of using an enum is to ensure that when you are
 matching you don't make a typo mistake (i.e. WOKER instead of WORKER). In
 lua there is no native <span class=code>switch</span> statement (or similar), but table lookup
 on functions can be equally as good -- see the example below.
-<br>
-<div class=code-block>M.Job = enum'Job' {<br>
+
+<p><div class=code-block>M.Job = enum'Job' {<br>
 &nbsp; OWNER &nbsp; = 1,<br>
 &nbsp; MANAGER = 2,<br>
 &nbsp; COOK &nbsp; &nbsp;= 3,<br>
@@ -86,8 +86,8 @@ local doJob = M.Job:matcher {<br>
 -- call in your own function like:<br>
 doJob[job](my, args)
 </div>
-<br>
-<h2><a id="Record_Equivalent" href="#Record_Equivalent" class=anchor>Record Equivalent</h2></a>
+
+<p><h2><a id="Record_Equivalent" href="#Record_Equivalent" class=anchor>Record Equivalent</h2></a>
 The example in <a href="#record">#record</a> expands to the following. Note that the "typosafe"
 elements are removed when <span class=code>LUA_OPT &gt; 3</span>.
 <div class=code-block>local M = {}<br>
@@ -113,8 +113,8 @@ PKG_LOCS[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp; = 'path/to/file.lua:123'<br>
 PKG_NAMES[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp;= 'mymod.Pos'<br>
 PKG_LOOKUP['myMod.Pos'] = M.Pos
 </div>
-<br>
-<h3><a id="metaty-API" href="#metaty-API" class=anchor>API</h3></a> <ul>
+
+<p><h3><a id="metaty-API" href="#metaty-API" class=anchor>API</h3></a> <ul>
   <li><span class=code>ty(v)</span> return the metaty of <span class=code>v</span>. For tables this is <span class=code>getmetatable(v)</span>,
   else it is <span class=code>type(v)</span>.</li>
   <li><span class=code>metaty'name' {'field1[type] documentation', 'field2[type]'}</span>
@@ -123,29 +123,29 @@ PKG_LOOKUP['myMod.Pos'] = M.Pos
     of the type or <span class=code>{string: type}</span> for a map of the type.</li>
     <li><span class=code>@&lt;decimal&gt;</span> (i.e. <span class=code>@2</span>) can be put after the type to specify the
     decimal value to use for the field when de/serializing.
-    <br>
-    It is recommended that once you assign a field to a decimal value to
+    
+    <p>It is recommended that once you assign a field to a decimal value to
     never change it if there is any chance it is stored or being used
     by an RPC service/etc with the previous version.</li>
   </ul></li>
 </ul>
-<br>
-<h2><a id="metaty-why" href="#metaty-why" class=anchor>Why?</h2></a>
-<br>
-Lua is a fast and fun language. However it often lacks the ability to express
+
+<p><h2><a id="metaty-why" href="#metaty-why" class=anchor>Why?</h2></a>
+
+<p>Lua is a fast and fun language. However it often lacks the ability to express
 intent when it comes to the structure of data. Also, not only is it not
 type-safe but it is also TYPO-unsafe -- small mistakes in the name of a field
 can easily result in hard to diagnose bugs, even when they occur in one's
 unit-test suite.
-<br>
-Checking for typos incurrs a small performance cost, so it is disabled by
+
+<p>Checking for typos incurrs a small performance cost, so it is disabled by
 default. However, it is well-worth the cost in your unit tests.
-<br>
-<h2><a id="metaty-spec" href="#metaty-spec" class=anchor>Spec</h2></a>
+
+<p><h2><a id="metaty-spec" href="#metaty-spec" class=anchor>Spec</h2></a>
 For a type to be considered a "metaty" the only requirement is that it has a
 metatable set and that metatable has a <span class=code>__name</span> field.
-<br>
-The following fields can optionally be set on the metatable: <ul>
+
+<p>The following fields can optionally be set on the metatable: <ul>
   <li><span class=code>__fmt</span>: used with <a href="#Package_fmt">#Package_fmt</a></li>
   <li><span class=code>__fields</span>: should contain a table of <span class=code>fieldName -&gt; fieldtype</span>.
   <span class=code>fieldType</span> can be an arbitrary string and is only for documentation, though
@@ -159,19 +159,19 @@ The following fields can optionally be set on the metatable: <ul>
   <li><span class=code>__fieldIds</span>: set using the <span class=code>@&lt;decimal&gt;</span> syntax after the type, used
   for de/serializing.</li>
 </ul>
-<br>
-In addition, there is runtime type specification defined below.
-<br>
-<h2><a id="metaty-typoe-check" href="#metaty-typoe-check" class=anchor>Runtime typo checking (optional)</h2></a>
+
+<p>In addition, there is runtime type specification defined below.
+
+<p><h2><a id="metaty-typoe-check" href="#metaty-typoe-check" class=anchor>Runtime typo checking (optional)</h2></a>
 <div class=info>Note: Runtime typo checking has a cost and can be disabled with
 LUA_OPT=3 or higher.</div>
-<br>
-You can override the typo-checking behavior of a single type with <div class=code-block>getmetatable(MyType).__call &nbsp;= myConstructor<br>
+
+<p>You can override the typo-checking behavior of a single type with <div class=code-block>getmetatable(MyType).__call &nbsp;= myConstructor<br>
 getmetatable(MyType).__index = myIndex<br>
 MyType.__newindex &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;= myNewIndex
 </div>
-<br>
-<h2><a id="lua_opt" href="#lua_opt" class=anchor>LUA_OPT</h2></a>
+
+<p><h2><a id="lua_opt" href="#lua_opt" class=anchor>LUA_OPT</h2></a>
 <span class=code>LUA_OPT</span> is an integer from 0-3 which is intended to have the following
 semantic meanings: <ul>
   <li><span class=code>4</span>: may be used for more optimization of certain library functions with
@@ -182,12 +182,12 @@ semantic meanings: <ul>
   <li><span class=code>0</span>: no optimizations, turn on anything. May be used as a debug mode or
   similar.</li>
 </ul>
-<br>
-<br>
-<h3><a id="metaty" href="#metaty" class=anchor>Mod metaty</h3></a>
+
+<p>
+<p><h3><a id="metaty" href="#metaty" class=anchor>Mod metaty</h3></a>
 metaty: simple but effective Lua type system using metatable
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="metaty.isMod" href="#metaty.isMod" class=anchor><b>fn isMod</b></a><span class=code>(t) -&gt; boolean</span><br>
   
   Return whether the value is a module.</li>
@@ -334,6 +334,7 @@ end
   
   Create an enum type. See module documentation.</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

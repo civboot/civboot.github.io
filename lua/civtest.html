@@ -15,24 +15,24 @@
 <html>
 <body><div class=doc>
 Civtest: absurdly simple test library
-<br>
-This is a no-frills test library. It simply builds on <a href="lib/metaty">lib/metaty</a> and
+
+<p>This is a no-frills test library. It simply builds on <a href="lib/metaty">lib/metaty</a> and
 <a href="lib/ds">lib/ds</a> to provide the simplest possible needs for testing. Your tests
 are just a lua file which something (i.e. <a href="civ.html">civ.html</a>) executes. This library
 provides helpers to print helpful headers for each test and provide
 superior assertions.
-<br>
-<a id="Usage" href="#Usage" class=anchor><b>Usage</b></a>: <div class=code-block>local T = require'civtest'<br>
+
+<p><a id="Usage" href="#Usage" class=anchor><b>Usage</b></a>: <div class=code-block>local T = require'civtest'<br>
 <br>
 T'my test name' do<br>
 &nbsp; T.eq('some expected\ntext', 'some actual\ntext')<br>
 end
 </div>
-<br>
-<h3><a id="civtest" href="#civtest" class=anchor>Mod civtest</h3></a>
+
+<p><h3><a id="civtest" href="#civtest" class=anchor>Mod civtest</h3></a>
 module for writing simple tests
-<br>
-<b>Functions</b> <ul>
+
+<p><b>Functions</b> <ul>
   <li><a id="civtest.runTest" href="#civtest.runTest" class=anchor><b>fn runTest</b></a><span class=code>(name, fn, path)</span><br>
   
   <div class=info>Note: you probably want to do <span class=code>T'name'</span> instead.
@@ -79,6 +79,7 @@ module for writing simple tests
   <li>string: asserts the file contents match.</li>
   <li>table: recursively assert the subtree contents exist.</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>

@@ -18,15 +18,15 @@
 The fmt module is a small module which formats arbitrary lua types as well as
 enables users to define formatting for their own <a href="metaty.html">metatypes</a> via
 the <span class=code>:__fmt(fmter)</span> method.
-<br>
-<br>
-It also provides several helper methods such as <span class=code>print</span>, <span class=code>assertf</span> and
+
+<p>
+<p>It also provides several helper methods such as <span class=code>print</span>, <span class=code>assertf</span> and
 <span class=code>errorf</span>, making it more convienent to print or format types. In addition, it
 sets <span class=code>io.fmt = io.fmt or Fmt{to=io.stderr}</span>, providing a default hook for
 <a href="ds.html#ds.log">ds.html#ds.log</a> and command line utilities to write formatted text to.
-<br>
-<br>
-The <a href="#fmt.Fmt">#fmt.Fmt</a> interface (which is passed to a metaty's <span class=code>__fmt</span> method if
+
+<p>
+<p>The <a href="#fmt.Fmt">#fmt.Fmt</a> interface (which is passed to a metaty's <span class=code>__fmt</span> method if
 present) accepts both <span class=code>:write(...)</span> (like a file) and
 <span class=code>:styled("style", "styled text", ..."non-styled text")</span>, enabling the
 <a href="asciicolor.html">asciicolor</a> library (or your own library!) to provide
@@ -34,14 +34,14 @@ user-configurable colors for specific styles which integrate with the
 <a href="vt100.html">vt100</a> library and the <a href="cxt.html">cxt</a> libraries. This is used
 throughout civstack to provide user-configurable (and optional) color
 to the terminal, web-pages and the <a href="ele.html">ele</a> editor.
-<br>
-<h3><a id="fmt" href="#fmt" class=anchor>Mod fmt</h3></a>
+
+<p><h3><a id="fmt" href="#fmt" class=anchor>Mod fmt</h3></a>
 format module: format any type into a readable string
-<br>
-<br>
-<b>Types: </b><a href="#fmt.Fmt">Fmt</a> 
-<br>
-<b>Functions</b> <ul>
+
+<p>
+<p><b>Types: </b><a href="#fmt.Fmt">Fmt</a> 
+
+<p><b>Functions</b> <ul>
   <li><a id="fmt.cmpDuck" href="#fmt.cmpDuck" class=anchor><b>fn cmpDuck</b></a><span class=code>(a, b)</span><br>
   
   Compares two values of any type.
@@ -80,16 +80,16 @@ format module: format any type into a readable string
   
   Set to __fmt to format a type like a table.</li>
 </ul>
-<br>
-<h4><a id="fmt.Fmt" href="#fmt.Fmt" class=anchor>Record Fmt</h4></a>
+
+<p><h4><a id="fmt.Fmt" href="#fmt.Fmt" class=anchor>Record Fmt</h4></a>
 The formatter object.
-<br>
-This is the main API of this module. It enables formatting any
+
+<p>This is the main API of this module. It enables formatting any
 type by simply calling it's instance, writing the result to
 <span class=code>to</span> (if set) or just the fmter itself. For the latter, you can construct
 the string with <span class=code>fmter:tostring()</span> or just <span class=code>table.concat(fmter)</span>.
-<br>
-<b>Fields:</b><ul>
+
+<p><b>Fields:</b><ul>
   <li><a id="fmt.Fmt.style" href="#fmt.Fmt.style" class=anchor><b>style</b></a>
   enable styling. If true, set <span class=code>to=Styler</span></li>
   <li><a id="fmt.Fmt.to" href="#fmt.Fmt.to" class=anchor><b>to</b></a>
@@ -188,11 +188,11 @@ the string with <span class=code>fmter:tostring()</span> or just <span class=cod
   
   Error if <span class=code>to</span> is set.</li>
 </ul>
-<br>
-<h4><a id="fmt.binary" href="#fmt.binary" class=anchor>Command fmt.binary</h4></a>
+
+<p><h4><a id="fmt.binary" href="#fmt.binary" class=anchor>Command fmt.binary</h4></a>
 Library to format binary text.
-<br>
-Cmd usage: <span class=code>seebin path/to/file.bin</span>
+
+<p>Cmd usage: <span class=code>seebin path/to/file.bin</span>
 <b>Arguments:</b><ul>
   <li><a id="fmt.binary.width" href="#fmt.binary.width" class=anchor><b>width</b></a> <span class=code>=16</span>
   column width in bytes</li>
@@ -211,6 +211,7 @@ Cmd usage: <span class=code>seebin path/to/file.bin</span>
   
   Simple API to get the concatenated arguments as binary.</li>
 </ul>
-<br>
+
+<p>
 </div></body>
 </html>
