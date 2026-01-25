@@ -105,9 +105,9 @@ civix: unix-like OS utilities.
   walk the paths up to depth, calling <span class=code>ftypeFns[ftype]</span> for
   each item encountered.
   
-  If depth is nil/false then the depth is infinite.
+  <p>If depth is nil/false then the depth is infinite.
   
-  ftypeFns must be a table of ftypes (file, dir) and: <ul>
+  <p>ftypeFns must be a table of ftypes (file, dir) and: <ul>
     <li>default: called as fallback (if missing ftype key)</li>
     <li>error: called if determining the type caused an error,
     typically due to the file not existing.
@@ -115,7 +115,7 @@ civix: unix-like OS utilities.
     <li>dirDone: called AFTER the directory has been walked</li>
   </ul>
   
-  The Fn signatures are: (path, ftype) -> stopWalk
+  <p>The Fn signatures are: (path, ftype) -> stopWalk
   If either return true then the walk is ended immediately
   If dirFn returns 'skip' then the directory is skipped</li>
   <li><a id="civix.findBack" href="#civix.findBack" class=anchor><b>fn findBack</b></a><span class=code>(name, dir) -&gt; path</span><br>
@@ -161,7 +161,7 @@ civix: unix-like OS utilities.
 &nbsp; 
 </div>
   
-  Builds a tree like <div class=code-block>&nbsp; a/a1.txt &nbsp; &nbsp;# content: stuff in a1.txt<br>
+  <p>Builds a tree like <div class=code-block>&nbsp; a/a1.txt &nbsp; &nbsp;# content: stuff in a1.txt<br>
 &nbsp; a/a2.txt &nbsp; &nbsp;# content: stuff in a2.txt<br>
 &nbsp; a/a3/a4.txt # content: stuff in a3.txt<br>
 &nbsp; 
@@ -175,7 +175,7 @@ civix: unix-like OS utilities.
   Execute the command in another process via execvp (system shell). Throws an
   error if the command fails.
   
-  if cmd is a table, the following keys are treated as special. If you need any
+  <p>if cmd is a table, the following keys are treated as special. If you need any
   of these then you must use M.Sh directly (recommendation: use Plumb) <ul>
     <li><span class=code>stdin[string|file]</span> the process's stdin. If string it will be sent to stdin.</li>
     <li><span class=code>stdout[file]</span> the process's stdout. out will be nil if this is set</li>
@@ -186,7 +186,7 @@ civix: unix-like OS utilities.
     You can get the rc with <span class=code>sh:rc()</span> (method on 3rd return argument).</li>
   </ul>
   
-  Note: use <span class=code>Plumb{...}:run()</span> if you want to pipe multiple shells together.
+  <p>Note: use <span class=code>Plumb{...}:run()</span> if you want to pipe multiple shells together.
   <div class=table><table>
     <tr>
       <th>Lua</th>
@@ -321,7 +321,7 @@ test runners and helpers for civix
   then passed to this -- which runs all tests sequentially
   inside the lap environment.
   
-  <div class=info>This does not print test names/etc. Use civtest or
+  <p><div class=info>This does not print test names/etc. Use civtest or
   equivalent for that.
   </div></li>
 </ul>

@@ -18,6 +18,9 @@
 Metatype is a library and specification for creating performant, documented,
 and typo-safe Lua record-types which can be formatted.
 
+<p>The <a href="#metaty.freeze">#metaty.freeze</a> module allows making types immutable (after calling
+<span class=code>freeze</span> on them) and making tables immutable.
+
 <p><div class=info> Turn off typo checking by setting the global <span class=code>LUA_OPT=3</span> or higher.</div>
 
 <p><h2><a id="record" href="#record" class=anchor>Mod and Record</h2></a>
@@ -195,7 +198,7 @@ metaty: simple but effective Lua type system using metatable
   
   Setup lua's global environment to meet metaty protocol.
   
-  Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
+  <p>Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
   not previously set).</li>
   <li><a id="metaty.isConcrete" href="#metaty.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span><br>
   
@@ -261,7 +264,7 @@ end
   
   The default __doc method.
   
-  <div class=info>d is of type <span class=code>doc.Documenter</span>.
+  <p><div class=info>d is of type <span class=code>doc.Documenter</span>.
   Tests are in cmd/doc/test.lua </div></li>
   <li><a id="metaty.eq" href="#metaty.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b) -&gt; bool</span><br>
   
@@ -285,7 +288,7 @@ end
   
   Usage: <span class=code>MyType.__newindex = mty.newindex</span><br>
   
-  This allows non-string keys to always be insert and is the default.</li>
+  (record default) this allows non-string keys to always be insert.</li>
   <li><a id="metaty.hardNewindex" href="#metaty.hardNewindex" class=anchor><b>fn hardNewindex</b></a><span class=code>(r, k, v)</span><br>
   
   Usage: <span class=code>MyType.__newindex = mty.hardNewindex</span><br>
@@ -295,25 +298,25 @@ end
   
   Usage: <span class=code>getmetatable(MyType).__call = mty.constructChecked</span>
   
-  Check type with field typochecking. This is the default when
+  <p>Check type with field typochecking. This is the default when
   <span class=code>LUA_OPT &lt;= 2</span></li>
   <li><a id="metaty.constructUnchecked" href="#metaty.constructUnchecked" class=anchor><b>fn constructUnchecked</b></a><span class=code>(T, t)</span><br>
   
   Usage: <span class=code>getmetatable(MyType).__call = mty.constructUnchecked</span>
   
-  Check type with field typochecking. This is the default when
+  <p>Check type with field typochecking. This is the default when
   <span class=code>LUA_OPT &gt;= 3</span>.</li>
   <li><a id="metaty.construct" href="#metaty.construct" class=anchor><b>fn construct</b></a><span class=code>(T, t)</span><br>
   
   Usage: <span class=code>getmetatable(MyType).__call = mty.constructChecked</span>
   
-  Check type with field typochecking. This is the default when
+  <p>Check type with field typochecking. This is the default when
   <span class=code>LUA_OPT &lt;= 2</span></li>
   <li><a id="metaty.record" href="#metaty.record" class=anchor><b>fn record</b></a><span class=code>(name)</span><br>
   
   Usage: <span class=code>record'name'{ 'field [type]: documentation' }</span>
   
-  Start a new record. See module documentation for details.</li>
+  <p>Start a new record. See module documentation for details.</li>
   <li><a id="metaty.recordMod" href="#metaty.recordMod" class=anchor><b>fn recordMod</b></a><span class=code>(name)</span><br>
   
   Start a new record which acts as a lua module (i.e. the file returns it).</li>
@@ -324,7 +327,7 @@ end
   
   Usage: <span class=code>mty.extend(MyBase, 'NewName', {...new fields...})</span>
   
-  Extend the Type with (optional) new name and (optional) additional fields.</li>
+  <p>Extend the Type with (optional) new name and (optional) additional fields.</li>
   <li><a id="metaty.extendMod" href="#metaty.extendMod" class=anchor><b>fn extendMod</b></a><span class=code>(T, name, fields)</span><br>
   
   Extend the type with new name and use as a module.</li>
@@ -333,6 +336,84 @@ end
   Usage: <span class=code>mty.enum'name' { A = 1, B = 2, ... }</span><br>
   
   Create an enum type. See module documentation.</li>
+  <li><a id="metaty.want" href="#metaty.want" class=anchor><b>fn want</b></a><span class=code>(mod) -&gt; module?</span><br>
+  
+  like require but returns nil if not found.</li>
+  <li><a id="metaty.from" href="#metaty.from" class=anchor><b>fn from</b></a><span class=code>(a, b)</span><br>
+  
+  Usage: <span class=code>local bar, baz = mty.from'foo bar,baz'</span><br>
+  
+  Usage: <span class=code>local sfmt, srep = mty.from(string, 'format,rep')</span><br>
+  
+  Shortcut for: <div class=code-block>&nbsp; local foo = require'foo'<br>
+&nbsp; local bar, baz = foo.bar, foo.baz<br>
+&nbsp; 
+</div></li>
+</ul>
+
+<p><h3><a id="metaty.freeze" href="#metaty.freeze" class=anchor>Mod metaty.freeze</h3></a>
+Usage: <span class=code>freeze.freezy(MyType)</span> to make MyType freezable, see
+
+<p><a href="#metaty.freeze.freezy">#metaty.freeze.freezy</a>.
+
+<p>
+<p>
+<p>Call usage: <span class=code>freeze(v)</span><br>
+
+
+<p>When called: freezes the value, see <a href="#metaty.freeze.freeze">#metaty.freeze.freeze</a>.
+
+<p>
+<p><b>Types: </b><a href="#metaty.freeze.frozen">frozen</a> 
+
+<p><b>Functions</b> <ul>
+  <li><a id="metaty.freeze.frozenNext" href="#metaty.freeze.frozenNext" class=anchor><b>fn frozenNext</b></a><span class=code>(FROZEN[f], k)</span></li>
+  <li><a id="metaty.freeze.freeze" href="#metaty.freeze.freeze" class=anchor><b>fn freeze</b></a><span class=code>(v)</span><br>
+  
+  Freeze value, making it immutable.
+  
+  <p>Implementation: If <span class=code>v</span> is a table, the table's actual values are moved
+  to a table in <span class=code>freeze.FROZEN</span>, which is where they are retrieved.
+  <span class=code>__index</span>, etc are frozen to give an immutable "view" into this table.
+  
+  <p>If <span class=code>v</span> is userdata, <span class=code>:freeze()</span> is called on it.
+  
+  <p>Concrete lua values are already immutable. Functions are considered
+  already frozen, it is the author's responsibility to ensure functions don't
+  mutate state.</li>
+  <li><a id="metaty.freeze.freezy" href="#metaty.freeze.freezy" class=anchor><b>fn freezy</b></a><span class=code>(R)</span><br>
+  
+  Usage: <span class=code>M.MyType = freeze.freezy(mty'MyType' { ... })</span><br>
+  
+  Make the type <span class=code>:freeze()</span>-able, after which it will be immutable.
+  
+  <p>This has a performance cost both before and after the value is frozen.
+  
+  <p><div class=info>Through three cheese trees three free fleas flew.<br>
+  
+  While these fleas flew, freezy breeze blew.<br>
+  
+  Freezy breeze made these three trees freeze.<br>
+  
+  Freezy trees made these trees' cheese freeze.<br>
+  
+  That's what made these three free fleas sneeze.<br>
+  
+  - Dr Seuss, "Fox in Socks"
+  </div></li>
+</ul>
+
+<p><h4><a id="metaty.freeze.frozen" href="#metaty.freeze.frozen" class=anchor>Record frozen</h4></a>
+A "plain old table" that has been frozen (made immutable).
+
+<p><b>Methods</b> <ul>
+  <li><a id="frozen.newindex" href="#frozen.newindex" class=anchor><b>fn newindex</b></a><span class=code>(name)</span><br>
+  
+  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="frozen.freeze" href="#frozen.freeze" class=anchor><b>fn freeze</b></a><span class=code>(self)</span><br>
+  
+  The <span class=code>FreezyType:freeze()</span> method.</li>
 </ul>
 
 <p>

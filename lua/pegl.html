@@ -162,14 +162,14 @@ pegl: peg-like lua parser
   
   Parse a spec, returning the nodes or throwing a syntax error.
   
-  <span class=code>config</span> is used to define settings of the parser such as how to skip
+  <p><span class=code>config</span> is used to define settings of the parser such as how to skip
   comments and whether to use debug mode.</li>
   <li><a id="pegl.assertParse" href="#pegl.assertParse" class=anchor><b>fn assertParse</b></a><span class=code>(t) -&gt; result, node, parser</span><br>
   
   Parse the <span class=code>dat</span> with the <span class=code>spec</span>, asserting the resulting "string tokens"
   are identical to <span class=code>expect</span>.
   
-  the input is a table of the form: <div class=code-block>&nbsp; &nbsp; {dat, spec, expect, dbg=nil, config=default} --&gt; nil<br>
+  <p>the input is a table of the form: <div class=code-block>&nbsp; &nbsp; {dat, spec, expect, dbg=nil, config=default} --&gt; nil<br>
 &nbsp; 
 </div></li>
   <li><a id="pegl.assertParseError" href="#pegl.assertParseError" class=anchor><b>fn assertParseError</b></a><span class=code>(t)</span></li>
@@ -321,7 +321,7 @@ is designed to work with an application that stores the strings as lines
   It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
   extend in a for loop.
   
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
+  <p><div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
   is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="Pat.parse" href="#Pat.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p)</span></li>
 </ul>

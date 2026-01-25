@@ -46,12 +46,12 @@ vsds: version control data structures (and algorithms)
   
   Create a patch item from a pick
   
-  At it's most basic it would just be: <ul>
+  <p>At it's most basic it would just be: <ul>
     <li>find line position via top and/or bottom anchor. We want at least 2 lines</li>
     <li>convert pick to change. Walk the text applying the change.</li>
   </ul>
   
-  There are some strategies to fix common anchor misses: <ul>
+  <p>There are some strategies to fix common anchor misses: <ul>
     <li>If an anchor is missing, the nearby change can be used instead. Use either
     the removed or added lines. For instance, if we are supposed to remove lines
     then try and find them. Conversely if the patch was already applied then the

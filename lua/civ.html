@@ -45,7 +45,6 @@ Before we do, a few notes:
 <div class=code-block>local P = { summary = "Does foo and some bar" }<br>
 <br>
 --- Imports a function to help us create Target<br>
-local cc &nbsp;= import'sys:cc.luk' &nbsp;-- C build targets<br>
 local lua = import'sys:lua.luk' -- Lua build targets<br>
 <br>
 -- Set up metadata for this PKG.luk file, this must be<br>
@@ -69,8 +68,8 @@ P.test = lua.test {<br>
 &nbsp; dep = { 'myhub:foo' },<br>
 }<br>
 <br>
--- C build target<br>
-P.libfoo = cc {<br>
+-- C build target with lua linked.<br>
+P.libfoo = lua.cc {<br>
 &nbsp; hdr = { 'foo.h' }, &nbsp;-- C headers<br>
 &nbsp; src = { 'foo.c' }, &nbsp;-- C source files<br>
 &nbsp; dep = {<br>
@@ -119,14 +118,12 @@ is as follows: <ul>
 <p><h3><a id="civ" href="#civ" class=anchor>Command civ</h3></a>
 civ command
 <h4><a id="init" href="#init" class=anchor>Subcmd init</h4></a>
-Usage: <span class=code>civ init --config=.civconfig.lua</span><br>
+Usage: <span class=code>civ init</span><br>
 
 Initialize the repository. This should be run when starting a new repo.
 <b>Arguments:</b><ul>
-  <li><a id="init.config" href="#init.config" class=anchor><b>config</b></a>
+  <li><a id="init.config" href="#init.config" class=anchor><b>config</b></a> <span class=code>=".civconfig.luk"</span>
   path to config.lua to output</li>
-  <li><a id="init.base" href="#init.base" class=anchor><b>base</b></a>
-  base config to copy from</li>
 </ul>
 <h4><a id="build" href="#build" class=anchor>Subcmd build</h4></a>
 Usage: <span class=code>civ build hub:tgt#name</span><br>
@@ -176,7 +173,7 @@ Install targets which match the pattern.
 <p>build/test macros.</div>
 
 <p>
-<p><b>Types: </b><a href="#civ.core.TargetName">TargetName</a> <a href="#civ.core.Target">Target</a> <a href="#civ.core.Hub">Hub</a> <a href="#civ.core.CfgBuilder">CfgBuilder</a> <a href="#civ.core.Cfg">Cfg</a> <a href="#civ.core.Civ">Civ</a> 
+<p><b>Types: </b><a href="#civ.core.TargetName">TargetName</a> <a href="#civ.core.Target">Target</a> <a href="#civ.core.Hub">Hub</a> <a href="#civ.core.Cfg">Cfg</a> <a href="#civ.core.BuilderCfg">BuilderCfg</a> <a href="#civ.core.Civ">Civ</a> 
 
 <p><b>Functions</b> <ul>
   <li><a id="civ.core.tgtnameSplit" href="#civ.core.tgtnameSplit" class=anchor><b>fn tgtnameSplit</b></a></li>
@@ -208,14 +205,14 @@ A build target, the result of compiling a package.
   directory of src files</li>
   <li><a id="civ.core.Target.src" href="#civ.core.Target.src" class=anchor><b>src</b></a>
   list of input source files (strings).</li>
-  <li><a id="civ.core.Target.dep" href="#civ.core.Target.dep" class=anchor><b>dep</b></a>
-  list of input Target objects (dependencies).</li>
   <li><a id="civ.core.Target.extra" href="#civ.core.Target.extra" class=anchor><b>extra</b></a>
   arbitrary value, used by run command</li>
-  <li><a id="civ.core.Target.api" href="#civ.core.Target.api" class=anchor><b>api</b></a>
-  the lang-specific exported import paths.</li>
+  <li><a id="civ.core.Target.dep" href="#civ.core.Target.dep" class=anchor><b>dep</b></a>
+  list of input Target objects (dependencies).</li>
   <li><a id="civ.core.Target.depIds" href="#civ.core.Target.depIds" class=anchor><b>depIds</b></a>
   list of dependency target ids. Populated for Worker.</li>
+  <li><a id="civ.core.Target.api" href="#civ.core.Target.api" class=anchor><b>api</b></a>
+  the lang-specific exported import paths.</li>
   <li><a id="civ.core.Target.out" href="#civ.core.Target.out" class=anchor><b>out</b></a>
   POD table output segregated by language.<ul>
     <li>t: PoD in a k/v table, can be used to configure downstream targets.</li>
@@ -229,8 +226,6 @@ A build target, the result of compiling a package.
   link outputs from -> to</li>
   <li><a id="civ.core.Target.tag" href="#civ.core.Target.tag" class=anchor><b>tag</b></a>
   arbitrary attributes like test, testonly, etc.</li>
-  <li><a id="civ.core.Target.ENV" href="#civ.core.Target.ENV" class=anchor><b>ENV</b></a>
-  the environment that scripts run in.</li>
   <li><a id="civ.core.Target.run" href="#civ.core.Target.run" class=anchor><b>run</b></a>
   executable script which performs the operation kind.</li>
 </ul>
@@ -246,21 +241,14 @@ A hub configuration
   the name of the hub</li>
 </ul>
 
-<p><h4><a id="civ.core.CfgBuilder" href="#civ.core.CfgBuilder" class=anchor>Record CfgBuilder</h4></a>
-Cfg.builder settings
-
-<p><b>Fields:</b><ul>
-  <li><a id="civ.core.CfgBuilder.direct" href="#civ.core.CfgBuilder.direct" class=anchor><b>direct</b></a>
-  prefer building directly
-  (running build scripts w/ dofile).</li>
-</ul>
-
 <p><h4><a id="civ.core.Cfg" href="#civ.core.Cfg" class=anchor>Record Cfg</h4></a>
 The user configuration, typically at ./.civconfig.lua
 
 <p><b>Fields:</b><ul>
   <li><a id="civ.core.Cfg.path" href="#civ.core.Cfg.path" class=anchor><b>path</b></a>
   the path to this config file.</li>
+  <li><a id="civ.core.Cfg.basePath" href="#civ.core.Cfg.basePath" class=anchor><b>basePath</b></a>
+  the base path of this config file.</li>
   <li><a id="civ.core.Cfg.host_os" href="#civ.core.Cfg.host_os" class=anchor><b>host_os</b></a>
   the operating system of this computer.'
   Typically equal to civix.OS</li>
@@ -275,6 +263,15 @@ The user configuration, typically at ./.civconfig.lua
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Cfg.load" href="#Cfg.load" class=anchor><b>fn load</b></a><span class=code>(T, path)</span></li>
+</ul>
+
+<p><h4><a id="civ.core.BuilderCfg" href="#civ.core.BuilderCfg" class=anchor>Record BuilderCfg</h4></a>
+Cfg.builder settings
+
+<p><b>Fields:</b><ul>
+  <li><a id="civ.core.BuilderCfg.direct" href="#civ.core.BuilderCfg.direct" class=anchor><b>direct</b></a>
+  prefer building directly
+  (running build scripts w/ dofile).</li>
 </ul>
 
 <p><h4><a id="civ.core.Civ" href="#civ.core.Civ" class=anchor>Record Civ</h4></a>

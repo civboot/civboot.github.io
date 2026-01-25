@@ -45,7 +45,7 @@ The lines module, providing a uniform API for lines-like objects.
   insert string at l, c<br>
   
   
-  Note: this is NOT performant (O(N)) for large tables.<br>
+  <p>Note: this is NOT performant (O(N)) for large tables.<br>
   
   See: <a href="#Gap">#Gap</a> (or similar) for handling real-world workloads.</li>
   <li><a id="lines.span" href="#lines.span" class=anchor><b>fn span</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c?, l2, c2?)</span><br>
@@ -92,7 +92,7 @@ The lines module, providing a uniform API for lines-like objects.
   
   return the box of the lines.
   
-  <div class=code-block>Outside the box is not returned.<br>
+  <p><div class=code-block>Outside the box is not returned.<br>
 ***1------------------------+**<br>
 ***|l1,c1 = top left &nbsp; &nbsp; &nbsp; &nbsp;|**<br>
 ***| &nbsp; &nbsp; &nbsp; bot right = l2,c2|<br>
@@ -110,7 +110,7 @@ The lines module, providing a uniform API for lines-like objects.
   
   Logic to make a table behave like a <span class=code>file:write(...)</span> method.
   
-  This is NOT performant, especially for large lines.</li>
+  <p>This is NOT performant, especially for large lines.</li>
 </ul>
 
 <p><h4><a id="lines.diff" href="#lines.diff" class=anchor>Command lines.diff</h4></a>
@@ -198,7 +198,7 @@ performance.
   
   Logic to make a table behave like a <span class=code>file:write(...)</span> method.
   
-  This is NOT performant, especially for large lines.</li>
+  <p>This is NOT performant, especially for large lines.</li>
   <li><a id="lines.Writer.flush" href="#lines.Writer.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
   
   function that does and returns nothing.</li>
@@ -208,7 +208,7 @@ performance.
   It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
   extend in a for loop.
   
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
+  <p><div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
   is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="lines.Writer.icopy" href="#lines.Writer.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
   
@@ -307,18 +307,18 @@ operation (except consecutive reads/writes) requires a file seek.
   
   Move the IFile's path to <span class=code>to</span>.
   
-  <span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
+  <p><span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
   <span class=code>civix.mv</span> will be used.
   
-  This can be done on both closed and opened files.
+  <p>This can be done on both closed and opened files.
   
-  The IFile will re-open on the new file regardless of the
+  <p>The IFile will re-open on the new file regardless of the
   previous state.</li>
   <li><a id="lines.U3File.reader" href="#lines.U3File.reader" class=anchor><b>fn reader</b></a><span class=code>(fi) -&gt; IFile?, err?</span><br>
   
   Get a new read-only instance with an independent file-descriptor.
   
-  Warning: currently the reader's len will be static, so this should
+  <p>Warning: currently the reader's len will be static, so this should
   be mostly used for temporary cases. This might be changed in
   the future.</li>
 </ul>
@@ -360,7 +360,7 @@ Indexed file of lines supporting modes 'r' and 'a+'.
   
   Get a new read-only instance with an independent file-descriptor.
   
-  This allows reading the file while another coroutine writes it (via
+  <p>This allows reading the file while another coroutine writes it (via
   <a href="lap.html">lap.html</a>).</li>
 </ul>
 
@@ -424,7 +424,7 @@ utilities for file loading of lines. Generally users shouldn't
   Can be usd instead of loadIdx to force a reload of the index,
   ignoring modification times/etc.
   
-  This is useful in some situtations where stat is not available.</li>
+  <p>This is useful in some situtations where stat is not available.</li>
   <li><a id="lines.futils.loadIdx" href="#lines.futils.loadIdx" class=anchor><b>fn loadIdx</b></a><span class=code>(f, idxpath, fmode, reindex) -&gt; idxFile</span><br>
   
   load or reindex the file at path to/from idxpath.</li>

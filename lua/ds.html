@@ -45,13 +45,13 @@ ds: data structures and algorithms.
   Uses <span class=code>inset</span> method if available.
   rmlen, if provided, will cause <span class=code>t[i:i+rmlen]</span> to be removed first
   
-  inset is like an extend but the items are insert at any place in the array.
+  <p>inset is like an extend but the items are insert at any place in the array.
   The rmlen will also remove a certain number of items.</li>
   <li><a id="ds.isPod" href="#ds.isPod" class=anchor><b>fn isPod</b></a><span class=code>(v, mtFn)</span><br>
   
   return true if the value is "plain old data".
   
-  Plain old data is defined as any concrete type or a table with no metatable
+  <p>Plain old data is defined as any concrete type or a table with no metatable
   and who's pairs() are only POD.</li>
   <li><a id="ds.noop" href="#ds.noop" class=anchor><b>fn noop</b></a><span class=code>()</span><br>
   
@@ -180,13 +180,13 @@ end
   
   <span class=code>t[k]</span> if t is a raw table, else <span class=code>getmetatable(t).get(t, k)</span>
   
-  This lets many types be substitutable for raw-tables in some APIs (i.e.
+  <p>This lets many types be substitutable for raw-tables in some APIs (i.e.
   lines).</li>
   <li><a id="ds.set" href="#ds.set" class=anchor><b>fn set</b></a><span class=code>(t, k, v)</span><br>
   
   <span class=code>t[k] = v</span> if t is a raw table, else <span class=code>getmetatable(t).set(t, k, v)</span>
   
-  This lets many types be substitutable for raw-tables in some APIs (i.e.
+  <p>This lets many types be substitutable for raw-tables in some APIs (i.e.
   lines).</li>
   <li><a id="ds.isEmpty" href="#ds.isEmpty" class=anchor><b>fn isEmpty</b></a><span class=code>(t) -&gt; t == nil or next(t) == nil</span><br>
   
@@ -262,7 +262,7 @@ end
   It uses their <span class=code>get</span> and <span class=code>set</span> methods to implement
   extend in a for loop.
   
-  <div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
+  <p><div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
   is not allowed through a C boundary like <span class=code>table.move</span></div></li>
   <li><a id="ds.clear" href="#ds.clear" class=anchor><b>fn clear</b></a><span class=code>(t, si, len) -&gt; t</span><br>
   
@@ -285,12 +285,10 @@ end
   
   Adds all <span class=code>key=index</span> to the table so the keys can
   be iterated using <span class=code>for _, k in ipairs(t)</span></li>
-  <li><a id="ds.merge" href="#ds.merge" class=anchor><b>fn merge</b></a><span class=code>(t, add) -&gt; t</span><br>
+  <li><a id="ds.merge" href="#ds.merge" class=anchor><b>fn merge</b></a><span class=code>(t, m) -&gt; t</span><br>
   
-  recursively update t with add. This will call update on inner tables as
-  well.
-  <div class=info>FIXME: currently treats list indexes as normal keys
-  (does not append)</div></li>
+  Recursively merge m into t, overriding existing values.
+  List (integer) indexes are <i>extended</i> instead of overwritten.</li>
   <li><a id="ds.popk" href="#ds.popk" class=anchor><b>fn popk</b></a><span class=code>(t, key) -&gt; value</span><br>
   
   Remove key from <span class=code>t</span> and return it's value.</li>
@@ -346,7 +344,7 @@ end
     <li><span class=code>tableFn(key, tblValue, state) -&gt; stop</span> is called for every table value</li>
   </ul>
   
-  If tableFn <span class=code>stop==ds.SKIP</span> (i.e. 'skip') then that table is not recursed.
+  <p>If tableFn <span class=code>stop==ds.SKIP</span> (i.e. 'skip') then that table is not recursed.
   Else if stop then the walk is halted immediately</li>
   <li><a id="ds.icopy" href="#ds.icopy" class=anchor><b>fn icopy</b></a><span class=code>(t) -&gt; list</span><br>
   
@@ -371,7 +369,7 @@ end
   <span class=code>sentinel(name, metatable)</span>
   Use to create a "sentinel type". Return the (singular) instance.
   
-  Sentinels are "single values" commonly used for things like: none, empty, EOF, etc.
+  <p>Sentinels are "single values" commonly used for things like: none, empty, EOF, etc.
   They have most metatable methods disallowed and are immutable down. Methods can
   only be set by the provided metatable value.</li>
   <li><a id="ds.bool" href="#ds.bool" class=anchor><b>fn bool</b></a><span class=code>(v) -&gt; bool</span><br>
@@ -390,16 +388,16 @@ end
   Sort the directed acyclic graph of ids + parentMap
   to put children before the parents.
   
-  returns <span class=code>nil, cycle</span> in the case of a cycle</li>
+  <p>returns <span class=code>nil, cycle</span> in the case of a cycle</li>
   <li><a id="ds.check" href="#ds.check" class=anchor><b>fn check</b></a><span class=code>(i, ...)</span><br>
   
   Throw an error if <span class=code>select(i, ...)</span> is truthy, else return ...
   
-  For example, <span class=code>file:read'L'</span> returns <span class=code>line?, errmsg?</span>.
+  <p>For example, <span class=code>file:read'L'</span> returns <span class=code>line?, errmsg?</span>.
   However, the absence of line doesn't necessarily
   indicate the presence of errmsg: EOF is just <span class=code>nil</span>.
   
-  Therefore you can use <span class=code>line = check(2, f:read'L')</span>
+  <p>Therefore you can use <span class=code>line = check(2, f:read'L')</span>
   to only assert on the presence of errmsg.</li>
   <li><a id="ds.tracelist" href="#ds.tracelist" class=anchor><b>fn tracelist</b></a><span class=code>(tbstr, level) -&gt; {traceback}</span><br>
   
@@ -426,9 +424,6 @@ end
   
   auto-set nil locals using require(mod)
   <span class=code>local x, y, z; ds.auto'mm' -- sets x=mm.x; y=mm.y; z=mm.z</span></li>
-  <li><a id="ds.want" href="#ds.want" class=anchor><b>fn want</b></a><span class=code>(mod) -&gt; module?</span><br>
-  
-  like require but returns nil</li>
   <li><a id="ds.wantpath" href="#ds.wantpath" class=anchor><b>fn wantpath</b></a><span class=code>(path) -&gt; value?</span><br>
   
   Try to get any <span class=code>string.to.path</span> by trying all possible combinations of
@@ -437,7 +432,7 @@ end
   
   Include a resource (raw data) relative to the current file.
   
-  Example: <span class=code>M.myData = ds.resource'data/myData.csv'</span></li>
+  <p>Example: <span class=code>M.myData = ds.resource'data/myData.csv'</span></li>
   <li><a id="ds.yeet" href="#ds.yeet" class=anchor><b>fn yeet</b></a><span class=code>(fmt, ...)</span><br>
   
   exit immediately with message and errorcode = 99</li>
@@ -599,7 +594,7 @@ NOTE: you should only use this for printing/logging/etc.
   create an iterable that returns <span class=code>table.unpack</span> on each
   value in <span class=code>ipairs(t)</span>.
   
-  i.e. <span class=code>Iter:ofUnpacked{{5, 'five'}, {6, 'six'}}</span> will
+  <p>i.e. <span class=code>Iter:ofUnpacked{{5, 'five'}, {6, 'six'}}</span> will
   return (5, 'five') then (6, 'six')</li>
   <li><a id="Iter.ofOrdMap" href="#Iter.ofOrdMap" class=anchor><b>fn ofOrdMap</b></a><span class=code>(T, t, cmpFn) -&gt; sortedIter[k, v]</span><br>
   
@@ -615,7 +610,7 @@ NOTE: you should only use this for printing/logging/etc.
   
   emit <span class=code>k, v = fn(v)</span> for each non-nil result
   
-  <div class=info>Note: if performance matters this is the most performant
+  <p><div class=info>Note: if performance matters this is the most performant
   application function since it doesn't create an internal
   function.
   </div></li>
@@ -665,7 +660,7 @@ NOTE: you should only use this for printing/logging/etc.
   emit <span class=code>i, k</span>, dropping values. <span class=code>i</span> starts at <span class=code>1</span> and increments each
   time called.
   
-  <div class=info> Note: this is most useful for iterators which don't emit a <span class=code>v</span>.
+  <p><div class=info> Note: this is most useful for iterators which don't emit a <span class=code>v</span>.
   i.e. getting the line number in <span class=code>file:lines()</span></div></li>
   <li><a id="Iter.swap" href="#Iter.swap" class=anchor><b>fn swap</b></a><span class=code>(it) -&gt; it[v, k]</span><br>
   
@@ -770,7 +765,7 @@ working with paths
   
   Ensure the path is absolute, using the wd (default=cwd()) if necessary
   
-  This preserves the type of the input: str -> str; table -> table</li>
+  <p>This preserves the type of the input: str -> str; table -> table</li>
   <li><a id="ds.path.resolve" href="#ds.path.resolve" class=anchor><b>fn resolve</b></a><span class=code>(path, wd) -&gt; list|str</span><br>
   
   resolve any `..` or `.` path components, making the path
@@ -788,7 +783,7 @@ working with paths
   
   return a nice path (string) that is resolved and readable.
   
-  It's 'nice' because it has no '/../' or '/./' elements
+  <p>It's 'nice' because it has no '/../' or '/./' elements
   and has CWD stripped.</li>
   <li><a id="ds.path.small" href="#ds.path.small" class=anchor><b>fn small</b></a><span class=code>(path, wd)</span><br>
   
@@ -818,9 +813,9 @@ working with paths
   
   return the relative path needed to get from <span class=code>from</span> to <span class=code>to</span>.
   
-  Note: this ignores (pops) the last item in <span class=code>from</span> if it's not a dir/.
+  <p>Note: this ignores (pops) the last item in <span class=code>from</span> if it's not a dir/.
   
-  For example
+  <p>For example
   T.eq(relative('/foo/bar',  '/foo/baz/bob'), 'baz/bob')
   T.eq(relative('/foo/bar/', '/foo/baz/bob'), '../baz/bob')</li>
   <li><a id="ds.path.cmpDirsLast" href="#ds.path.cmpDirsLast" class=anchor><b>fn cmpDirsLast</b></a><span class=code>(a, b)</span><br>
@@ -964,7 +959,7 @@ used in tests
   Insert the str into the Grid.
   Any newlines will be insert starting at column c.
   
-  This will automatically fill <span class=code>[1,c-1]</span> with spaces, but will
+  <p>This will automatically fill <span class=code>[1,c-1]</span> with spaces, but will
   NOT clear any data after the insert text, meaning it is essentially a
   replace.
   FIXME: considere renaming to replace... or something.</li>
@@ -1064,18 +1059,18 @@ load lua modules with custom or default environment in a sandboxed
   
   Move the IFile's path to <span class=code>to</span>.
   
-  <span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
+  <p><span class=code>mv</span> must be of type <span class=code>fn(from, to)</span>. If not provided,
   <span class=code>civix.mv</span> will be used.
   
-  This can be done on both closed and opened files.
+  <p>This can be done on both closed and opened files.
   
-  The IFile will re-open on the new file regardless of the
+  <p>The IFile will re-open on the new file regardless of the
   previous state.</li>
   <li><a id="ds.IFile.reader" href="#ds.IFile.reader" class=anchor><b>fn reader</b></a><span class=code>(fi) -&gt; IFile?, err?</span><br>
   
   Get a new read-only instance with an independent file-descriptor.
   
-  Warning: currently the reader's len will be static, so this should
+  <p>Warning: currently the reader's len will be static, so this should
   be mostly used for temporary cases. This might be changed in
   the future.</li>
 </ul>

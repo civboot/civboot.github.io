@@ -47,14 +47,14 @@ shim: command line library for lua.
   or <span class=code>{'strings", option='foo'}</span> or a combination of both. If v is a string then
   it is split on whitespace and parsed as a list.
   
-  Note: this handles repeat keys by creating and appending a list for that key.</li>
+  <p>Note: this handles repeat keys by creating and appending a list for that key.</li>
   <li><a id="shim.parseStr" href="#shim.parseStr" class=anchor><b>fn parseStr</b></a><span class=code>(str) -&gt; args</span><br>
   
   parses the string by splitting via whitespace.
   Asserts the string contains no special chars: <span class=code>'"[]</span>
   This is for convinience, use a table if it's not enough.
   
-  Note: if the input is already a table it just returns it.</li>
+  <p>Note: if the input is already a table it just returns it.</li>
   <li><a id="shim.parseList" href="#shim.parseList" class=anchor><b>fn parseList</b></a><span class=code>(strlist) -&gt; args</span><br>
   
   Note: typically use parse() or parseStr() instead.</li>
@@ -109,7 +109,7 @@ shim: command line library for lua.
   
   Setup lua using <span class=code>require(LUA_SETUP).setup(args, force)</span>.
   
-  The default is to use ds.setup.</li>
+  <p>The default is to use ds.setup.</li>
   <li><a id="shim.construct" href="#shim.construct" class=anchor><b>fn construct</b></a><span class=code>(Cmd, args) -&gt; ok, err?</span></li>
   <li><a id="shim.constructNew" href="#shim.constructNew" class=anchor><b>fn constructNew</b></a><span class=code>(Cmd, args) -&gt; ok, err?</span></li>
   <li><a id="shim.init" href="#shim.init" class=anchor><b>fn init</b></a><span class=code>(Cmd, args)</span><br>
@@ -123,7 +123,7 @@ shim: command line library for lua.
   
   Create a new command as your module.
   
-  <div class=code-block>local M = shim.cmd'mycmd' {<br>
+  <p><div class=code-block>local M = shim.cmd'mycmd' {<br>
 &nbsp; '...: argument documentation',<br>
 &nbsp; 'foo: some paramater',<br>
 &nbsp; 'to [path|file]: where to write output',<br>
