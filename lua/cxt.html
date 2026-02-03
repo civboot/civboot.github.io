@@ -326,7 +326,7 @@ Convert cxt to HTML.
 <p><b>Types: </b><a href="#cxt.Config">Config</a> <a href="#cxt.Writer">Writer</a> 
 
 <p><b>Functions</b> <ul>
-  <li><a id="cxt.escape" href="#cxt.escape" class=anchor><b>fn escape</b></a><span class=code>(str) -&gt; str:gsub('([\\%[%]])', '\\%1')</span><br>
+  <li><a id="cxt.escape" href="#cxt.escape" class=anchor><b>fn escape</b></a><span class=code>([\\%[%]])</span><br>
   
   escape the string so it renders literally</li>
   <li><a id="cxt.code" href="#cxt.code" class=anchor><b>fn code</b></a><span class=code>(str, lang)</span><br>
@@ -367,10 +367,10 @@ A Writer for cxt serializers (terminal, http, etc) to use.
   <li><a id="cxt.Writer.config" href="#cxt.Writer.config" class=anchor><b>config</b></a> <span class=code>=Config() instance</span></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Writer.fromParser" href="#Writer.fromParser" class=anchor><b>fn fromParser</b></a><span class=code>(ty_, p, to)</span></li>
-  <li><a id="Writer.tokenStr" href="#Writer.tokenStr" class=anchor><b>fn tokenStr</b></a><span class=code>(w, t)</span></li>
-  <li><a id="Writer.eqStr" href="#Writer.eqStr" class=anchor><b>fn eqStr</b></a><span class=code>(w, t, str)</span></li>
-  <li><a id="Writer.level" href="#Writer.level" class=anchor><b>fn level</b></a><span class=code>(w, add) -&gt; w.to:level(add)</span></li>
+  <li><a id="Writer.fromParser" href="#Writer.fromParser" class=anchor><b>fn fromParser</b></a><span class=code>(T, p, to)</span></li>
+  <li><a id="Writer.tokenStr" href="#Writer.tokenStr" class=anchor><b>fn:tokenStr</b></a><span class=code>(t)</span></li>
+  <li><a id="Writer.eqStr" href="#Writer.eqStr" class=anchor><b>fn:eqStr</b></a><span class=code>(t, str)</span></li>
+  <li><a id="Writer.level" href="#Writer.level" class=anchor><b>fn:level</b></a><span class=code>(add)</span></li>
 </ul>
 
 <p><h3><a id="cxt.term" href="#cxt.term" class=anchor>Mod cxt.term</h3></a>

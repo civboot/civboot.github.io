@@ -285,25 +285,25 @@ operation (except consecutive reads/writes) requires a file seek.
 </ul>
 <b>Methods</b> <ul>
   <li><a id="lines.U3File.create" href="#lines.U3File.create" class=anchor><b>fn create</b></a><span class=code>(T, ...) -&gt; icreate(T, 3, ...)</span></li>
-  <li><a id="lines.U3File.reload" href="#lines.U3File.reload" class=anchor><b>fn reload</b></a><span class=code>(fi) -&gt; IFile?, errmsg?</span><br>
+  <li><a id="lines.U3File.reload" href="#lines.U3File.reload" class=anchor><b>fn:reload</b></a><span class=code>() -&gt; IFile?, errmsg?</span><br>
   
   Reload IFile from path.</li>
   <li><a id="lines.U3File.load" href="#lines.U3File.load" class=anchor><b>fn load</b></a><span class=code>(T, ...) -&gt; iload(T, 3, ...)</span></li>
-  <li><a id="lines.U3File.flush" href="#lines.U3File.flush" class=anchor><b>fn flush</b></a><span class=code>(fi) -&gt; fi.f:flush()</span></li>
-  <li><a id="lines.U3File.close" href="#lines.U3File.close" class=anchor><b>fn close</b></a><span class=code>(fi)</span></li>
-  <li><a id="lines.U3File.closed" href="#lines.U3File.closed" class=anchor><b>fn closed</b></a><span class=code>(fi) -&gt; bool</span></li>
-  <li><a id="lines.U3File.getbytes" href="#lines.U3File.getbytes" class=anchor><b>fn getbytes</b></a><span class=code>(fi, i)</span><br>
+  <li><a id="lines.U3File.flush" href="#lines.U3File.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span></li>
+  <li><a id="lines.U3File.close" href="#lines.U3File.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
+  <li><a id="lines.U3File.closed" href="#lines.U3File.closed" class=anchor><b>fn:closed</b></a><span class=code>() -&gt; bool</span></li>
+  <li><a id="lines.U3File.getbytes" href="#lines.U3File.getbytes" class=anchor><b>fn:getbytes</b></a><span class=code>(i)</span><br>
   
   get bytes. If index out of bounds return nil.
   Panic if there are read errors.</li>
   <li><a id="lines.U3File.get" href="#lines.U3File.get" class=anchor><b>fn:get</b></a><span class=code>(i)</span><br>
   
   get value at index</li>
-  <li><a id="lines.U3File.setbytes" href="#lines.U3File.setbytes" class=anchor><b>fn setbytes</b></a><span class=code>(fi, i, v)</span></li>
+  <li><a id="lines.U3File.setbytes" href="#lines.U3File.setbytes" class=anchor><b>fn:setbytes</b></a><span class=code>(i, v)</span></li>
   <li><a id="lines.U3File.set" href="#lines.U3File.set" class=anchor><b>fn:set</b></a><span class=code>(i, v)</span><br>
   
   set value at index</li>
-  <li><a id="lines.U3File.move" href="#lines.U3File.move" class=anchor><b>fn move</b></a><span class=code>(fi, to, mvFn) -&gt; fi</span><br>
+  <li><a id="lines.U3File.move" href="#lines.U3File.move" class=anchor><b>fn:move</b></a><span class=code>(to, mvFn) -&gt; self</span><br>
   
   Move the IFile's path to <span class=code>to</span>.
   
@@ -314,7 +314,7 @@ operation (except consecutive reads/writes) requires a file seek.
   
   <p>The IFile will re-open on the new file regardless of the
   previous state.</li>
-  <li><a id="lines.U3File.reader" href="#lines.U3File.reader" class=anchor><b>fn reader</b></a><span class=code>(fi) -&gt; IFile?, err?</span><br>
+  <li><a id="lines.U3File.reader" href="#lines.U3File.reader" class=anchor><b>fn:reader</b></a><span class=code>() -&gt; IFile?, err?</span><br>
   
   Get a new read-only instance with an independent file-descriptor.
   
@@ -511,8 +511,8 @@ kev: "Key Equal Value" serialization format.
   <li><a id="lines.kev.from" href="#lines.kev.from" class=anchor><b>fn from</b></a><span class=code>(lines, to)</span><br>
   
   convert <span class=code>key=value</span> lines to a table.</li>
-  <li><a id="lines.kev.load" href="#lines.kev.load" class=anchor><b>fn load</b></a><span class=code>(f, to) -&gt; M.from(lines.load(f), to)</span></li>
-  <li><a id="lines.kev.dump" href="#lines.kev.dump" class=anchor><b>fn dump</b></a><span class=code>(t, f) -&gt; lines.dump(M.to(t), f)</span></li>
+  <li><a id="lines.kev.load" href="#lines.kev.load" class=anchor><b>fn load</b></a><span class=code>(f)</span></li>
+  <li><a id="lines.kev.dump" href="#lines.kev.dump" class=anchor><b>fn dump</b></a><span class=code>(t)</span></li>
 </ul>
 
 <p>

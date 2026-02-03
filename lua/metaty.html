@@ -200,7 +200,7 @@ metaty: simple but effective Lua type system using metatable
   
   <p>Currently this only makes non-<span class=code>G</span> global access typosafe (throw error if
   not previously set).</li>
-  <li><a id="metaty.isConcrete" href="#metaty.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span><br>
+  <li><a id="metaty.isConcrete" href="#metaty.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v)</span><br>
   
   Return whether v is a nil, boolean, number or string.</li>
   <li><a id="metaty.isBuiltin" href="#metaty.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span><br>
@@ -254,6 +254,9 @@ metaty: simple but effective Lua type system using metatable
 &nbsp; ... do something with line<br>
 end
 </div></li>
+  <li><a id="metaty.copyMethod" href="#metaty.copyMethod" class=anchor><b>fn copyMethod</b></a><span class=code>(self)</span><br>
+  
+  The <span class=code>__copy</span> method.</li>
   <li><a id="metaty.fmt" href="#metaty.fmt" class=anchor><b>fn fmt</b></a><span class=code>(self, f)</span><br>
   
   The default __fmt method.</li>
@@ -401,21 +404,19 @@ Usage: <span class=code>freeze.freezy(MyType)</span> to make MyType freezable, s
   
   - Dr Seuss, "Fox in Socks"
   </div></li>
+  <li><a id="metaty.freeze.isFrozen" href="#metaty.freeze.isFrozen" class=anchor><b>fn isFrozen</b></a><span class=code>(v)</span><br>
+  
+  Return whether v is immutable.</li>
+  <li><a id="metaty.freeze.forceset" href="#metaty.freeze.forceset" class=anchor><b>fn forceset</b></a><span class=code>(t, k, v)</span><br>
+  
+  Force set the value, even on a frozen type. Obviously,
+  this should be used with caution.</li>
 </ul>
 
 <p><h4><a id="metaty.freeze.frozen" href="#metaty.freeze.frozen" class=anchor>Record frozen</h4></a>
 A "plain old table" that has been frozen (made immutable).
 
-<p><b>Methods</b> <ul>
-  <li><a id="frozen.newindex" href="#frozen.newindex" class=anchor><b>fn newindex</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
-  <li><a id="frozen.freeze" href="#frozen.freeze" class=anchor><b>fn freeze</b></a><span class=code>(self)</span><br>
-  
-  The <span class=code>FreezyType:freeze()</span> method.</li>
-</ul>
-
+<p>
 <p>
 </div></body>
 </html>

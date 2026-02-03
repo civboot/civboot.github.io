@@ -150,9 +150,9 @@ pegl: peg-like lua parser
   
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
   and must define the <span class=code>parse</span> method.</li>
-  <li><a id="pegl.Maybe" href="#pegl.Maybe" class=anchor><b>fn Maybe</b></a><span class=code>(spec) -&gt; M.Or{spec, M.Empty}</span></li>
-  <li><a id="pegl.isEmpty" href="#pegl.isEmpty" class=anchor><b>fn isEmpty</b></a><span class=code>(t) -&gt; mty.eq(M.EMPTY, t)</span></li>
-  <li><a id="pegl.notEmpty" href="#pegl.notEmpty" class=anchor><b>fn notEmpty</b></a><span class=code>(t) -&gt; not mty.eq(M.EMPTY, t)</span></li>
+  <li><a id="pegl.Maybe" href="#pegl.Maybe" class=anchor><b>fn Maybe</b></a><span class=code>(spec)</span></li>
+  <li><a id="pegl.isEmpty" href="#pegl.isEmpty" class=anchor><b>fn isEmpty</b></a><span class=code>(M.EMPTY, t)</span></li>
+  <li><a id="pegl.notEmpty" href="#pegl.notEmpty" class=anchor><b>fn notEmpty</b></a><span class=code>(M.EMPTY, t)</span></li>
   <li><a id="pegl.skipWs1" href="#pegl.skipWs1" class=anchor><b>fn skipWs1</b></a><span class=code>(p)</span></li>
   <li><a id="pegl.skipEmpty" href="#pegl.skipEmpty" class=anchor><b>fn skipEmpty</b></a><span class=code>(p)</span></li>
   <li><a id="pegl.skipEmptyMinimal" href="#pegl.skipEmptyMinimal" class=anchor><b>fn skipEmptyMinimal</b></a><span class=code>(p)</span></li>
@@ -173,18 +173,23 @@ pegl: peg-like lua parser
 &nbsp; 
 </div></li>
   <li><a id="pegl.assertParseError" href="#pegl.assertParseError" class=anchor><b>fn assertParseError</b></a><span class=code>(t)</span></li>
-  <li><a id="pegl.isKeyword" href="#pegl.isKeyword" class=anchor><b>fn isKeyword</b></a><span class=code>(t) -&gt; #t == 1 and t.kind == t[1]</span></li>
+  <li><a id="pegl.isKeyword" href="#pegl.isKeyword" class=anchor><b>fn isKeyword</b></a><span class=code>(t)</span></li>
 </ul>
 
 <p><h4><a id="pegl.Token" href="#pegl.Token" class=anchor>Record Token</h4></a>
 <b>Fields:</b><ul>
   <li><a id="pegl.Token.kind" href="#pegl.Token.kind" class=anchor><b>kind</b></a>
   optional, used for debugging</li>
+  <li><a id="pegl.Token.style" href="#pegl.Token.style" class=anchor><b>style</b></a>
+  computed by acsyntax</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Token.span" href="#Token.span" class=anchor><b>fn span</b></a><span class=code>(t, dec) -&gt; M.decodeSpan(t[1])</span></li>
-  <li><a id="Token.encode" href="#Token.encode" class=anchor><b>fn encode</b></a><span class=code>(ty_, p, l, c, l2, c2, kind)</span></li>
-  <li><a id="Token.decode" href="#Token.decode" class=anchor><b>fn decode</b></a><span class=code>(t, dat) -&gt; lines.sub(dat, M.decodeSpan(t[1]))</span></li>
+  <li><a id="Token.span" href="#Token.span" class=anchor><b>fn:span</b></a><span class=code>(dec) -&gt; l, c, l2, c2</span></li>
+  <li><a id="Token.encode" href="#Token.encode" class=anchor><b>fn encode</b></a><span class=code>(T, p, l, c, l2, c2, kind, style)</span></li>
+  <li><a id="Token.decode" href="#Token.decode" class=anchor><b>fn:decode</b></a><span class=code>(self[1])</span></li>
+  <li><a id="Token.lte" href="#Token.lte" class=anchor><b>fn:lte</b></a><span class=code>(r)</span><br>
+  
+  compare two tokens, commonly used in sorting algorithms.</li>
 </ul>
 
 <p><h4><a id="pegl.Config" href="#pegl.Config" class=anchor>Record Config</h4></a>
@@ -205,7 +210,7 @@ can be set to change how the parser skips empty (whitespace) and handles comment
     this function alone.</li>
   </ul></li>
   <li><a id="pegl.Config.skipComment" href="#pegl.Config.skipComment" class=anchor><b>skipComment</b></a>
-  fn(p) -> Token for found comment</li>
+  function for behavior of found comment</li>
   <li><a id="pegl.Config.tokenizer" href="#pegl.Config.tokenizer" class=anchor><b>tokenizer</b></a> <span class=code>=pegl.defaultTokenizer</span>
   Requires: <ul>
     <li>must return one token. The default is to return a single punctuation character
@@ -250,52 +255,54 @@ is designed to work with an application that stores the strings as lines
   <li><a id="pegl.Parser.stackC" href="#pegl.Parser.stackC" class=anchor><b>stackC</b></a></li>
   <li><a id="pegl.Parser.stackLast" href="#pegl.Parser.stackLast" class=anchor><b>stackLast</b></a></li>
   <li><a id="pegl.Parser.commentLC" href="#pegl.Parser.commentLC" class=anchor><b>commentLC</b></a>
-  table of {line={col=CommentToken}}</li>
+  table of cached {line={col=CommentToken}}</li>
+  <li><a id="pegl.Parser.comments" href="#pegl.Parser.comments" class=anchor><b>comments</b></a>
+  list of comment tokens</li>
   <li><a id="pegl.Parser.dbgLevel" href="#pegl.Parser.dbgLevel" class=anchor><b>dbgLevel</b></a> <span class=code>=0</span></li>
   <li><a id="pegl.Parser.path" href="#pegl.Parser.path" class=anchor><b>path</b></a></li>
   <li><a id="pegl.Parser.firstError" href="#pegl.Parser.firstError" class=anchor><b>firstError</b></a>
   first error.</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Parser.assertNode" href="#Parser.assertNode" class=anchor><b>fn assertNode</b></a><span class=code>(p, expect, node, config)</span></li>
+  <li><a id="Parser.assertNode" href="#Parser.assertNode" class=anchor><b>fn:assertNode</b></a><span class=code>(expect, node, config) -&gt; strTokens</span></li>
   <li><a id="Parser.new" href="#Parser.new" class=anchor><b>fn new</b></a><span class=code>(T, dat, config)</span></li>
-  <li><a id="Parser.parse" href="#Parser.parse" class=anchor><b>fn parse</b></a><span class=code>(p, spec) -&gt; node</span><br>
+  <li><a id="Parser.parse" href="#Parser.parse" class=anchor><b>fn:parse</b></a><span class=code>(spec) -&gt; node</span><br>
   
   the main entry point and used recursively.
   Parses the spec, returning the node, which is a table of nodes that are
   eventually tokens.</li>
-  <li><a id="Parser.consume" href="#Parser.consume" class=anchor><b>fn consume</b></a><span class=code>(p, pat, plain) -&gt; Token</span><br>
+  <li><a id="Parser.consume" href="#Parser.consume" class=anchor><b>fn:consume</b></a><span class=code>(pat, plain) -&gt; Token</span><br>
   
   consume the pattern, advancing the column if found</li>
-  <li><a id="Parser.peek" href="#Parser.peek" class=anchor><b>fn peek</b></a><span class=code>(p, pat)</span><br>
+  <li><a id="Parser.peek" href="#Parser.peek" class=anchor><b>fn:peek</b></a><span class=code>(pat)</span><br>
   
   identical to `consume` except it does not advance the column</li>
-  <li><a id="Parser.sub" href="#Parser.sub" class=anchor><b>fn sub</b></a><span class=code>(p, t)</span></li>
-  <li><a id="Parser.incLine" href="#Parser.incLine" class=anchor><b>fn incLine</b></a><span class=code>(p)</span></li>
-  <li><a id="Parser.isEof" href="#Parser.isEof" class=anchor><b>fn isEof</b></a><span class=code>(p) -&gt; isAtEndOfFile</span></li>
-  <li><a id="Parser.skipEmpty" href="#Parser.skipEmpty" class=anchor><b>fn skipEmpty</b></a><span class=code>(p)</span></li>
-  <li><a id="Parser.state" href="#Parser.state" class=anchor><b>fn state</b></a><span class=code>(p) -&gt; {l=p.l, c=p.c, line=p.line}</span><br>
+  <li><a id="Parser.sub" href="#Parser.sub" class=anchor><b>fn:sub</b></a><span class=code>(t)</span></li>
+  <li><a id="Parser.incLine" href="#Parser.incLine" class=anchor><b>fn:incLine</b></a><span class=code>()</span></li>
+  <li><a id="Parser.isEof" href="#Parser.isEof" class=anchor><b>fn:isEof</b></a><span class=code>() -&gt; isAtEndOfFile</span></li>
+  <li><a id="Parser.skipEmpty" href="#Parser.skipEmpty" class=anchor><b>fn:skipEmpty</b></a><span class=code>()</span></li>
+  <li><a id="Parser.state" href="#Parser.state" class=anchor><b>fn:state</b></a><span class=code>()</span><br>
   
   get the current parser state <span class=code>{l, c, line}</span></li>
-  <li><a id="Parser.setState" href="#Parser.setState" class=anchor><b>fn setState</b></a><span class=code>(p, st)</span><br>
+  <li><a id="Parser.setState" href="#Parser.setState" class=anchor><b>fn:setState</b></a><span class=code>(st)</span><br>
   
   restore the current parser state <span class=code>{l, c, line}</span></li>
-  <li><a id="Parser.toStrTokens" href="#Parser.toStrTokens" class=anchor><b>fn toStrTokens</b></a><span class=code>(p, n)</span></li>
-  <li><a id="Parser.makeStrTokens" href="#Parser.makeStrTokens" class=anchor><b>fn makeStrTokens</b></a><span class=code>(p, t) -&gt; t</span><br>
+  <li><a id="Parser.toStrTokens" href="#Parser.toStrTokens" class=anchor><b>fn:toStrTokens</b></a><span class=code>(n)</span></li>
+  <li><a id="Parser.makeStrTokens" href="#Parser.makeStrTokens" class=anchor><b>fn:makeStrTokens</b></a><span class=code>(t) -&gt; t</span><br>
   
   recursively mutate table converting all Tokens to strings</li>
-  <li><a id="Parser.tokenStr" href="#Parser.tokenStr" class=anchor><b>fn tokenStr</b></a><span class=code>(p, t) -&gt; string</span></li>
-  <li><a id="Parser.trimTokenStart" href="#Parser.trimTokenStart" class=anchor><b>fn trimTokenStart</b></a><span class=code>(p, list)</span></li>
-  <li><a id="Parser.trimTokenLast" href="#Parser.trimTokenLast" class=anchor><b>fn trimTokenLast</b></a><span class=code>(p, list, trimNl)</span></li>
-  <li><a id="Parser.checkPin" href="#Parser.checkPin" class=anchor><b>fn checkPin</b></a><span class=code>(p, pin, expect)</span></li>
-  <li><a id="Parser.error" href="#Parser.error" class=anchor><b>fn error</b></a><span class=code>(p, msg)</span></li>
-  <li><a id="Parser.parseAssert" href="#Parser.parseAssert" class=anchor><b>fn parseAssert</b></a><span class=code>(p, spec)</span></li>
-  <li><a id="Parser.dbgEnter" href="#Parser.dbgEnter" class=anchor><b>fn dbgEnter</b></a><span class=code>(p, spec)</span></li>
-  <li><a id="Parser.dbgLeave" href="#Parser.dbgLeave" class=anchor><b>fn dbgLeave</b></a><span class=code>(p, n)</span></li>
-  <li><a id="Parser.dbgMatched" href="#Parser.dbgMatched" class=anchor><b>fn dbgMatched</b></a><span class=code>(p, spec)</span></li>
-  <li><a id="Parser.dbgMissed" href="#Parser.dbgMissed" class=anchor><b>fn dbgMissed</b></a><span class=code>(p, spec, note)</span></li>
-  <li><a id="Parser.dbgUnpack" href="#Parser.dbgUnpack" class=anchor><b>fn dbgUnpack</b></a><span class=code>(p, spec, t)</span></li>
-  <li><a id="Parser.dbg" href="#Parser.dbg" class=anchor><b>fn dbg</b></a><span class=code>(p, fmtstr, ...)</span></li>
+  <li><a id="Parser.tokenStr" href="#Parser.tokenStr" class=anchor><b>fn:tokenStr</b></a><span class=code>(t) -&gt; string</span></li>
+  <li><a id="Parser.trimTokenStart" href="#Parser.trimTokenStart" class=anchor><b>fn:trimTokenStart</b></a><span class=code>(list)</span></li>
+  <li><a id="Parser.trimTokenLast" href="#Parser.trimTokenLast" class=anchor><b>fn:trimTokenLast</b></a><span class=code>(list, trimNl)</span></li>
+  <li><a id="Parser.checkPin" href="#Parser.checkPin" class=anchor><b>fn:checkPin</b></a><span class=code>(pin, expect)</span></li>
+  <li><a id="Parser.error" href="#Parser.error" class=anchor><b>fn:error</b></a><span class=code>(msg)</span></li>
+  <li><a id="Parser.parseAssert" href="#Parser.parseAssert" class=anchor><b>fn:parseAssert</b></a><span class=code>(spec)</span></li>
+  <li><a id="Parser.dbgEnter" href="#Parser.dbgEnter" class=anchor><b>fn:dbgEnter</b></a><span class=code>(spec)</span></li>
+  <li><a id="Parser.dbgLeave" href="#Parser.dbgLeave" class=anchor><b>fn:dbgLeave</b></a><span class=code>(n)</span></li>
+  <li><a id="Parser.dbgMatched" href="#Parser.dbgMatched" class=anchor><b>fn:dbgMatched</b></a><span class=code>(spec)</span></li>
+  <li><a id="Parser.dbgMissed" href="#Parser.dbgMissed" class=anchor><b>fn:dbgMissed</b></a><span class=code>(spec, note)</span></li>
+  <li><a id="Parser.dbgUnpack" href="#Parser.dbgUnpack" class=anchor><b>fn:dbgUnpack</b></a><span class=code>(spec, t)</span></li>
+  <li><a id="Parser.dbg" href="#Parser.dbg" class=anchor><b>fn:dbg</b></a><span class=code>(fmtstr, ...)</span></li>
 </ul>
 
 <p><h4><a id="pegl.Pat" href="#pegl.Pat" class=anchor>Record Pat</h4></a>
@@ -323,7 +330,7 @@ is designed to work with an application that stores the strings as lines
   
   <p><div class=info>types do this if they may <span class=code>yield</span> in their get/set, which
   is not allowed through a C boundary like <span class=code>table.move</span></div></li>
-  <li><a id="Pat.parse" href="#Pat.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p)</span></li>
+  <li><a id="Pat.parse" href="#Pat.parse" class=anchor><b>fn:parse</b></a><span class=code>(p)</span></li>
 </ul>
 
 <p><h4><a id="pegl.Key" href="#pegl.Key" class=anchor>Record Key</h4></a>
@@ -345,7 +352,7 @@ tokens "myKeyword" and "+" followed by "+" (but not "+" not followed by
   <li><a id="pegl.Key.kind" href="#pegl.Key.kind" class=anchor><b>kind</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Key.parse" href="#Key.parse" class=anchor><b>fn parse</b></a><span class=code>(key, p)</span></li>
+  <li><a id="Key.parse" href="#Key.parse" class=anchor><b>fn:parse</b></a><span class=code>(p)</span></li>
 </ul>
 
 <p><h4><a id="pegl.Or" href="#pegl.Or" class=anchor>Record Or</h4></a>
@@ -366,7 +373,7 @@ not performant (<span class=code>O(N)</span> vs Key's <span class=code>O(1)</spa
   <li><a id="pegl.Or.name" href="#pegl.Or.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Or.parse" href="#Or.parse" class=anchor><b>fn parse</b></a><span class=code>(or_, p)</span></li>
+  <li><a id="Or.parse" href="#Or.parse" class=anchor><b>fn:parse</b></a><span class=code>(p)</span></li>
 </ul>
 
 <p><h4><a id="pegl.Many" href="#pegl.Many" class=anchor>Record Many</h4></a>
@@ -381,7 +388,7 @@ result is a list with <span class=code>kind='myMany'</span>.
   <li><a id="pegl.Many.name" href="#pegl.Many.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Many.parse" href="#Many.parse" class=anchor><b>fn parse</b></a><span class=code>(many, p)</span></li>
+  <li><a id="Many.parse" href="#Many.parse" class=anchor><b>fn:parse</b></a><span class=code>(p)</span></li>
 </ul>
 
 <p><h4><a id="pegl.Seq" href="#pegl.Seq" class=anchor>Record Seq</h4></a>
@@ -434,7 +441,7 @@ PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
   <li><a id="pegl.Not.name" href="#pegl.Not.name" class=anchor><b>name</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Not.parse" href="#Not.parse" class=anchor><b>fn parse</b></a><span class=code>(self, p) -&gt; not M.parseSeq(p, self)</span></li>
+  <li><a id="Not.parse" href="#Not.parse" class=anchor><b>fn:parse</b></a><span class=code>(p, self)</span></li>
 </ul>
 
 <p><h3><a id="pegl.common" href="#pegl.common" class=anchor>Mod pegl.common</h3></a>
@@ -443,6 +450,72 @@ PEGL implements syntax error detection ONLY in Sequence specs (table specs i.e.
 <b>Fields:</b><ul>
   <li><a id="pegl.FmtPegl.kinds" href="#pegl.FmtPegl.kinds" class=anchor><b>kinds</b></a> <span class=code>=pegl.fmtKinds</span>
   kind -> fmtFn</li>
+</ul>
+
+<p><h3><a id="pegl.acsyntax" href="#pegl.acsyntax" class=anchor>Mod pegl.acsyntax</h3></a>
+Module for applying asciicolor syntax highlighting to parsed pegl.
+
+<p>
+<p><b>Types: </b><a href="#pegl.acsyntax.Highlighter">Highlighter</a> <a href="#pegl.acsyntax.tokenize">tokenize</a> 
+
+<p>
+<p><h4><a id="pegl.acsyntax.Highlighter" href="#pegl.acsyntax.Highlighter" class=anchor>Record Highlighter</h4></a>
+The highlighter object determines how to parse and
+highlight a text file's syntax.
+
+<p><b>Fields:</b><ul>
+  <li><a id="pegl.acsyntax.Highlighter.config" href="#pegl.acsyntax.Highlighter.config" class=anchor><b>config</b></a>
+  the pegl root configuration.
+  Typically this should have lenient=true to allow for
+  syntax errors to happen but parsing to continue.</li>
+  <li><a id="pegl.acsyntax.Highlighter.spec" href="#pegl.acsyntax.Highlighter.spec" class=anchor><b>spec</b></a>
+  pegl root spec to parse, aka the grammar tree.
+  This should typically be a "lenient" spec with a fallback
+  which can parse any symbol.</li>
+  <li><a id="pegl.acsyntax.Highlighter.style" href="#pegl.acsyntax.Highlighter.style" class=anchor><b>style</b></a>
+  a table of name|kind -> 'style' (asciicolor style)
+  (name takes precendence).
+  
+  <p>The value can be either the style literal or a <span class=code>fn(node) -&gt; style</span>.
+  
+  <p>The Highlighter will call for each node's kind, if the style isn't
+  found it will be called again for all node children.</li>
+  <li><a id="pegl.acsyntax.Highlighter.builtin" href="#pegl.acsyntax.Highlighter.builtin" class=anchor><b>builtin</b></a>
+  list of builtin names.</li>
+  <li><a id="pegl.acsyntax.Highlighter.styleColor" href="#pegl.acsyntax.Highlighter.styleColor" class=anchor><b>styleColor</b></a>
+  table of style -> asciicolor fg/bg</li>
+  <li><a id="pegl.acsyntax.Highlighter.dir" href="#pegl.acsyntax.Highlighter.dir" class=anchor><b>dir</b></a>
+  base dir where highlighting is stored</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Highlighter.paths" href="#Highlighter.paths" class=anchor><b>fn:paths</b></a><span class=code>(path) -&gt; fgPath, bgPath</span><br>
+  
+  Given the file path to be highlighted, return the configured foreground
+  and background paths.</li>
+  <li><a id="Highlighter.tokenize" href="#Highlighter.tokenize" class=anchor><b>fn:tokenize</b></a><span class=code>(lf) -&gt; tokens</span></li>
+  <li><a id="Highlighter.assertTokens" href="#Highlighter.assertTokens" class=anchor><b>fn:assertTokens</b></a><span class=code>(expect, lf) -&gt; strTokens, tokenize</span></li>
+  <li><a id="Highlighter.highlight" href="#Highlighter.highlight" class=anchor><b>fn:highlight</b></a><span class=code>(lf, fgFile, bgFile) -&gt; nil</span><br>
+  
+  Write the asciicolor highlight values to <span class=code>fgFile</span> and <span class=code>bgFile</span>.
+  
+  <p>It is intended that these are read as line-files, where the final character
+  in the line is treated as the "default" for the rest of the line.</li>
+  <li><a id="Highlighter.assertHighlight" href="#Highlighter.assertHighlight" class=anchor><b>fn:assertHighlight</b></a><span class=code>(str, fgExpect, bgExpect)</span></li>
+</ul>
+
+<p><h4><a id="pegl.acsyntax.tokenize" href="#pegl.acsyntax.tokenize" class=anchor>Record tokenize</h4></a>
+Usage: <span class=code>tokens = tokenize(highlighter, lineFile)</span><br>
+
+A state that when called (constructed) is a list of tokens.
+
+<p><b>Fields:</b><ul>
+  <li><a id="pegl.acsyntax.tokenize.hl" href="#pegl.acsyntax.tokenize.hl" class=anchor><b>hl</b></a>
+  highlighter config</li>
+  <li><a id="pegl.acsyntax.tokenize.p" href="#pegl.acsyntax.tokenize.p" class=anchor><b>p</b></a>
+  the parser</li>
+  <li><a id="pegl.acsyntax.tokenize.root" href="#pegl.acsyntax.tokenize.root" class=anchor><b>root</b></a>
+  the root parsed node</li>
+  <li><a id="pegl.acsyntax.tokenize.kind" href="#pegl.acsyntax.tokenize.kind" class=anchor><b>kind</b></a></li>
 </ul>
 
 <p><h3><a id="pegl.lua" href="#pegl.lua" class=anchor>Mod pegl.lua</h3></a>

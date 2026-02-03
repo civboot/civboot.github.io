@@ -62,6 +62,17 @@ local worker = pod.de(serialized, M.Worker) -- convert from string
   <span class=code>pod.List</span> and <span class=code>pod.Map</span> respectively.</li>
 </ul>
 
+<p><h2>Custom Podder</h2>
+For making your own podder impl, the signatures are
+<div class=code-block>function MyT.__toPod(T, pod, value) ... end --&gt; p<br>
+function MyT.__fromPod(T, pod, p) ... end &nbsp; --&gt; value
+</div>
+Where:<ul>
+  <li><span class=code>value</span> is the value (instance of T).</li>
+  <li><span class=code>p</span> is a builtin plain-old-data (concrete)</li>
+  <li><span class=code>T</span> will equal <span class=code>MyT</span></li>
+</ul>
+
 <p><h2>Serialization Best Practices</h2>
 <ul>
   <li>Only make a type pod if it is actually plain-old-data -- the type must be
@@ -121,7 +132,7 @@ pod: plain old data
 <p><b>Types: </b><a href="#pod.Pod">Pod</a> <a href="#pod.Podder">Podder</a> <a href="#pod.key">key</a> <a href="#pod.builtin">builtin</a> <a href="#pod.List">List</a> <a href="#pod.Map">Map</a> 
 
 <p><b>Functions</b> <ul>
-  <li><a id="pod.isConcrete" href="#pod.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v) -&gt; CONCRETE[type(v)]</span><br>
+  <li><a id="pod.isConcrete" href="#pod.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v)</span><br>
   
   Return whether v is a nil, boolean, number or string.</li>
   <li><a id="pod.isBuiltin" href="#pod.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span><br>
@@ -129,8 +140,16 @@ pod: plain old data
   Return whether v is concrete or a table with no metatable.</li>
   <li><a id="pod.serRaw" href="#pod.serRaw" class=anchor><b>fn serRaw</b></a></li>
   <li><a id="pod.deserRaw" href="#pod.deserRaw" class=anchor><b>fn deserRaw</b></a></li>
-  <li><a id="pod.isPod" href="#pod.isPod" class=anchor><b>fn isPod</b></a></li>
+  <li><a id="pod.isPod" href="#pod.isPod" class=anchor><b>fn isPod</b></a><span class=code>(v, isPodFn)</span><br>
+  
+  return true if the value is "plain old data".
+  
+  <p>Plain old data is defined as any native type or a table with no metatable
+  and who's pairs() are only POD.
+  
+  <p>The <span class=code>isPodFn</span> fn takes <span class=code>v</span> and should return true if it is pod.</li>
   <li><a id="pod.isPodder" href="#pod.isPodder" class=anchor><b>fn isPodder</b></a><span class=code>(P) -&gt; isPodder, whyNot?</span></li>
+  <li><a id="pod.tableToPod" href="#pod.tableToPod" class=anchor><b>fn tableToPod</b></a><span class=code>(T, pod, t)</span></li>
   <li><a id="pod.toPod" href="#pod.toPod" class=anchor><b>fn toPod</b></a><span class=code>(v, podder, pod)</span></li>
   <li><a id="pod.fromPod" href="#pod.fromPod" class=anchor><b>fn fromPod</b></a><span class=code>(v, poder, pod)</span></li>
   <li><a id="pod.mty_toPod" href="#pod.mty_toPod" class=anchor><b>fn mty_toPod</b></a><span class=code>(T, pod, t)</span><br>

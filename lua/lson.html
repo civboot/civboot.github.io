@@ -99,7 +99,7 @@ how tables are formatted to use JSON instead of printing them.
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Json.toPretty" href="#Json.toPretty" class=anchor><b>fn:toPretty</b></a><span class=code>()</span></li>
-  <li><a id="Json.pretty" href="#Json.pretty" class=anchor><b>fn pretty</b></a><span class=code>(E, t)</span></li>
+  <li><a id="Json.pretty" href="#Json.pretty" class=anchor><b>fn pretty</b></a><span class=code>(T, self)</span></li>
   <li><a id="Json.level" href="#Json.level" class=anchor><b>fn:level</b></a><span class=code>(add) -&gt; int: current level</span><br>
   
   Add to the indent level and get the new value
@@ -114,7 +114,7 @@ how tables are formatted to use JSON instead of printing them.
   Call <span class=code>to:styled(...)</span> if it is enabled, else simply <span class=code>self:write(text, ...)</span>.
   This allows for configurable styling of output, both for objects as well
   as command-line utilities/etc.</li>
-  <li><a id="Json.tableKey" href="#Json.tableKey" class=anchor><b>fn tableKey</b></a><span class=code>(f, v, podder, pod)</span></li>
+  <li><a id="Json.tableKey" href="#Json.tableKey" class=anchor><b>fn:tableKey</b></a><span class=code>(v, podder, pod)</span></li>
   <li><a id="Json.nil" href="#Json.nil" class=anchor><b>fn nil</b></a><span class=code>(self)</span><br>
   
   format a nil value.</li>
@@ -124,7 +124,7 @@ how tables are formatted to use JSON instead of printing them.
   <li><a id="Json.number" href="#Json.number" class=anchor><b>fn:number</b></a><span class=code>(n)</span><br>
   
   format a number value.</li>
-  <li><a id="Json.string" href="#Json.string" class=anchor><b>fn string</b></a><span class=code>(enc, s)</span></li>
+  <li><a id="Json.string" href="#Json.string" class=anchor><b>fn string</b></a><span class=code>(f, s)</span></li>
   <li><a id="Json.thread" href="#Json.thread" class=anchor><b>fn:thread</b></a><span class=code>(th)</span><br>
   
   format a thread value.</li>
@@ -192,7 +192,7 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
   <li><a id="lson.Lson.listEnd" href="#lson.Lson.listEnd" class=anchor><b>listEnd</b></a> <span class=code>="]"</span></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Lson.pretty" href="#Lson.pretty" class=anchor><b>fn pretty</b></a><span class=code>(E, t)</span></li>
+  <li><a id="Lson.pretty" href="#Lson.pretty" class=anchor><b>fn pretty</b></a><span class=code>(T, self)</span></li>
   <li><a id="Lson.string" href="#Lson.string" class=anchor><b>fn string</b></a><span class=code>(f, s)</span><br>
   
   The bytes type-encoder. Encodes as <span class=code>|bytes|</span> instead of <span class=code>"string"</span> for
@@ -214,9 +214,9 @@ Similar to JSON but no commas and strings are encoded as <span class=code>|bytes
   <li><a id="lson.De.line" href="#lson.De.line" class=anchor><b>line</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="De.assert" href="#De.assert" class=anchor><b>fn assert</b></a><span class=code>(de, ok, msg)</span></li>
-  <li><a id="De.skipWs" href="#De.skipWs" class=anchor><b>fn skipWs</b></a><span class=code>(de, eofOkay)</span></li>
-  <li><a id="De.consume" href="#De.consume" class=anchor><b>fn consume</b></a><span class=code>(de, pat, context)</span></li>
+  <li><a id="De.assert" href="#De.assert" class=anchor><b>fn:assert</b></a><span class=code>(ok, msg)</span></li>
+  <li><a id="De.skipWs" href="#De.skipWs" class=anchor><b>fn:skipWs</b></a><span class=code>(eofOkay)</span></li>
+  <li><a id="De.consume" href="#De.consume" class=anchor><b>fn:consume</b></a><span class=code>(pat, context)</span></li>
 </ul>
 
 <p>

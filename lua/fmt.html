@@ -67,7 +67,7 @@ format module: format any type into a readable string
   <li><a id="fmt.fprint" href="#fmt.fprint" class=anchor><b>fn fprint</b></a><span class=code>(fmter, ...)</span><br>
   
   Writes the formatted arguments to <span class=code>f</span>.</li>
-  <li><a id="fmt.print" href="#fmt.print" class=anchor><b>fn print</b></a><span class=code>(...) -&gt; fprint(io.fmt, ...)</span><br>
+  <li><a id="fmt.print" href="#fmt.print" class=anchor><b>fn print</b></a><span class=code>(io.fmt, ...)</span><br>
   
   <span class=code>print(...)</span> but using <span class=code>io.fmt</span>.</li>
   <li><a id="fmt.pprint" href="#fmt.pprint" class=anchor><b>fn pprint</b></a><span class=code>(...)</span><br>
@@ -76,7 +76,7 @@ format module: format any type into a readable string
   <li><a id="fmt.pretty" href="#fmt.pretty" class=anchor><b>fn pretty</b></a><span class=code>(v) -&gt; string</span><br>
   
   pretty format the value</li>
-  <li><a id="fmt.table" href="#fmt.table" class=anchor><b>fn table</b></a><span class=code>(tbl, fmter) -&gt; fmter:rawtable(tbl)</span><br>
+  <li><a id="fmt.table" href="#fmt.table" class=anchor><b>fn table</b></a><span class=code>(tbl)</span><br>
   
   Set to __fmt to format a type like a table.</li>
 </ul>
@@ -110,7 +110,7 @@ the string with <span class=code>fmter:tostring()</span> or just <span class=cod
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Fmt.toPretty" href="#Fmt.toPretty" class=anchor><b>fn:toPretty</b></a><span class=code>()</span></li>
-  <li><a id="Fmt.pretty" href="#Fmt.pretty" class=anchor><b>fn pretty</b></a><span class=code>(F, t) -&gt; F(t):toPretty()</span><br>
+  <li><a id="Fmt.pretty" href="#Fmt.pretty" class=anchor><b>fn pretty</b></a><span class=code>(T, self) -&gt; T(self):toPretty()</span><br>
   
   Create a new Formatter object with default "pretty" settings.
   Generally, this means line-separated and indented tables.</li>

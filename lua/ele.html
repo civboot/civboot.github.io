@@ -251,7 +251,7 @@ later actions to be repeated a <span class=code>num</span> of times.
   if true the above fields will be preserved in next call</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="KeySt.check" href="#KeySt.check" class=anchor><b>fn check</b></a><span class=code>(k, ele) -&gt; errstring?</span><br>
+  <li><a id="KeySt.check" href="#KeySt.check" class=anchor><b>fn:check</b></a><span class=code>(ele) -&gt; errstring?</span><br>
   
   Check the current Key State.</li>
 </ul>
@@ -309,40 +309,40 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   asciicolor style</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Edit.close" href="#Edit.close" class=anchor><b>fn close</b></a><span class=code>(e, ed)</span></li>
-  <li><a id="Edit.save" href="#Edit.save" class=anchor><b>fn save</b></a><span class=code>(e, ed)</span></li>
-  <li><a id="Edit.copy" href="#Edit.copy" class=anchor><b>fn copy</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.forceHeight" href="#Edit.forceHeight" class=anchor><b>fn forceHeight</b></a><span class=code>(e) -&gt; e.fh</span></li>
-  <li><a id="Edit.forceWidth" href="#Edit.forceWidth" class=anchor><b>fn forceWidth</b></a><span class=code>(e) -&gt; e.fw</span></li>
-  <li><a id="Edit.curLine" href="#Edit.curLine" class=anchor><b>fn curLine</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.colEnd" href="#Edit.colEnd" class=anchor><b>fn colEnd</b></a><span class=code>(e) -&gt; #(e:curLine() or '') + 1</span></li>
-  <li><a id="Edit.lastLine" href="#Edit.lastLine" class=anchor><b>fn lastLine</b></a><span class=code>(e) -&gt; e.buf[#e]</span></li>
-  <li><a id="Edit.offset" href="#Edit.offset" class=anchor><b>fn offset</b></a><span class=code>(e, off)</span></li>
-  <li><a id="Edit.boundC" href="#Edit.boundC" class=anchor><b>fn boundC</b></a><span class=code>(e, l,c)</span></li>
-  <li><a id="Edit.boundLC" href="#Edit.boundLC" class=anchor><b>fn boundLC</b></a><span class=code>(e, l, c)</span></li>
-  <li><a id="Edit.boundCol" href="#Edit.boundCol" class=anchor><b>fn boundCol</b></a><span class=code>(e, c, l)</span></li>
-  <li><a id="Edit.viewCursor" href="#Edit.viewCursor" class=anchor><b>fn viewCursor</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.changeStart" href="#Edit.changeStart" class=anchor><b>fn changeStart</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.changeUpdate2" href="#Edit.changeUpdate2" class=anchor><b>fn changeUpdate2</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.append" href="#Edit.append" class=anchor><b>fn append</b></a><span class=code>(e, msg)</span></li>
-  <li><a id="Edit.insert" href="#Edit.insert" class=anchor><b>fn insert</b></a><span class=code>(e, s)</span></li>
-  <li><a id="Edit.remove" href="#Edit.remove" class=anchor><b>fn remove</b></a><span class=code>(e, ...)</span></li>
-  <li><a id="Edit.removeOff" href="#Edit.removeOff" class=anchor><b>fn removeOff</b></a><span class=code>(e, off, l, c)</span></li>
-  <li><a id="Edit.replace" href="#Edit.replace" class=anchor><b>fn replace</b></a><span class=code>(e, s, ...)</span></li>
-  <li><a id="Edit.clear" href="#Edit.clear" class=anchor><b>fn clear</b></a><span class=code>(e)</span><br>
+  <li><a id="Edit.close" href="#Edit.close" class=anchor><b>fn:close</b></a><span class=code>(ed)</span></li>
+  <li><a id="Edit.save" href="#Edit.save" class=anchor><b>fn:save</b></a><span class=code>(ed)</span></li>
+  <li><a id="Edit.copy" href="#Edit.copy" class=anchor><b>fn:copy</b></a><span class=code>()</span></li>
+  <li><a id="Edit.forceHeight" href="#Edit.forceHeight" class=anchor><b>fn:forceHeight</b></a><span class=code>()</span></li>
+  <li><a id="Edit.forceWidth" href="#Edit.forceWidth" class=anchor><b>fn:forceWidth</b></a><span class=code>()</span></li>
+  <li><a id="Edit.curLine" href="#Edit.curLine" class=anchor><b>fn:curLine</b></a><span class=code>()</span></li>
+  <li><a id="Edit.colEnd" href="#Edit.colEnd" class=anchor><b>fn:colEnd</b></a><span class=code>()</span></li>
+  <li><a id="Edit.lastLine" href="#Edit.lastLine" class=anchor><b>fn:lastLine</b></a><span class=code>()</span></li>
+  <li><a id="Edit.offset" href="#Edit.offset" class=anchor><b>fn:offset</b></a><span class=code>(off)</span></li>
+  <li><a id="Edit.boundC" href="#Edit.boundC" class=anchor><b>fn:boundC</b></a><span class=code>(l,c)</span></li>
+  <li><a id="Edit.boundLC" href="#Edit.boundLC" class=anchor><b>fn:boundLC</b></a><span class=code>(l, c)</span></li>
+  <li><a id="Edit.boundCol" href="#Edit.boundCol" class=anchor><b>fn:boundCol</b></a><span class=code>(c, l)</span></li>
+  <li><a id="Edit.viewCursor" href="#Edit.viewCursor" class=anchor><b>fn:viewCursor</b></a><span class=code>()</span></li>
+  <li><a id="Edit.changeStart" href="#Edit.changeStart" class=anchor><b>fn:changeStart</b></a><span class=code>()</span></li>
+  <li><a id="Edit.changeUpdate2" href="#Edit.changeUpdate2" class=anchor><b>fn:changeUpdate2</b></a><span class=code>()</span></li>
+  <li><a id="Edit.append" href="#Edit.append" class=anchor><b>fn:append</b></a><span class=code>(msg)</span></li>
+  <li><a id="Edit.insert" href="#Edit.insert" class=anchor><b>fn:insert</b></a><span class=code>(s)</span></li>
+  <li><a id="Edit.remove" href="#Edit.remove" class=anchor><b>fn:remove</b></a><span class=code>(...)</span></li>
+  <li><a id="Edit.removeOff" href="#Edit.removeOff" class=anchor><b>fn:removeOff</b></a><span class=code>(off, l, c)</span></li>
+  <li><a id="Edit.replace" href="#Edit.replace" class=anchor><b>fn:replace</b></a><span class=code>(s, ...)</span></li>
+  <li><a id="Edit.clear" href="#Edit.clear" class=anchor><b>fn:clear</b></a><span class=code>()</span><br>
   
   Clear the buffer.</li>
-  <li><a id="Edit.undo" href="#Edit.undo" class=anchor><b>fn undo</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.redo" href="#Edit.redo" class=anchor><b>fn redo</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.draw" href="#Edit.draw" class=anchor><b>fn draw</b></a><span class=code>(e, ed, isRight)</span></li>
-  <li><a id="Edit.barDims" href="#Edit.barDims" class=anchor><b>fn barDims</b></a><span class=code>(e)</span></li>
-  <li><a id="Edit.drawBars" href="#Edit.drawBars" class=anchor><b>fn drawBars</b></a><span class=code>(e, d) -&gt; botHeight, leftWidth</span></li>
-  <li><a id="Edit.drawCursor" href="#Edit.drawCursor" class=anchor><b>fn drawCursor</b></a><span class=code>(e, ed)</span></li>
-  <li><a id="Edit.split" href="#Edit.split" class=anchor><b>fn split</b></a><span class=code>(e, S) -&gt; split</span><br>
+  <li><a id="Edit.undo" href="#Edit.undo" class=anchor><b>fn:undo</b></a><span class=code>()</span></li>
+  <li><a id="Edit.redo" href="#Edit.redo" class=anchor><b>fn:redo</b></a><span class=code>()</span></li>
+  <li><a id="Edit.draw" href="#Edit.draw" class=anchor><b>fn:draw</b></a><span class=code>(ed, isRight)</span></li>
+  <li><a id="Edit.barDims" href="#Edit.barDims" class=anchor><b>fn:barDims</b></a><span class=code>()</span></li>
+  <li><a id="Edit.drawBars" href="#Edit.drawBars" class=anchor><b>fn:drawBars</b></a><span class=code>(d) -&gt; botHeight, leftWidth</span></li>
+  <li><a id="Edit.drawCursor" href="#Edit.drawCursor" class=anchor><b>fn:drawCursor</b></a><span class=code>(ed)</span></li>
+  <li><a id="Edit.split" href="#Edit.split" class=anchor><b>fn:split</b></a><span class=code>(S) -&gt; split</span><br>
   
   Split the edit by wrapping it and a copy into split type S.
   Return the resulting split.</li>
-  <li><a id="Edit.path" href="#Edit.path" class=anchor><b>fn path</b></a><span class=code>(e) -&gt; path?</span></li>
+  <li><a id="Edit.path" href="#Edit.path" class=anchor><b>fn:path</b></a><span class=code>() -&gt; path?</span></li>
 </ul>
 
 <p><h3><a id="ele.actions" href="#ele.actions" class=anchor>Mod ele.actions</h3></a>
@@ -455,37 +455,37 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   set to true to force a redraw</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Editor.init" href="#Editor.init" class=anchor><b>fn init</b></a><span class=code>(ed)</span></li>
-  <li><a id="Editor.getBuffer" href="#Editor.getBuffer" class=anchor><b>fn getBuffer</b></a><span class=code>(ed, v) -&gt; Buffer?</span><br>
+  <li><a id="Editor.init" href="#Editor.init" class=anchor><b>fn:init</b></a><span class=code>()</span></li>
+  <li><a id="Editor.getBuffer" href="#Editor.getBuffer" class=anchor><b>fn:getBuffer</b></a><span class=code>(v) -&gt; Buffer?</span><br>
   
   Get an existing buffer if it exists.
   Else return false if the buffer is path-like and should be
   created, else nil.</li>
-  <li><a id="Editor.buffer" href="#Editor.buffer" class=anchor><b>fn buffer</b></a><span class=code>(ed, idOrPath) -&gt; Buffer</span></li>
-  <li><a id="Editor.namedBuffer" href="#Editor.namedBuffer" class=anchor><b>fn namedBuffer</b></a><span class=code>(ed, name, path)</span><br>
+  <li><a id="Editor.buffer" href="#Editor.buffer" class=anchor><b>fn:buffer</b></a><span class=code>(idOrPath) -&gt; Buffer</span></li>
+  <li><a id="Editor.namedBuffer" href="#Editor.namedBuffer" class=anchor><b>fn:namedBuffer</b></a><span class=code>(name, path)</span><br>
   
   Get or create a named buffer (NOT a path).</li>
-  <li><a id="Editor.open" href="#Editor.open" class=anchor><b>fn open</b></a><span class=code>(ed, path) -&gt; edit</span></li>
-  <li><a id="Editor.draw" href="#Editor.draw" class=anchor><b>fn draw</b></a><span class=code>(ed)</span></li>
-  <li><a id="Editor.handleStandard" href="#Editor.handleStandard" class=anchor><b>fn handleStandard</b></a><span class=code>(ed, ev)</span><br>
+  <li><a id="Editor.open" href="#Editor.open" class=anchor><b>fn:open</b></a><span class=code>(path) -&gt; edit</span></li>
+  <li><a id="Editor.draw" href="#Editor.draw" class=anchor><b>fn:draw</b></a><span class=code>()</span></li>
+  <li><a id="Editor.handleStandard" href="#Editor.handleStandard" class=anchor><b>fn:handleStandard</b></a><span class=code>(ev)</span><br>
   
   Handle standard event fields.
   Currently this only handles the <span class=code>mode</span> field.</li>
-  <li><a id="Editor.replace" href="#Editor.replace" class=anchor><b>fn replace</b></a><span class=code>(ed, from, to) -&gt; from</span><br>
+  <li><a id="Editor.replace" href="#Editor.replace" class=anchor><b>fn:replace</b></a><span class=code>(from, to) -&gt; from</span><br>
   
   Replace the view/edit from with to.
-  Since Editor supports only <span class=code>ed.view</span> this means
+  Since Editor supports only <span class=code>self.view</span> this means
   it must be that value.</li>
-  <li><a id="Editor.remove" href="#Editor.remove" class=anchor><b>fn remove</b></a><span class=code>(ed, v) -&gt; v</span><br>
+  <li><a id="Editor.remove" href="#Editor.remove" class=anchor><b>fn:remove</b></a><span class=code>(v) -&gt; v</span><br>
   
   Remove a view and remove self as it's container.
   This does NOT close the view.</li>
-  <li><a id="Editor.focusFirst" href="#Editor.focusFirst" class=anchor><b>fn focusFirst</b></a><span class=code>(ed, c)</span><br>
+  <li><a id="Editor.focusFirst" href="#Editor.focusFirst" class=anchor><b>fn:focusFirst</b></a><span class=code>(c)</span><br>
   
-  Focus the first edit view in container c (default ed.view)</li>
-  <li><a id="Editor.focus" href="#Editor.focus" class=anchor><b>fn focus</b></a><span class=code>(ed, b) -&gt; Edit</span><br>
+  Focus the first edit view in container c (default self.view)</li>
+  <li><a id="Editor.focus" href="#Editor.focus" class=anchor><b>fn:focus</b></a><span class=code>(b) -&gt; Edit</span><br>
   
-  Replace the current edit view with the new <span class=code>ed:buffer(b)</span>.
+  Replace the current edit view with the new <span class=code>self:buffer(b)</span>.
   Return the new edit view being focused.</li>
 </ul>
 

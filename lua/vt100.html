@@ -88,9 +88,9 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4<br>
   <p>Return: <span class=code>fg, bg, write(str, ...)</span>
   <div class=info> Note: fg and bg are the updated color codes</div></li>
   <li><a id="vt100.setrawmode" href="#vt100.setrawmode" class=anchor><b>fn setrawmode</b></a><span class=code>()</span></li>
-  <li><a id="vt100.setsanemode" href="#vt100.setsanemode" class=anchor><b>fn setsanemode</b></a><span class=code>() -&gt; os.execute'stty sane'</span></li>
+  <li><a id="vt100.setsanemode" href="#vt100.setsanemode" class=anchor><b>fn setsanemode</b></a><span class=code>()</span></li>
   <li><a id="vt100.savemode" href="#vt100.savemode" class=anchor><b>fn savemode</b></a><span class=code>() -&gt; mode?, errmsg?</span></li>
-  <li><a id="vt100.restoremode" href="#vt100.restoremode" class=anchor><b>fn restoremode</b></a><span class=code>(mode) -&gt; os.execute('stty '..mode)</span></li>
+  <li><a id="vt100.restoremode" href="#vt100.restoremode" class=anchor><b>fn restoremode</b></a><span class=code>('stty '..mode)</span></li>
   <li><a id="vt100.start" href="#vt100.start" class=anchor><b>fn start</b></a><span class=code>() -&gt; savedmode</span></li>
   <li><a id="vt100.stop" href="#vt100.stop" class=anchor><b>fn stop</b></a><span class=code>(fd, savedmode)</span></li>
   <li><a id="vt100.Fmt" href="#vt100.Fmt" class=anchor><b>fn Fmt</b></a><span class=code>(t)</span><br>
@@ -109,22 +109,22 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4<br>
 Direct terminal control functions
 
 <p><b>Functions</b> <ul>
-  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.colorFB" href="#vt100.ctrl.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.right" href="#vt100.ctrl.right" class=anchor><b>fn right</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(name, fmt)</span></li>
-  <li><a id="vt100.ctrl.up" href="#vt100.ctrl.up" class=anchor><b>fn up</b></a><span class=code>(name, fmt)</span></li>
+  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.right" href="#vt100.ctrl.right" class=anchor><b>fn right</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.up" href="#vt100.ctrl.up" class=anchor><b>fn up</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.colorFB" href="#vt100.ctrl.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
   <li><a id="vt100.ctrl.size" href="#vt100.ctrl.size" class=anchor><b>fn size</b></a><span class=code>(f)</span><br>
   
   causes terminal to send size as (escaped) cursor position</li>
@@ -162,15 +162,15 @@ VT100 Terminal Emulator <ul>
   optional styler</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Term.clear" href="#Term.clear" class=anchor><b>fn clear</b></a><span class=code>(tm)</span></li>
-  <li><a id="Term.resize" href="#Term.resize" class=anchor><b>fn resize</b></a><span class=code>(tm)</span><br>
+  <li><a id="Term.clear" href="#Term.clear" class=anchor><b>fn:clear</b></a><span class=code>()</span></li>
+  <li><a id="Term.resize" href="#Term.resize" class=anchor><b>fn:resize</b></a><span class=code>()</span><br>
   
   request size and clear children
   This can only be run with an active (LAP) input coroutine</li>
-  <li><a id="Term.draw" href="#Term.draw" class=anchor><b>fn draw</b></a><span class=code>(tm)</span><br>
+  <li><a id="Term.draw" href="#Term.draw" class=anchor><b>fn:draw</b></a><span class=code>()</span><br>
   
   draw the text and color(fg/bg) grids to the screen</li>
-  <li><a id="Term.input" href="#Term.input" class=anchor><b>fn input</b></a><span class=code>(tm, send) -&gt; infinite loop (run in coroutine)</span><br>
+  <li><a id="Term.input" href="#Term.input" class=anchor><b>fn:input</b></a><span class=code>(send) -&gt; infinite loop (run in coroutine)</span><br>
   
   function to run in a (LAP) coroutine.
   <span class=code>send()</span> is called with each key recieved. Typically this is a lap.Send.</li>
@@ -185,11 +185,11 @@ VT100 Terminal Emulator <ul>
   current background ac letter</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="vt100.AcWriter.flush" href="#vt100.AcWriter.flush" class=anchor><b>fn flush</b></a><span class=code>(aw) -&gt; aw.f:flush()</span></li>
-  <li><a id="vt100.AcWriter.acwrite" href="#vt100.AcWriter.acwrite" class=anchor><b>fn acwrite</b></a><span class=code>(aw, fgstr, bgstr, ...) -&gt; write(...)</span><br>
+  <li><a id="vt100.AcWriter.flush" href="#vt100.AcWriter.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span></li>
+  <li><a id="vt100.AcWriter.acwrite" href="#vt100.AcWriter.acwrite" class=anchor><b>fn:acwrite</b></a><span class=code>(fgstr, bgstr, ...) -&gt; write(...)</span><br>
   
   <span class=code>:acwrite(fgstr, bgstr, str, ...)</span>: writes str with style of fg/bg str</li>
-  <li><a id="vt100.AcWriter.write" href="#vt100.AcWriter.write" class=anchor><b>fn write</b></a><span class=code>(aw, ...) -&gt; aw:acwrite(nil, nil, ...)</span><br>
+  <li><a id="vt100.AcWriter.write" href="#vt100.AcWriter.write" class=anchor><b>fn:write</b></a><span class=code>(nil, nil, ...)</span><br>
   
   write plain</li>
 </ul>
@@ -234,7 +234,7 @@ helpers for testing/demoing vt100
   optional styler</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Fake.resize" href="#Fake.resize" class=anchor><b>fn resize</b></a><span class=code>(tm, l, c)</span></li>
+  <li><a id="Fake.resize" href="#Fake.resize" class=anchor><b>fn:resize</b></a><span class=code>(l, c)</span></li>
   <li><a id="Fake.draw" href="#Fake.draw" class=anchor><b>fn draw</b></a><span class=code>()</span><br>
   
   Function that indicates an API is not supported for a type.

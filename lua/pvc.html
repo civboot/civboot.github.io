@@ -410,7 +410,7 @@ Get the snapshot directory of branch#id.
   <li><a id="pvc.branchDir" href="#pvc.branchDir" class=anchor><b>fn branchDir</b></a><span class=code>(P, branch, dot)</span><br>
   
   return the branch path in project regardless of whether it exists</li>
-  <li><a id="pvc.depth" href="#pvc.depth" class=anchor><b>fn depth</b></a><span class=code>(bdir) -&gt; readInt(toDir(bdir)..'commit/depth')</span></li>
+  <li><a id="pvc.depth" href="#pvc.depth" class=anchor><b>fn depth</b></a><span class=code>(bdir)</span></li>
   <li><a id="pvc.snapDir" href="#pvc.snapDir" class=anchor><b>fn snapDir</b></a><span class=code>(bdir, id) -&gt; string?</span><br>
   
   Get the snap/ path regardless of whether it exists</li>
@@ -461,9 +461,9 @@ Get the snapshot directory of branch#id.
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Diff.of" href="#Diff.of" class=anchor><b>fn of</b></a><span class=code>(T, d1, d2)</span></li>
-  <li><a id="Diff.hasDiff" href="#Diff.hasDiff" class=anchor><b>fn hasDiff</b></a><span class=code>(d)</span></li>
-  <li><a id="Diff.format" href="#Diff.format" class=anchor><b>fn format</b></a><span class=code>(d, fmt, full)</span></li>
-  <li><a id="Diff.patch" href="#Diff.patch" class=anchor><b>fn patch</b></a><span class=code>(d) -&gt; patchText</span></li>
+  <li><a id="Diff.hasDiff" href="#Diff.hasDiff" class=anchor><b>fn:hasDiff</b></a><span class=code>()</span></li>
+  <li><a id="Diff.format" href="#Diff.format" class=anchor><b>fn:format</b></a><span class=code>(fmt, full)</span></li>
+  <li><a id="Diff.patch" href="#Diff.patch" class=anchor><b>fn:patch</b></a><span class=code>() -&gt; patchText</span></li>
 </ul>
 
 <p><h3><a id="pvc.unix" href="#pvc.unix" class=anchor>Mod pvc.unix</h3></a>

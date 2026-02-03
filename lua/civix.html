@@ -49,12 +49,12 @@ civix: unix-like OS utilities.
   <li><a id="civix.rm" href="#civix.rm" class=anchor><b>fn rm</b></a><span class=code>(path) -&gt; nil</span><br>
   
   remove file.</li>
-  <li><a id="civix.statModifiedEq" href="#civix.statModifiedEq" class=anchor><b>fn statModifiedEq</b></a><span class=code>(fs1, fs2) -&gt; boolean</span><br>
-  
-  return whether two Stat's have equal modification times</li>
   <li><a id="civix.stat" href="#civix.stat" class=anchor><b>fn stat</b></a><span class=code>(v) -&gt; Stat?, errmsg?</span><br>
   
   Given a path|File|Stat return a Stat</li>
+  <li><a id="civix.statModifiedEq" href="#civix.statModifiedEq" class=anchor><b>fn statModifiedEq</b></a><span class=code>(fs1, fs2) -&gt; boolean</span><br>
+  
+  return whether two Stat's have equal modification times</li>
   <li><a id="civix.modifiedEq" href="#civix.modifiedEq" class=anchor><b>fn modifiedEq</b></a><span class=code>(a, b)</span><br>
   
   return whether two path|File|Stat have equal modification times</li>
@@ -84,21 +84,21 @@ civix: unix-like OS utilities.
   <li><a id="civix.sleep" href="#civix.sleep" class=anchor><b>fn sleep</b></a><span class=code>(d) -&gt; nil</span><br>
   
   Sleep for the specified duration</li>
-  <li><a id="civix.epoch" href="#civix.epoch" class=anchor><b>fn epoch</b></a><span class=code>() -&gt; ds.Epoch(lib.epoch())</span><br>
+  <li><a id="civix.epoch" href="#civix.epoch" class=anchor><b>fn epoch</b></a><span class=code>()</span><br>
   
   Return the Epoch/Mono time
   Time according to realtime clock</li>
-  <li><a id="civix.mono" href="#civix.mono" class=anchor><b>fn mono</b></a><span class=code>() -&gt; ds.Duration(lib.mono())</span><br>
+  <li><a id="civix.mono" href="#civix.mono" class=anchor><b>fn mono</b></a><span class=code>()</span><br>
   
   Duration according to monotomically incrementing clock.</li>
-  <li><a id="civix.monoSec" href="#civix.monoSec" class=anchor><b>fn monoSec</b></a><span class=code>() -&gt; M.mono():asSeconds()</span></li>
+  <li><a id="civix.monoSec" href="#civix.monoSec" class=anchor><b>fn monoSec</b></a><span class=code>()</span></li>
   <li><a id="civix.pathEq" href="#civix.pathEq" class=anchor><b>fn pathEq</b></a><span class=code>(path1, path2)</span><br>
   
   return if the contents of the two paths are equal.
   If both are directories return true (do not recurse).
   If both don't exist return true</li>
-  <li><a id="civix.isFile" href="#civix.isFile" class=anchor><b>fn isFile</b></a><span class=code>(path) -&gt; M.pathtype(path) == 'file'</span></li>
-  <li><a id="civix.isDir" href="#civix.isDir" class=anchor><b>fn isDir</b></a><span class=code>(path) -&gt; M.pathtype(path) == 'dir'</span></li>
+  <li><a id="civix.isFile" href="#civix.isFile" class=anchor><b>fn isFile</b></a><span class=code>(path)</span></li>
+  <li><a id="civix.isDir" href="#civix.isDir" class=anchor><b>fn isDir</b></a><span class=code>(path)</span></li>
   <li><a id="civix.walk" href="#civix.walk" class=anchor><b>fn walk</b></a><span class=code>(paths, ftypeFns, maxDepth)</span><br>
   
   TODO: remove this, use Walk instead.
@@ -205,7 +205,7 @@ civix: unix-like OS utilities.
       <td><span class=code>echo "sent to stdin" | cat</span></td>
     </tr>
   </table></div></li>
-  <li><a id="civix.isRoot" href="#civix.isRoot" class=anchor><b>fn isRoot</b></a><span class=code>() -&gt; os.getenv'EUID' == '0'</span></li>
+  <li><a id="civix.isRoot" href="#civix.isRoot" class=anchor><b>fn isRoot</b></a><span class=code>()</span></li>
 </ul>
 
 <p><h4><a id="civix.Walk" href="#civix.Walk" class=anchor>Record Walk</h4></a>
@@ -232,10 +232,10 @@ end
   the current (root) path index being walked</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Walk.depth" href="#Walk.depth" class=anchor><b>fn depth</b></a><span class=code>(w) -&gt; #w._dirs</span><br>
+  <li><a id="Walk.depth" href="#Walk.depth" class=anchor><b>fn:depth</b></a><span class=code>()</span><br>
   
   - get the depth of the current directory being walked</li>
-  <li><a id="Walk.skip" href="#Walk.skip" class=anchor><b>fn skip</b></a><span class=code>(w._dirs)</span><br>
+  <li><a id="Walk.skip" href="#Walk.skip" class=anchor><b>fn:skip</b></a><span class=code>(self._dirs)</span><br>
   
   skip the current directory level</li>
 </ul>

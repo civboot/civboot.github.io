@@ -21,7 +21,7 @@ vsds: version control data structures (and algorithms)
 <p><b>Types: </b><a href="#vcds.Diff">Diff</a> <a href="#vcds.Keep">Keep</a> <a href="#vcds.Change">Change</a> <a href="#vcds.DiffsExtender">DiffsExtender</a> <a href="#vcds.Picks">Picks</a> <a href="#vcds.Patch">Patch</a> 
 
 <p><b>Functions</b> <ul>
-  <li><a id="vcds.normalize" href="#vcds.normalize" class=anchor><b>fn normalize</b></a><span class=code>(s) -&gt; ds.squash(ds.trimEnd(s))</span><br>
+  <li><a id="vcds.normalize" href="#vcds.normalize" class=anchor><b>fn normalize</b></a><span class=code>(s)</span><br>
   
   normalize a line for comparing (anchoring).
   This just squashes and trims the end.</li>
@@ -78,7 +78,7 @@ This type is good for displaying differences to a user.
   <li><a id="vcds.Diff.text" href="#vcds.Diff.text" class=anchor><b>text</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Diff.isKeep" href="#Diff.isKeep" class=anchor><b>fn isKeep</b></a><span class=code>(d)</span></li>
+  <li><a id="Diff.isKeep" href="#Diff.isKeep" class=anchor><b>fn:isKeep</b></a><span class=code>()</span></li>
 </ul>
 
 <p><h4><a id="vcds.Keep" href="#vcds.Keep" class=anchor>Record Keep</h4></a>
@@ -86,7 +86,7 @@ This type is good for displaying differences to a user.
   <li><a id="vcds.Keep.num" href="#vcds.Keep.num" class=anchor><b>num</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Keep.len" href="#Keep.len" class=anchor><b>fn len</b></a><span class=code>(k) -&gt; k.num and k.num or #k</span></li>
+  <li><a id="Keep.len" href="#Keep.len" class=anchor><b>fn:len</b></a><span class=code>()</span></li>
 </ul>
 
 <p><h4><a id="vcds.Change" href="#vcds.Change" class=anchor>Record Change</h4></a>
@@ -97,7 +97,7 @@ This type is good for displaying differences to a user.
   text to add</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Change.len" href="#Change.len" class=anchor><b>fn len</b></a><span class=code>(ch)</span></li>
+  <li><a id="Change.len" href="#Change.len" class=anchor><b>fn:len</b></a><span class=code>()</span></li>
 </ul>
 
 <p><h4><a id="vcds.DiffsExtender" href="#vcds.DiffsExtender" class=anchor>Record DiffsExtender</h4></a>
@@ -127,7 +127,7 @@ above and below (unless they are start/end of file).
   settings (need refactor)</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Picks.groupChanges" href="#Picks.groupChanges" class=anchor><b>fn groupChanges</b></a><span class=code>(p, ci)</span><br>
+  <li><a id="Picks.groupChanges" href="#Picks.groupChanges" class=anchor><b>fn:groupChanges</b></a><span class=code>(ci)</span><br>
   
   Get which changes to include in a patch group.
   A group is a series of patches with Keep:len() < anchorLen (default=3)

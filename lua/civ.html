@@ -124,6 +124,8 @@ Initialize the repository. This should be run when starting a new repo.
 <b>Arguments:</b><ul>
   <li><a id="init.config" href="#init.config" class=anchor><b>config</b></a> <span class=code>=".civconfig.luk"</span>
   path to config.lua to output</li>
+  <li><a id="init.llua" href="#init.llua" class=anchor><b>llua</b></a> <span class=code>="lua"</span>
+  the lua library name override for pkg-config, i.e. lua5.3</li>
 </ul>
 <h4><a id="build" href="#build" class=anchor>Subcmd build</h4></a>
 Usage: <span class=code>civ build hub:tgt#name</span><br>
@@ -132,6 +134,7 @@ Build targets which match the pattern.
 <b>Arguments:</b><ul>
   <li><a id="civ.build.config" href="#civ.build.config" class=anchor><b>config</b></a>
   path to civ config.</li>
+  <li><a id="civ.build.clean" href="#civ.build.clean" class=anchor><b>clean</b></a></li>
 </ul>
 <h4><a id="test" href="#test" class=anchor>Subcmd test</h4></a>
 Usage: <span class=code>civ test hub:tgt#name</span><br>
@@ -140,6 +143,7 @@ Test targets which match the pattern.
 <b>Arguments:</b><ul>
   <li><a id="civ.test.config" href="#civ.test.config" class=anchor><b>config</b></a>
   path to civ config.</li>
+  <li><a id="civ.test.clean" href="#civ.test.clean" class=anchor><b>clean</b></a></li>
 </ul>
 <h4><a id="run" href="#run" class=anchor>Subcmd run</h4></a>
 Usage: <span class=code>civ run hub:tgt#name -- ...args</span><br>
@@ -148,6 +152,7 @@ Build+run a single build target which has a single bin or link output.
 <b>Arguments:</b><ul>
   <li><a id="civ.run.config" href="#civ.run.config" class=anchor><b>config</b></a>
   path to civ config.</li>
+  <li><a id="civ.run.clean" href="#civ.run.clean" class=anchor><b>clean</b></a></li>
 </ul>
 <h4><a id="install" href="#install" class=anchor>Subcmd install</h4></a>
 Usage: <span class=code>civ install hub:tgt#name</span><br>
@@ -156,6 +161,7 @@ Install targets which match the pattern.
 <b>Arguments:</b><ul>
   <li><a id="civ.install.config" href="#civ.install.config" class=anchor><b>config</b></a>
   path to civ config.</li>
+  <li><a id="civ.install.clean" href="#civ.install.clean" class=anchor><b>clean</b></a></li>
   <li><a id="civ.install.force" href="#civ.install.force" class=anchor><b>force</b></a>
   do not confirm deletion of files.</li>
 </ul>
@@ -178,6 +184,7 @@ Install targets which match the pattern.
 <p><b>Functions</b> <ul>
   <li><a id="civ.core.tgtnameSplit" href="#civ.core.tgtnameSplit" class=anchor><b>fn tgtnameSplit</b></a></li>
   <li><a id="civ.core.tgtname" href="#civ.core.tgtname" class=anchor><b>fn tgtname</b></a><span class=code>(tgtname)</span></li>
+  <li><a id="civ.core.loadPrevTargets" href="#civ.core.loadPrevTargets" class=anchor><b>fn loadPrevTargets</b></a><span class=code>(jsonPath)</span></li>
 </ul>
 
 <p><h4><a id="civ.core.TargetName" href="#civ.core.TargetName" class=anchor>Record TargetName</h4></a>
@@ -209,8 +216,6 @@ A build target, the result of compiling a package.
   arbitrary value, used by run command</li>
   <li><a id="civ.core.Target.dep" href="#civ.core.Target.dep" class=anchor><b>dep</b></a>
   list of input Target objects (dependencies).</li>
-  <li><a id="civ.core.Target.depIds" href="#civ.core.Target.depIds" class=anchor><b>depIds</b></a>
-  list of dependency target ids. Populated for Worker.</li>
   <li><a id="civ.core.Target.api" href="#civ.core.Target.api" class=anchor><b>api</b></a>
   the lang-specific exported import paths.</li>
   <li><a id="civ.core.Target.out" href="#civ.core.Target.out" class=anchor><b>out</b></a>
@@ -228,9 +233,18 @@ A build target, the result of compiling a package.
   arbitrary attributes like test, testonly, etc.</li>
   <li><a id="civ.core.Target.run" href="#civ.core.Target.run" class=anchor><b>run</b></a>
   executable script which performs the operation kind.</li>
+  <li><a id="civ.core.Target.mtime" href="#civ.core.Target.mtime" class=anchor><b>mtime</b></a>
+  modified time of target and deps</li>
+  <li><a id="civ.core.Target.id" href="#civ.core.Target.id" class=anchor><b>id</b></a>
+  id of this target. Populated for Worker.</li>
+  <li><a id="civ.core.Target.depIds" href="#civ.core.Target.depIds" class=anchor><b>depIds</b></a>
+  list of dependency target ids. Populated for Worker.</li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Target.tgtname" href="#Target.tgtname" class=anchor><b>fn:tgtname</b></a><span class=code>()</span></li>
+  <li><a id="Target.outPaths" href="#Target.outPaths" class=anchor><b>fn:outPaths</b></a><span class=code>(dir)</span><br>
+  
+  Fill <span class=code>to</span> with output path strings.</li>
 </ul>
 
 <p><h4><a id="civ.core.Hub" href="#civ.core.Hub" class=anchor>Record Hub</h4></a>
@@ -291,6 +305,8 @@ processing civ build graphs (pkgname graphs).
   <li><a id="civ.core.Civ.cycle" href="#civ.core.Civ.cycle" class=anchor><b>cycle</b></a></li>
   <li><a id="civ.core.Civ.worker" href="#civ.core.Civ.worker" class=anchor><b>worker</b></a>
   direct worker</li>
+  <li><a id="civ.core.Civ.lastTargets" href="#civ.core.Civ.lastTargets" class=anchor><b>lastTargets</b></a>
+  the last targets</li>
   <li><a id="civ.core.Civ.ENV" href="#civ.core.Civ.ENV" class=anchor><b>ENV</b></a>
   environment for running workers</li>
 </ul>
@@ -312,6 +328,9 @@ processing civ build graphs (pkgname graphs).
   Get pkgname's full directory.</li>
   <li><a id="Civ.tgtDir" href="#Civ.tgtDir" class=anchor><b>fn:tgtDir</b></a><span class=code>(tgt) -&gt; dir/</span></li>
   <li><a id="Civ.target" href="#Civ.target" class=anchor><b>fn:target</b></a><span class=code>(tgt) -&gt; Target?, errmsg</span></li>
+  <li><a id="Civ.tgtMod" href="#Civ.tgtMod" class=anchor><b>fn:tgtMod</b></a><span class=code>(tgt) -&gt; ds.time.Epoch</span><br>
+  
+  Get the "modtime" of the whole target.</li>
   <li><a id="Civ.loadPkg" href="#Civ.loadPkg" class=anchor><b>fn:loadPkg</b></a><span class=code>(pkgname)</span></li>
   <li><a id="Civ.loadPkgs" href="#Civ.loadPkgs" class=anchor><b>fn:loadPkgs</b></a><span class=code>(pkgnames)</span><br>
   
@@ -320,6 +339,7 @@ processing civ build graphs (pkgname graphs).
   
   recursively find all deps</li>
   <li><a id="Civ.run" href="#Civ.run" class=anchor><b>fn:run</b></a><span class=code>(stage, tgtname, script, ids)</span></li>
+  <li><a id="Civ.prebuild" href="#Civ.prebuild" class=anchor><b>fn:prebuild</b></a><span class=code>(prevTgts, tgts) -&gt; toBuild, ordered</span></li>
   <li><a id="Civ.build" href="#Civ.build" class=anchor><b>fn:build</b></a><span class=code>(tgts) -&gt; ordered, tgtsCache</span><br>
   
   Build the target.</li>
@@ -351,7 +371,7 @@ build/test macros.</div>
   
   Usage: <span class=code>worker = Worker:get()</span></li>
   <li><a id="civ.Worker.target" href="#civ.Worker.target" class=anchor><b>fn:target</b></a><span class=code>(id) -&gt; Target</span></li>
-  <li><a id="civ.Worker.copyOut" href="#civ.Worker.copyOut" class=anchor><b>fn:copyOut</b></a><span class=code>(tgt, outKey)</span><br>
+  <li><a id="civ.Worker.copyOut" href="#civ.Worker.copyOut" class=anchor><b>fn:copyOut</b></a><span class=code>(tgt)</span><br>
   
   Copy output files from <span class=code>tgt.out[outKey]</span>.</li>
   <li><a id="civ.Worker.link" href="#civ.Worker.link" class=anchor><b>fn:link</b></a><span class=code>(tgt)</span></li>

@@ -48,19 +48,19 @@ filedescriptor: direct control of filedescriptors.
   return whether two fstat's have equal modification times
   FIXME: move this to civix</li>
   <li><a id="fd.openWith" href="#fd.openWith" class=anchor><b>fn openWith</b></a><span class=code>(openFn, path, mode)</span></li>
-  <li><a id="fd.openFD" href="#fd.openFD" class=anchor><b>fn openFD</b></a><span class=code>(...) -&gt; M.openWith(S.openFD, ...)</span></li>
-  <li><a id="fd.openFDT" href="#fd.openFDT" class=anchor><b>fn openFDT</b></a><span class=code>(...) -&gt; M.openWith(S.openFDT, ...)</span></li>
+  <li><a id="fd.openFD" href="#fd.openFD" class=anchor><b>fn openFD</b></a><span class=code>(S.openFD, ...)</span></li>
+  <li><a id="fd.openFDT" href="#fd.openFDT" class=anchor><b>fn openFDT</b></a><span class=code>(S.openFDT, ...)</span></li>
   <li><a id="fd.open" href="#fd.open" class=anchor><b>fn open</b></a><span class=code>(...)</span></li>
   <li><a id="fd.close" href="#fd.close" class=anchor><b>fn close</b></a><span class=code>()</span></li>
   <li><a id="fd.tmpfileFn" href="#fd.tmpfileFn" class=anchor><b>fn tmpfileFn</b></a><span class=code>(sysFn)</span></li>
   <li><a id="fd.tmpfile" href="#fd.tmpfile" class=anchor><b>fn tmpfile</b></a><span class=code>() -&gt; M.tmpfileFn(S.tmpFD)</span></li>
   <li><a id="fd.read" href="#fd.read" class=anchor><b>fn read</b></a><span class=code>(...)</span></li>
   <li><a id="fd.lines" href="#fd.lines" class=anchor><b>fn lines</b></a><span class=code>(path, mode)</span></li>
-  <li><a id="fd.write" href="#fd.write" class=anchor><b>fn write</b></a><span class=code>(...) -&gt; M.output():write(...)</span></li>
+  <li><a id="fd.write" href="#fd.write" class=anchor><b>fn write</b></a><span class=code>(...)</span></li>
   <li><a id="fd.openFileno" href="#fd.openFileno" class=anchor><b>fn openFileno</b></a><span class=code>(fileno)</span></li>
-  <li><a id="fd.input" href="#fd.input" class=anchor><b>fn input</b></a><span class=code>() -&gt; M.stdin</span></li>
-  <li><a id="fd.output" href="#fd.output" class=anchor><b>fn output</b></a><span class=code>() -&gt; M.stdout</span></li>
-  <li><a id="fd.flush" href="#fd.flush" class=anchor><b>fn flush</b></a><span class=code>() -&gt; M.output():flush()</span></li>
+  <li><a id="fd.input" href="#fd.input" class=anchor><b>fn input</b></a><span class=code>()</span></li>
+  <li><a id="fd.output" href="#fd.output" class=anchor><b>fn output</b></a><span class=code>()</span></li>
+  <li><a id="fd.flush" href="#fd.flush" class=anchor><b>fn flush</b></a><span class=code>()</span></li>
   <li><a id="fd.type" href="#fd.type" class=anchor><b>fn type</b></a><span class=code>(fd)</span></li>
   <li><a id="fd.fileno" href="#fd.fileno" class=anchor><b>fn fileno</b></a><span class=code>(fd)</span></li>
   <li><a id="fd.ftype" href="#fd.ftype" class=anchor><b>fn ftype</b></a><span class=code>(f)</span></li>

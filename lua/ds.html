@@ -24,7 +24,7 @@ dependency is <a href="lib/metaty">lib/metaty</a> which it uses for defining it'
 ds: data structures and algorithms.
 
 <p>
-<p><b>Types: </b><a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Duration">Duration</a> <a href="#ds.Epoch">Epoch</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.TWriter">TWriter</a> <a href="#ds.Error">Error</a> 
+<p><b>Types: </b><a href="#ds.PlainStyler">PlainStyler</a> <a href="#ds.TypoSafe">TypoSafe</a> <a href="#ds.Slc">Slc</a> <a href="#ds.Imm">Imm</a> <a href="#ds.Set">Set</a> <a href="#ds.bt">bt</a> <a href="#ds.BiMap">BiMap</a> <a href="#ds.Deq">Deq</a> <a href="#ds.Error">Error</a> 
 
 <p><b>Functions</b> <ul>
   <li><a id="ds.setup" href="#ds.setup" class=anchor><b>fn setup</b></a><span class=code>(args)</span><br>
@@ -92,6 +92,12 @@ ds: data structures and algorithms.
   <li><a id="ds.isWithin" href="#ds.isWithin" class=anchor><b>fn isWithin</b></a><span class=code>(v, min, max) -&gt; bool</span><br>
   
   Return whether <span class=code>min &lt;= v &lt;= max</span>.</li>
+  <li><a id="ds.min" href="#ds.min" class=anchor><b>fn min</b></a><span class=code>(a, b) -&gt; minimum</span><br>
+  
+  return the minimum value</li>
+  <li><a id="ds.max" href="#ds.max" class=anchor><b>fn max</b></a><span class=code>(a, b) -&gt; maximum</span><br>
+  
+  return the maximum value</li>
   <li><a id="ds.lt" href="#ds.lt" class=anchor><b>fn lt</b></a><span class=code>(a, b) -&gt; bool</span><br>
   
   Return <span class=code>a &lt; b</span>.</li>
@@ -188,9 +194,9 @@ end
   
   <p>This lets many types be substitutable for raw-tables in some APIs (i.e.
   lines).</li>
-  <li><a id="ds.isEmpty" href="#ds.isEmpty" class=anchor><b>fn isEmpty</b></a><span class=code>(t) -&gt; t == nil or next(t) == nil</span><br>
+  <li><a id="ds.isEmpty" href="#ds.isEmpty" class=anchor><b>fn isEmpty</b></a><span class=code>(t)</span><br>
   
-  Return whether <span class=code>t</span> is nil or the result of <span class=code>next(t)</span> is nil.</li>
+  Return whether <span class=code>t</span> contains a single value.</li>
   <li><a id="ds.pairlen" href="#ds.pairlen" class=anchor><b>fn pairlen</b></a><span class=code>(t) -&gt; int</span><br>
   
   the full length of all pairs
@@ -205,7 +211,7 @@ end
   <li><a id="ds.geti" href="#ds.geti" class=anchor><b>fn geti</b></a><span class=code>(t, i) -&gt; t[i]</span><br>
   
   get index, handling negatives</li>
-  <li><a id="ds.last" href="#ds.last" class=anchor><b>fn last</b></a><span class=code>(t) -&gt; t[#t]</span><br>
+  <li><a id="ds.last" href="#ds.last" class=anchor><b>fn last</b></a><span class=code>(t)</span><br>
   
   get the last value of a list-like table.</li>
   <li><a id="ds.only" href="#ds.only" class=anchor><b>fn only</b></a><span class=code>(t) -&gt; t[1]</span><br>
@@ -289,6 +295,22 @@ end
   
   Recursively merge m into t, overriding existing values.
   List (integer) indexes are <i>extended</i> instead of overwritten.</li>
+  <li><a id="ds.orderedMerge" href="#ds.orderedMerge" class=anchor><b>fn orderedMerge</b></a><span class=code>(a, b, to, cmp, a_si, a_ei, b_si, b_ei, ti, mv) -&gt; to</span><br>
+  
+  Perform an ordered merge of <span class=code>a[a_si:a_ei</span> and <span class=code>b[b_si:b_ei</span>
+  to <span class=code>to[ti:a_ei-a_si + b_ei-b_si + 2</span>, using <span class=code>cmp</span> (default <span class=code>ds.lte</span>)
+  for comparison.
+  
+  <p>The return values is the table <span class=code>to</span>, which will be created if not provided.
+  
+  <p>The <span class=code>mv</span> function is used for moving final values after one list
+  is empty (default=<span class=code>table.move</span>).
+  
+  <p>This can be part of a sorting algorithm or used to merge two
+  already-sorted lists.</li>
+  <li><a id="ds.orderedMergeRaw" href="#ds.orderedMergeRaw" class=anchor><b>fn orderedMergeRaw</b></a><span class=code>(a, b, to, cmp, a_si, a_ei, b_si, b_ei, ti, mv) -&gt; to</span><br>
+  
+  orderedMerge without any default values.</li>
   <li><a id="ds.popk" href="#ds.popk" class=anchor><b>fn popk</b></a><span class=code>(t, key) -&gt; value</span><br>
   
   Remove key from <span class=code>t</span> and return it's value.</li>
@@ -303,7 +325,7 @@ end
   
   Set the key to a value if it is currently nil.
   Else do not change it.</li>
-  <li><a id="ds.emptyTable" href="#ds.emptyTable" class=anchor><b>fn emptyTable</b></a><span class=code>() -&gt; {}</span><br>
+  <li><a id="ds.emptyTable" href="#ds.emptyTable" class=anchor><b>fn emptyTable</b></a><span class=code>()</span><br>
   
   Return an empty table, useful for newFn/etc in some APIs.</li>
   <li><a id="ds.rmleft" href="#ds.rmleft" class=anchor><b>fn rmleft</b></a><span class=code>(t, rm, eq--[[ds.eq]]) -&gt; t (mutated)</span><br>
@@ -352,9 +374,11 @@ end
   <li><a id="ds.defaultICopy" href="#ds.defaultICopy" class=anchor><b>fn defaultICopy</b></a><span class=code>(r)</span><br>
   
   For types implementing <span class=code>:copy()</span> method.</li>
+  <li><a id="ds.rawcopy" href="#ds.rawcopy" class=anchor><b>fn rawcopy</b></a><span class=code>(t)</span></li>
   <li><a id="ds.copy" href="#ds.copy" class=anchor><b>fn copy</b></a><span class=code>(t, add) -&gt; new t</span><br>
   
-  Copy and update full table</li>
+  Copy and update full table
+  FIXME: remove add</li>
   <li><a id="ds.deepcopy" href="#ds.deepcopy" class=anchor><b>fn deepcopy</b></a><span class=code>(t) -&gt; table</span><br>
   
   Recursively copy the table.</li>
@@ -418,12 +442,6 @@ end
   
   Same as coroutine.resume except uses a ds.Error object for errors
   (has traceback)</li>
-  <li><a id="ds.auto" href="#ds.auto" class=anchor><b>fn auto</b></a><span class=code>(mod, i) -&gt; (mod, i)</span><br>
-  
-  DEPRECATED: do not use this function.<br>
-  
-  auto-set nil locals using require(mod)
-  <span class=code>local x, y, z; ds.auto'mm' -- sets x=mm.x; y=mm.y; z=mm.z</span></li>
   <li><a id="ds.wantpath" href="#ds.wantpath" class=anchor><b>fn wantpath</b></a><span class=code>(path) -&gt; value?</span><br>
   
   Try to get any <span class=code>string.to.path</span> by trying all possible combinations of
@@ -461,7 +479,7 @@ sliced.</div>
   end index</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Slc.merge" href="#Slc.merge" class=anchor><b>fn merge</b></a><span class=code>(a, b) -&gt; first, second?</span><br>
+  <li><a id="Slc.merge" href="#Slc.merge" class=anchor><b>fn:merge</b></a><span class=code>(b) -&gt; first, second?</span><br>
   
   return either a single (new) merged or two sorted Slcs.</li>
 </ul>
@@ -470,31 +488,10 @@ sliced.</div>
 Immutable table
 
 <p>
-<p><h4><a id="ds.Duration" href="#ds.Duration" class=anchor>Record Duration</h4></a>
-<b>Fields:</b><ul>
-  <li><a id="ds.Duration.s" href="#ds.Duration.s" class=anchor><b>s</b></a>
-  seconds</li>
-  <li><a id="ds.Duration.ns" href="#ds.Duration.ns" class=anchor><b>ns</b></a>
-  nanoseconds</li>
-</ul>
-<b>Methods</b> <ul>
-  <li><a id="Duration.fromSeconds" href="#Duration.fromSeconds" class=anchor><b>fn fromSeconds</b></a></li>
-  <li><a id="Duration.fromMs" href="#Duration.fromMs" class=anchor><b>fn fromMs</b></a></li>
-  <li><a id="Duration.asSeconds" href="#Duration.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
-</ul>
-
-<p><h4><a id="ds.Epoch" href="#ds.Epoch" class=anchor>Record Epoch</h4></a>
-<b>Fields:</b><ul>
-  <li><a id="ds.Epoch.s" href="#ds.Epoch.s" class=anchor><b>s</b></a>
-  seconds</li>
-  <li><a id="ds.Epoch.ns" href="#ds.Epoch.ns" class=anchor><b>ns</b></a>
-  nanoseconds</li>
-</ul>
-
 <p><h4><a id="ds.Set" href="#ds.Set" class=anchor>Record Set</h4></a>
 <b>Methods</b> <ul>
-  <li><a id="Set.union" href="#Set.union" class=anchor><b>fn union</b></a><span class=code>(self, s) -&gt; Set</span></li>
-  <li><a id="Set.diff" href="#Set.diff" class=anchor><b>fn diff</b></a><span class=code>(self, s) -&gt; Set</span><br>
+  <li><a id="Set.union" href="#Set.union" class=anchor><b>fn:union</b></a><span class=code>(s) -&gt; Set</span></li>
+  <li><a id="Set.diff" href="#Set.diff" class=anchor><b>fn:diff</b></a><span class=code>(s) -&gt; Set</span><br>
   
   items in self but not in s</li>
 </ul>
@@ -507,12 +504,12 @@ indexed table as Binary Tree.
 <p>where root is at <span class=code>index=1</span>
 
 <p><b>Functions</b> <ul>
-  <li><a id="bt.left" href="#bt.left" class=anchor><b>fn left</b></a><span class=code>(t, i) -&gt; t[i * 2]</span></li>
-  <li><a id="bt.right" href="#bt.right" class=anchor><b>fn right</b></a><span class=code>(t, i) -&gt; t[i * 2 + 1]</span></li>
-  <li><a id="bt.parent" href="#bt.parent" class=anchor><b>fn parent</b></a><span class=code>(t, i) -&gt; t[i // 2]</span></li>
-  <li><a id="bt.lefti" href="#bt.lefti" class=anchor><b>fn lefti</b></a><span class=code>(t, i) -&gt; i * 2</span></li>
-  <li><a id="bt.righti" href="#bt.righti" class=anchor><b>fn righti</b></a><span class=code>(t, i) -&gt; i * 2 + 1</span></li>
-  <li><a id="bt.parenti" href="#bt.parenti" class=anchor><b>fn parenti</b></a><span class=code>(t, i) -&gt; i // 2</span></li>
+  <li><a id="bt.left" href="#bt.left" class=anchor><b>fn left</b></a><span class=code>(t, i)</span></li>
+  <li><a id="bt.right" href="#bt.right" class=anchor><b>fn right</b></a><span class=code>(t, i)</span></li>
+  <li><a id="bt.parent" href="#bt.parent" class=anchor><b>fn parent</b></a><span class=code>(t, i)</span></li>
+  <li><a id="bt.lefti" href="#bt.lefti" class=anchor><b>fn lefti</b></a><span class=code>(t, i)</span></li>
+  <li><a id="bt.righti" href="#bt.righti" class=anchor><b>fn righti</b></a><span class=code>(t, i)</span></li>
+  <li><a id="bt.parenti" href="#bt.parenti" class=anchor><b>fn parenti</b></a><span class=code>(t, i)</span></li>
 </ul>
 
 <p><h4><a id="ds.BiMap" href="#ds.BiMap" class=anchor>Record BiMap</h4></a>
@@ -523,7 +520,7 @@ Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = ni
 <p>Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
 
 <p><b>Methods</b> <ul>
-  <li><a id="BiMap.remove" href="#BiMap.remove" class=anchor><b>fn remove</b></a><span class=code>(t, k) -&gt; v</span></li>
+  <li><a id="BiMap.remove" href="#BiMap.remove" class=anchor><b>fn:remove</b></a><span class=code>(k) -&gt; v</span></li>
 </ul>
 
 <p><h4><a id="ds.Deq" href="#ds.Deq" class=anchor>Record Deq</h4></a>
@@ -540,26 +537,18 @@ Calling it is the same as popLeft (use as iterator)
   <li><a id="ds.Deq.left" href="#ds.Deq.left" class=anchor><b>left</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Deq.pushRight" href="#Deq.pushRight" class=anchor><b>fn pushRight</b></a><span class=code>(deq, val)</span></li>
-  <li><a id="Deq.extendRight" href="#Deq.extendRight" class=anchor><b>fn extendRight</b></a><span class=code>(deq, vals) -&gt; nil</span><br>
+  <li><a id="Deq.pushRight" href="#Deq.pushRight" class=anchor><b>fn:pushRight</b></a><span class=code>(val)</span></li>
+  <li><a id="Deq.extendRight" href="#Deq.extendRight" class=anchor><b>fn:extendRight</b></a><span class=code>(vals) -&gt; nil</span><br>
   
   extend deq to right</li>
-  <li><a id="Deq.pushLeft" href="#Deq.pushLeft" class=anchor><b>fn pushLeft</b></a><span class=code>(deq, val) -&gt; nil</span></li>
-  <li><a id="Deq.extendLeft" href="#Deq.extendLeft" class=anchor><b>fn extendLeft</b></a><span class=code>(deq, vals) -&gt; nil</span><br>
+  <li><a id="Deq.pushLeft" href="#Deq.pushLeft" class=anchor><b>fn:pushLeft</b></a><span class=code>(val) -&gt; nil</span></li>
+  <li><a id="Deq.extendLeft" href="#Deq.extendLeft" class=anchor><b>fn:extendLeft</b></a><span class=code>(vals) -&gt; nil</span><br>
   
   extend deq to left (<span class=code>vals[1]</span> is left-most)</li>
-  <li><a id="Deq.popLeft" href="#Deq.popLeft" class=anchor><b>fn popLeft</b></a><span class=code>(deq) -&gt; v</span></li>
-  <li><a id="Deq.popRight" href="#Deq.popRight" class=anchor><b>fn popRight</b></a><span class=code>(deq) -&gt; v</span></li>
-  <li><a id="Deq.clear" href="#Deq.clear" class=anchor><b>fn clear</b></a><span class=code>(deq) -&gt; nil: clear deq</span></li>
-  <li><a id="Deq.drain" href="#Deq.drain" class=anchor><b>fn drain</b></a><span class=code>(deq) -&gt; table: get all items and clear deq</span></li>
-</ul>
-
-<p><h4><a id="ds.TWriter" href="#ds.TWriter" class=anchor>Record TWriter</h4></a>
-<b>Methods</b> <ul>
-  <li><a id="TWriter.write" href="#TWriter.write" class=anchor><b>fn write</b></a><span class=code>(tw, ...)</span></li>
-  <li><a id="TWriter.flush" href="#TWriter.flush" class=anchor><b>fn flush</b></a><span class=code>()</span><br>
-  
-  function that does and returns nothing.</li>
+  <li><a id="Deq.popLeft" href="#Deq.popLeft" class=anchor><b>fn:popLeft</b></a><span class=code>() -&gt; v</span></li>
+  <li><a id="Deq.popRight" href="#Deq.popRight" class=anchor><b>fn:popRight</b></a><span class=code>() -&gt; v</span></li>
+  <li><a id="Deq.clear" href="#Deq.clear" class=anchor><b>fn:clear</b></a><span class=code>() -&gt; nil: clear deq</span></li>
+  <li><a id="Deq.drain" href="#Deq.drain" class=anchor><b>fn:drain</b></a><span class=code>() -&gt; table: get all items and clear deq</span></li>
 </ul>
 
 <p><h4><a id="ds.Error" href="#ds.Error" class=anchor>Record Error</h4></a>
@@ -575,10 +564,102 @@ NOTE: you should only use this for printing/logging/etc.
   <li><a id="Error.from" href="#Error.from" class=anchor><b>fn from</b></a><span class=code>(msg, tb, cause) -&gt; Error</span><br>
   
   create the error from the arguments.
-  tb can be one of: <span class=code>coroutine|string|table</span></li>
+  tb can be one of: <span class=code>coroutine|string|table</span>
+  FIXME: have this take T as first arg</li>
   <li><a id="Error.msgh" href="#Error.msgh" class=anchor><b>fn msgh</b></a><span class=code>(msg, level) -&gt; Error</span><br>
   
   for use with xpcall. See: try</li>
+</ul>
+
+<p><h3><a id="ds.time" href="#ds.time" class=anchor>Mod ds.time</h3></a>
+Working with and representing time.
+
+<p>
+<p><b>Types: </b><a href="#ds.time.DateTime">DateTime</a> <a href="#ds.time.Duration">Duration</a> <a href="#ds.time.Epoch">Epoch</a> <a href="#ds.time.Tz">Tz</a> 
+
+<p><b>Functions</b> <ul>
+  <li><a id="ds.time.isLeap" href="#ds.time.isLeap" class=anchor><b>fn isLeap</b></a><span class=code>(year)</span><br>
+  
+  Leap years are every 4 years. The only exception is on the century,
+  except every 4th century (since 1600) there is still a leap year.
+  Therefore:</li>
+  <li>1600 WAS a leap year, as well as 1604, 1608, etc.</li>
+  <li>1700 was NOT a leap year, but 1704, 1708, etc was.</li>
+  <li>1800 was NOT a leap year, but 1804, 1808, etc was.</li>
+  <li>1900 was NOT a leap year, but 1904, 1908, etc was.</li>
+  <li>2000 WAS a leap year, as well as 2004,2008,etc.</li>
+</ul>
+
+<p><h4><a id="ds.time.DateTime" href="#ds.time.DateTime" class=anchor>Record DateTime</h4></a>
+Represents a date time. The core fields are documented below, with
+methods to convert to more "typical" reprsentations.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ds.time.DateTime.y" href="#ds.time.DateTime.y" class=anchor><b>y</b></a>
+  the year</li>
+  <li><a id="ds.time.DateTime.yd" href="#ds.time.DateTime.yd" class=anchor><b>yd</b></a>
+  the day of the year</li>
+  <li><a id="ds.time.DateTime.s" href="#ds.time.DateTime.s" class=anchor><b>s</b></a>
+  seconds in day</li>
+  <li><a id="ds.time.DateTime.ns" href="#ds.time.DateTime.ns" class=anchor><b>ns</b></a>
+  nanoseconds in second</li>
+  <li><a id="ds.time.DateTime.tz" href="#ds.time.DateTime.tz" class=anchor><b>tz</b></a>
+  timezone offset, see <a href="#ds.time.Tz">#ds.time.Tz</a>.</li>
+  <li><a id="ds.time.DateTime.wd" href="#ds.time.DateTime.wd" class=anchor><b>wd</b></a>
+  weekday, 1=sunday - 7=saturday</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="DateTime.of" href="#DateTime.of" class=anchor><b>fn of</b></a><span class=code>(T, s, tz)</span></li>
+  <li><a id="DateTime.isLeap" href="#DateTime.isLeap" class=anchor><b>fn:isLeap</b></a><span class=code>(self.y)</span></li>
+  <li><a id="DateTime.date" href="#DateTime.date" class=anchor><b>fn:date</b></a><span class=code>() -&gt; month, day</span><br>
+  
+  Get the month and day of the month.
+  To get the year use <span class=code>DateTime.y</span>.</li>
+  <li><a id="DateTime.time" href="#DateTime.time" class=anchor><b>fn:time</b></a><span class=code>() -&gt; hour,min,sec</span><br>
+  
+  Get the time of day in hour,min,sec.
+  To get ns, use <span class=code>DateTime.ns</span></li>
+  <li><a id="DateTime.epoch" href="#DateTime.epoch" class=anchor><b>fn:epoch</b></a><span class=code>() -&gt; Epoch</span><br>
+  
+  Convert a DateTime to an Epoch</li>
+</ul>
+
+<p><h4><a id="ds.time.Duration" href="#ds.time.Duration" class=anchor>Record Duration</h4></a>
+Represents a Duration of time.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ds.time.Duration.s" href="#ds.time.Duration.s" class=anchor><b>s</b></a>
+  seconds</li>
+  <li><a id="ds.time.Duration.ns" href="#ds.time.Duration.ns" class=anchor><b>ns</b></a>
+  nanoseconds</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Duration.fromSeconds" href="#Duration.fromSeconds" class=anchor><b>fn fromSeconds</b></a></li>
+  <li><a id="Duration.fromMs" href="#Duration.fromMs" class=anchor><b>fn fromMs</b></a></li>
+  <li><a id="Duration.asSeconds" href="#Duration.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
+</ul>
+
+<p><h4><a id="ds.time.Epoch" href="#ds.time.Epoch" class=anchor>Record Epoch</h4></a>
+Represents an Epoch: seconds and nano-seconds since 1970-01-01 at 12:00 pm.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ds.time.Epoch.s" href="#ds.time.Epoch.s" class=anchor><b>s</b></a>
+  seconds</li>
+  <li><a id="ds.time.Epoch.ns" href="#ds.time.Epoch.ns" class=anchor><b>ns</b></a>
+  nanoseconds</li>
+</ul>
+
+<p><h4><a id="ds.time.Tz" href="#ds.time.Tz" class=anchor>Record Tz</h4></a>
+Usage: <span class=code>Tz:of(-6)</span> for a -6 hour offset.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ds.time.Tz.s" href="#ds.time.Tz.s" class=anchor><b>s</b></a>
+  second offset</li>
+  <li><a id="ds.time.Tz.name" href="#ds.time.Tz.name" class=anchor><b>name</b></a>
+  calculated name</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Tz.of" href="#Tz.of" class=anchor><b>fn of</b></a><span class=code>(T, hours, minutes)</span></li>
 </ul>
 
 <p><h4><a id="Ty<Iter>" href="#Ty<Iter>" class=anchor>Record Iter</h4></a>
@@ -606,95 +687,92 @@ NOTE: you should only use this for printing/logging/etc.
   <li><a id="Iter.ofSlc" href="#Iter.ofSlc" class=anchor><b>fn ofSlc</b></a><span class=code>(T, t, starti, endi) -&gt; iter[i, v]</span><br>
   
   iterate over slice of <span class=code>starti:endi</span> in <span class=code>t</span></li>
-  <li><a id="Iter.map" href="#Iter.map" class=anchor><b>fn map</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.map" href="#Iter.map" class=anchor><b>fn:map</b></a><span class=code>(fn) -&gt; self</span><br>
   
   emit <span class=code>k, v = fn(v)</span> for each non-nil result
   
   <p><div class=info>Note: if performance matters this is the most performant
-  application function since it doesn't create an internal
+  application function since self doesn't create an internal
   function.
   </div></li>
-  <li><a id="Iter.mapK" href="#Iter.mapK" class=anchor><b>fn mapK</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.mapK" href="#Iter.mapK" class=anchor><b>fn:mapK</b></a><span class=code>(fn) -&gt; self</span><br>
   
   - emit <span class=code>fn(k), v)</span> for each non-nil result.</li>
-  <li><a id="Iter.mapV" href="#Iter.mapV" class=anchor><b>fn mapV</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.mapV" href="#Iter.mapV" class=anchor><b>fn:mapV</b></a><span class=code>(fn) -&gt; self</span><br>
   
   emit <span class=code>k, fn(v)</span> for each non-nil result.
   (filtered when <span class=code>newK==nil</span>)</li>
-  <li><a id="Iter.filter" href="#Iter.filter" class=anchor><b>fn filter</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.filter" href="#Iter.filter" class=anchor><b>fn:filter</b></a><span class=code>(fn) -&gt; self</span><br>
   
   - emit only <span class=code>if fn(k, v)</span> results</li>
-  <li><a id="Iter.filterK" href="#Iter.filterK" class=anchor><b>fn filterK</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.filterK" href="#Iter.filterK" class=anchor><b>fn:filterK</b></a><span class=code>(fn) -&gt; self</span><br>
   
   - emit only <span class=code>if fn(k)</span> results</li>
-  <li><a id="Iter.filterV" href="#Iter.filterV" class=anchor><b>fn filterV</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.filterV" href="#Iter.filterV" class=anchor><b>fn:filterV</b></a><span class=code>(fn) -&gt; self</span><br>
   
   - emit only <span class=code>if fn(v)</span> results</li>
-  <li><a id="Iter.lookup" href="#Iter.lookup" class=anchor><b>fn lookup</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.lookup" href="#Iter.lookup" class=anchor><b>fn:lookup</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit<span class=code>v, t[k]</span>, looking up the iter's values in the table's keys.</li>
-  <li><a id="Iter.lookupK" href="#Iter.lookupK" class=anchor><b>fn lookupK</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.lookupK" href="#Iter.lookupK" class=anchor><b>fn:lookupK</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit <span class=code>t[k], v</span> for each non-nil <span class=code>t[k]</span></li>
-  <li><a id="Iter.lookupV" href="#Iter.lookupV" class=anchor><b>fn lookupV</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.lookupV" href="#Iter.lookupV" class=anchor><b>fn:lookupV</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit <span class=code>k, $t[v]</span> for each non-nil <span class=code>t[v]</span></li>
-  <li><a id="Iter.keyIn" href="#Iter.keyIn" class=anchor><b>fn keyIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.keyIn" href="#Iter.keyIn" class=anchor><b>fn:keyIn</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit <span class=code>k, v</span> for each non-nil <span class=code>t[k]</span></li>
-  <li><a id="Iter.keyNotIn" href="#Iter.keyNotIn" class=anchor><b>fn keyNotIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.keyNotIn" href="#Iter.keyNotIn" class=anchor><b>fn:keyNotIn</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit <span class=code>k, v</span> for each nil <span class=code>t[k]</span></li>
-  <li><a id="Iter.valIn" href="#Iter.valIn" class=anchor><b>fn valIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.valIn" href="#Iter.valIn" class=anchor><b>fn:valIn</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit <span class=code>k, v</span> for each non-nil <span class=code>t[v]</span></li>
-  <li><a id="Iter.valNotIn" href="#Iter.valNotIn" class=anchor><b>fn valNotIn</b></a><span class=code>(it, t) -&gt; it</span><br>
+  <li><a id="Iter.valNotIn" href="#Iter.valNotIn" class=anchor><b>fn:valNotIn</b></a><span class=code>(t) -&gt; self</span><br>
   
   emit <span class=code>k, v</span> for each nil <span class=code>t[v]</span></li>
-  <li><a id="Iter.listen" href="#Iter.listen" class=anchor><b>fn listen</b></a><span class=code>(it, fn) -&gt; it</span><br>
+  <li><a id="Iter.listen" href="#Iter.listen" class=anchor><b>fn:listen</b></a><span class=code>(fn) -&gt; self</span><br>
   
   emit <span class=code>k, v</span> after calling <span class=code>fn(k, v)</span>.
   The results of the fn are ignored</li>
-  <li><a id="Iter.index" href="#Iter.index" class=anchor><b>fn index</b></a><span class=code>(it) -&gt; it</span><br>
+  <li><a id="Iter.index" href="#Iter.index" class=anchor><b>fn:index</b></a><span class=code>() -&gt; self</span><br>
   
   emit <span class=code>i, k</span>, dropping values. <span class=code>i</span> starts at <span class=code>1</span> and increments each
   time called.
   
   <p><div class=info> Note: this is most useful for iterators which don't emit a <span class=code>v</span>.
   i.e. getting the line number in <span class=code>file:lines()</span></div></li>
-  <li><a id="Iter.swap" href="#Iter.swap" class=anchor><b>fn swap</b></a><span class=code>(it) -&gt; it[v, k]</span><br>
+  <li><a id="Iter.swap" href="#Iter.swap" class=anchor><b>fn:swap</b></a><span class=code>() -&gt; self[v, k]</span><br>
   
   emit <span class=code>v, k</span> (swaps key and value)</li>
-  <li><a id="Iter.find" href="#Iter.find" class=anchor><b>fn find</b></a><span class=code>(it, fn) -&gt; k, v</span><br>
+  <li><a id="Iter.find" href="#Iter.find" class=anchor><b>fn:find</b></a><span class=code>(fn) -&gt; k, v</span><br>
   
   run the iterator over all values, calling <span class=code>fn(k, v)</span> for each.
   return the first <span class=code>k, v</span> where the fn returns a truthy value.</li>
-  <li><a id="Iter.all" href="#Iter.all" class=anchor><b>fn all</b></a><span class=code>(it) -&gt; not it:find(allFn)</span><br>
+  <li><a id="Iter.all" href="#Iter.all" class=anchor><b>fn:all</b></a><span class=code>(allFn)</span><br>
   
   return true if any of the values are truthy</li>
-  <li><a id="Iter.any" href="#Iter.any" class=anchor><b>fn any</b></a><span class=code>(it) -&gt; not not it:find(anyFn)</span><br>
+  <li><a id="Iter.any" href="#Iter.any" class=anchor><b>fn:any</b></a><span class=code>(anyFn)</span><br>
   
   return true if any of the values are truthy</li>
-  <li><a id="Iter.run" href="#Iter.run" class=anchor><b>fn run</b></a><span class=code>(it, fn--[[noop]]) -&gt; nil</span><br>
+  <li><a id="Iter.run" href="#Iter.run" class=anchor><b>fn:run</b></a><span class=code>(fn--[[noop]]) -&gt; nil</span><br>
   
   run the iterator over all values, calling <span class=code>fn(k, v)</span> for each.</li>
-  <li><a id="Iter.to" href="#Iter.to" class=anchor><b>fn to</b></a><span class=code>(it, to={}) -&gt; to</span><br>
+  <li><a id="Iter.to" href="#Iter.to" class=anchor><b>fn to</b></a><span class=code>(self, to={}) -&gt; to</span><br>
   
   collect non-nil <span class=code>k, v</span> into table-like object <span class=code>to</span></li>
-  <li><a id="Iter.keysTo" href="#Iter.keysTo" class=anchor><b>fn keysTo</b></a><span class=code>(it, to={}) -&gt; to</span><br>
+  <li><a id="Iter.keysTo" href="#Iter.keysTo" class=anchor><b>fn keysTo</b></a><span class=code>(self, to={}) -&gt; to</span><br>
   
   collect emitted <span class=code>k</span> as a list (vals are dropped)</li>
-  <li><a id="Iter.valsTo" href="#Iter.valsTo" class=anchor><b>fn valsTo</b></a><span class=code>(it, to={}) -&gt; to</span><br>
+  <li><a id="Iter.valsTo" href="#Iter.valsTo" class=anchor><b>fn valsTo</b></a><span class=code>(self, to={}) -&gt; to</span><br>
   
   collect emitted <span class=code>v</span> as a list (keys are dropped)</li>
-  <li><a id="Iter.concat" href="#Iter.concat" class=anchor><b>fn concat</b></a><span class=code>(it, sep) -&gt; concat(it:to(), sep)</span></li>
-  <li><a id="Iter.reset" href="#Iter.reset" class=anchor><b>fn reset</b></a><span class=code>(it) -&gt; it</span><br>
+  <li><a id="Iter.concat" href="#Iter.concat" class=anchor><b>fn:concat</b></a><span class=code>()</span></li>
+  <li><a id="Iter.reset" href="#Iter.reset" class=anchor><b>fn:reset</b></a><span class=code>() -&gt; self</span><br>
   
   reset the iterator to run from the start</li>
-  <li><a id="Iter.single" href="#Iter.single" class=anchor><b>fn single</b></a><span class=code>(k, v) -&gt; fn(): (k, v) .. nil</span><br>
-  
-  create an iterator that returns a single value</li>
-  <li><a id="Iter.assertEq" href="#Iter.assertEq" class=anchor><b>fn assertEq</b></a><span class=code>(it1, it2)</span><br>
+  <li><a id="Iter.assertEq" href="#Iter.assertEq" class=anchor><b>fn:assertEq</b></a><span class=code>(it2)</span><br>
   
   Used for testing. <span class=code>Iter:assertEq(it1, it2)</span> constructs both
   iterators using <span class=code>Iter()</span> and then asserts the results are
@@ -712,21 +790,21 @@ NOTE: you should only use this for printing/logging/etc.
 </ul>
 <b>Methods</b> <ul>
   <li><a id="LL.from" href="#LL.from" class=anchor><b>fn from</b></a><span class=code>(T, list) -&gt; (head, tail) from list of vals</span></li>
-  <li><a id="LL.head" href="#LL.head" class=anchor><b>fn head</b></a><span class=code>(ll) -&gt; ll</span></li>
-  <li><a id="LL.tail" href="#LL.tail" class=anchor><b>fn tail</b></a><span class=code>(ll) -&gt; ll</span></li>
-  <li><a id="LL.tolist" href="#LL.tolist" class=anchor><b>fn tolist</b></a><span class=code>(ll) -&gt; {a.v, b.v, c.v, ...}</span></li>
-  <li><a id="LL.link" href="#LL.link" class=anchor><b>fn link</b></a><span class=code>(l, r)</span><br>
+  <li><a id="LL.head" href="#LL.head" class=anchor><b>fn:head</b></a><span class=code>()</span></li>
+  <li><a id="LL.tail" href="#LL.tail" class=anchor><b>fn:tail</b></a><span class=code>()</span></li>
+  <li><a id="LL.tolist" href="#LL.tolist" class=anchor><b>fn:tolist</b></a><span class=code>() -&gt; {a.v, b.v, c.v, ...}</span></li>
+  <li><a id="LL.link" href="#LL.link" class=anchor><b>fn:link</b></a><span class=code>(r)</span><br>
   
   create l -> r link</li>
-  <li><a id="LL.insert" href="#LL.insert" class=anchor><b>fn insert</b></a><span class=code>(ll, v)</span><br>
+  <li><a id="LL.insert" href="#LL.insert" class=anchor><b>fn:insert</b></a><span class=code>(v)</span><br>
   
   insert LL(v) to right of ll
   <span class=code>(h -&gt; 2); h:insert(1) ==&gt; (h -&gt; 1 -&gt; 2)</span></li>
-  <li><a id="LL.rm" href="#LL.rm" class=anchor><b>fn rm</b></a><span class=code>(ll) -&gt; head?</span><br>
+  <li><a id="LL.rm" href="#LL.rm" class=anchor><b>fn:rm</b></a><span class=code>() -&gt; head?</span><br>
   
   remove node ll from linked list
   if ll was the head, returns the new head (or nil)</li>
-  <li><a id="LL.get" href="#LL.get" class=anchor><b>fn get</b></a><span class=code>(ll, i) -&gt; node? (at index +/- i)</span></li>
+  <li><a id="LL.get" href="#LL.get" class=anchor><b>fn:get</b></a><span class=code>(i) -&gt; node? (at index +/- i)</span></li>
 </ul>
 
 <p><h3><a id="ds.path" href="#ds.path" class=anchor>Mod ds.path</h3></a>
@@ -751,7 +829,7 @@ working with paths
   <li><a id="ds.path.cd" href="#ds.path.cd" class=anchor><b>fn cd</b></a><span class=code>(dir)</span><br>
   
   Set the CWD, changing the result of ds.cwd.</li>
-  <li><a id="ds.path.home" href="#ds.path.home" class=anchor><b>fn home</b></a><span class=code>() -&gt; M.pathenv('HOME', 'HOMEDIR')</span><br>
+  <li><a id="ds.path.home" href="#ds.path.home" class=anchor><b>fn home</b></a><span class=code>('HOME', 'HOMEDIR')</span><br>
   
   get the user's home directory</li>
   <li><a id="ds.path.concat" href="#ds.path.concat" class=anchor><b>fn concat</b></a><span class=code>(t, _) -&gt; string</span><br>
@@ -771,7 +849,7 @@ working with paths
   resolve any `..` or `.` path components, making the path
   /absolute if necessary.
   The return type is the same as the input type.</li>
-  <li><a id="ds.path.canonical" href="#ds.path.canonical" class=anchor><b>fn canonical</b></a><span class=code>(path) -&gt; M.resolve(M.abs(path))</span><br>
+  <li><a id="ds.path.canonical" href="#ds.path.canonical" class=anchor><b>fn canonical</b></a><span class=code>(path)</span><br>
   
   Get the canonical path.
   This is a shortcut for <span class=code>resolve(abs(path))</span>.</li>
@@ -802,7 +880,7 @@ working with paths
   <li><a id="ds.path.dir" href="#ds.path.dir" class=anchor><b>fn dir</b></a><span class=code>(path)</span><br>
   
   Get the directory of the path or nil if it is root.</li>
-  <li><a id="ds.path.isDir" href="#ds.path.isDir" class=anchor><b>fn isDir</b></a><span class=code>(path) -&gt; path:sub(-1) == '/'</span><br>
+  <li><a id="ds.path.isDir" href="#ds.path.isDir" class=anchor><b>fn isDir</b></a><span class=code>(-1)</span><br>
   
   return whether the path looks like a dir.
   Note: civstack tries to make all ftype='dir' paths end in '/'
@@ -832,7 +910,7 @@ utf8 stream decoding.
 <p>with decode(dat)
 
 <p><b>Functions</b> <ul>
-  <li><a id="ds.utf8.decodelen" href="#ds.utf8.decodelen" class=anchor><b>fn decodelen</b></a><span class=code>(firstbyte) -&gt; U8LEN[0xF8 &amp; firstbyte]</span><br>
+  <li><a id="ds.utf8.decodelen" href="#ds.utf8.decodelen" class=anchor><b>fn decodelen</b></a><span class=code>(firstbyte)</span><br>
   
   given the first byte return the number of bytes in the utf8 char</li>
   <li><a id="ds.utf8.decode" href="#ds.utf8.decode" class=anchor><b>fn decode</b></a><span class=code>(dat) -&gt; int</span><br>
@@ -864,10 +942,10 @@ priority queues and similar problems.
   comparison function to use</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Heap.add" href="#Heap.add" class=anchor><b>fn add</b></a><span class=code>(h, 1, #h, #h, h.cmp)</span><br>
+  <li><a id="Heap.add" href="#Heap.add" class=anchor><b>fn:add</b></a><span class=code>(v)</span><br>
   
   <span class=code>h:add(v)</span> add value to the heap.</li>
-  <li><a id="Heap.pop" href="#Heap.pop" class=anchor><b>fn pop</b></a><span class=code>(h) -&gt; v</span><br>
+  <li><a id="Heap.pop" href="#Heap.pop" class=anchor><b>fn:pop</b></a><span class=code>() -&gt; v</span><br>
   
   <span class=code>h:pop() -&gt; v</span> pop the top node.</li>
 </ul>
@@ -951,10 +1029,10 @@ used in tests
   width</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="ds.Grid.clear" href="#ds.Grid.clear" class=anchor><b>fn clear</b></a><span class=code>(g) -&gt; g</span><br>
+  <li><a id="ds.Grid.clear" href="#ds.Grid.clear" class=anchor><b>fn:clear</b></a><span class=code>() -&gt; self</span><br>
   
   clear the grid</li>
-  <li><a id="ds.Grid.insert" href="#ds.Grid.insert" class=anchor><b>fn insert</b></a><span class=code>(g, l, c, str)</span><br>
+  <li><a id="ds.Grid.insert" href="#ds.Grid.insert" class=anchor><b>fn:insert</b></a><span class=code>(l, c, str)</span><br>
   
   Insert the str into the Grid.
   Any newlines will be insert starting at column c.
@@ -1041,21 +1119,21 @@ load lua modules with custom or default environment in a sandboxed
   
   This creates a new index file at path (path=nil uses tmpfile()).
   Note: Use load if you want to load an existing index.</li>
-  <li><a id="ds.IFile.reload" href="#ds.IFile.reload" class=anchor><b>fn reload</b></a><span class=code>(fi) -&gt; IFile?, errmsg?</span><br>
+  <li><a id="ds.IFile.reload" href="#ds.IFile.reload" class=anchor><b>fn:reload</b></a><span class=code>() -&gt; IFile?, errmsg?</span><br>
   
   Reload IFile from path.</li>
   <li><a id="ds.IFile.load" href="#ds.IFile.load" class=anchor><b>fn load</b></a><span class=code>(T, sz, path, mode) -&gt; IFile?, errmsg?</span><br>
   
   load an index file</li>
-  <li><a id="ds.IFile.flush" href="#ds.IFile.flush" class=anchor><b>fn flush</b></a><span class=code>(fi) -&gt; fi.f:flush()</span></li>
-  <li><a id="ds.IFile.close" href="#ds.IFile.close" class=anchor><b>fn close</b></a><span class=code>(fi)</span></li>
-  <li><a id="ds.IFile.closed" href="#ds.IFile.closed" class=anchor><b>fn closed</b></a><span class=code>(fi) -&gt; bool</span></li>
-  <li><a id="ds.IFile.getbytes" href="#ds.IFile.getbytes" class=anchor><b>fn getbytes</b></a><span class=code>(fi, i)</span><br>
+  <li><a id="ds.IFile.flush" href="#ds.IFile.flush" class=anchor><b>fn:flush</b></a><span class=code>()</span></li>
+  <li><a id="ds.IFile.close" href="#ds.IFile.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
+  <li><a id="ds.IFile.closed" href="#ds.IFile.closed" class=anchor><b>fn:closed</b></a><span class=code>() -&gt; bool</span></li>
+  <li><a id="ds.IFile.getbytes" href="#ds.IFile.getbytes" class=anchor><b>fn:getbytes</b></a><span class=code>(i)</span><br>
   
   get bytes. If index out of bounds return nil.
   Panic if there are read errors.</li>
-  <li><a id="ds.IFile.setbytes" href="#ds.IFile.setbytes" class=anchor><b>fn setbytes</b></a><span class=code>(fi, i, v)</span></li>
-  <li><a id="ds.IFile.move" href="#ds.IFile.move" class=anchor><b>fn move</b></a><span class=code>(fi, to, mvFn) -&gt; fi</span><br>
+  <li><a id="ds.IFile.setbytes" href="#ds.IFile.setbytes" class=anchor><b>fn:setbytes</b></a><span class=code>(i, v)</span></li>
+  <li><a id="ds.IFile.move" href="#ds.IFile.move" class=anchor><b>fn:move</b></a><span class=code>(to, mvFn) -&gt; self</span><br>
   
   Move the IFile's path to <span class=code>to</span>.
   
@@ -1066,7 +1144,7 @@ load lua modules with custom or default environment in a sandboxed
   
   <p>The IFile will re-open on the new file regardless of the
   previous state.</li>
-  <li><a id="ds.IFile.reader" href="#ds.IFile.reader" class=anchor><b>fn reader</b></a><span class=code>(fi) -&gt; IFile?, err?</span><br>
+  <li><a id="ds.IFile.reader" href="#ds.IFile.reader" class=anchor><b>fn:reader</b></a><span class=code>() -&gt; IFile?, err?</span><br>
   
   Get a new read-only instance with an independent file-descriptor.
   
