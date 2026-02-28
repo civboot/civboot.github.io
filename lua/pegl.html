@@ -169,7 +169,7 @@ pegl: peg-like lua parser
   Parse the <span class=code>dat</span> with the <span class=code>spec</span>, asserting the resulting "string tokens"
   are identical to <span class=code>expect</span>.
   
-  <p>the input is a table of the form: <div class=code-block>&nbsp; &nbsp; {dat, spec, expect, dbg=nil, config=default} --&gt; nil<br>
+  <p>The input is a table of the form: <div class=code-block>&nbsp; &nbsp; {dat, spec, expect, dbg=nil, config=default} --&gt; nil<br>
 &nbsp; 
 </div></li>
   <li><a id="pegl.assertParseError" href="#pegl.assertParseError" class=anchor><b>fn assertParseError</b></a><span class=code>(t)</span></li>
@@ -277,7 +277,7 @@ is designed to work with an application that stores the strings as lines
   <li><a id="Parser.peek" href="#Parser.peek" class=anchor><b>fn:peek</b></a><span class=code>(pat)</span><br>
   
   identical to `consume` except it does not advance the column</li>
-  <li><a id="Parser.sub" href="#Parser.sub" class=anchor><b>fn:sub</b></a><span class=code>(t)</span></li>
+  <li><a id="Parser.sub" href="#Parser.sub" class=anchor><b>fn:sub</b></a><span class=code>(t) -&gt; string</span></li>
   <li><a id="Parser.incLine" href="#Parser.incLine" class=anchor><b>fn:incLine</b></a><span class=code>()</span></li>
   <li><a id="Parser.isEof" href="#Parser.isEof" class=anchor><b>fn:isEof</b></a><span class=code>() -&gt; isAtEndOfFile</span></li>
   <li><a id="Parser.skipEmpty" href="#Parser.skipEmpty" class=anchor><b>fn:skipEmpty</b></a><span class=code>()</span></li>
@@ -386,6 +386,8 @@ result is a list with <span class=code>kind='myMany'</span>.
   <li><a id="pegl.Many.min" href="#pegl.Many.min" class=anchor><b>min</b></a> <span class=code>=0</span></li>
   <li><a id="pegl.Many.kind" href="#pegl.Many.kind" class=anchor><b>kind</b></a></li>
   <li><a id="pegl.Many.name" href="#pegl.Many.name" class=anchor><b>name</b></a></li>
+  <li><a id="pegl.Many.yield" href="#pegl.Many.yield" class=anchor><b>yield</b></a>
+  call lap.yield() on every int loop</li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Many.parse" href="#Many.parse" class=anchor><b>fn:parse</b></a><span class=code>(p)</span></li>
@@ -460,7 +462,11 @@ Module for applying asciicolor syntax highlighting to parsed pegl.
 
 <p>
 <p><h4><a id="pegl.acsyntax.Highlighter" href="#pegl.acsyntax.Highlighter" class=anchor>Record Highlighter</h4></a>
-The highlighter object determines how to parse and
+Usage: <div class=code-block>hl = require'pegl.lua'.highlighter<br>
+hl:highlight(lf, fgFile, bgFile)
+</div>
+
+<p>The highlighter object determines how to parse and
 highlight a text file's syntax.
 
 <p><b>Fields:</b><ul>

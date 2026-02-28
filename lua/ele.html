@@ -45,9 +45,9 @@ by <a href="ele.lua">ele.lua</a>'s <span class=code>main</span> function: <ul>
   and sends event (plain-old-table values) to the <span class=code>keys</span>
   channel.</li>
   <li>A coroutine that listens to key actions and converts them
-  to events (again, plain-old-tables) based on the ele.bindings,
+  to events (again, plain-old-tables) based on the <h3>Mod ele.bindings</h3>,
   which are sent on an events channel. This also handles
-  chords correctly, see the ele.bindings documentation.</li>
+  chords correctly, see the <h3>Mod ele.bindings</h3> documentation.</li>
   <li>A coroutine that listens for event tables, looks up their
   <span class=code>action</span> in <h3>Mod ele.actions</h3> and runs the appropriate action.</li>
   <li>A coroutine that "draws" the current display once per "frame"
@@ -73,7 +73,7 @@ that the results are being written to in any way.
 <p><h1>Adding Bindings</h1>
 Adding simple bindings is easy. Simply insert the space-separated chord
 of keys you want to go to your binding to one of ele's default modes, or
-create your own.  ele.bindings's <span class=code>command</span>, <span class=code>insert</span> and/or <span class=code>system</span>
+create your own.  <h3>Mod ele.bindings</h3>'s <span class=code>command</span>, <span class=code>insert</span> and/or <span class=code>system</span>
 entries are where you will find the default modes. For instance,
 the following will insert the expected text at the cursor position
 from command mode:
@@ -95,7 +95,7 @@ B.command['y y'] = {action='insert', 'Why oh why did I bind this?\n'},
   which is the event that will be generated, or a <span class=code>fn(KeySt) -&gt; ev?</span> callable.
   Using the callable API is slightly complex but allows for complex key
   interactions where you build-up a command with a chaing (aka "chord") of
-  multiple key inputs. Refer to the ele.bindings documentation.</li>
+  multiple key inputs. Refer to the <h3>Mod ele.bindings</h3> documentation.</li>
 </ul>
 
 <p><h1>Editor API</h1>
@@ -131,6 +131,7 @@ The ele commandline editor.
 <p><b>Types: </b><a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> 
 
 <p><b>Functions</b> <ul>
+  <li><a id="ele.types.getEditor" href="#ele.types.getEditor" class=anchor><b>fn getEditor</b></a><span class=code>(c)</span></li>
   <li><a id="ele.types.uniqueId" href="#ele.types.uniqueId" class=anchor><b>fn uniqueId</b></a><span class=code>()</span></li>
   <li><a id="ele.types.checkBinding" href="#ele.types.checkBinding" class=anchor><b>fn checkBinding</b></a><span class=code>(b)</span></li>
   <li><a id="ele.types.checkBindings" href="#ele.types.checkBindings" class=anchor><b>fn checkBindings</b></a><span class=code>(btable, path)</span></li>
@@ -150,6 +151,7 @@ A container with windows split vertically (i.e. tall windows)
   <li><a id="ele.types.VSplit.tw" href="#ele.types.VSplit.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
 </ul>
 <b>Methods</b> <ul>
+  <li><a id="VSplit.getEditor" href="#VSplit.getEditor" class=anchor><b>fn getEditor</b></a><span class=code>(c)</span></li>
   <li><a id="VSplit.close" href="#VSplit.close" class=anchor><b>fn close</b></a><span class=code>()</span><br>
   
   function that does and returns nothing.</li>
@@ -174,80 +176,81 @@ A container with windows split horizontally (i.e. wide windows)
   <li><a id="HSplit.draw" href="#HSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
 </ul>
 
-<p><h3><a id="ele.keys" href="#ele.keys" class=anchor>Mod ele.keys</h3></a>
+<p><h3><a id="ele.bindings" href="#ele.bindings" class=anchor>Mod ele.bindings</h3></a>
 
-<p><b>Types: </b><a href="#ele.keys.KeySt">KeySt</a> <a href="#ele.keys.KeyBindings">KeyBindings</a> 
+<p><b>Types: </b><a href="#ele.bindings.KeySt">KeySt</a> <a href="#ele.bindings.KeyBindings">KeyBindings</a> 
 
 <p><b>Functions</b> <ul>
-  <li><a id="ele.keys.chord" href="#ele.keys.chord" class=anchor><b>fn chord</b></a><span class=code>(str) -&gt; keylist</span></li>
-  <li><a id="ele.keys.literal" href="#ele.keys.literal" class=anchor><b>fn literal</b></a><span class=code>(key)</span></li>
-  <li><a id="ele.keys.chordstr" href="#ele.keys.chordstr" class=anchor><b>fn chordstr</b></a><span class=code>(chord)</span></li>
-  <li><a id="ele.keys.insertChord" href="#ele.keys.insertChord" class=anchor><b>fn insertChord</b></a><span class=code>(keys)</span></li>
-  <li><a id="ele.keys.unboundChord" href="#ele.keys.unboundChord" class=anchor><b>fn unboundChord</b></a><span class=code>(keys)</span></li>
-  <li><a id="ele.keys.moveAction" href="#ele.keys.moveAction" class=anchor><b>fn moveAction</b></a><span class=code>(event)</span></li>
-  <li><a id="ele.keys.left" href="#ele.keys.left" class=anchor><b>fn left</b></a></li>
-  <li><a id="ele.keys.right" href="#ele.keys.right" class=anchor><b>fn right</b></a></li>
-  <li><a id="ele.keys.backword" href="#ele.keys.backword" class=anchor><b>fn backword</b></a></li>
-  <li><a id="ele.keys.forword" href="#ele.keys.forword" class=anchor><b>fn forword</b></a></li>
-  <li><a id="ele.keys.up" href="#ele.keys.up" class=anchor><b>fn up</b></a></li>
-  <li><a id="ele.keys.down" href="#ele.keys.down" class=anchor><b>fn down</b></a></li>
-  <li><a id="ele.keys.sot" href="#ele.keys.sot" class=anchor><b>fn sot</b></a></li>
-  <li><a id="ele.keys.sol" href="#ele.keys.sol" class=anchor><b>fn sol</b></a></li>
-  <li><a id="ele.keys.eot" href="#ele.keys.eot" class=anchor><b>fn eot</b></a></li>
-  <li><a id="ele.keys.eol" href="#ele.keys.eol" class=anchor><b>fn eol</b></a></li>
-  <li><a id="ele.keys.eof" href="#ele.keys.eof" class=anchor><b>fn eof</b></a></li>
-  <li><a id="ele.keys.sof" href="#ele.keys.sof" class=anchor><b>fn sof</b></a></li>
-  <li><a id="ele.keys.upScreen" href="#ele.keys.upScreen" class=anchor><b>fn upScreen</b></a></li>
-  <li><a id="ele.keys.downScreen" href="#ele.keys.downScreen" class=anchor><b>fn downScreen</b></a></li>
-  <li><a id="ele.keys.moveG" href="#ele.keys.moveG" class=anchor><b>fn moveG</b></a><span class=code>(keySt)</span></li>
-  <li><a id="ele.keys.movekey" href="#ele.keys.movekey" class=anchor><b>fn movekey</b></a><span class=code>(keys)</span></li>
-  <li><a id="ele.keys.find" href="#ele.keys.find" class=anchor><b>fn find</b></a><span class=code>(keys)</span></li>
-  <li><a id="ele.keys.till" href="#ele.keys.till" class=anchor><b>fn till</b></a><span class=code>(keys)</span><br>
+  <li><a id="ele.bindings.chord" href="#ele.bindings.chord" class=anchor><b>fn chord</b></a><span class=code>(str) -&gt; keylist</span></li>
+  <li><a id="ele.bindings.literal" href="#ele.bindings.literal" class=anchor><b>fn literal</b></a><span class=code>(key)</span></li>
+  <li><a id="ele.bindings.chordstr" href="#ele.bindings.chordstr" class=anchor><b>fn chordstr</b></a><span class=code>(chord)</span></li>
+  <li><a id="ele.bindings.insertChord" href="#ele.bindings.insertChord" class=anchor><b>fn insertChord</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.bindings.unboundChord" href="#ele.bindings.unboundChord" class=anchor><b>fn unboundChord</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.bindings.moveAction" href="#ele.bindings.moveAction" class=anchor><b>fn moveAction</b></a><span class=code>(event)</span></li>
+  <li><a id="ele.bindings.left" href="#ele.bindings.left" class=anchor><b>fn left</b></a></li>
+  <li><a id="ele.bindings.right" href="#ele.bindings.right" class=anchor><b>fn right</b></a></li>
+  <li><a id="ele.bindings.backword" href="#ele.bindings.backword" class=anchor><b>fn backword</b></a></li>
+  <li><a id="ele.bindings.forword" href="#ele.bindings.forword" class=anchor><b>fn forword</b></a></li>
+  <li><a id="ele.bindings.up" href="#ele.bindings.up" class=anchor><b>fn up</b></a></li>
+  <li><a id="ele.bindings.down" href="#ele.bindings.down" class=anchor><b>fn down</b></a></li>
+  <li><a id="ele.bindings.sot" href="#ele.bindings.sot" class=anchor><b>fn sot</b></a></li>
+  <li><a id="ele.bindings.sol" href="#ele.bindings.sol" class=anchor><b>fn sol</b></a></li>
+  <li><a id="ele.bindings.eot" href="#ele.bindings.eot" class=anchor><b>fn eot</b></a></li>
+  <li><a id="ele.bindings.eol" href="#ele.bindings.eol" class=anchor><b>fn eol</b></a></li>
+  <li><a id="ele.bindings.eof" href="#ele.bindings.eof" class=anchor><b>fn eof</b></a></li>
+  <li><a id="ele.bindings.sof" href="#ele.bindings.sof" class=anchor><b>fn sof</b></a></li>
+  <li><a id="ele.bindings.upScreen" href="#ele.bindings.upScreen" class=anchor><b>fn upScreen</b></a></li>
+  <li><a id="ele.bindings.downScreen" href="#ele.bindings.downScreen" class=anchor><b>fn downScreen</b></a></li>
+  <li><a id="ele.bindings.moveG" href="#ele.bindings.moveG" class=anchor><b>fn moveG</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.bindings.movekey" href="#ele.bindings.movekey" class=anchor><b>fn movekey</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.bindings.find" href="#ele.bindings.find" class=anchor><b>fn find</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.bindings.till" href="#ele.bindings.till" class=anchor><b>fn till</b></a><span class=code>(keys)</span><br>
   
   go to the column before the character</li>
-  <li><a id="ele.keys.findback" href="#ele.keys.findback" class=anchor><b>fn findback</b></a><span class=code>(keys)</span><br>
+  <li><a id="ele.bindings.findback" href="#ele.bindings.findback" class=anchor><b>fn findback</b></a><span class=code>(keys)</span><br>
   
   go back to the character</li>
-  <li><a id="ele.keys.tillback" href="#ele.keys.tillback" class=anchor><b>fn tillback</b></a><span class=code>(keys)</span><br>
+  <li><a id="ele.bindings.tillback" href="#ele.bindings.tillback" class=anchor><b>fn tillback</b></a><span class=code>(keys)</span><br>
   
   go back to the column after the character</li>
-  <li><a id="ele.keys.delete" href="#ele.keys.delete" class=anchor><b>fn delete</b></a><span class=code>(keySt)</span><br>
+  <li><a id="ele.bindings.delete" href="#ele.bindings.delete" class=anchor><b>fn delete</b></a><span class=code>(keySt)</span><br>
   
   delete until a movement command (or similar)</li>
-  <li><a id="ele.keys.deleteEol" href="#ele.keys.deleteEol" class=anchor><b>fn deleteEol</b></a><span class=code>(keySt)</span></li>
-  <li><a id="ele.keys.change" href="#ele.keys.change" class=anchor><b>fn change</b></a><span class=code>(keySt)</span><br>
+  <li><a id="ele.bindings.deleteEol" href="#ele.bindings.deleteEol" class=anchor><b>fn deleteEol</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.bindings.replace" href="#ele.bindings.replace" class=anchor><b>fn replace</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.bindings.change" href="#ele.bindings.change" class=anchor><b>fn change</b></a><span class=code>(keySt)</span><br>
   
   Delete <move> then enter insert.</li>
-  <li><a id="ele.keys.changeEol" href="#ele.keys.changeEol" class=anchor><b>fn changeEol</b></a><span class=code>(keySt, evsend)</span></li>
-  <li><a id="ele.keys.times" href="#ele.keys.times" class=anchor><b>fn times</b></a><span class=code>(keys)</span><br>
+  <li><a id="ele.bindings.changeEol" href="#ele.bindings.changeEol" class=anchor><b>fn changeEol</b></a><span class=code>(keySt, evsend)</span></li>
+  <li><a id="ele.bindings.yank" href="#ele.bindings.yank" class=anchor><b>fn yank</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.bindings.yankEol" href="#ele.bindings.yankEol" class=anchor><b>fn yankEol</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.bindings.paste" href="#ele.bindings.paste" class=anchor><b>fn paste</b></a><span class=code>(keySt)</span></li>
+  <li><a id="ele.bindings.times" href="#ele.bindings.times" class=anchor><b>fn times</b></a><span class=code>(keys)</span><br>
   
   used for setting the number of times to do an action.
   1 0 d t x: delete till the 10th x</li>
-  <li><a id="ele.keys.zero" href="#ele.keys.zero" class=anchor><b>fn zero</b></a><span class=code>(keys)</span></li>
-  <li><a id="ele.keys.searchBuf" href="#ele.keys.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(keySt)</span><br>
+  <li><a id="ele.bindings.zero" href="#ele.bindings.zero" class=anchor><b>fn zero</b></a><span class=code>(keys)</span></li>
+  <li><a id="ele.bindings.searchBuf" href="#ele.bindings.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(keySt)</span><br>
   
-  Interactively search the buffer.
-  
-  <p>This holds onto keySt (sets .keep), effectively owning all keyboard
   inputs.</li>
-  <li><a id="ele.keys.install" href="#ele.keys.install" class=anchor><b>fn install</b></a><span class=code>(ed)</span></li>
-  <li><a id="ele.keys.keyactions" href="#ele.keys.keyactions" class=anchor><b>fn keyactions</b></a><span class=code>(ed, keyrecv, evsend)</span></li>
+  <li><a id="ele.bindings.install" href="#ele.bindings.install" class=anchor><b>fn install</b></a><span class=code>(ed)</span></li>
+  <li><a id="ele.bindings.keyactions" href="#ele.bindings.keyactions" class=anchor><b>fn keyactions</b></a><span class=code>(ed, keyrecv, evsend)</span></li>
 </ul>
 
-<p><h4><a id="ele.keys.KeySt" href="#ele.keys.KeySt" class=anchor>Record KeySt</h4></a>
+<p><h4><a id="ele.bindings.KeySt" href="#ele.bindings.KeySt" class=anchor>Record KeySt</h4></a>
 The state of the keyboard input (chord).
 Some bindings are a simple action to perform, whereas callable bindings
 can update the KeySt to affect future ones, such as decimals causing
 later actions to be repeated a <span class=code>num</span> of times.
 
 <p><b>Fields:</b><ul>
-  <li><a id="ele.keys.KeySt.chord" href="#ele.keys.KeySt.chord" class=anchor><b>chord</b></a>
+  <li><a id="ele.bindings.KeySt.chord" href="#ele.bindings.KeySt.chord" class=anchor><b>chord</b></a>
   list of keys which led to this binding, i.e. {'space', 'a'}</li>
-  <li><a id="ele.keys.KeySt.event" href="#ele.keys.KeySt.event" class=anchor><b>event</b></a>
+  <li><a id="ele.bindings.KeySt.event" href="#ele.bindings.KeySt.event" class=anchor><b>event</b></a>
   table to use when returning (emitting) an event.</li>
-  <li><a id="ele.keys.KeySt.next" href="#ele.keys.KeySt.next" class=anchor><b>next</b></a>
+  <li><a id="ele.bindings.KeySt.next" href="#ele.bindings.KeySt.next" class=anchor><b>next</b></a>
   the binding which will be used for the next key</li>
-  <li><a id="ele.keys.KeySt.keep" href="#ele.keys.KeySt.keep" class=anchor><b>keep</b></a>
+  <li><a id="ele.bindings.KeySt.keep" href="#ele.bindings.KeySt.keep" class=anchor><b>keep</b></a>
   if true the above fields will be preserved in next call</li>
 </ul>
 <b>Methods</b> <ul>
@@ -256,7 +259,7 @@ later actions to be repeated a <span class=code>num</span> of times.
   Check the current Key State.</li>
 </ul>
 
-<p><h4><a id="ele.keys.KeyBindings" href="#ele.keys.KeyBindings" class=anchor>Record KeyBindings</h4></a>
+<p><h4><a id="ele.bindings.KeyBindings" href="#ele.bindings.KeyBindings" class=anchor>Record KeyBindings</h4></a>
 A map of key -> binding.
 The name and doc can be provided for the user.
 
@@ -270,9 +273,9 @@ split (by whitespace) to create sub-KeyBindings as-needed.
 </ul>
 
 <p><b>Fields:</b><ul>
-  <li><a id="ele.keys.KeyBindings.name" href="#ele.keys.KeyBindings.name" class=anchor><b>name</b></a>
+  <li><a id="ele.bindings.KeyBindings.name" href="#ele.bindings.KeyBindings.name" class=anchor><b>name</b></a>
   the name of the group for documentation</li>
-  <li><a id="ele.keys.KeyBindings.doc" href="#ele.keys.KeyBindings.doc" class=anchor><b>doc</b></a>
+  <li><a id="ele.bindings.KeyBindings.doc" href="#ele.bindings.KeyBindings.doc" class=anchor><b>doc</b></a>
   documentation to display to the user</li>
 </ul>
 <b>Methods</b> <ul>
@@ -292,6 +295,8 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   <li><a id="ele.edit.Edit.id" href="#ele.edit.Edit.id" class=anchor><b>id</b></a></li>
   <li><a id="ele.edit.Edit.container" href="#ele.edit.Edit.container" class=anchor><b>container</b></a></li>
   <li><a id="ele.edit.Edit.buf" href="#ele.edit.Edit.buf" class=anchor><b>buf</b></a></li>
+  <li><a id="ele.edit.Edit.yank" href="#ele.edit.Edit.yank" class=anchor><b>yank</b></a>
+  global yank deque</li>
   <li><a id="ele.edit.Edit.l" href="#ele.edit.Edit.l" class=anchor><b>l</b></a> <span class=code>=1</span></li>
   <li><a id="ele.edit.Edit.c" href="#ele.edit.Edit.c" class=anchor><b>c</b></a> <span class=code>=1</span></li>
   <li><a id="ele.edit.Edit.vl" href="#ele.edit.Edit.vl" class=anchor><b>vl</b></a> <span class=code>=1</span></li>
@@ -342,6 +347,7 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   
   Split the edit by wrapping it and a copy into split type S.
   Return the resulting split.</li>
+  <li><a id="Edit.autoIndent" href="#Edit.autoIndent" class=anchor><b>fn:autoIndent</b></a><span class=code>()</span></li>
   <li><a id="Edit.path" href="#Edit.path" class=anchor><b>fn:path</b></a><span class=code>() -&gt; path?</span></li>
 </ul>
 
@@ -354,8 +360,21 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   <li><a id="ele.actions.merge" href="#ele.actions.merge" class=anchor><b>fn merge</b></a><span class=code>(ed, ev)</span></li>
   <li><a id="ele.actions.chain" href="#ele.actions.chain" class=anchor><b>fn chain</b></a><span class=code>(ed, ev, evsend)</span></li>
   <li><a id="ele.actions.move" href="#ele.actions.move" class=anchor><b>fn move</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.getMove" href="#ele.actions.getMove" class=anchor><b>fn getMove</b></a><span class=code>(ed, ev) -&gt; l1,c1, l2,c2</span><br>
+  
+  Get the start/end of a move without changing
+  the position.</li>
   <li><a id="ele.actions.insert" href="#ele.actions.insert" class=anchor><b>fn insert</b></a><span class=code>(ed, ev, evsend)</span></li>
   <li><a id="ele.actions.insertTab" href="#ele.actions.insertTab" class=anchor><b>fn insertTab</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.backspace" href="#ele.actions.backspace" class=anchor><b>fn backspace</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.autoIndent" href="#ele.actions.autoIndent" class=anchor><b>fn autoIndent</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.yank" href="#ele.actions.yank" class=anchor><b>fn yank</b></a><span class=code>(ed, ev)</span><br>
+  
+  yank movement action.</li>
+  <li><a id="ele.actions.paste" href="#ele.actions.paste" class=anchor><b>fn paste</b></a><span class=code>(ed, ev)</span><br>
+  
+  Paste from an index (default=1) from the yank stream.
+  The index goes from last -> first, so 1 is the most recent yank.</li>
   <li><a id="ele.actions.remove" href="#ele.actions.remove" class=anchor><b>fn remove</b></a><span class=code>(ed, ev)</span></li>
   <li><a id="ele.actions.searchBuf" href="#ele.actions.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(ed, ev)</span></li>
   <li><a id="ele.actions.path" href="#ele.actions.path" class=anchor><b>fn path</b></a><span class=code>(ed, ev, evsend)</span></li>
@@ -368,7 +387,6 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   </ul></li>
   <li><a id="ele.actions.buf" href="#ele.actions.buf" class=anchor><b>fn buf</b></a><span class=code>(ed, ev)</span><br>
   
-  Directly modify a buffer by name. This is most commonly
   used for the overlay.</li>
   <li><a id="ele.actions.window" href="#ele.actions.window" class=anchor><b>fn window</b></a><span class=code>(ed, ev)</span><br>
   
@@ -445,6 +463,8 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   search pattern for searchBuf, etc</li>
   <li><a id="Ty<Editor>.lastEvent" href="#Ty<Editor>.lastEvent" class=anchor><b>lastEvent</b></a>
   the last event executed.</li>
+  <li><a id="Ty<Editor>.yank" href="#Ty<Editor>.yank" class=anchor><b>yank</b></a>
+  a deque of removed text. See yankMax.</li>
   <li><a id="Ty<Editor>.error" href="#Ty<Editor>.error" class=anchor><b>error</b></a>
   error handler (ds.log.logfmt sig)</li>
   <li><a id="Ty<Editor>.warn" href="#Ty<Editor>.warn" class=anchor><b>warn</b></a>
@@ -455,6 +475,7 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   set to true to force a redraw</li>
 </ul>
 <b>Methods</b> <ul>
+  <li><a id="Editor.getEditor" href="#Editor.getEditor" class=anchor><b>fn:getEditor</b></a><span class=code>()</span></li>
   <li><a id="Editor.init" href="#Editor.init" class=anchor><b>fn:init</b></a><span class=code>()</span></li>
   <li><a id="Editor.getBuffer" href="#Editor.getBuffer" class=anchor><b>fn:getBuffer</b></a><span class=code>(v) -&gt; Buffer?</span><br>
   
@@ -487,6 +508,7 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   
   Replace the current edit view with the new <span class=code>self:buffer(b)</span>.
   Return the new edit view being focused.</li>
+  <li><a id="Editor.close" href="#Editor.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
 </ul>
 
 <p><h4><a id="Ty<Session>" href="#Ty<Session>" class=anchor>Record Session</h4></a>
@@ -506,6 +528,7 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   <li><a id="Session.play" href="#Session.play" class=anchor><b>fn play</b></a><span class=code>(s, chord)</span></li>
   <li><a id="Session.handleEvents" href="#Session.handleEvents" class=anchor><b>fn handleEvents</b></a><span class=code>(s)</span></li>
   <li><a id="Session.draw" href="#Session.draw" class=anchor><b>fn draw</b></a><span class=code>(s)</span></li>
+  <li><a id="Session.highlight" href="#Session.highlight" class=anchor><b>fn:highlight</b></a><span class=code>()</span></li>
 </ul>
 
 <p><h3><a id="ele.testing" href="#ele.testing" class=anchor>Mod ele.testing</h3></a>

@@ -78,7 +78,7 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4<br>
   <li><a id="vt100.colorFB" href="#vt100.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(f, fg, bg, fg0, bg0)</span><br>
   
   Set the color, taking into account the previous color</li>
-  <li><a id="vt100.acwrite" href="#vt100.acwrite" class=anchor><b>fn acwrite</b></a><span class=code>(f, colorFB, fg, bg, fgstr, bgstr, str, ...)</span><br>
+  <li><a id="vt100.acwrite" href="#vt100.acwrite" class=anchor><b>fn acwrite</b></a><span class=code>(f, colorFB, fg, bg, fgstr, bgstr, str, ...) -&gt; fg,bg, ok,err?</span><br>
   
   write to the terminal-like file f using colors fgstr and bgstr
   accounting for previous color codes fg, bg
@@ -109,22 +109,22 @@ Authorized for relicense in: http://github.com/philanc/plterm/issues/4<br>
 Direct terminal control functions
 
 <p><b>Functions</b> <ul>
-  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
   <li><a id="vt100.ctrl.right" href="#vt100.ctrl.right" class=anchor><b>fn right</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
-  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.getlc" href="#vt100.ctrl.getlc" class=anchor><b>fn getlc</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.hide" href="#vt100.ctrl.hide" class=anchor><b>fn hide</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
   <li><a id="vt100.ctrl.up" href="#vt100.ctrl.up" class=anchor><b>fn up</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.restore" href="#vt100.ctrl.restore" class=anchor><b>fn restore</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.clear" href="#vt100.ctrl.clear" class=anchor><b>fn clear</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.save" href="#vt100.ctrl.save" class=anchor><b>fn save</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
   <li><a id="vt100.ctrl.colorFB" href="#vt100.ctrl.colorFB" class=anchor><b>fn colorFB</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.show" href="#vt100.ctrl.show" class=anchor><b>fn show</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.down" href="#vt100.ctrl.down" class=anchor><b>fn down</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.reset" href="#vt100.ctrl.reset" class=anchor><b>fn reset</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.golc" href="#vt100.ctrl.golc" class=anchor><b>fn golc</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.color" href="#vt100.ctrl.color" class=anchor><b>fn color</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.left" href="#vt100.ctrl.left" class=anchor><b>fn left</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.cleareol" href="#vt100.ctrl.cleareol" class=anchor><b>fn cleareol</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
+  <li><a id="vt100.ctrl.nextline" href="#vt100.ctrl.nextline" class=anchor><b>fn nextline</b></a><span class=code>(key) -&gt; key?, errstring?</span></li>
   <li><a id="vt100.ctrl.size" href="#vt100.ctrl.size" class=anchor><b>fn size</b></a><span class=code>(f)</span><br>
   
   causes terminal to send size as (escaped) cursor position</li>

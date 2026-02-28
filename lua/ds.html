@@ -45,8 +45,9 @@ ds: data structures and algorithms.
   Uses <span class=code>inset</span> method if available.
   rmlen, if provided, will cause <span class=code>t[i:i+rmlen]</span> to be removed first
   
-  <p>inset is like an extend but the items are insert at any place in the array.
-  The rmlen will also remove a certain number of items.</li>
+  <p>inset is like extend but the items are insert at any place in the array.
+  The rmlen will also remove a certain number of items.
+  These are done together to improve performance.</li>
   <li><a id="ds.isPod" href="#ds.isPod" class=anchor><b>fn isPod</b></a><span class=code>(v, mtFn)</span><br>
   
   return true if the value is "plain old data".
@@ -524,13 +525,14 @@ Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = ni
 </ul>
 
 <p><h4><a id="ds.Deq" href="#ds.Deq" class=anchor>Record Deq</h4></a>
-<span class=code>Deq() -&gt; Deq</span>, a deque
-Use as a first in/out with <span class=code>deq:push(v)/deq()</span>
+<span class=code>Deq() -&gt; Deq</span>, a deque datastructure.
+Use as a first in/out (fifo) with <span class=code>deq:push(v)</span> and <span class=code>deq()</span> (pop).
 
-<p>Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp;pushRight()<br>
-&nbsp; popLeft() &nbsp; popRight()
+<p>Main methods: <div class=code-block>&nbsp; pushLeft() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-- push on left side<br>
+&nbsp; pushRight() push() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-- push on right side<br>
+&nbsp; popRight() &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-- pop on right side<br>
+&nbsp; popLeft() &nbsp; pop() &nbsp;__call() -- pop on left side
 </div>
-Calling it is the same as popLeft (use as iterator)
 
 <p><b>Fields:</b><ul>
   <li><a id="ds.Deq.right" href="#ds.Deq.right" class=anchor><b>right</b></a></li>

@@ -27,6 +27,49 @@ especially true for an editor. <a href="#lines.File">#lines.File</a> and <a href
 a separate index file to make reading and writing to files as lines
 actually performant for more real-world use-cases.
 
+<p><h2>sub / insert / remove semantics</h2>
+<span class=code>lines.sub(t, l,c, l2,c2)</span> returns the text from span l.c -> l2.c2.
+
+<p>For instance: suppose you have the following text:<div class=code-block>1234 6789<br>
+abcd fghi
+</div>
+
+<p>You would get the following values: <div class=table><table>
+  <tr>
+    <td>1.1  1.2</td>
+    <td><span class=code>{'12'}</span></td>
+  </tr>
+  <tr>
+    <td>1.6  1.10</td>
+    <td><span class=code>{'6789', ''}</span> - last char goes to next line</td>
+  </tr>
+  <tr>
+    <td>1.6  2.0</td>
+    <td><span class=code>{'6789', ''}</span> - next line zero char the same</td>
+  </tr>
+  <tr>
+    <td>1.6  2.2</td>
+    <td><span class=code>{'6789', 'ab'}</span></td>
+  </tr>
+  <tr>
+    <td>1.10 2.2</td>
+    <td><span class=code>{'', 'ab'}</span></td>
+  </tr>
+  <tr>
+    <td>1.10 3.0</td>
+    <td><span class=code>{'', 'abcd fghi'}</span> - EoF does not have new line</td>
+  </tr>
+</table></div>
+
+<p>The methods <span class=code>span remove offset offsetOf insert</span> are all designed to
+use these conventions to enable reversibility. When you remove a span, it will
+modify the lines object in-place, returning the span you removed. If you
+re-insert that span in the same place it will return the table to it's previous
+state. Along with being easy to understand, this architecture if fundamental to
+how undo/redo works in the Ele editor.
+
+<p>
+<p>
 <p><h3><a id="lines" href="#lines" class=anchor>Mod lines</h3></a>
 The lines module, providing a uniform API for lines-like objects.
 
@@ -40,7 +83,22 @@ The lines module, providing a uniform API for lines-like objects.
   <li><a id="lines.join" href="#lines.join" class=anchor><b>fn join</b></a><span class=code>(t) -&gt; string</span><br>
   
   Join a table of strings with newlines.</li>
-  <li><a id="lines.insert" href="#lines.insert" class=anchor><b>fn insert</b></a><span class=code>(t, s, l,c) -&gt; nil</span><br>
+  <li><a id="lines.span" href="#lines.span" class=anchor><b>fn span</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c?, l2, c2?)</span><br>
+  
+  Enables addressing lines via either (l,l2) or (l,c, l2,c2) span.</li>
+  <li><a id="lines.bound" href="#lines.bound" class=anchor><b>fn bound</b></a><span class=code>(t, l,c, tlen, ln) -&gt; l, c</span><br>
+  
+  Bound the line/col for the lines table.<ul>
+    <li><span class=code>l</span> will be from <span class=code>1 to #t+1</span>.</li>
+    <li><span class=code>c</span> will be from <span class=code>0 to #t[l]+1</span>.</li>
+  </ul>
+  <span class=code>tlen</span> is precomputed <span class=code>#t</span> and <span class=code>line</span> is pre-fetched <span class=code>t[l]</span>
+  
+  <p>This can handle negative integers.</li>
+  <li><a id="lines.boundSpan" href="#lines.boundSpan" class=anchor><b>fn boundSpan</b></a><span class=code>(t, l,c, l2,c2, tlen)</span><br>
+  
+  Bound a span from <span class=code>l,c -&gt; l2,c2</span>.</li>
+  <li><a id="lines.insert" href="#lines.insert" class=anchor><b>fn insert</b></a><span class=code>(t, ins, l,c) -&gt; nil</span><br>
   
   insert string at l, c<br>
   
@@ -48,44 +106,34 @@ The lines module, providing a uniform API for lines-like objects.
   <p>Note: this is NOT performant (O(N)) for large tables.<br>
   
   See: <a href="#Gap">#Gap</a> (or similar) for handling real-world workloads.</li>
-  <li><a id="lines.span" href="#lines.span" class=anchor><b>fn span</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c?, l2, c2?)</span><br>
-  
-  Enables addressing lines via either (l,l2) or (l,c, l2,c2) span.</li>
   <li><a id="lines.sort" href="#lines.sort" class=anchor><b>fn sort</b></a><span class=code>(...) -&gt; l1, c1, l2, c2</span><br>
   
-  sort the span</li>
-  <li><a id="lines.sub" href="#lines.sub" class=anchor><b>fn sub</b></a><span class=code>(l, ...) -&gt; string | table</span><br>
+  Sort the span</li>
+  <li><a id="lines.sub" href="#lines.sub" class=anchor><b>fn sub</b></a><span class=code>(l, ...) -&gt; {str}, l,c</span><br>
   
   Get the sub-span of the lines.<br>
-  
-  Returns a string if the result is a single line, else a table of lines.</li>
-  <li><a id="lines.usub" href="#lines.usub" class=anchor><b>fn usub</b></a><span class=code>(l, ...) -&gt; string | table</span><br>
+  </li>
+  <li><a id="lines.usub" href="#lines.usub" class=anchor><b>fn usub</b></a><span class=code>(l, ...) -&gt; {str}, l,c</span><br>
   
   Get the UTF8 aware sub-span of the lines.<br>
-  
-  Returns a string if the result is a single line, else a table of lines.</li>
+  </li>
   <li><a id="lines.map" href="#lines.map" class=anchor><b>fn map</b></a><span class=code>(lines) -&gt; table</span><br>
   
   create a table of lineText -> {lineNums}</li>
-  <li><a id="lines.bound" href="#lines.bound" class=anchor><b>fn bound</b></a><span class=code>(t, l, c, len, line) -&gt; l, c</span><br>
-  
-  bound the line/col for the lines table.
-  This will automatically convert negatives indexes to positive,
-  where <span class=code>-1</span> is the last item.</li>
-  <li><a id="lines.offset" href="#lines.offset" class=anchor><b>fn offset</b></a><span class=code>(t, off, l, c) -&gt; l, c</span><br>
+  <li><a id="lines.offset" href="#lines.offset" class=anchor><b>fn offset</b></a><span class=code>(t, off, l,c) -&gt; l2,c2</span><br>
   
   Get the <span class=code>l, c</span> with the +/- offset applied</li>
-  <li><a id="lines.offsetOf" href="#lines.offsetOf" class=anchor><b>fn offsetOf</b></a><span class=code>(t, l, c, l2, c2) -&gt; int</span><br>
+  <li><a id="lines.offsetOf" href="#lines.offsetOf" class=anchor><b>fn offsetOf</b></a><span class=code>(t, l,c, l2,c2) -&gt; int</span><br>
   
   get the byte offset </li>
-  <li><a id="lines.find" href="#lines.find" class=anchor><b>fn find</b></a><span class=code>(t, pat, l, c) -&gt; (l, c, c2)</span><br>
+  <li><a id="lines.find" href="#lines.find" class=anchor><b>fn find</b></a><span class=code>(t, pat, l,c) -&gt; (l, c, c2)</span><br>
   
   find the pattern starting at l/c
   Note: matches are only within a single line.</li>
-  <li><a id="lines.findBack" href="#lines.findBack" class=anchor><b>fn findBack</b></a><span class=code>(t, pat, l, c)</span><br>
+  <li><a id="lines.findBack" href="#lines.findBack" class=anchor><b>fn findBack</b></a><span class=code>(t, pat, l,c)</span><br>
   
   find the pattern (backwards) starting at l/c</li>
-  <li><a id="lines.remove" href="#lines.remove" class=anchor><b>fn remove</b></a><span class=code>(t, ...) -&gt; string|table</span><br>
+  <li><a id="lines.remove" href="#lines.remove" class=anchor><b>fn remove</b></a><span class=code>(t, l,c, l2,c2) -&gt; string|table</span><br>
   
   remove span (l, c) -> (l2, c2), return what was removed</li>
   <li><a id="lines.box" href="#lines.box" class=anchor><b>fn box</b></a><span class=code>(t, l1, c1, l2, c2, fill) -&gt; lines</span><br>
@@ -99,6 +147,12 @@ The lines module, providing a uniform API for lines-like objects.
 ***+------------------------2**<br>
 *So no '*' chars are returned.*
 </div></li>
+  <li><a id="lines.getIndent" href="#lines.getIndent" class=anchor><b>fn getIndent</b></a><span class=code>(t, l) -&gt; str?</span><br>
+  
+  Get the indentation of line.</li>
+  <li><a id="lines.autoIndent" href="#lines.autoIndent" class=anchor><b>fn autoIndent</b></a><span class=code>(t, l) -&gt; string?</span><br>
+  
+  Get the autoIndent to use for line.</li>
   <li><a id="lines.load" href="#lines.load" class=anchor><b>fn load</b></a><span class=code>(f, close) -&gt; (table?, errstr?)</span><br>
   
   load lines from file or path. On error return (nil, errstr)</li>
@@ -242,6 +296,7 @@ for some workloads (writing single characters)</div>
   <li><a id="Gap.icopy" href="#Gap.icopy" class=anchor><b>fn:icopy</b></a><span class=code>() -&gt; list</span><br>
   
   Make a copy of the gap to a lua list.</li>
+  <li><a id="Gap.reader" href="#Gap.reader" class=anchor><b>fn:reader</b></a><span class=code>() -&gt; Gap</span></li>
   <li><a id="Gap.load" href="#Gap.load" class=anchor><b>fn load</b></a><span class=code>(T, f, close) -&gt; Gap?, err?</span><br>
   
   Load gap from file, which can be a path.
