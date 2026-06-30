@@ -90,6 +90,15 @@ ds: data structures and algorithms.
   
   Create an error message for the coroutine which includes
   it's traceback.</li>
+  <li><a id="ds.dbg" href="#ds.dbg" class=anchor><b>fn dbg</b></a><span class=code>(fmt, ...)</span><br>
+  
+  Global debug function, useful for quickly and temporarily
+  debugging code.  The first argument is always a format string which uses
+  the following arguments. Additional arguments are printed as literals.</li>
+  <li><a id="ds.int" href="#ds.int" class=anchor><b>fn int</b></a><span class=code>(n) -&gt; int</span><br>
+  
+  Convert the floor of the number to an integer.
+  Throws if n is not a number.</li>
   <li><a id="ds.isWithin" href="#ds.isWithin" class=anchor><b>fn isWithin</b></a><span class=code>(v, min, max) -&gt; bool</span><br>
   
   Return whether <span class=code>min &lt;= v &lt;= max</span>.</li>
@@ -137,6 +146,7 @@ ds: data structures and algorithms.
   
   Remove <span class=code>pat</span> (default=<span class=code>%s</span>, aka whitespace) from the front and back
   of the string.</li>
+  <li><a id="ds.trimFront" href="#ds.trimFront" class=anchor><b>fn trimFront</b></a><span class=code>(subj, pat, si)</span></li>
   <li><a id="ds.trimEnd" href="#ds.trimEnd" class=anchor><b>fn trimEnd</b></a><span class=code>(subj, pat, index) -&gt; string</span><br>
   
   Trim the end of the string by removing pat (default=<span class=code>%s</span>)</li>
@@ -183,6 +193,9 @@ end
     <li>sep4 will be used to separate every 4 bits, set to
     nil to disable.</li>
   </ul></li>
+  <li><a id="ds.paint" href="#ds.paint" class=anchor><b>fn paint</b></a><span class=code>(chr, lines, cols)</span><br>
+  
+  Like string.rep but over multiple lines/cols</li>
   <li><a id="ds.get" href="#ds.get" class=anchor><b>fn get</b></a><span class=code>(t, k) -&gt; value</span><br>
   
   <span class=code>t[k]</span> if t is a raw table, else <span class=code>getmetatable(t).get(t, k)</span>
@@ -254,8 +267,7 @@ end
   
   Return true if two list-like tables are equal.<br>
   
-  Note that this only compares integer keys and ignores
-  others.</li>
+  Note that this only compares integer keys up to <span class=code>#len</span>.</li>
   <li><a id="ds.reverse" href="#ds.reverse" class=anchor><b>fn reverse</b></a><span class=code>(t) -&gt; t</span><br>
   
   Reverse a list-like table in-place (mutating it).</li>
@@ -374,12 +386,11 @@ end
   Copy list-elements only</li>
   <li><a id="ds.defaultICopy" href="#ds.defaultICopy" class=anchor><b>fn defaultICopy</b></a><span class=code>(r)</span><br>
   
-  For types implementing <span class=code>:copy()</span> method.</li>
+  For types implementing <span class=code>:icopy()</span> method.</li>
   <li><a id="ds.rawcopy" href="#ds.rawcopy" class=anchor><b>fn rawcopy</b></a><span class=code>(t)</span></li>
   <li><a id="ds.copy" href="#ds.copy" class=anchor><b>fn copy</b></a><span class=code>(t, add) -&gt; new t</span><br>
   
-  Copy and update full table
-  FIXME: remove add</li>
+  Copy and update full table</li>
   <li><a id="ds.deepcopy" href="#ds.deepcopy" class=anchor><b>fn deepcopy</b></a><span class=code>(t) -&gt; table</span><br>
   
   Recursively copy the table.</li>
@@ -535,8 +546,8 @@ Use as a first in/out (fifo) with <span class=code>deq:push(v)</span> and <span 
 </div>
 
 <p><b>Fields:</b><ul>
-  <li><a id="ds.Deq.right" href="#ds.Deq.right" class=anchor><b>right</b></a></li>
   <li><a id="ds.Deq.left" href="#ds.Deq.left" class=anchor><b>left</b></a></li>
+  <li><a id="ds.Deq.right" href="#ds.Deq.right" class=anchor><b>right</b></a></li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Deq.pushRight" href="#Deq.pushRight" class=anchor><b>fn:pushRight</b></a><span class=code>(val)</span></li>
@@ -639,6 +650,7 @@ Represents a Duration of time.
   <li><a id="Duration.fromSeconds" href="#Duration.fromSeconds" class=anchor><b>fn fromSeconds</b></a></li>
   <li><a id="Duration.fromMs" href="#Duration.fromMs" class=anchor><b>fn fromMs</b></a></li>
   <li><a id="Duration.asSeconds" href="#Duration.asSeconds" class=anchor><b>fn asSeconds</b></a></li>
+  <li><a id="Duration.asMs" href="#Duration.asMs" class=anchor><b>fn:asMs</b></a><span class=code>() -&gt; int</span></li>
 </ul>
 
 <p><h4><a id="ds.time.Epoch" href="#ds.time.Epoch" class=anchor>Record Epoch</h4></a>
@@ -828,6 +840,9 @@ working with paths
   <li><a id="ds.path.cwd" href="#ds.path.cwd" class=anchor><b>fn cwd</b></a><span class=code>(dir) -&gt; /...cwd/</span><br>
   
   get the current working directory</li>
+  <li><a id="ds.path.data" href="#ds.path.data" class=anchor><b>fn data</b></a><span class=code>(relPath)</span><br>
+  
+  Get path to data in $DATA_PATH</li>
   <li><a id="ds.path.cd" href="#ds.path.cd" class=anchor><b>fn cd</b></a><span class=code>(dir)</span><br>
   
   Set the CWD, changing the result of ds.cwd.</li>
@@ -1034,7 +1049,7 @@ used in tests
   <li><a id="ds.Grid.clear" href="#ds.Grid.clear" class=anchor><b>fn:clear</b></a><span class=code>() -&gt; self</span><br>
   
   clear the grid</li>
-  <li><a id="ds.Grid.insert" href="#ds.Grid.insert" class=anchor><b>fn:insert</b></a><span class=code>(l, c, str)</span><br>
+  <li><a id="ds.Grid.insert" href="#ds.Grid.insert" class=anchor><b>fn:insert</b></a><span class=code>(l, c, str) -&gt; self</span><br>
   
   Insert the str into the Grid.
   Any newlines will be insert starting at column c.
@@ -1043,6 +1058,9 @@ used in tests
   NOT clear any data after the insert text, meaning it is essentially a
   replace.
   FIXME: considere renaming to replace... or something.</li>
+  <li><a id="ds.Grid.insertGrid" href="#ds.Grid.insertGrid" class=anchor><b>fn:insertGrid</b></a><span class=code>(l,c, grid) -&gt; self</span><br>
+  
+  Insert another grid.</li>
 </ul>
 
 <p><h3><a id="ds.load" href="#ds.load" class=anchor>Mod ds.load</h3></a>
@@ -1153,6 +1171,47 @@ load lua modules with custom or default environment in a sandboxed
   <p>Warning: currently the reader's len will be static, so this should
   be mostly used for temporary cases. This might be changed in
   the future.</li>
+</ul>
+
+<p><h4><a id="ds.Stack" href="#ds.Stack" class=anchor>Record ds.Stack</h4></a>
+A stack of values with history preservation.
+
+<p>The main value of this vs a list is that pop'd items can be
+recovered until new items are pushed (by incrementing top up to max).
+This is very useful for undo/redo stacks/etc.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ds.Stack.top" href="#ds.Stack.top" class=anchor><b>top</b></a>
+  current top index of the stack</li>
+  <li><a id="ds.Stack.max" href="#ds.Stack.max" class=anchor><b>max</b></a>
+  max index of the stack</li>
+  <li><a id="ds.Stack.newEl" href="#ds.Stack.newEl" class=anchor><b>newEl</b></a> <span class=code>=ds.iden</span>
+  element type function, calld for each new element.</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="ds.Stack.get" href="#ds.Stack.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
+  
+  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="ds.Stack.set" href="#ds.Stack.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
+  
+  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
+  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="ds.Stack.icopy" href="#ds.Stack.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
+  
+  For types implementing <span class=code>:icopy()</span> method.</li>
+  <li><a id="ds.Stack.push" href="#ds.Stack.push" class=anchor><b>fn:push</b></a><span class=code>(v) -&gt; el</span><br>
+  
+  Push a value onto the stack.</li>
+  <li><a id="ds.Stack.pop" href="#ds.Stack.pop" class=anchor><b>fn:pop</b></a><span class=code>() -&gt; el</span><br>
+  
+  Pop a value from the stack.<br>
+  
+  This does not change the max, so the value can still be recovered.</li>
+  <li><a id="ds.Stack.copy" href="#ds.Stack.copy" class=anchor><b>fn:copy</b></a><span class=code>(num)</span><br>
+  
+  Copy num items into new stack.
+  This preserves all values from top -> max.</li>
 </ul>
 
 <p>

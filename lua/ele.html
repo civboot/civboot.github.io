@@ -125,18 +125,57 @@ of work as much as possible.
 Usage: <span class=code>ele path/to/file.txt</span><br>
 
 The ele commandline editor.
+<b>Arguments:</b><ul>
+  <li><a id="ele.run" href="#ele.run" class=anchor><b>run</b></a>
+  lua module to call at start</li>
+</ul>
 
 <p><h3><a id="ele.types" href="#ele.types" class=anchor>Mod ele.types</h3></a>
+Core ele types.
 
-<p><b>Types: </b><a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> 
+<p>
+<p><b>Types: </b><a href="#ele.types.BasePane">BasePane</a> <a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> <a href="#ele.types.EditLoc">EditLoc</a> 
 
 <p><b>Functions</b> <ul>
   <li><a id="ele.types.getEditor" href="#ele.types.getEditor" class=anchor><b>fn getEditor</b></a><span class=code>(c)</span></li>
+  <li><a id="ele.types.isPane" href="#ele.types.isPane" class=anchor><b>fn isPane</b></a><span class=code>(v)</span></li>
   <li><a id="ele.types.uniqueId" href="#ele.types.uniqueId" class=anchor><b>fn uniqueId</b></a><span class=code>()</span></li>
   <li><a id="ele.types.checkBinding" href="#ele.types.checkBinding" class=anchor><b>fn checkBinding</b></a><span class=code>(b)</span></li>
   <li><a id="ele.types.checkBindings" href="#ele.types.checkBindings" class=anchor><b>fn checkBindings</b></a><span class=code>(btable, path)</span></li>
   <li><a id="ele.types.checkMode" href="#ele.types.checkMode" class=anchor><b>fn checkMode</b></a><span class=code>(data, mode) -&gt; errstring</span></li>
   <li><a id="ele.types.checkAction" href="#ele.types.checkAction" class=anchor><b>fn checkAction</b></a><span class=code>(data, action) -&gt; errstring</span></li>
+</ul>
+
+<p><h4><a id="ele.types.BasePane" href="#ele.types.BasePane" class=anchor>Record BasePane</h4></a>
+The base record for Edit/Game.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.types.BasePane.id" href="#ele.types.BasePane.id" class=anchor><b>id</b></a></li>
+  <li><a id="ele.types.BasePane.container" href="#ele.types.BasePane.container" class=anchor><b>container</b></a></li>
+  <li><a id="ele.types.BasePane.actions" href="#ele.types.BasePane.actions" class=anchor><b>actions</b></a>
+  override of actions, especially keyinput</li>
+  <li><a id="ele.types.BasePane.hide" href="#ele.types.BasePane.hide" class=anchor><b>hide</b></a> <span class=code>=true</span>
+  whether to hide cursor</li>
+  <li><a id="ele.types.BasePane.l" href="#ele.types.BasePane.l" class=anchor><b>l</b></a> <span class=code>=1</span>
+  cursor line</li>
+  <li><a id="ele.types.BasePane.c" href="#ele.types.BasePane.c" class=anchor><b>c</b></a> <span class=code>=1</span>
+  cursor col</li>
+  <li><a id="ele.types.BasePane.tl" href="#ele.types.BasePane.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.BasePane.tc" href="#ele.types.BasePane.tc" class=anchor><b>tc</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.BasePane.th" href="#ele.types.BasePane.th" class=anchor><b>th</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.BasePane.tw" href="#ele.types.BasePane.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.types.BasePane.closed" href="#ele.types.BasePane.closed" class=anchor><b>closed</b></a> <span class=code>=false</span></li>
+  <li><a id="ele.types.BasePane.modes" href="#ele.types.BasePane.modes" class=anchor><b>modes</b></a>
+  override specific keybindings for this pane</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="BasePane.focus" href="#BasePane.focus" class=anchor><b>fn:focus</b></a><span class=code>(ed)</span><br>
+  
+  Called after this pane is focused by Editor.</li>
+  <li><a id="BasePane.close" href="#BasePane.close" class=anchor><b>fn:close</b></a><span class=code>(ed)</span><br>
+  
+  Called when this pane is closed by Editor.</li>
+  <li><a id="BasePane.drawCursor" href="#BasePane.drawCursor" class=anchor><b>fn:drawCursor</b></a><span class=code>(ed)</span></li>
 </ul>
 
 <p><h4><a id="ele.types.VSplit" href="#ele.types.VSplit" class=anchor>Record VSplit</h4></a>
@@ -174,6 +213,21 @@ A container with windows split horizontally (i.e. wide windows)
 </ul>
 <b>Methods</b> <ul>
   <li><a id="HSplit.draw" href="#HSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
+</ul>
+
+<p><h4><a id="ele.types.EditLoc" href="#ele.types.EditLoc" class=anchor>Record EditLoc</h4></a>
+The location the cursor was at, to be in a stack.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.types.EditLoc.b" href="#ele.types.EditLoc.b" class=anchor><b>b</b></a>
+  buf name</li>
+  <li><a id="ele.types.EditLoc.l" href="#ele.types.EditLoc.l" class=anchor><b>l</b></a></li>
+  <li><a id="ele.types.EditLoc.c" href="#ele.types.EditLoc.c" class=anchor><b>c</b></a></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="EditLoc.parse" href="#EditLoc.parse" class=anchor><b>fn parse</b></a><span class=code>(T, str, defaultBuf)</span><br>
+  
+  parses l.c:b</li>
 </ul>
 
 <p><h3><a id="ele.bindings" href="#ele.bindings" class=anchor>Mod ele.bindings</h3></a>
@@ -291,34 +345,42 @@ split (by whitespace) to create sub-KeyBindings as-needed.
 
 <p>
 <p><h4><a id="ele.edit.Edit" href="#ele.edit.Edit" class=anchor>Record Edit</h4></a>
-<b>Fields:</b><ul>
+Ele Edit View for viewing and editing text files in a pane.
+
+<p><b>Fields:</b><ul>
   <li><a id="ele.edit.Edit.id" href="#ele.edit.Edit.id" class=anchor><b>id</b></a></li>
   <li><a id="ele.edit.Edit.container" href="#ele.edit.Edit.container" class=anchor><b>container</b></a></li>
-  <li><a id="ele.edit.Edit.buf" href="#ele.edit.Edit.buf" class=anchor><b>buf</b></a></li>
-  <li><a id="ele.edit.Edit.yank" href="#ele.edit.Edit.yank" class=anchor><b>yank</b></a>
-  global yank deque</li>
-  <li><a id="ele.edit.Edit.l" href="#ele.edit.Edit.l" class=anchor><b>l</b></a> <span class=code>=1</span></li>
-  <li><a id="ele.edit.Edit.c" href="#ele.edit.Edit.c" class=anchor><b>c</b></a> <span class=code>=1</span></li>
-  <li><a id="ele.edit.Edit.vl" href="#ele.edit.Edit.vl" class=anchor><b>vl</b></a> <span class=code>=1</span></li>
-  <li><a id="ele.edit.Edit.vc" href="#ele.edit.Edit.vc" class=anchor><b>vc</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.actions" href="#ele.edit.Edit.actions" class=anchor><b>actions</b></a>
+  override of actions, especially keyinput</li>
+  <li><a id="ele.edit.Edit.hide" href="#ele.edit.Edit.hide" class=anchor><b>hide</b></a> <span class=code>=true</span>
+  whether to hide cursor</li>
+  <li><a id="ele.edit.Edit.l" href="#ele.edit.Edit.l" class=anchor><b>l</b></a> <span class=code>=1</span>
+  cursor line</li>
+  <li><a id="ele.edit.Edit.c" href="#ele.edit.Edit.c" class=anchor><b>c</b></a> <span class=code>=1</span>
+  cursor col</li>
   <li><a id="ele.edit.Edit.tl" href="#ele.edit.Edit.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
   <li><a id="ele.edit.Edit.tc" href="#ele.edit.Edit.tc" class=anchor><b>tc</b></a> <span class=code>=-1</span></li>
   <li><a id="ele.edit.Edit.th" href="#ele.edit.Edit.th" class=anchor><b>th</b></a> <span class=code>=-1</span></li>
   <li><a id="ele.edit.Edit.tw" href="#ele.edit.Edit.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
-  <li><a id="ele.edit.Edit.fh" href="#ele.edit.Edit.fh" class=anchor><b>fh</b></a> <span class=code>=0</span></li>
-  <li><a id="ele.edit.Edit.fw" href="#ele.edit.Edit.fw" class=anchor><b>fw</b></a> <span class=code>=0</span></li>
   <li><a id="ele.edit.Edit.closed" href="#ele.edit.Edit.closed" class=anchor><b>closed</b></a> <span class=code>=false</span></li>
-  <li><a id="ele.edit.Edit.modes" href="#ele.edit.Edit.modes" class=anchor><b>modes</b></a></li>
+  <li><a id="ele.edit.Edit.modes" href="#ele.edit.Edit.modes" class=anchor><b>modes</b></a>
+  override specific keybindings for this pane</li>
+  <li><a id="ele.edit.Edit.vl" href="#ele.edit.Edit.vl" class=anchor><b>vl</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.vc" href="#ele.edit.Edit.vc" class=anchor><b>vc</b></a> <span class=code>=1</span></li>
+  <li><a id="ele.edit.Edit.buf" href="#ele.edit.Edit.buf" class=anchor><b>buf</b></a></li>
+  <li><a id="ele.edit.Edit.yank" href="#ele.edit.Edit.yank" class=anchor><b>yank</b></a>
+  global yank deque</li>
+  <li><a id="ele.edit.Edit.locations" href="#ele.edit.Edit.locations" class=anchor><b>locations</b></a>
+  a deq of locations visited.</li>
   <li><a id="ele.edit.Edit.drawBars" href="#ele.edit.Edit.drawBars" class=anchor><b>drawBars</b></a> <span class=code>=Edit.drawBars</span></li>
   <li><a id="ele.edit.Edit.lineStyle" href="#ele.edit.Edit.lineStyle" class=anchor><b>lineStyle</b></a> <span class=code>="bar:line"</span>
   asciicolor style</li>
 </ul>
 <b>Methods</b> <ul>
   <li><a id="Edit.close" href="#Edit.close" class=anchor><b>fn:close</b></a><span class=code>(ed)</span></li>
+  <li><a id="Edit.drawCursor" href="#Edit.drawCursor" class=anchor><b>fn:drawCursor</b></a><span class=code>(ed)</span></li>
   <li><a id="Edit.save" href="#Edit.save" class=anchor><b>fn:save</b></a><span class=code>(ed)</span></li>
   <li><a id="Edit.copy" href="#Edit.copy" class=anchor><b>fn:copy</b></a><span class=code>()</span></li>
-  <li><a id="Edit.forceHeight" href="#Edit.forceHeight" class=anchor><b>fn:forceHeight</b></a><span class=code>()</span></li>
-  <li><a id="Edit.forceWidth" href="#Edit.forceWidth" class=anchor><b>fn:forceWidth</b></a><span class=code>()</span></li>
   <li><a id="Edit.curLine" href="#Edit.curLine" class=anchor><b>fn:curLine</b></a><span class=code>()</span></li>
   <li><a id="Edit.colEnd" href="#Edit.colEnd" class=anchor><b>fn:colEnd</b></a><span class=code>()</span></li>
   <li><a id="Edit.lastLine" href="#Edit.lastLine" class=anchor><b>fn:lastLine</b></a><span class=code>()</span></li>
@@ -342,7 +404,6 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   <li><a id="Edit.draw" href="#Edit.draw" class=anchor><b>fn:draw</b></a><span class=code>(ed, isRight)</span></li>
   <li><a id="Edit.barDims" href="#Edit.barDims" class=anchor><b>fn:barDims</b></a><span class=code>()</span></li>
   <li><a id="Edit.drawBars" href="#Edit.drawBars" class=anchor><b>fn:drawBars</b></a><span class=code>(d) -&gt; botHeight, leftWidth</span></li>
-  <li><a id="Edit.drawCursor" href="#Edit.drawCursor" class=anchor><b>fn:drawCursor</b></a><span class=code>(ed)</span></li>
   <li><a id="Edit.split" href="#Edit.split" class=anchor><b>fn:split</b></a><span class=code>(S) -&gt; split</span><br>
   
   Split the edit by wrapping it and a copy into split type S.
@@ -387,10 +448,13 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   </ul></li>
   <li><a id="ele.actions.buf" href="#ele.actions.buf" class=anchor><b>fn buf</b></a><span class=code>(ed, ev)</span><br>
   
-  used for the overlay.</li>
+  Manipulate a buffer by name, i.e. b#overlay, b#nav, etc.</li>
   <li><a id="ele.actions.window" href="#ele.actions.window" class=anchor><b>fn window</b></a><span class=code>(ed, ev)</span><br>
   
   Window operations like split and close</li>
+  <li><a id="ele.actions.jump" href="#ele.actions.jump" class=anchor><b>fn jump</b></a><span class=code>(ed, ev)</span><br>
+  
+  ev={location=+/-int}</li>
 </ul>
 
 <p><h3><a id="ele.actions.nav" href="#ele.actions.nav" class=anchor>Mod ele.actions.nav</h3></a>
@@ -449,8 +513,8 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   <li><a id="Ty<Editor>.namedBuffers" href="#Ty<Editor>.namedBuffers" class=anchor><b>namedBuffers</b></a></li>
   <li><a id="Ty<Editor>.overlay" href="#Ty<Editor>.overlay" class=anchor><b>overlay</b></a>
   the overlay buffer</li>
-  <li><a id="Ty<Editor>.edit" href="#Ty<Editor>.edit" class=anchor><b>edit</b></a>
-  the current edit buffer. Also in namedBuffers.overlay</li>
+  <li><a id="Ty<Editor>.pane" href="#Ty<Editor>.pane" class=anchor><b>pane</b></a>
+  the currently active pane.</li>
   <li><a id="Ty<Editor>.view" href="#Ty<Editor>.view" class=anchor><b>view</b></a>
   the root view</li>
   <li><a id="Ty<Editor>.display" href="#Ty<Editor>.display" class=anchor><b>display</b></a>
@@ -477,11 +541,18 @@ split (by whitespace) to create sub-KeyBindings as-needed.
 <b>Methods</b> <ul>
   <li><a id="Editor.getEditor" href="#Editor.getEditor" class=anchor><b>fn:getEditor</b></a><span class=code>()</span></li>
   <li><a id="Editor.init" href="#Editor.init" class=anchor><b>fn:init</b></a><span class=code>()</span></li>
+  <li><a id="Editor.edit" href="#Editor.edit" class=anchor><b>fn:edit</b></a><span class=code>()</span></li>
+  <li><a id="Editor.bufferName" href="#Editor.bufferName" class=anchor><b>fn:bufferName</b></a><span class=code>(b) -&gt; string</span></li>
+  <li><a id="Editor.currentLocation" href="#Editor.currentLocation" class=anchor><b>fn:currentLocation</b></a><span class=code>(e)</span></li>
+  <li><a id="Editor.pushLocation" href="#Editor.pushLocation" class=anchor><b>fn:pushLocation</b></a><span class=code>(e) -&gt; pushed</span></li>
   <li><a id="Editor.getBuffer" href="#Editor.getBuffer" class=anchor><b>fn:getBuffer</b></a><span class=code>(v) -&gt; Buffer?</span><br>
   
   Get an existing buffer if it exists.
   Else return false if the buffer is path-like and should be
-  created, else nil.</li>
+  created, else nil.
+  Special buffers: <ul>
+    <li><span class=code>b#tmp</span> creates a new buffer pointing to a tmp file.</li>
+  </ul></li>
   <li><a id="Editor.buffer" href="#Editor.buffer" class=anchor><b>fn:buffer</b></a><span class=code>(idOrPath) -&gt; Buffer</span></li>
   <li><a id="Editor.namedBuffer" href="#Editor.namedBuffer" class=anchor><b>fn:namedBuffer</b></a><span class=code>(name, path)</span><br>
   
@@ -504,7 +575,7 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   <li><a id="Editor.focusFirst" href="#Editor.focusFirst" class=anchor><b>fn:focusFirst</b></a><span class=code>(c)</span><br>
   
   Focus the first edit view in container c (default self.view)</li>
-  <li><a id="Editor.focus" href="#Editor.focus" class=anchor><b>fn:focus</b></a><span class=code>(b) -&gt; Edit</span><br>
+  <li><a id="Editor.focus" href="#Editor.focus" class=anchor><b>fn:focus</b></a><span class=code>(p) -&gt; Edit</span><br>
   
   Replace the current edit view with the new <span class=code>self:buffer(b)</span>.
   Return the new edit view being focused.</li>
@@ -524,11 +595,64 @@ split (by whitespace) to create sub-KeyBindings as-needed.
 <b>Methods</b> <ul>
   <li><a id="Session.test" href="#Session.test" class=anchor><b>fn test</b></a><span class=code>(T, s)</span></li>
   <li><a id="Session.user" href="#Session.user" class=anchor><b>fn user</b></a><span class=code>(T, s)</span></li>
-  <li><a id="Session.run" href="#Session.run" class=anchor><b>fn run</b></a><span class=code>(s)</span></li>
+  <li><a id="Session.run" href="#Session.run" class=anchor><b>fn:run</b></a><span class=code>()</span></li>
   <li><a id="Session.play" href="#Session.play" class=anchor><b>fn play</b></a><span class=code>(s, chord)</span></li>
   <li><a id="Session.handleEvents" href="#Session.handleEvents" class=anchor><b>fn handleEvents</b></a><span class=code>(s)</span></li>
   <li><a id="Session.draw" href="#Session.draw" class=anchor><b>fn draw</b></a><span class=code>(s)</span></li>
   <li><a id="Session.highlight" href="#Session.highlight" class=anchor><b>fn:highlight</b></a><span class=code>()</span></li>
+</ul>
+
+<p><h3><a id="ele.game" href="#ele.game" class=anchor>Mod ele.game</h3></a>
+Ele game library.
+
+<p>
+<p><b>Types: </b><a href="#ele.game.Sprite">Sprite</a> <a href="#ele.game.Game">Game</a> 
+
+<p>
+<p><h4><a id="ele.game.Sprite" href="#ele.game.Sprite" class=anchor>Record Sprite</h4></a>
+A sprite with a location. Used by games to more easily write
+to the Game grid by simply appending the txt/fg/bg.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.game.Sprite.l" href="#ele.game.Sprite.l" class=anchor><b>l</b></a>
+  line number</li>
+  <li><a id="ele.game.Sprite.c" href="#ele.game.Sprite.c" class=anchor><b>c</b></a>
+  column number</li>
+  <li><a id="ele.game.Sprite.txt" href="#ele.game.Sprite.txt" class=anchor><b>txt</b></a></li>
+  <li><a id="ele.game.Sprite.fg" href="#ele.game.Sprite.fg" class=anchor><b>fg</b></a></li>
+  <li><a id="ele.game.Sprite.bg" href="#ele.game.Sprite.bg" class=anchor><b>bg</b></a></li>
+</ul>
+
+<p><h4><a id="ele.game.Game" href="#ele.game.Game" class=anchor>Record Game</h4></a>
+A Game window which renders a list of sprites.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.game.Game.id" href="#ele.game.Game.id" class=anchor><b>id</b></a></li>
+  <li><a id="ele.game.Game.container" href="#ele.game.Game.container" class=anchor><b>container</b></a></li>
+  <li><a id="ele.game.Game.actions" href="#ele.game.Game.actions" class=anchor><b>actions</b></a>
+  override of actions, especially keyinput</li>
+  <li><a id="ele.game.Game.hide" href="#ele.game.Game.hide" class=anchor><b>hide</b></a> <span class=code>=true</span>
+  whether to hide cursor</li>
+  <li><a id="ele.game.Game.l" href="#ele.game.Game.l" class=anchor><b>l</b></a> <span class=code>=1</span>
+  cursor line</li>
+  <li><a id="ele.game.Game.c" href="#ele.game.Game.c" class=anchor><b>c</b></a> <span class=code>=1</span>
+  cursor col</li>
+  <li><a id="ele.game.Game.tl" href="#ele.game.Game.tl" class=anchor><b>tl</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.game.Game.tc" href="#ele.game.Game.tc" class=anchor><b>tc</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.game.Game.th" href="#ele.game.Game.th" class=anchor><b>th</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.game.Game.tw" href="#ele.game.Game.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
+  <li><a id="ele.game.Game.closed" href="#ele.game.Game.closed" class=anchor><b>closed</b></a> <span class=code>=false</span></li>
+  <li><a id="ele.game.Game.modes" href="#ele.game.Game.modes" class=anchor><b>modes</b></a>
+  override specific keybindings for this pane</li>
+  <li><a id="ele.game.Game.sprites" href="#ele.game.Game.sprites" class=anchor><b>sprites</b></a>
+  list of sprites to render</li>
+  <li><a id="ele.game.Game.mh" href="#ele.game.Game.mh" class=anchor><b>mh</b></a>
+  minimum height</li>
+  <li><a id="ele.game.Game.mw" href="#ele.game.Game.mw" class=anchor><b>mw</b></a>
+  minimum width</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Game.draw" href="#Game.draw" class=anchor><b>fn:draw</b></a><span class=code>(ed, isRight)</span></li>
 </ul>
 
 <p><h3><a id="ele.testing" href="#ele.testing" class=anchor>Mod ele.testing</h3></a>

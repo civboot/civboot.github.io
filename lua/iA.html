@@ -45,30 +45,29 @@ W, X, Y and Z are reserved for future use (probably thread-local values and
 flags).
 
 <p>
-<p>Any value can be declared "corruptable" (aka mutable) with $, which means that
-it can be modified within the scope declared. If it is ever declared
+<p>Any value can be declared "corruptable" (aka mutable) with $, which means
+that it can be modified within the scope declared. If it is ever declared
 "uncorruptable" (without $) then it cannot be modified within that scope.
 
 <p>You can declare a named variable and its type with:
 <div class=code-block>const answer: Int = 42 &nbsp;\ a constant, not stored anywhere.<br>
 <br>
-&nbsp;A val1: Int = 41 &nbsp; &nbsp; \ register A, pre-initialized with 41, non-mutable<br>
-$B val2: Int = answer \ register B, pre-initialized with const, mutable<br>
-$V val3: Int = val1 &nbsp; \ mutable local value, increases return stack size<br>
-$U val4: Int = 0 &nbsp; &nbsp; &nbsp;\ mutable universal value, stored on heap
+&nbsp;A val1: Int = 41 &nbsp; &nbsp; \ register A, pre-initialized with 41, non-corruptable<br>
+$B val2: Int = answer \ register B, pre-initialized with const, corruptable<br>
+$V val3: Int = val1 &nbsp; \ mutable local value, increases local stack size<br>
+$U val4: Int = 0 &nbsp; &nbsp; &nbsp;\ mutable universal (aka global) value, stored on heap
 </div>
 
 <p><h3><a id="Functions" href="#Functions" class=anchor>Functions</h3></a>
 iA supports defining functions. Unlike many languages, function arguments must
-specify exactly what registers the function will be operating on (or V) and
+specify exactly which registers the function will be operating on (or <span class=code>V</span>) and
 which registers should be considered "return" values of the function. Functions
 cannot return local values (but can modify passed-in pointers or arrays).
 
-<p>
-<p>The simplest way to specify a function is via the #auto attribute.
+<p>The simplest way to specify a function is via the <span class=code>#auto</span> macro.
 
 <p><div class=code-block>\ &nbsp; &nbsp; &nbsp; &nbsp;name &nbsp;inputs &nbsp; &nbsp; &nbsp;outputs<br>
-#auto fn fib &nbsp;(V i: Int) -&gt; Int &nbsp; &nbsp;do<br>
+#auto fn fib &nbsp;(i: Int) -&gt; Int &nbsp; &nbsp;do<br>
 &nbsp; ... expr1 or multi-assiment statements ...<br>
 end
 </div>
@@ -79,107 +78,98 @@ end
   <li>The output types of the function.</li>
 </ul>
 
-<p>If the fn is #auto then the whole function must never specify specific
-registers (only use V inputs and locals). iA will automatically convert these
-to iA-reg-common standards and may replace other V used with registers for
+<p>If the fn is <span class=code>#auto</span> then the whole function must never specify specific
+registers or corruptability. iA will automatically convert these to
+iA-reg-common standards and may replace other V used with registers for
 optimizations.
 
 <p>Some notes: <ul>
-  <li>#auto can be replaced with #link, which uses the platform-defined
+  <li><span class=code>#auto</span> can be replaced with <span class=code>#link</span>, which uses the platform-defined
   calling convention instead of iA standards, which carries several
   performance and usability disadvantages.</li>
-  <li>only #auto or #link functions can be stored as a pointer and called.</li>
+  <li>only <span class=code>#auto</span> or <span class=code>#link</span> functions can be stored as a pointer and called.</li>
 </ul>
 
-<p>Without #auto, you may specify the specific registers to use and whether
+<p>Without <span class=code>#auto</span>, you may specify the specific registers to use and whether
 they are corruptable:
 <div class=code-block>\ &nbsp;name &nbsp;inputs &nbsp; &nbsp; &nbsp; &nbsp;outputs &nbsp; corrupts<br>
-fn fib &nbsp;($A i: Int) -&gt; C: Int &nbsp; &nbsp;$$BD &nbsp; &nbsp; do<br>
+fn fib &nbsp;($C i: Int) -&gt; C: Int &nbsp; &nbsp;$$BD &nbsp; &nbsp; do<br>
 &nbsp; ... expr1 or multi-assignment statements ...<br>
 end
 </div>
 
-<p>A few notes: <ul>
-  <li>The output registers will use the default ordering (C D A B) if
-  unspecified.</li>
-</ul>
-
 <p><h3>Expressions</h3>
-There are 3 types of what are called "single expressions" (expr1): <ul>
+There are 3 types of "single expressions" (expr1): <ul>
   <li><b>val</b>: a named variable <span class=code>var</span> or literal value such as 42, 0x4F, "string",
   c"counted", etc
   
   <p></li>
   <li><b>eq1</b> single-assignment <span class=code>expr1 = expr1</span>, i.e. <span class=code>A val1: Int = 4</span>. The
   register and type are optional if <span class=code>val1</span> is already defined.
-  i.e. <span class=code>A val1: Int = 41</span> declares it in register A and of type Int.<ul>
+  i.e. $A val1: Int = 41 declares it in register A and of type Int.<ul>
     <li>the right-hand expression can be _ (an underscore), which does the
     operation with itself.</li>
     <li><span class=code>expr1 += expr1</span> where an operation is after = is also eq1.</li>
   </ul>
   
   <p></li>
-  <li><b>fn1</b>: <span class=code>fn foo(...) -&gt; Int</span>, calls to functions which return a single
-  register.</li>
+  <li><b>fn1</b>: <span class=code>foo(...)</span>, calls to functions which return a single register.</li>
 </ul>
 
 <p>expr1's effectively "return" their leftmost value, so you can write something
 like below. Note that you can be explicit about the registers like below,
-or they can be inferred.
+or they can be inferred. All expressions are evaluated from left to right,
+with the right side of any equal sign evaluated first. Once a variable is
+assigned as a function input it is considered "locked" and attempts to mutate
+it will result in a corruption error.
 
-<p>
-<p>All expressions are evaluate from right to left (TODO: I think this will be
-changed to left->right and an optional <span class=code>&gt;&gt;</span> left-to-right assignment operator
-will be added, stay tuned). Once a variable is assigned as a function input it
-is considered "locked" and attempts to mutate it will result in a corruption
-error.
+<p><div class=code-block>(A=10) += (C=foo($A=bar($A=7, $C=6), $C=5))</div>
 
-<p><div class=code-block>(a=10) += (C c: Int = foo($A a=5, $B b = bar($A a=6)))</div>
-In the example above the A register is modified twice but is not locked until
-<span class=code>a=5</span>, so the above code compiles. The above code is very explicit with
-what registers are modified and could be rewritten as:
+<p>In the example above the <span class=code>C</span> register is modified twice but is not locked
+for the <span class=code>foo</span> call until <span class=code>C=5</span>, so the above code compiles. The above code is
+overly very explicit with what registers are being modified and could be
+rewritten as:
 
-<p><div class=code-block>(a=10) += foo(5, bar(a))</div>
+<p><div class=code-block>(A=10) += foo(bar(7,6), 5)</div>
 
-<p>An example of a corruption error is below. Register B is locked with
-<span class=code>b=3</span> (remember, right-to-left evaluation) and then is corrupted
-by <span class=code>bar(a=1, b=2)</span>.
+<p>An example of a corruption error is below. Register A is locked with
+<span class=code>A=3</span> and then is corrupted by <span class=code>bar(A=1, C=2)</span>.
 
-<p><div class=code-block>foo(a=bar(a=1, b=2), b=3)</div>
-From the above you can see the general rule when calling functions in iA:
-the functions called must be progressively simpler as they go from right to
-left, since more registers will be locked.
+<p><div class=code-block>foo(A=3, C=bar(A=1, C=2))</div>
+
+<p>From the above you can see the general rule when calling functions in iA:
+the argument calculations must be progressively simpler as they go from left to
+right since more registers will be locked as the calling progresses.
 
 <p><h3>Types</h3>
 iA supports the following native types: <ul>
-  <li>Int: processor-defined integer with the width of one register.
+  <li>UR: unsigned register, aka positive integer that fits in a register.
   
   <p></li>
-  <li>UInt: processor-defined unsigned integer with the width of one register.
-  
-  <p></li>
-  <li>I1 I2 I4 I8: signed integer of a specific byte-width.
+  <li>SR: signed register, aka positive or negative integer that fits in a
+  register.
   
   <p></li>
   <li>U1 U2 U4 U8: unsigned integer of a specific byte-width.
   
   <p></li>
+  <li>S1 S2 S4 S8: signed integer of a specific byte-width.
+  
+  <p></li>
   <li><span class=code>&amp;Type</span>: pointer to Type. <span class=code>&amp;&amp;Type</span> is a double-pointer, etc.
   
   <p></li>
-  <li><span class=code>[Type]</span>: array of Type, which is len and capacity U4 values directly
-  followed by the data (the data itself, NOT a pointer). Used for function
-  arguments or when allocating on the heap.
+  <li><span class=code>[Type]</span>: array of Type, which is effectively a struct of
+  <span class=code>UR capacity,len</span> and a pointer to the data.
   
   <p></li>
-  <li><span class=code>[Type, 16]</span>: array of Type with a declared maximum capacity of 16 (the
-  capacity is still stored in a slot though), used for declaring array
-  variables on the local stack.
+  <li><span class=code>[Type, 16]</span>: local array of Type with a maximum capacity of 16.
   
   <p></li>
-  <li>CStr: counted string. A byte length and byte capacity followed by 0-254 bytes
-  of binary data and a 0 byte. Commonly used for efficient storage of names and
-  many cases where long strings are not necessary.</li>
+  <li>CStr: <span class=code>c"counted string"</span>. A <span class=code>U1 capacity,len</span> followed directly (not a
+  pointer) by 0-252 bytes of binary data and a 0 byte. Commonly used for
+  efficient storage of names and many cases where long strings are not
+  necessary.</li>
 </ul>
 
 <p><div class=info>Note that a conventional Str is just <span class=code>[U1]</span>.</div>
@@ -191,11 +181,10 @@ of known-size typed fields.
 iA is implemented as a Lua library and it can be extended by other Lua
 libraries.
 
-<p>
 <p>iA code can be defined in one of two types of files: <ul>
   <li>If ending in <span class=code>.iA</span> it is 100% iA syntax. It should define
   the modules it requires and use iA syntax to define functions,
-  globals, etc. It can call to Lua code via $macros
+  globals, etc. It can call to Lua code via <span class=code>#macros</span>
   
   <p></li>
   <li>If ending in <span class=code>.lua</span> it is a Lua file which can directly compile
@@ -204,16 +193,16 @@ libraries.
   it into a target platforms actual assembly).</li>
 </ul>
 
-<p>Symbols prefixed with # such as #auto are considered "macros". They are defined
-in Lua and are passed a single expression (which can be (inside, parens)). They
-are executed from right -> left, so <span class=code>#mymacro #auto fn myFn()</span> would first
-execute #auto and then execute #mymacro.
+<p>Symbols prefixed with <span class=code>#</span> such as <span class=code>#auto</span> are considered "macros". They are
+defined in Lua and are passed the single expression which follows them(which
+can be <span class=code>(inside, parens)</span>.
 
-<p>
 <p>Macros modify the AST directly, including: adding flags or debugigng info,
-reorganizing nodes, changing operations, re-organizing registers, etc. A
-common use for macros is to inline code.  Macro expansion happens before type
-or corruption checking, but all macros must be valid code.
+reorganizing nodes, changing operations, re-organizing registers, etc. The most
+common macro <span class=code>#auto</span> simply auto-assigns registers to meet the iA standard.
+The most common user-defined macros simply inline some code. Macro expansion
+happens before type or corruption checking, but all macros must use valid
+iA syntax.
 
 <p><h3>iA package API</h3>
 Use <span class=code>local iA = require"iA"</span> to get the iA Lua package. It has the following
@@ -351,22 +340,33 @@ cleanly.
 registers are used for both inputs and outputs of functions,
 and will therefore be corrupted.
 
-<p>
-<p>A B D: inputs should use these registers, in this order, then non-corruptable
-registers or local values.
+<p><span class=code>C, A, B, D</span> should be the output registers, in that order. These are the only
+registers that can be function outputs (unless the platform is constrained),
+additional outputs must be represented as mutable pointer inputs.
 
-<p>
-<p>Outputs should use C A B D (in that order). These are the only registers that
-can be function outputs (unless the platform is constrained), additional
-outputs must be represented as mutable pointer inputs.
+<p><span class=code>D, B, A, C</span> should be the LAST four input registers, in that order. If
+additional arguments are needed, they should be the non-corruptable registers
+from last -> first <span class=code>I-P</span>, followed by using the stack w/<span class=code>V</span>.
 
-<p>
+<p><div class=code-block>-- Note: SR is the "signed register" type, aka an integer.<br>
+fn twoArgs( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;$A a:SR, $C c:SR) -&gt; C:SR;<br>
+fn fourArgs(P p:SR, $D d: SR, $B b:SR, $A a:SR, $C c:SR) -&gt; C:SR;
+</div>
+
+<p><div class=info>Why? Registers become locked from left -> right. Without this convention
+we couldn't do <span class=code>foo(A=bar(a), C=baz(b))</span> - if poorly designed we would need
+to locally cache the result of both <span class=code>bar(a)</span> and <span class=code>baz(b)</span>.
+
+<p>We use <span class=code>P</span> instead of <span class=code>I-K</span> because we want to use the latter for tight
+loops which call functions.
+</div>
+
 <p>Additionally, these registers should be chosen to work with the following: <ul>
-  <li><span class=code>A low: int, D high: int = mul($A a: int, V b: int)</span> defines
+  <li><span class=code>A low: int, D high: int = #mul($A a: int, V b: int)</span> defines
   cross-platform multiplication.
   
   <p></li>
-  <li><span class=code>A quot: int, D rem: int = div($D high: int, $A low: int, V div: int)</span>
+  <li><span class=code>A quot: int, D rem: int = #div($D high: int, $A low: int, V div: int)</span>
   defines cross-platform division.
   
   <p></li>
@@ -386,17 +386,15 @@ outputs must be represented as mutable pointer inputs.
 <div class=info>Note: On some supported architectures like the Z80 there are only 4 general
 purpose registers, so the rest of these will be converted to V</div>
 
-<p>E F G H: corruptable registers, commonly used as additional function
-inputs after A B D.
+<p>Additionally: <b>
+* <span class=code>E F G H</span>: corruptable registers.
 
-<p>
-<p>I J K L M N O P: non-corruptable registers for general use. I J K are
+<p>* <span class=code>I J K L M N O P</span>: non-corruptable registers for general use. <span class=code>I J K</span> are
 very common for loop registers.
 
-<p>
-<p>Q R S T: corruptable registers, typically used for temporary values.
+<p>* <span class=code>Q R S T</span>: corruptable registers. <span class=code>T</span> is the most common temporary.
+</b>
 
-<p>
 <p><b>Other registers</b>: the following are special registers and cannot be assigned
 to a variable name. However, they can be accessed directly.
 <ul>

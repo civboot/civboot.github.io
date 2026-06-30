@@ -134,7 +134,7 @@ how tables are formatted to use JSON instead of printing them.
   <li><a id="Json.function" href="#Json.function" class=anchor><b>fn function</b></a><span class=code>(self, fn)</span><br>
   
   format a function value.</li>
-  <li><a id="Json.items" href="#Json.items" class=anchor><b>fn:items</b></a><span class=code>(t, hasKeys, listEnd)</span><br>
+  <li><a id="Json.items" href="#Json.items" class=anchor><b>fn:items</b></a><span class=code>(t, hasKeys, listEnd, si, ei)</span><br>
   
   format items in table "list"</li>
   <li><a id="Json.keyvals" href="#Json.keyvals" class=anchor><b>fn:keyvals</b></a><span class=code>(t, keys)</span><br>
@@ -145,6 +145,9 @@ how tables are formatted to use JSON instead of printing them.
   Format only the list-elements of a table.</li>
   <li><a id="Json.rawtable" href="#Json.rawtable" class=anchor><b>fn:rawtable</b></a><span class=code>(t)</span></li>
   <li><a id="Json.table" href="#Json.table" class=anchor><b>fn table</b></a><span class=code>(f, t)</span></li>
+  <li><a id="Json.formatArgs" href="#Json.formatArgs" class=anchor><b>fn:formatArgs</b></a><span class=code>(fmt, args)</span><br>
+  
+  Format a list of arguments.</li>
   <li><a id="Json.format" href="#Json.format" class=anchor><b>fn:format</b></a><span class=code>(fmt, ...) -&gt; varargsUsed</span><br>
   
   like string.format but use <span class=code>Fmt</span> for <span class=code>%q</span>.

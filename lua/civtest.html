@@ -50,6 +50,11 @@ module for writing simple tests
   
   Assert that <span class=code>a</span> equals <span class=code>b</span> (according to <a href="#metaty.eq">#metaty.eq</a>
   and print a diff if not.</li>
+  <li><a id="civtest.ieq" href="#civtest.ieq" class=anchor><b>fn ieq</b></a><span class=code>(a, b, msg)</span><br>
+  
+  Assert that two list-like tables are equal.<br>
+  
+  Note that this only compares integer keys up to <span class=code>#len</span>.</li>
   <li><a id="civtest.binEq" href="#civtest.binEq" class=anchor><b>fn binEq</b></a><span class=code>(e, r)</span><br>
   
   Same as eq but for binary strings. Shows a very clear

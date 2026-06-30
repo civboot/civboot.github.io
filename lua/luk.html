@@ -22,7 +22,23 @@ different globals!
 provides an (overrideable) <span class=code>import'name'</span> function which can import other Luk
 files (by path).
 
-<p><b>Usage:</b><div class=code-block>local flowers = import'path/to/flowers.luk'<br>
+<p>
+<p><b>Usage:</b><div class=code-block>local luk = require'luk'<br>
+local flowerMetrics = luk.import'path/to/flower_metrics.luk'
+</div>
+
+<p><div class=code-block>-- flowers.luk: a bunch of flower data.<br>
+return {<br>
+&nbsp; { kind = 'rose', quality = 'good' },<br>
+&nbsp; { kind = 'rose', quality = 'great' },<br>
+&nbsp; { kind = 'tulip', quality = 'poor' },<br>
+&nbsp; -- ...<br>
+}
+</div>
+
+<p><div class=code-block>-- flower_metrics.luk: analyze the flower data.<br>
+<br>
+local flowers = import'flowers.luk'<br>
 <br>
 -- Do normal lua stuff.<br>
 local count = {}<br>
@@ -55,6 +71,14 @@ luk: lua config language.<br>
   
   Convert value to luk-value. This is mostly used internally,
   but feel free to use it as well.</li>
+  <li><a id="luk.import" href="#luk.import" class=anchor><b>fn import</b></a><span class=code>(path, wd)</span><br>
+  
+  The simplest API to load a single <span class=code>.luk</span> file.
+  Imports the path and returns it's data.
+  
+  <p><span class=code>wd</span> specifies the working directory to use.
+  
+  <p>Throws an error if there are any errors.</li>
 </ul>
 
 <p><h4><a id="luk.Table" href="#luk.Table" class=anchor>Record Table</h4></a>

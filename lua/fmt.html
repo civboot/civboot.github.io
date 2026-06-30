@@ -79,6 +79,11 @@ format module: format any type into a readable string
   <li><a id="fmt.table" href="#fmt.table" class=anchor><b>fn table</b></a><span class=code>(tbl)</span><br>
   
   Set to __fmt to format a type like a table.</li>
+  <li><a id="fmt.dbg" href="#fmt.dbg" class=anchor><b>fn dbg</b></a><span class=code>(fmt, ...)</span><br>
+  
+  Global debug function, useful for quickly and temporarily
+  debugging code.  The first argument is always a format string which uses
+  the following arguments. Additional arguments are printed as literals.</li>
 </ul>
 
 <p><h4><a id="fmt.Fmt" href="#fmt.Fmt" class=anchor>Record Fmt</h4></a>
@@ -153,7 +158,7 @@ the string with <span class=code>fmter:tostring()</span> or just <span class=cod
   <li><a id="Fmt.function" href="#Fmt.function" class=anchor><b>fn function</b></a><span class=code>(self, fn)</span><br>
   
   format a function value.</li>
-  <li><a id="Fmt.items" href="#Fmt.items" class=anchor><b>fn:items</b></a><span class=code>(t, hasKeys, listEnd)</span><br>
+  <li><a id="Fmt.items" href="#Fmt.items" class=anchor><b>fn:items</b></a><span class=code>(t, hasKeys, listEnd, si, ei)</span><br>
   
   format items in table "list"</li>
   <li><a id="Fmt.keyvals" href="#Fmt.keyvals" class=anchor><b>fn:keyvals</b></a><span class=code>(t, keys)</span><br>
@@ -168,6 +173,9 @@ the string with <span class=code>fmter:tostring()</span> or just <span class=cod
   Recursively format a table.
   Yes this is complicated. No, there is no way to really improve
   this while preserving the features.</li>
+  <li><a id="Fmt.formatArgs" href="#Fmt.formatArgs" class=anchor><b>fn:formatArgs</b></a><span class=code>(fmt, args)</span><br>
+  
+  Format a list of arguments.</li>
   <li><a id="Fmt.format" href="#Fmt.format" class=anchor><b>fn:format</b></a><span class=code>(fmt, ...) -&gt; varargsUsed</span><br>
   
   like string.format but use <span class=code>Fmt</span> for <span class=code>%q</span>.
