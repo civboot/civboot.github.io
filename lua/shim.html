@@ -24,19 +24,29 @@ that work from either bash or Lua.
 <p><b>Usage:</b> <div class=code-block>#!/usr/bin/env -S lua -e "require'pkglib'()"<br>
 local shim = require'shim'<br>
 <br>
-local M = shim.cmd'myModName' {<br>
+local mycmd = shim.cmd'mycmd' {<br>
 &nbsp; 'arg [type]: documentation',<br>
 &nbsp; &nbsp; arg = 'default-value',<br>
 }<br>
 <br>
--- ... nomral lua module<br>
-function M.someFunction() ... end<br>
+--- Optionally overload the constructor<br>
+function mycmd.new(T, t)<br>
+&nbsp; -- do validation and construct the raw type.<br>
+&nbsp; return shim.constructNew(T, t)<br>
+end<br>
 <br>
-if shim.isMain(M) then M:main(arg) end<br>
-return M -- return as library
+--- Overload what to do when executing cmd.<br>
+function mycmd:__call()<br>
+&nbsp; -- do whatever the command is, using its fields.<br>
+end<br>
+<br>
+--- Add functions/etc like a normal lua module.<br>
+function mycmd.someFunction() ... end<br>
+<br>
+if shim.isMain(mycmd) then mycmd:main(arg) end<br>
+return mycmd -- return as library
 </div>
-
-<p><h3><a id="shim" href="#shim" class=anchor>Mod shim</h3></a>
+<h3><a id="shim" href="#shim" class=anchor>Mod shim</h3></a>
 shim: command line library for lua.
 
 <p><b>Functions</b> <ul>
@@ -71,9 +81,12 @@ shim: command line library for lua.
   Duck type: always return a boolean (except for nil).
   See BOOLS (above) for mapping.</li>
   <li><a id="shim.bools" href="#shim.bools" class=anchor><b>fn bools</b></a><span class=code>(args, ...)</span></li>
-  <li><a id="shim.number" href="#shim.number" class=anchor><b>fn number</b></a><span class=code>(num)</span><br>
+  <li><a id="shim.number" href="#shim.number" class=anchor><b>fn number</b></a><span class=code>(num) -&gt; number</span><br>
   
   Duck type: always return a number</li>
+  <li><a id="shim.int" href="#shim.int" class=anchor><b>fn int</b></a><span class=code>(int) -&gt; int</span><br>
+  
+  Duck type: always return a integer.</li>
   <li><a id="shim.string" href="#shim.string" class=anchor><b>fn string</b></a><span class=code>(v)</span><br>
   
   Duck type: always return a string
@@ -110,12 +123,9 @@ shim: command line library for lua.
   Setup lua using <span class=code>require(LUA_SETUP).setup(args, force)</span>.
   
   <p>The default is to use ds.setup.</li>
-  <li><a id="shim.construct" href="#shim.construct" class=anchor><b>fn construct</b></a><span class=code>(Cmd, args) -&gt; ok, err?</span></li>
-  <li><a id="shim.constructNew" href="#shim.constructNew" class=anchor><b>fn constructNew</b></a><span class=code>(Cmd, args) -&gt; ok, err?</span></li>
-  <li><a id="shim.init" href="#shim.init" class=anchor><b>fn init</b></a><span class=code>(Cmd, args)</span><br>
+  <li><a id="shim.constructNew" href="#shim.constructNew" class=anchor><b>fn constructNew</b></a><span class=code>(Cmd, args) -&gt; ok, err?</span><br>
   
-  FIXME delete</li>
-  <li><a id="shim.run" href="#shim.run" class=anchor><b>fn run</b></a><span class=code>(Args, args)</span></li>
+  The default <span class=code>new()</span> constructor, handles subcommands.</li>
   <li><a id="shim.isCmd" href="#shim.isCmd" class=anchor><b>fn isCmd</b></a><span class=code>(R)</span><br>
   
   Return whether a record was created with <b>fn cmd</b></li>

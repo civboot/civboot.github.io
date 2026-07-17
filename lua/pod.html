@@ -32,7 +32,7 @@ M.Job = mty.enum'Job' { BOSS = 1, PEON = 2 }<br>
 --- This implements __toPod and __fromPod for the metaty record.<br>
 M.Worker = pod(mty'Worker' {<br>
 &nbsp; 'name [string] #1', &nbsp; &nbsp;-- must specify type and #id<br>
-&nbsp; 'job &nbsp;[mymod.Job] #2', -- can lookup any type in PKG_LOOKUP<br>
+&nbsp; 'job &nbsp;[mymod.Job] #2', -- can lookup any type in MOD_LOOKUP<br>
 &nbsp; 'salary [int] #3',<br>
 &nbsp; 'schedule {int: mymod.Schedule} #4', -- map of weekday[1,7] -&gt; scheduled time<br>
 })<br>
@@ -69,7 +69,7 @@ function MyT.__fromPod(T, pod, p) ... end &nbsp; --&gt; value
 </div>
 Where:<ul>
   <li><span class=code>value</span> is the value (instance of T).</li>
-  <li><span class=code>p</span> is a builtin plain-old-data (concrete)</li>
+  <li><span class=code>p</span> is a primitive plain-old-data (concrete)</li>
   <li><span class=code>T</span> will equal <span class=code>MyT</span></li>
 </ul>
 
@@ -123,31 +123,24 @@ languages to read/write pod's binary serialization format.
 pod is meant to mimick protobuf as much as possible so that such a goal can be
 met in the future. Work on supporting multiple languages will likely not be
 part of the civstack project but the civstack project will support such work.
-
-<p>
-<p><h3><a id="pod" href="#pod" class=anchor>Mod pod</h3></a>
+<h3><a id="pod" href="#pod" class=anchor>Mod pod</h3></a>
 pod: plain old data
 
 <p>
-<p><b>Types: </b><a href="#pod.Pod">Pod</a> <a href="#pod.Podder">Podder</a> <a href="#pod.key">key</a> <a href="#pod.builtin">builtin</a> <a href="#pod.List">List</a> <a href="#pod.Map">Map</a> 
+<p><b>Types: </b><a href="#pod.Pod">Pod</a> <a href="#pod.Podder">Podder</a> <a href="#pod.key">key</a> <a href="#pod.prim">prim</a> <a href="#pod.List">List</a> <a href="#pod.Map">Map</a> 
 
 <p><b>Functions</b> <ul>
-  <li><a id="pod.isConcrete" href="#pod.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v)</span><br>
-  
-  Return whether v is a nil, boolean, number or string.</li>
-  <li><a id="pod.isBuiltin" href="#pod.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span><br>
-  
-  Return whether v is concrete or a table with no metatable.</li>
   <li><a id="pod.serRaw" href="#pod.serRaw" class=anchor><b>fn serRaw</b></a></li>
   <li><a id="pod.deserRaw" href="#pod.deserRaw" class=anchor><b>fn deserRaw</b></a></li>
-  <li><a id="pod.isPod" href="#pod.isPod" class=anchor><b>fn isPod</b></a><span class=code>(v, isPodFn)</span><br>
+  <li><a id="pod.isPrim" href="#pod.isPrim" class=anchor><b>fn isPrim</b></a><span class=code>(v, isPrimFn) -&gt; isPrim, whyNotTy</span><br>
   
-  return true if the value is "plain old data".
+  Return true if the value is primitive "plain old data" that can be decrypted
+  without type information.
   
-  <p>Plain old data is defined as any native type or a table with no metatable
-  and who's pairs() are only POD.
+  <p>A primitive is defined as a concrete type (bool, num, string) or a
+  metatable-less table containing only primitive types.
   
-  <p>The <span class=code>isPodFn</span> fn takes <span class=code>v</span> and should return true if it is pod.</li>
+  <p>The <span class=code>isPrimFn</span> fn takes <span class=code>v</span> and should return true if it is primitive pod.</li>
   <li><a id="pod.isPodder" href="#pod.isPodder" class=anchor><b>fn isPodder</b></a><span class=code>(P) -&gt; isPodder, whyNot?</span></li>
   <li><a id="pod.tableToPod" href="#pod.tableToPod" class=anchor><b>fn tableToPod</b></a><span class=code>(T, pod, t)</span></li>
   <li><a id="pod.toPod" href="#pod.toPod" class=anchor><b>fn toPod</b></a><span class=code>(v, podder, pod)</span></li>
@@ -203,12 +196,14 @@ A type who's sole job is converting values to/from POD.
 Handles concrete non-nil types (boolean, number, string)
 
 <p>
-<p><h4><a id="pod.builtin" href="#pod.builtin" class=anchor>Record builtin</h4></a>
-Handles all native types (nil, boolean, number, string, table)
+<p><h4><a id="pod.prim" href="#pod.prim" class=anchor>Record prim</h4></a>
+Handles all primitive types (nil, boolean, number, string, table)
 
 <p>
 <p><h4><a id="pod.List" href="#pod.List" class=anchor>Record List</h4></a>
 Poder for a list of items with a type.
+Note that this defines the mechanism to decrypt a list, you should not
+use this to directly contain any data.
 
 <p><b>Fields:</b><ul>
   <li><a id="pod.List.I" href="#pod.List.I" class=anchor><b>I</b></a>
@@ -217,6 +212,8 @@ Poder for a list of items with a type.
 
 <p><h4><a id="pod.Map" href="#pod.Map" class=anchor>Record Map</h4></a>
 Poder for a map of key/value pairs.
+Note that this defines the mechanism to decrypt a map, you should not
+use this to directly contain any data.
 
 <p><b>Fields:</b><ul>
   <li><a id="pod.Map.K" href="#pod.Map.K" class=anchor><b>K</b></a> <span class=code>=pod.key</span>

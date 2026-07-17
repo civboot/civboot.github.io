@@ -16,12 +16,36 @@
 <body><div class=doc>
 <h1>Ele: Extendable Lua Editor</h1>
 
-<p>Ele is an (<b>In Development</b>) <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor written to be easy
-to understand, extend and modify. It is the primary editor and shell for the
+<p>Ele is an <b>E</b>xtendable <b>L</b>ua <b>E</b>ditor written to be easy to understand,
+extend and modify. It is the primary editor and shell for the
 Civstack project, and also the core framework for the devleopment of
 Civstack's text-based learning games.
 
 <p>To install: follow <a href="civ.html#install">civ.html#install</a>, ele will be installed by default.
+
+<p><h1>Learn Ele in Y Minutes</h1>
+To learn ele (or vim for that matter) just install civstack and run:<div class=code-block>ele cmd/ele/README.cxt</div>
+
+<p>Pressing <span class=code>^q ^q</span> (cntrl+q twice) will exit ele from any mode.
+You can move the cursor with the keys <span class=code>h j k l</span> which are mapped to
+h=left j=down k=up l=right (yes they are weird but also easy to access).
+
+<p>The top left will say <span class=code>mode:command</span>, meaning you are in command mode.
+In command mode, ele's key bindings are in a memonic "language" that is relatively
+quick to learn but does take some effort. Stringing multiple keys together is
+called a "chord", and the language of chords are typically of the form: <b>
+* amount: for instance <span class=code>2</span>.
+* action/verb: for instance <b>d</b>elete.
+* noun/movement: for instance <b>w</b>ord.
+</b>
+
+<p>So typing <span class=code>2 d w</span> will delete two words. Typing actions twice tends to trigger
+a specialized action, for instance <span class=code>d d</span> is delete line and <span class=code>4 d d</span> deletes
+four lines. Capital letters are also typically special, e.g. <span class=code>D</span> deletes from
+the cursor to the end of the line.
+
+<p>You can press <span class=code>? ?</span> at any point to see what keys are available. You can
+also type <span class=code>? &lt;key&gt;</span> to see what that key would have done in that mode.
 
 <p><h1>Architecture</h1>
 
@@ -119,9 +143,7 @@ folks will care about are: <ul>
 data using its APIs and/or change its <span class=code>l,c</span> (line,column) values. They are
 free to use any lua API to do so, but should avoid large amounts
 of work as much as possible.
-
-<p>
-<p><h4><a id="ele" href="#ele" class=anchor>Command ele</h4></a>
+<h4><a id="ele" href="#ele" class=anchor>Command ele</h4></a>
 Usage: <span class=code>ele path/to/file.txt</span><br>
 
 The ele commandline editor.
@@ -134,20 +156,66 @@ The ele commandline editor.
 Core ele types.
 
 <p>
-<p><b>Types: </b><a href="#ele.types.BasePane">BasePane</a> <a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> <a href="#ele.types.EditLoc">EditLoc</a> 
+<p><b>Types: </b><a href="#ele.types.BufState">BufState</a> <a href="#ele.types.PaneState">PaneState</a> <a href="#ele.types.State">State</a> <a href="#ele.types.BasePane">BasePane</a> <a href="#ele.types.VSplit">VSplit</a> <a href="#ele.types.HSplit">HSplit</a> <a href="#ele.types.EditLoc">EditLoc</a> 
 
 <p><b>Functions</b> <ul>
+  <li><a id="ele.types.uniqueId" href="#ele.types.uniqueId" class=anchor><b>fn uniqueId</b></a><span class=code>()</span></li>
   <li><a id="ele.types.getEditor" href="#ele.types.getEditor" class=anchor><b>fn getEditor</b></a><span class=code>(c)</span></li>
   <li><a id="ele.types.isPane" href="#ele.types.isPane" class=anchor><b>fn isPane</b></a><span class=code>(v)</span></li>
-  <li><a id="ele.types.uniqueId" href="#ele.types.uniqueId" class=anchor><b>fn uniqueId</b></a><span class=code>()</span></li>
   <li><a id="ele.types.checkBinding" href="#ele.types.checkBinding" class=anchor><b>fn checkBinding</b></a><span class=code>(b)</span></li>
   <li><a id="ele.types.checkBindings" href="#ele.types.checkBindings" class=anchor><b>fn checkBindings</b></a><span class=code>(btable, path)</span></li>
   <li><a id="ele.types.checkMode" href="#ele.types.checkMode" class=anchor><b>fn checkMode</b></a><span class=code>(data, mode) -&gt; errstring</span></li>
   <li><a id="ele.types.checkAction" href="#ele.types.checkAction" class=anchor><b>fn checkAction</b></a><span class=code>(data, action) -&gt; errstring</span></li>
 </ul>
 
+<p><h4><a id="ele.types.BufState" href="#ele.types.BufState" class=anchor>Record BufState</h4></a>
+Cached buffer state
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.types.BufState.id" href="#ele.types.BufState.id" class=anchor><b>id</b></a>
+  buffer id</li>
+  <li><a id="ele.types.BufState.name" href="#ele.types.BufState.name" class=anchor><b>name</b></a>
+  buffer name</li>
+  <li><a id="ele.types.BufState.path" href="#ele.types.BufState.path" class=anchor><b>path</b></a>
+  buffer path</li>
+  <li><a id="ele.types.BufState.l" href="#ele.types.BufState.l" class=anchor><b>l</b></a></li>
+  <li><a id="ele.types.BufState.c" href="#ele.types.BufState.c" class=anchor><b>c</b></a></li>
+</ul>
+
+<p><h4><a id="ele.types.PaneState" href="#ele.types.PaneState" class=anchor>Record PaneState</h4></a>
+Cached window/pane state.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.types.PaneState.ty" href="#ele.types.PaneState.ty" class=anchor><b>ty</b></a>
+  the type to ds.wantpath, i.e. "ele.edit.Edit"</li>
+  <li><a id="ele.types.PaneState.dat" href="#ele.types.PaneState.dat" class=anchor><b>dat</b></a>
+  the data to pass to the ty</li>
+  <li><a id="ele.types.PaneState.chld" href="#ele.types.PaneState.chld" class=anchor><b>chld</b></a>
+  children</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="PaneState.load" href="#PaneState.load" class=anchor><b>fn:load</b></a><span class=code>(ed)</span></li>
+</ul>
+
+<p><h4><a id="ele.types.State" href="#ele.types.State" class=anchor>Record State</h4></a>
+Editor state for caching/reloading the current
+editor state.
+
+<p><b>Fields:</b><ul>
+  <li><a id="ele.types.State.ID" href="#ele.types.State.ID" class=anchor><b>ID</b></a>
+  current uniqueId() state.</li>
+  <li><a id="ele.types.State.buffers" href="#ele.types.State.buffers" class=anchor><b>buffers</b></a></li>
+  <li><a id="ele.types.State.view" href="#ele.types.State.view" class=anchor><b>view</b></a></li>
+  <li><a id="ele.types.State.pane" href="#ele.types.State.pane" class=anchor><b>pane</b></a>
+  the currently focused pane</li>
+</ul>
+
 <p><h4><a id="ele.types.BasePane" href="#ele.types.BasePane" class=anchor>Record BasePane</h4></a>
 The base record for Edit/Game.
+
+<p>These should be implemented: <div class=code-block>function M.BasePane:state() --&gt; PaneState<br>
+function M.BasePane.fromState(T, ed, s) --&gt; new self
+</div>
 
 <p><b>Fields:</b><ul>
   <li><a id="ele.types.BasePane.id" href="#ele.types.BasePane.id" class=anchor><b>id</b></a></li>
@@ -194,10 +262,12 @@ A container with windows split vertically (i.e. tall windows)
   <li><a id="VSplit.close" href="#VSplit.close" class=anchor><b>fn close</b></a><span class=code>()</span><br>
   
   function that does and returns nothing.</li>
-  <li><a id="VSplit.insert" href="#VSplit.insert" class=anchor><b>fn insert</b></a><span class=code>(sp, i, v)</span></li>
-  <li><a id="VSplit.replace" href="#VSplit.replace" class=anchor><b>fn replace</b></a><span class=code>(sp, from, to) -&gt; from</span></li>
-  <li><a id="VSplit.remove" href="#VSplit.remove" class=anchor><b>fn remove</b></a><span class=code>(sp, v) -&gt; v</span></li>
-  <li><a id="VSplit.draw" href="#VSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
+  <li><a id="VSplit.insert" href="#VSplit.insert" class=anchor><b>fn:insert</b></a><span class=code>(i, v)</span></li>
+  <li><a id="VSplit.replace" href="#VSplit.replace" class=anchor><b>fn:replace</b></a><span class=code>(from, to) -&gt; from</span></li>
+  <li><a id="VSplit.remove" href="#VSplit.remove" class=anchor><b>fn:remove</b></a><span class=code>(v) -&gt; v</span></li>
+  <li><a id="VSplit.draw" href="#VSplit.draw" class=anchor><b>fn:draw</b></a><span class=code>(ed, isRight)</span></li>
+  <li><a id="VSplit.state" href="#VSplit.state" class=anchor><b>fn:state</b></a><span class=code>()</span></li>
+  <li><a id="VSplit.fromState" href="#VSplit.fromState" class=anchor><b>fn fromState</b></a><span class=code>(T, ed, s)</span></li>
 </ul>
 
 <p><h4><a id="ele.types.HSplit" href="#ele.types.HSplit" class=anchor>Record HSplit</h4></a>
@@ -212,7 +282,7 @@ A container with windows split horizontally (i.e. wide windows)
   <li><a id="ele.types.HSplit.tw" href="#ele.types.HSplit.tw" class=anchor><b>tw</b></a> <span class=code>=-1</span></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="HSplit.draw" href="#HSplit.draw" class=anchor><b>fn draw</b></a><span class=code>(sp, ed, isRight)</span></li>
+  <li><a id="HSplit.draw" href="#HSplit.draw" class=anchor><b>fn:draw</b></a><span class=code>(ed, isRight)</span></li>
 </ul>
 
 <p><h4><a id="ele.types.EditLoc" href="#ele.types.EditLoc" class=anchor>Record EditLoc</h4></a>
@@ -245,6 +315,7 @@ The location the cursor was at, to be in a stack.
   <li><a id="ele.bindings.right" href="#ele.bindings.right" class=anchor><b>fn right</b></a></li>
   <li><a id="ele.bindings.backword" href="#ele.bindings.backword" class=anchor><b>fn backword</b></a></li>
   <li><a id="ele.bindings.forword" href="#ele.bindings.forword" class=anchor><b>fn forword</b></a></li>
+  <li><a id="ele.bindings.endword" href="#ele.bindings.endword" class=anchor><b>fn endword</b></a></li>
   <li><a id="ele.bindings.up" href="#ele.bindings.up" class=anchor><b>fn up</b></a></li>
   <li><a id="ele.bindings.down" href="#ele.bindings.down" class=anchor><b>fn down</b></a></li>
   <li><a id="ele.bindings.sot" href="#ele.bindings.sot" class=anchor><b>fn sot</b></a></li>
@@ -287,6 +358,9 @@ The location the cursor was at, to be in a stack.
   <li><a id="ele.bindings.searchBuf" href="#ele.bindings.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(keySt)</span><br>
   
   inputs.</li>
+  <li><a id="ele.bindings.help" href="#ele.bindings.help" class=anchor><b>fn help</b></a><span class=code>(keySt)</span><br>
+  
+  Get help on next key. '??' gets help on current bindings.</li>
   <li><a id="ele.bindings.install" href="#ele.bindings.install" class=anchor><b>fn install</b></a><span class=code>(ed)</span></li>
   <li><a id="ele.bindings.keyactions" href="#ele.bindings.keyactions" class=anchor><b>fn keyactions</b></a><span class=code>(ed, keyrecv, evsend)</span></li>
 </ul>
@@ -304,6 +378,8 @@ later actions to be repeated a <span class=code>num</span> of times.
   table to use when returning (emitting) an event.</li>
   <li><a id="ele.bindings.KeySt.next" href="#ele.bindings.KeySt.next" class=anchor><b>next</b></a>
   the binding which will be used for the next key</li>
+  <li><a id="ele.bindings.KeySt.save" href="#ele.bindings.KeySt.save" class=anchor><b>save</b></a>
+  saved binding, only used for help</li>
   <li><a id="ele.bindings.KeySt.keep" href="#ele.bindings.KeySt.keep" class=anchor><b>keep</b></a>
   if true the above fields will be preserved in next call</li>
 </ul>
@@ -333,10 +409,8 @@ split (by whitespace) to create sub-KeyBindings as-needed.
   documentation to display to the user</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="KeyBindings.getBinding" href="#KeyBindings.getBinding" class=anchor><b>fn getBinding</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="KeyBindings.bindingsDoc" href="#KeyBindings.bindingsDoc" class=anchor><b>fn:bindingsDoc</b></a><span class=code>(f)</span></li>
+  <li><a id="KeyBindings.getBinding" href="#KeyBindings.getBinding" class=anchor><b>fn getBinding</b></a></li>
 </ul>
 
 <p><h3><a id="ele.edit" href="#ele.edit" class=anchor>Mod ele.edit</h3></a>
@@ -372,7 +446,6 @@ Ele Edit View for viewing and editing text files in a pane.
   global yank deque</li>
   <li><a id="ele.edit.Edit.locations" href="#ele.edit.Edit.locations" class=anchor><b>locations</b></a>
   a deq of locations visited.</li>
-  <li><a id="ele.edit.Edit.drawBars" href="#ele.edit.Edit.drawBars" class=anchor><b>drawBars</b></a> <span class=code>=Edit.drawBars</span></li>
   <li><a id="ele.edit.Edit.lineStyle" href="#ele.edit.Edit.lineStyle" class=anchor><b>lineStyle</b></a> <span class=code>="bar:line"</span>
   asciicolor style</li>
 </ul>
@@ -410,6 +483,8 @@ Ele Edit View for viewing and editing text files in a pane.
   Return the resulting split.</li>
   <li><a id="Edit.autoIndent" href="#Edit.autoIndent" class=anchor><b>fn:autoIndent</b></a><span class=code>()</span></li>
   <li><a id="Edit.path" href="#Edit.path" class=anchor><b>fn:path</b></a><span class=code>() -&gt; path?</span></li>
+  <li><a id="Edit.state" href="#Edit.state" class=anchor><b>fn:state</b></a><span class=code>()</span></li>
+  <li><a id="Edit.fromState" href="#Edit.fromState" class=anchor><b>fn fromState</b></a><span class=code>(T, ed, s)</span></li>
 </ul>
 
 <p><h3><a id="ele.actions" href="#ele.actions" class=anchor>Mod ele.actions</h3></a>
@@ -418,6 +493,7 @@ Ele Edit View for viewing and editing text files in a pane.
 
 <p><b>Functions</b> <ul>
   <li><a id="ele.actions.keyinput" href="#ele.actions.keyinput" class=anchor><b>fn keyinput</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.runBinding" href="#ele.actions.runBinding" class=anchor><b>fn runBinding</b></a><span class=code>(ed, ev, evsend)</span></li>
   <li><a id="ele.actions.merge" href="#ele.actions.merge" class=anchor><b>fn merge</b></a><span class=code>(ed, ev)</span></li>
   <li><a id="ele.actions.chain" href="#ele.actions.chain" class=anchor><b>fn chain</b></a><span class=code>(ed, ev, evsend)</span></li>
   <li><a id="ele.actions.move" href="#ele.actions.move" class=anchor><b>fn move</b></a><span class=code>(ed, ev)</span></li>
@@ -455,12 +531,17 @@ Ele Edit View for viewing and editing text files in a pane.
   <li><a id="ele.actions.jump" href="#ele.actions.jump" class=anchor><b>fn jump</b></a><span class=code>(ed, ev)</span><br>
   
   ev={location=+/-int}</li>
+  <li><a id="ele.actions.again" href="#ele.actions.again" class=anchor><b>fn again</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.help" href="#ele.actions.help" class=anchor><b>fn help</b></a><span class=code>(ed, ev, evsend)</span></li>
 </ul>
 
 <p><h3><a id="ele.actions.nav" href="#ele.actions.nav" class=anchor>Mod ele.actions.nav</h3></a>
 <b>Functions</b> <ul>
   <li><a id="ele.actions.nav.getFocus" href="#ele.actions.nav.getFocus" class=anchor><b>fn getFocus</b></a><span class=code>(line)</span></li>
   <li><a id="ele.actions.nav.getEntry" href="#ele.actions.nav.getEntry" class=anchor><b>fn getEntry</b></a><span class=code>(line) -&gt; (indent, kind, entry)</span></li>
+  <li><a id="ele.actions.nav.getArgs" href="#ele.actions.nav.getArgs" class=anchor><b>fn getArgs</b></a><span class=code>(b)</span><br>
+  
+  Return the arguments for navigation at the top of the file.</li>
   <li><a id="ele.actions.nav.findParent" href="#ele.actions.nav.findParent" class=anchor><b>fn findParent</b></a><span class=code>(b, l) -&gt; linenum, line</span><br>
   
   Find the parent of current path entry
@@ -468,10 +549,6 @@ Ele Edit View for viewing and editing text files in a pane.
   <li><a id="ele.actions.nav.findFocus" href="#ele.actions.nav.findFocus" class=anchor><b>fn findFocus</b></a><span class=code>(b, l) -&gt; linenum, line</span><br>
   
   Find the focus path line num (i.e. the starting directory)</li>
-  <li><a id="ele.actions.nav.findEnd" href="#ele.actions.nav.findEnd" class=anchor><b>fn findEnd</b></a><span class=code>(b, l) -&gt; linenum</span><br>
-  
-  Find the last line of the focus's entities (or itself).
-  invariant: line l is an entry or focus.</li>
   <li><a id="ele.actions.nav.findView" href="#ele.actions.nav.findView" class=anchor><b>fn findView</b></a><span class=code>(b, l) -&gt; (fln, eln, fline)</span><br>
   
   Find the view (focusLineNum, endLineNum, focusLine)</li>
@@ -479,20 +556,22 @@ Ele Edit View for viewing and editing text files in a pane.
   
   Walk up the parents, getting the full path.
   If not an entry, try to find the path from the column.</li>
-  <li><a id="ele.actions.nav.findEntryEnd" href="#ele.actions.nav.findEntryEnd" class=anchor><b>fn findEntryEnd</b></a><span class=code>(b, l) -&gt; linenum</span></li>
-  <li><a id="ele.actions.nav.backFocus" href="#ele.actions.nav.backFocus" class=anchor><b>fn backFocus</b></a><span class=code>(b, l)</span></li>
-  <li><a id="ele.actions.nav.backEntry" href="#ele.actions.nav.backEntry" class=anchor><b>fn backEntry</b></a><span class=code>(b, l) -&gt; ln</span><br>
+  <li><a id="ele.actions.nav.findEnd" href="#ele.actions.nav.findEnd" class=anchor><b>fn findEnd</b></a><span class=code>(b, l) -&gt; linenum, maxChildInd</span><br>
+  
+  find the last line of a focus or entry.</li>
+  <li><a id="ele.actions.nav.backFocus" href="#ele.actions.nav.backFocus" class=anchor><b>fn backFocus</b></a><span class=code>(ed, b, l)</span></li>
+  <li><a id="ele.actions.nav.backEntry" href="#ele.actions.nav.backEntry" class=anchor><b>fn backEntry</b></a><span class=code>(ed, b, l) -&gt; ln</span><br>
   
   Go backwards on the entry, returning the new line
   For focus, this will go back one component.
   For entry, this will collapse parent (and move to it).</li>
-  <li><a id="ele.actions.nav.expandEntry" href="#ele.actions.nav.expandEntry" class=anchor><b>fn expandEntry</b></a><span class=code>(b, l, ls) -&gt; numEntries</span></li>
-  <li><a id="ele.actions.nav.doBack" href="#ele.actions.nav.doBack" class=anchor><b>fn doBack</b></a><span class=code>(b, l, times)</span></li>
-  <li><a id="ele.actions.nav.doExpand" href="#ele.actions.nav.doExpand" class=anchor><b>fn doExpand</b></a><span class=code>(b, l, times, ls)</span></li>
+  <li><a id="ele.actions.nav.expandEntry" href="#ele.actions.nav.expandEntry" class=anchor><b>fn expandEntry</b></a><span class=code>(ed, b, l) -&gt; numExpanded</span></li>
+  <li><a id="ele.actions.nav.doBack" href="#ele.actions.nav.doBack" class=anchor><b>fn doBack</b></a><span class=code>(ed, b, l, times)</span></li>
+  <li><a id="ele.actions.nav.doExpand" href="#ele.actions.nav.doExpand" class=anchor><b>fn doExpand</b></a><span class=code>(ed, b, l, times)</span></li>
   <li><a id="ele.actions.nav.goPath" href="#ele.actions.nav.goPath" class=anchor><b>fn goPath</b></a><span class=code>(ed, create)</span><br>
   
   go to path at l,c. If op=='create' then create the path</li>
-  <li><a id="ele.actions.nav.doEntry" href="#ele.actions.nav.doEntry" class=anchor><b>fn doEntry</b></a><span class=code>(ed, op, times, ls)</span><br>
+  <li><a id="ele.actions.nav.doEntry" href="#ele.actions.nav.doEntry" class=anchor><b>fn doEntry</b></a><span class=code>(ed, op, times)</span><br>
   
   perform the entry operation</li>
 </ul>
@@ -525,16 +604,20 @@ Ele Edit View for viewing and editing text files in a pane.
   table for extensions to store data</li>
   <li><a id="Ty<Editor>.search" href="#Ty<Editor>.search" class=anchor><b>search</b></a>
   search pattern for searchBuf, etc</li>
-  <li><a id="Ty<Editor>.lastEvent" href="#Ty<Editor>.lastEvent" class=anchor><b>lastEvent</b></a>
-  the last event executed.</li>
+  <li><a id="Ty<Editor>.listeners" href="#Ty<Editor>.listeners" class=anchor><b>listeners</b></a>
+  list of functions to call for each successful event</li>
   <li><a id="Ty<Editor>.yank" href="#Ty<Editor>.yank" class=anchor><b>yank</b></a>
   a deque of removed text. See yankMax.</li>
+  <li><a id="Ty<Editor>.bindings" href="#Ty<Editor>.bindings" class=anchor><b>bindings</b></a>
+  set to bindings.lua</li>
   <li><a id="Ty<Editor>.error" href="#Ty<Editor>.error" class=anchor><b>error</b></a>
   error handler (ds.log.logfmt sig)</li>
   <li><a id="Ty<Editor>.warn" href="#Ty<Editor>.warn" class=anchor><b>warn</b></a>
   warn handler</li>
   <li><a id="Ty<Editor>.newDat" href="#Ty<Editor>.newDat" class=anchor><b>newDat</b></a> <span class=code>=function() instance</span>
   function to create new buffer</li>
+  <li><a id="Ty<Editor>.navLs" href="#Ty<Editor>.navLs" class=anchor><b>navLs</b></a> <span class=code>=function() instance</span>
+  ls used for nav</li>
   <li><a id="Ty<Editor>.redraw" href="#Ty<Editor>.redraw" class=anchor><b>redraw</b></a>
   set to true to force a redraw</li>
 </ul>
@@ -556,7 +639,7 @@ Ele Edit View for viewing and editing text files in a pane.
   <li><a id="Editor.buffer" href="#Editor.buffer" class=anchor><b>fn:buffer</b></a><span class=code>(idOrPath) -&gt; Buffer</span></li>
   <li><a id="Editor.namedBuffer" href="#Editor.namedBuffer" class=anchor><b>fn:namedBuffer</b></a><span class=code>(name, path)</span><br>
   
-  Get or create a named buffer (NOT a path).</li>
+  Get or create a named buffer.</li>
   <li><a id="Editor.open" href="#Editor.open" class=anchor><b>fn:open</b></a><span class=code>(path) -&gt; edit</span></li>
   <li><a id="Editor.draw" href="#Editor.draw" class=anchor><b>fn:draw</b></a><span class=code>()</span></li>
   <li><a id="Editor.handleStandard" href="#Editor.handleStandard" class=anchor><b>fn:handleStandard</b></a><span class=code>(ev)</span><br>
@@ -580,6 +663,11 @@ Ele Edit View for viewing and editing text files in a pane.
   Replace the current edit view with the new <span class=code>self:buffer(b)</span>.
   Return the new edit view being focused.</li>
   <li><a id="Editor.close" href="#Editor.close" class=anchor><b>fn:close</b></a><span class=code>()</span></li>
+  <li><a id="Editor.state" href="#Editor.state" class=anchor><b>fn:state</b></a><span class=code>() -&gt; ele.types.State</span></li>
+  <li><a id="Editor.loadState" href="#Editor.loadState" class=anchor><b>fn:loadState</b></a><span class=code>(st) -&gt; self</span></li>
+  <li><a id="Editor.rmTmp" href="#Editor.rmTmp" class=anchor><b>fn:rmTmp</b></a><span class=code>()</span><br>
+  
+  Cleanup all temporary files. Used for tests.</li>
 </ul>
 
 <p><h4><a id="Ty<Session>" href="#Ty<Session>" class=anchor>Record Session</h4></a>
@@ -606,23 +694,9 @@ Ele Edit View for viewing and editing text files in a pane.
 Ele game library.
 
 <p>
-<p><b>Types: </b><a href="#ele.game.Sprite">Sprite</a> <a href="#ele.game.Game">Game</a> 
+<p><b>Types: </b><a href="#ele.game.Game">Game</a> 
 
 <p>
-<p><h4><a id="ele.game.Sprite" href="#ele.game.Sprite" class=anchor>Record Sprite</h4></a>
-A sprite with a location. Used by games to more easily write
-to the Game grid by simply appending the txt/fg/bg.
-
-<p><b>Fields:</b><ul>
-  <li><a id="ele.game.Sprite.l" href="#ele.game.Sprite.l" class=anchor><b>l</b></a>
-  line number</li>
-  <li><a id="ele.game.Sprite.c" href="#ele.game.Sprite.c" class=anchor><b>c</b></a>
-  column number</li>
-  <li><a id="ele.game.Sprite.txt" href="#ele.game.Sprite.txt" class=anchor><b>txt</b></a></li>
-  <li><a id="ele.game.Sprite.fg" href="#ele.game.Sprite.fg" class=anchor><b>fg</b></a></li>
-  <li><a id="ele.game.Sprite.bg" href="#ele.game.Sprite.bg" class=anchor><b>bg</b></a></li>
-</ul>
-
 <p><h4><a id="ele.game.Game" href="#ele.game.Game" class=anchor>Record Game</h4></a>
 A Game window which renders a list of sprites.
 
@@ -645,7 +719,8 @@ A Game window which renders a list of sprites.
   <li><a id="ele.game.Game.modes" href="#ele.game.Game.modes" class=anchor><b>modes</b></a>
   override specific keybindings for this pane</li>
   <li><a id="ele.game.Game.sprites" href="#ele.game.Game.sprites" class=anchor><b>sprites</b></a>
-  list of sprites to render</li>
+  list of sprites to render.
+  sprites are written first -> last (last wins).</li>
   <li><a id="ele.game.Game.mh" href="#ele.game.Game.mh" class=anchor><b>mh</b></a>
   minimum height</li>
   <li><a id="ele.game.Game.mw" href="#ele.game.Game.mw" class=anchor><b>mw</b></a>

@@ -78,6 +78,24 @@ civix: unix-like OS utilities.
   <li><a id="civix.setModified" href="#civix.setModified" class=anchor><b>fn setModified</b></a><span class=code>(f, sec, nsec) -&gt; ok, errmsg?</span><br>
   
   set the modified time of the path|file</li>
+  <li><a id="civix.chmod" href="#civix.chmod" class=anchor><b>fn chmod</b></a><span class=code>(f, p)</span><br>
+  
+  Change modifiers on f (string or file) using the octal string p.
+  The ocal is in the form UGO where U=user, G=group, O=other.
+  execute=1, write=2, read=4 so: <ul>
+    <li>4 = Read only (r--)</li>
+    <li>5 = Read & Execute (r-x) (4 + 1)</li>
+    <li>6 = Read & Write (rw-) (4 + 2)</li>
+    <li>7 = Read, Write & Execute (rwx) (4 + 2 + 1)</li>
+    <li>0 = No permissions (---)</li>
+  </ul>
+  
+  <p>You can create your own octal with <span class=code>tonumber(s, 8)</span>.
+  
+  <p>Combine with stat like: <div class=code-block>&nbsp; -- add executable bits to [$f].<br>
+&nbsp; ix.chmod(f, ix.stat(f):mode() | tonumber('111', 8))<br>
+&nbsp; 
+</div></li>
   <li><a id="civix.quote" href="#civix.quote" class=anchor><b>fn quote</b></a><span class=code>(str)</span><br>
   
   quote the str if it's possible</li>
@@ -227,7 +245,8 @@ end
 
 <p><b>Fields:</b><ul>
   <li><a id="civix.Walk.maxDepth" href="#civix.Walk.maxDepth" class=anchor><b>maxDepth</b></a>
-  maximum depth to walk (default=infinite)</li>
+  maximum depth to walk (default=infinite).
+  A depth of 0 is equivalent to ls (with addition of root node).</li>
   <li><a id="civix.Walk.pi" href="#civix.Walk.pi" class=anchor><b>pi</b></a> <span class=code>=0</span>
   the current (root) path index being walked</li>
 </ul>

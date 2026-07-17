@@ -112,9 +112,9 @@ local Pos = setmetatable({<br>
 Pos.__index = Pos<br>
 <br>
 -- `mod` gives documentation reflection<br>
-PKG_LOCS[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp; = 'path/to/file.lua:123'<br>
-PKG_NAMES[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp;= 'mymod.Pos'<br>
-PKG_LOOKUP['myMod.Pos'] = M.Pos
+MOD_LOCS[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp; = 'path/to/file.lua:123'<br>
+MOD_NAMES[M.myFn] &nbsp; &nbsp; &nbsp; &nbsp;= 'mymod.Pos'<br>
+MOD_LOOKUP['myMod.Pos'] = M.Pos
 </div>
 
 <p><h3><a id="metaty-API" href="#metaty-API" class=anchor>API</h3></a> <ul>
@@ -203,9 +203,9 @@ metaty: simple but effective Lua type system using metatable
   <li><a id="metaty.isConcrete" href="#metaty.isConcrete" class=anchor><b>fn isConcrete</b></a><span class=code>(v)</span><br>
   
   Return whether v is a nil, boolean, number or string.</li>
-  <li><a id="metaty.isBuiltin" href="#metaty.isBuiltin" class=anchor><b>fn isBuiltin</b></a><span class=code>(obj)</span><br>
+  <li><a id="metaty.isPrim" href="#metaty.isPrim" class=anchor><b>fn isPrim</b></a><span class=code>(obj)</span><br>
   
-  Return whether v is concrete or a table with no metatable.</li>
+  Return whether v is a primitive value, aka concrete or a table with no metatable.</li>
   <li><a id="metaty.isEnv" href="#metaty.isEnv" class=anchor><b>fn isEnv</b></a><span class=code>(var)</span><br>
   
   Given a string return whether os.getenv returns 'true' or '1'.</li>
@@ -229,6 +229,10 @@ metaty: simple but effective Lua type system using metatable
   
   Given an object (function, table, userdata) return its name.
   Return it's string type if it's not one of the above types.</li>
+  <li><a id="metaty.fullname" href="#metaty.fullname" class=anchor><b>fn fullname</b></a><span class=code>(o)</span><br>
+  
+  Get the fullname of the object's type. This is typically
+  the same as looking it up in <span class=code>MOD_NAMES</span>.</li>
   <li><a id="metaty.callable" href="#metaty.callable" class=anchor><b>fn callable</b></a><span class=code>(obj) -&gt; bool</span><br>
   
   Return whether obj is callable (function or has <span class=code>mt.__call</span>).</li>

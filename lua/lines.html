@@ -244,10 +244,7 @@ performance.
   
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
   and must define the <span class=code>parse</span> method.</li>
-  <li><a id="lines.Writer.get" href="#lines.Writer.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
+  <li><a id="lines.Writer.get" href="#lines.Writer.get" class=anchor><b>fn get</b></a></li>
   <li><a id="lines.Writer.write" href="#lines.Writer.write" class=anchor><b>fn write</b></a><span class=code>(t, ...) -&gt; true</span><br>
   
   Logic to make a table behave like a <span class=code>file:write(...)</span> method.
@@ -304,6 +301,9 @@ for some workloads (writing single characters)</div>
   <li><a id="Gap.get" href="#Gap.get" class=anchor><b>fn:get</b></a><span class=code>(l) -&gt; string</span><br>
   
   Get a specific line index.</li>
+  <li><a id="Gap.ipairs" href="#Gap.ipairs" class=anchor><b>fn ipairs</b></a><span class=code>(t)</span><br>
+  
+  ipairs using <span class=code>t:get(i)</span> instead of <span class=code>t[i]</span></li>
   <li><a id="Gap.set" href="#Gap.set" class=anchor><b>fn:set</b></a><span class=code>(l, v)</span><br>
   
   Set a specific line index with the value.</li>

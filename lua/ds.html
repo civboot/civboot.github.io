@@ -76,6 +76,9 @@ ds: data structures and algorithms.
   <li><a id="ds.eq" href="#ds.eq" class=anchor><b>fn eq</b></a><span class=code>(a, b) -&gt; bool</span><br>
   
   Function that returns <span class=code>a == b</span>.</li>
+  <li><a id="ds.len" href="#ds.len" class=anchor><b>fn len</b></a><span class=code>(t) -&gt; int</span><br>
+  
+  Function that returns <span class=code>#t</span>.</li>
   <li><a id="ds.srcloc" href="#ds.srcloc" class=anchor><b>fn srcloc</b></a><span class=code>(level) -&gt; "/path/to/dir/file.lua:10"</span><br>
   
   Get the source location of wherever this is called
@@ -150,10 +153,15 @@ ds: data structures and algorithms.
   <li><a id="ds.trimEnd" href="#ds.trimEnd" class=anchor><b>fn trimEnd</b></a><span class=code>(subj, pat, index) -&gt; string</span><br>
   
   Trim the end of the string by removing pat (default=<span class=code>%s</span>)</li>
-  <li><a id="ds.find" href="#ds.find" class=anchor><b>fn find</b></a><span class=code>(subj, pats, si, plain) -&gt; (ms, me, pi, pat)</span><br>
+  <li><a id="ds.find" href="#ds.find" class=anchor><b>fn find</b></a><span class=code>(subj, pats, si, plain) -&gt; (ms,me, pi, pat)</span><br>
   
-  Find any of a list of patterns. Return the match <span class=code>start, end</span> as well as
-  the <span class=code>index, pat</span> of the pattern matched.</li>
+  Find any of a list of patterns.
+  
+  <p>Return the match <span class=code>start, end</span> as well as the
+  <span class=code>index, pat</span> of the pattern matched. 
+  Patterns that start with <span class=code>-</span> stop matching,
+  returning nil for ms/me and the index/pat (with '-' trimmed) for
+  the negative pattern.</li>
   <li><a id="ds.split" href="#ds.split" class=anchor><b>fn split</b></a><span class=code>(subj, pat--[[%s+]], index--[[1]]) -&gt; (cxt, str) iter</span><br>
   
   split the subj by pattern. <span class=code>ctx</span> has two keys: <span class=code>si</span> (start index) and
@@ -162,7 +170,7 @@ ds: data structures and algorithms.
 &nbsp; ... do something with line<br>
 end
 </div></li>
-  <li><a id="ds.splitList" href="#ds.splitList" class=anchor><b>fn splitList</b></a><span class=code>(...) -&gt; list</span><br>
+  <li><a id="ds.splitList" href="#ds.splitList" class=anchor><b>fn splitList</b></a><span class=code>(...) -&gt; {str}</span><br>
   
   Perform a split but returning a list instead of a string.</li>
   <li><a id="ds.squash" href="#ds.squash" class=anchor><b>fn squash</b></a><span class=code>(s, repl) -&gt; string</span><br>
@@ -243,6 +251,12 @@ end
   <li><a id="ds.iprev" href="#ds.iprev" class=anchor><b>fn iprev</b></a><span class=code>(t, i) -&gt; (i-1, v)</span><br>
   
   inext but reversed.</li>
+  <li><a id="ds.igetnext" href="#ds.igetnext" class=anchor><b>fn igetnext</b></a><span class=code>(t, i)</span><br>
+  
+  inext using <span class=code>t:get(i)</span> instead of <span class=code>t[i]</span></li>
+  <li><a id="ds.igetpairs" href="#ds.igetpairs" class=anchor><b>fn igetpairs</b></a><span class=code>(t)</span><br>
+  
+  ipairs using <span class=code>t:get(i)</span> instead of <span class=code>t[i]</span></li>
   <li><a id="ds.ireverse" href="#ds.ireverse" class=anchor><b>fn ireverse</b></a><span class=code>(t) -&gt; iter</span><br>
   
   ipairs reversed</li>
@@ -372,6 +386,23 @@ end
   <li><a id="ds.indexOfPat" href="#ds.indexOfPat" class=anchor><b>fn indexOfPat</b></a><span class=code>(strs, pat) -&gt; int</span><br>
   
   Return the index where <span class=code>value:match(pat)</span>.</li>
+  <li><a id="ds.tag" href="#ds.tag" class=anchor><b>fn tag</b></a><span class=code>(t, tag, tagKey) -&gt; t</span><br>
+  
+  Tag the table <span class=code>t</span>. <ul>
+    <li>if <span class=code>t.tagKey=nil</span> then this simply sets <span class=code>t.tagKey=tag</span>.</li>
+    <li>if <span class=code>t.tagKey</span> is a string or table, then it will become
+    a table with <span class=code>tag=t.tagKey+1</span> added to it.</li>
+  </ul></li>
+  <li><a id="ds.rmTag" href="#ds.rmTag" class=anchor><b>fn rmTag</b></a><span class=code>(t, tag, tagKey) -&gt; t</span><br>
+  
+  Remove tag from t.
+  TODO: downgrade if only one tag remains of count=1.</li>
+  <li><a id="ds.getTag" href="#ds.getTag" class=anchor><b>fn getTag</b></a><span class=code>(t, tag, tagKey) -&gt; int|nil</span><br>
+  
+  Get the tag count.</li>
+  <li><a id="ds.tags" href="#ds.tags" class=anchor><b>fn tags</b></a><span class=code>(t, tagKey) -&gt; {str=count}?</span><br>
+  
+  Get all keys as a map of tag=count or nil if there are no tags.</li>
   <li><a id="ds.walk" href="#ds.walk" class=anchor><b>fn walk</b></a><span class=code>(t, fieldFn, tableFn, maxDepth, state) -&gt; nil</span><br>
   
   Walk the table up to depth maxDepth (or infinite if nil) <ul>
@@ -380,7 +411,7 @@ end
   </ul>
   
   <p>If tableFn <span class=code>stop==ds.SKIP</span> (i.e. 'skip') then that table is not recursed.
-  Else if stop then the walk is halted immediately</li>
+  Else if <span class=code>stop=true</span> then the walk is halted immediately</li>
   <li><a id="ds.icopy" href="#ds.icopy" class=anchor><b>fn icopy</b></a><span class=code>(t) -&gt; list</span><br>
   
   Copy list-elements only</li>
@@ -532,7 +563,11 @@ Must use <span class=code>:remove</span> (instead of <span class=code>bm[k] = ni
 <p>Note that <span class=code>pairs()</span> will return BOTH directions (in an unspecified order)
 
 <p><b>Methods</b> <ul>
+  <li><a id="BiMap.get" href="#BiMap.get" class=anchor><b>fn get</b></a></li>
   <li><a id="BiMap.remove" href="#BiMap.remove" class=anchor><b>fn:remove</b></a><span class=code>(k) -&gt; v</span></li>
+  <li><a id="BiMap.icopy" href="#BiMap.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
+  
+  For types implementing <span class=code>:icopy()</span> method.</li>
 </ul>
 
 <p><h4><a id="ds.Deq" href="#ds.Deq" class=anchor>Record Deq</h4></a>
@@ -561,6 +596,7 @@ Use as a first in/out (fifo) with <span class=code>deq:push(v)</span> and <span 
   <li><a id="Deq.popLeft" href="#Deq.popLeft" class=anchor><b>fn:popLeft</b></a><span class=code>() -&gt; v</span></li>
   <li><a id="Deq.popRight" href="#Deq.popRight" class=anchor><b>fn:popRight</b></a><span class=code>() -&gt; v</span></li>
   <li><a id="Deq.clear" href="#Deq.clear" class=anchor><b>fn:clear</b></a><span class=code>() -&gt; nil: clear deq</span></li>
+  <li><a id="Deq.icopy" href="#Deq.icopy" class=anchor><b>fn:icopy</b></a><span class=code>() -&gt; table</span></li>
   <li><a id="Deq.drain" href="#Deq.drain" class=anchor><b>fn:drain</b></a><span class=code>() -&gt; table: get all items and clear deq</span></li>
 </ul>
 
@@ -574,14 +610,15 @@ NOTE: you should only use this for printing/logging/etc.
   <li><a id="ds.Error.cause" href="#ds.Error.cause" class=anchor><b>cause</b></a></li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="Error.from" href="#Error.from" class=anchor><b>fn from</b></a><span class=code>(msg, tb, cause) -&gt; Error</span><br>
+  <li><a id="Error.from" href="#Error.from" class=anchor><b>fn from</b></a><span class=code>(T, msg, tb, cause) -&gt; Error</span><br>
   
-  create the error from the arguments.
-  tb can be one of: <span class=code>coroutine|string|table</span>
-  FIXME: have this take T as first arg</li>
+  Usage: <span class=code>Error:from(msg, tb, cause)</span><br>
+  
+  Create the error from the arguments.
+  tb can be one of: <span class=code>coroutine|string|table</span></li>
   <li><a id="Error.msgh" href="#Error.msgh" class=anchor><b>fn msgh</b></a><span class=code>(msg, level) -&gt; Error</span><br>
   
-  for use with xpcall. See: try</li>
+  For use with xpcall. See: <b>fn try</b></li>
 </ul>
 
 <p><h3><a id="ds.time" href="#ds.time" class=anchor>Mod ds.time</h3></a>
@@ -851,7 +888,8 @@ working with paths
   get the user's home directory</li>
   <li><a id="ds.path.concat" href="#ds.path.concat" class=anchor><b>fn concat</b></a><span class=code>(t, _) -&gt; string</span><br>
   
-  join a table of path components</li>
+  join a table of path components.
+  This strips elements containing empty strings from the start and end.</li>
   <li><a id="ds.path.hasBacktrack" href="#ds.path.hasBacktrack" class=anchor><b>fn hasBacktrack</b></a><span class=code>(path) -&gt; bool. path: [str|list]</span><br>
   
   return whether a path has any '..' components</li>
@@ -1057,7 +1095,7 @@ used in tests
   <p>This will automatically fill <span class=code>[1,c-1]</span> with spaces, but will
   NOT clear any data after the insert text, meaning it is essentially a
   replace.
-  FIXME: considere renaming to replace... or something.</li>
+  TODO: considere renaming to replace... or something.</li>
   <li><a id="ds.Grid.insertGrid" href="#ds.Grid.insertGrid" class=anchor><b>fn:insertGrid</b></a><span class=code>(l,c, grid) -&gt; self</span><br>
   
   Insert another grid.</li>
@@ -1189,17 +1227,10 @@ This is very useful for undo/redo stacks/etc.
   element type function, calld for each new element.</li>
 </ul>
 <b>Methods</b> <ul>
-  <li><a id="ds.Stack.get" href="#ds.Stack.get" class=anchor><b>fn get</b></a><span class=code>(name)</span><br>
-  
-  Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
-  and must define the <span class=code>parse</span> method.</li>
   <li><a id="ds.Stack.set" href="#ds.Stack.set" class=anchor><b>fn set</b></a><span class=code>(name)</span><br>
   
   Create a parser spec record. These have the fields <span class=code>kind</span> and <span class=code>name</span>
   and must define the <span class=code>parse</span> method.</li>
-  <li><a id="ds.Stack.icopy" href="#ds.Stack.icopy" class=anchor><b>fn icopy</b></a><span class=code>(r)</span><br>
-  
-  For types implementing <span class=code>:icopy()</span> method.</li>
   <li><a id="ds.Stack.push" href="#ds.Stack.push" class=anchor><b>fn:push</b></a><span class=code>(v) -&gt; el</span><br>
   
   Push a value onto the stack.</li>

@@ -160,6 +160,9 @@ Lua module importing the LAP protocol so that libraries can
   <li><a id="lap.all" href="#lap.all" class=anchor><b>fn all</b></a><span class=code>(fns)</span><br>
   
   Resume when all of the functions complete.</li>
+  <li><a id="lap.sleep" href="#lap.sleep" class=anchor><b>fn sleep</b></a><span class=code>('sleep', s)</span><br>
+  
+  Yield a sleep signal for the number of  seconds (float).</li>
 </ul>
 
 <p><h4><a id="lap.Recv" href="#lap.Recv" class=anchor>Record Recv</h4></a>
@@ -232,7 +235,21 @@ automatically close if it is garbage collected.
 </ul>
 
 <p><h4><a id="lap.Any" href="#lap.Any" class=anchor>Record Any</h4></a>
-<b>Fields:</b><ul>
+<span class=code>Any(fns)</span>: handle resuming and restarting multiple fns.
+
+<p>Call <span class=code>any:ignore()</span> to stop the child threads from resuming
+the current thread. This does NOT stop the child threads.
+
+<p>Example which handles multiple fns running simultaniously: <div class=code-block>local any = lap.Any{fn1, fn2}:schedule()<br>
+while true do<br>
+&nbsp; local i = any:yield()<br>
+&nbsp; -- do something related to index i<br>
+&nbsp; any:restart(i) -- restart i to run again<br>
+end
+</div>
+TODO: test this
+
+<p><b>Fields:</b><ul>
   <li><a id="lap.Any.cor" href="#lap.Any.cor" class=anchor><b>cor</b></a>
   the coroutine this is running on.</li>
   <li><a id="lap.Any.fns" href="#lap.Any.fns" class=anchor><b>fns</b></a>
@@ -243,16 +260,13 @@ automatically close if it is garbage collected.
 <b>Methods</b> <ul>
   <li><a id="Any.ignore" href="#Any.ignore" class=anchor><b>fn:ignore</b></a><span class=code>()</span><br>
   
-  Stop running functions.</li>
+  Stop running caring about functions.</li>
   <li><a id="Any.schedule" href="#Any.schedule" class=anchor><b>fn:schedule</b></a><span class=code>() -&gt; self</span><br>
   
-  ensure all fns are scheduled</li>
+  Ensure all fns are scheduled</li>
   <li><a id="Any.yield" href="#Any.yield" class=anchor><b>fn:yield</b></a><span class=code>() -&gt; fnIndex</span><br>
   
   yield until any fn is done</li>
-  <li><a id="Any.restart" href="#Any.restart" class=anchor><b>fn:restart</b></a><span class=code>(i)</span><br>
-  
-  restart fn at index</li>
 </ul>
 
 <p><h4><a id="lap.Lap" href="#lap.Lap" class=anchor>Record Lap</h4></a>

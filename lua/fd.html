@@ -28,6 +28,12 @@ filedescriptor: direct control of filedescriptors.
 <p>Can override default `io` module for global async mode.
 
 <p><b>Functions</b> <ul>
+  <li><a id="fd.fstmode" href="#fd.fstmode" class=anchor><b>fn fstmode</b></a><span class=code>(fileno) -&gt; st_mode?, error</span><br>
+  
+  Get the st_mode of the fileno.</li>
+  <li><a id="fd.fchmod" href="#fd.fchmod" class=anchor><b>fn fchmod</b></a><span class=code>(fileno, st_mode) -&gt; ok?, error</span><br>
+  
+  Change the st_mode of the fileno.</li>
   <li><a id="fd.isTrunc" href="#fd.isTrunc" class=anchor><b>fn isTrunc</b></a><span class=code>(mode) -&gt; bool</span><br>
   
   Given a string mode, return whether the file will be truncated.</li>
@@ -43,10 +49,6 @@ filedescriptor: direct control of filedescriptors.
   
   Use to explicitly create a async file-descriptor.
   Operations will yield if not yet complete.</li>
-  <li><a id="fd.modifiedEq" href="#fd.modifiedEq" class=anchor><b>fn modifiedEq</b></a><span class=code>(fs1, fs2)</span><br>
-  
-  return whether two fstat's have equal modification times
-  FIXME: move this to civix</li>
   <li><a id="fd.openWith" href="#fd.openWith" class=anchor><b>fn openWith</b></a><span class=code>(openFn, path, mode)</span></li>
   <li><a id="fd.openFD" href="#fd.openFD" class=anchor><b>fn openFD</b></a><span class=code>(S.openFD, ...)</span></li>
   <li><a id="fd.openFDT" href="#fd.openFDT" class=anchor><b>fn openFDT</b></a><span class=code>(S.openFDT, ...)</span></li>
