@@ -439,6 +439,12 @@ Ele Edit View for viewing and editing text files in a pane.
   <li><a id="ele.edit.Edit.closed" href="#ele.edit.Edit.closed" class=anchor><b>closed</b></a> <span class=code>=false</span></li>
   <li><a id="ele.edit.Edit.modes" href="#ele.edit.Edit.modes" class=anchor><b>modes</b></a>
   override specific keybindings for this pane</li>
+  <li><a id="ele.edit.Edit.box" href="#ele.edit.Edit.box" class=anchor><b>box</b></a>
+  whether visual mode is in "box" mode.</li>
+  <li><a id="ele.edit.Edit.ol" href="#ele.edit.Edit.ol" class=anchor><b>ol</b></a>
+  origin line</li>
+  <li><a id="ele.edit.Edit.oc" href="#ele.edit.Edit.oc" class=anchor><b>oc</b></a>
+  origin col</li>
   <li><a id="ele.edit.Edit.vl" href="#ele.edit.Edit.vl" class=anchor><b>vl</b></a> <span class=code>=1</span></li>
   <li><a id="ele.edit.Edit.vc" href="#ele.edit.Edit.vc" class=anchor><b>vc</b></a> <span class=code>=1</span></li>
   <li><a id="ele.edit.Edit.buf" href="#ele.edit.Edit.buf" class=anchor><b>buf</b></a></li>
@@ -454,10 +460,15 @@ Ele Edit View for viewing and editing text files in a pane.
   <li><a id="Edit.drawCursor" href="#Edit.drawCursor" class=anchor><b>fn:drawCursor</b></a><span class=code>(ed)</span></li>
   <li><a id="Edit.save" href="#Edit.save" class=anchor><b>fn:save</b></a><span class=code>(ed)</span></li>
   <li><a id="Edit.copy" href="#Edit.copy" class=anchor><b>fn:copy</b></a><span class=code>()</span></li>
-  <li><a id="Edit.curLine" href="#Edit.curLine" class=anchor><b>fn:curLine</b></a><span class=code>()</span></li>
+  <li><a id="Edit.get" href="#Edit.get" class=anchor><b>fn:get</b></a><span class=code>(l)</span></li>
+  <li><a id="Edit.curLine" href="#Edit.curLine" class=anchor><b>fn:curLine</b></a><span class=code>(self.l)</span></li>
   <li><a id="Edit.colEnd" href="#Edit.colEnd" class=anchor><b>fn:colEnd</b></a><span class=code>()</span></li>
   <li><a id="Edit.lastLine" href="#Edit.lastLine" class=anchor><b>fn:lastLine</b></a><span class=code>()</span></li>
   <li><a id="Edit.offset" href="#Edit.offset" class=anchor><b>fn:offset</b></a><span class=code>(off)</span></li>
+  <li><a id="Edit.selected" href="#Edit.selected" class=anchor><b>fn:selected</b></a><span class=code>(l2,c2) -&gt; iter[l,c, l2,c2]</span><br>
+  
+  Get iterator of selection. If box is used, multiple distinct
+  lines will be returned from bottom -> top.</li>
   <li><a id="Edit.boundC" href="#Edit.boundC" class=anchor><b>fn:boundC</b></a><span class=code>(l,c)</span></li>
   <li><a id="Edit.boundLC" href="#Edit.boundLC" class=anchor><b>fn:boundLC</b></a><span class=code>(l, c)</span></li>
   <li><a id="Edit.boundCol" href="#Edit.boundCol" class=anchor><b>fn:boundCol</b></a><span class=code>(c, l)</span></li>
@@ -465,7 +476,11 @@ Ele Edit View for viewing and editing text files in a pane.
   <li><a id="Edit.changeStart" href="#Edit.changeStart" class=anchor><b>fn:changeStart</b></a><span class=code>()</span></li>
   <li><a id="Edit.changeUpdate2" href="#Edit.changeUpdate2" class=anchor><b>fn:changeUpdate2</b></a><span class=code>()</span></li>
   <li><a id="Edit.append" href="#Edit.append" class=anchor><b>fn:append</b></a><span class=code>(msg)</span></li>
-  <li><a id="Edit.insert" href="#Edit.insert" class=anchor><b>fn:insert</b></a><span class=code>(s)</span></li>
+  <li><a id="Edit.insert" href="#Edit.insert" class=anchor><b>fn:insert</b></a><span class=code>(s, l,c)</span><br>
+  
+  Insert text at l,c or default self.(l,c)
+  Updates the cursor position only if l,c is nil or exactly matches
+  self.(l,c).</li>
   <li><a id="Edit.remove" href="#Edit.remove" class=anchor><b>fn:remove</b></a><span class=code>(...)</span></li>
   <li><a id="Edit.removeOff" href="#Edit.removeOff" class=anchor><b>fn:removeOff</b></a><span class=code>(off, l, c)</span></li>
   <li><a id="Edit.replace" href="#Edit.replace" class=anchor><b>fn:replace</b></a><span class=code>(s, ...)</span></li>
@@ -512,7 +527,17 @@ Ele Edit View for viewing and editing text files in a pane.
   
   Paste from an index (default=1) from the yank stream.
   The index goes from last -> first, so 1 is the most recent yank.</li>
-  <li><a id="ele.actions.remove" href="#ele.actions.remove" class=anchor><b>fn remove</b></a><span class=code>(ed, ev)</span></li>
+  <li><a id="ele.actions.remove" href="#ele.actions.remove" class=anchor><b>fn remove</b></a><span class=code>(ed, ev)</span><br>
+  
+  Remove action.
+  
+  <p>This is always tied with a movement (except below).
+  It performs the movement and then uses the new location
+  as the "end"
+  
+  <p>Exceptions: <ul>
+    <li>lines=0 removes a single line (also supports times)</li>
+  </ul></li>
   <li><a id="ele.actions.searchBuf" href="#ele.actions.searchBuf" class=anchor><b>fn searchBuf</b></a><span class=code>(ed, ev)</span></li>
   <li><a id="ele.actions.path" href="#ele.actions.path" class=anchor><b>fn path</b></a><span class=code>(ed, ev, evsend)</span></li>
   <li><a id="ele.actions.edit" href="#ele.actions.edit" class=anchor><b>fn edit</b></a><span class=code>(ed, ev)</span><br>
@@ -532,12 +557,16 @@ Ele Edit View for viewing and editing text files in a pane.
   
   ev={location=+/-int}</li>
   <li><a id="ele.actions.again" href="#ele.actions.again" class=anchor><b>fn again</b></a><span class=code>(ed, ev, evsend)</span></li>
+  <li><a id="ele.actions.visual" href="#ele.actions.visual" class=anchor><b>fn visual</b></a><span class=code>(ed, ev)</span><br>
+  
+  Action which ASSISTS in starting/ending visual mode.</li>
   <li><a id="ele.actions.help" href="#ele.actions.help" class=anchor><b>fn help</b></a><span class=code>(ed, ev, evsend)</span></li>
 </ul>
 
 <p><h3><a id="ele.actions.nav" href="#ele.actions.nav" class=anchor>Mod ele.actions.nav</h3></a>
 <b>Functions</b> <ul>
   <li><a id="ele.actions.nav.getFocus" href="#ele.actions.nav.getFocus" class=anchor><b>fn getFocus</b></a><span class=code>(line)</span></li>
+  <li><a id="ele.actions.nav.getBuffer" href="#ele.actions.nav.getBuffer" class=anchor><b>fn getBuffer</b></a><span class=code>(line)</span></li>
   <li><a id="ele.actions.nav.getEntry" href="#ele.actions.nav.getEntry" class=anchor><b>fn getEntry</b></a><span class=code>(line) -&gt; (indent, kind, entry)</span></li>
   <li><a id="ele.actions.nav.getArgs" href="#ele.actions.nav.getArgs" class=anchor><b>fn getArgs</b></a><span class=code>(b)</span><br>
   

@@ -147,6 +147,10 @@ The lines module, providing a uniform API for lines-like objects.
 ***+------------------------2**<br>
 *So no '*' chars are returned.*
 </div></li>
+  <li><a id="lines.selected" href="#lines.selected" class=anchor><b>fn selected</b></a><span class=code>(t, l,c, l2,c2) -&gt; iter[l,c,l2,c2]</span><br>
+  
+  Given a start/end selection, return an iterator
+  that returns line-by-line values.</li>
   <li><a id="lines.getIndent" href="#lines.getIndent" class=anchor><b>fn getIndent</b></a><span class=code>(t, l) -&gt; str?</span><br>
   
   Get the indentation of line.</li>
@@ -504,7 +508,7 @@ Helper methods for moving a cursor around a lines-like 2D grid.
   <li><a id="lines.motion.lcGe" href="#lines.motion.lcGe" class=anchor><b>fn lcGe</b></a><span class=code>(l, c, l2, c2) -&gt; bool</span><br>
   
   Return whether <span class=code>l.c</span> is equal to or after <span class=code>l2.c2</span></li>
-  <li><a id="lines.motion.topLeft" href="#lines.motion.topLeft" class=anchor><b>fn topLeft</b></a><span class=code>(l, c, l2, c2) -&gt; (l, c)</span><br>
+  <li><a id="lines.motion.topLeft" href="#lines.motion.topLeft" class=anchor><b>fn topLeft</b></a><span class=code>(l,c, l2,c2) -&gt; (l, c)</span><br>
   
   Return the top-left (aka the minimum) of two points.</li>
   <li><a id="lines.motion.lcWithin" href="#lines.motion.lcWithin" class=anchor><b>fn lcWithin</b></a><span class=code>(l, c, l1, c1, l2, c2) -&gt; bool</span></li>

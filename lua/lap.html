@@ -157,12 +157,12 @@ Lua module importing the LAP protocol so that libraries can
     <li>sync:  run the fn immediately and return nil</li>
     <li>async: create and schedule returned coroutine</li>
   </ul></li>
-  <li><a id="lap.all" href="#lap.all" class=anchor><b>fn all</b></a><span class=code>(fns)</span><br>
-  
-  Resume when all of the functions complete.</li>
   <li><a id="lap.sleep" href="#lap.sleep" class=anchor><b>fn sleep</b></a><span class=code>('sleep', s)</span><br>
   
   Yield a sleep signal for the number of  seconds (float).</li>
+  <li><a id="lap.all" href="#lap.all" class=anchor><b>fn all</b></a><span class=code>(fns)</span><br>
+  
+  Resume when all of the functions complete.</li>
 </ul>
 
 <p><h4><a id="lap.Recv" href="#lap.Recv" class=anchor>Record Recv</h4></a>
@@ -263,7 +263,8 @@ TODO: test this
   Stop running caring about functions.</li>
   <li><a id="Any.schedule" href="#Any.schedule" class=anchor><b>fn:schedule</b></a><span class=code>() -&gt; self</span><br>
   
-  Ensure all fns are scheduled</li>
+  Ensure all fns are scheduled. This is called automatically on
+  construction.</li>
   <li><a id="Any.yield" href="#Any.yield" class=anchor><b>fn:yield</b></a><span class=code>() -&gt; fnIndex</span><br>
   
   yield until any fn is done</li>
