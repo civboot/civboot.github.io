@@ -1,0 +1,202 @@
+<head>
+  <meta charset="utf-8">
+  <title>Civboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<nav>
+  <ul>
+    <a href="../index.html"   class="nav"             >civ/</a>
+    <a href="index.html"      class="nav nav-selected">lua/</a>
+  </ul>
+</nav>
+
+<!DOCTYPE html>
+<html>
+<body><div class=doc>
+<h1>asciigame: library for making ascii-colored games</h1>
+
+<p>asciigame contains a syntax to make colored asciiart, which
+can be loaded to the Ele editor.
+
+<p>If you want to start writing ASCII art with Ele (or vim) here are
+some helpful references to get you started: <ul>
+  <li> <a href="https://alexyang.dev/vim-ascii-art/">this blog</a> post.</li>
+</ul>
+
+<p><h2>acs: write ascii sprites</h2>
+
+<p><span class=code>.acs</span> files contain a series of named "sprites" which are lines of
+text, followed by their asciicolor foreground style and asciicolor
+background style.
+
+<p><div class=code-block>-- The below is typically put at the top of all acs sheets as a color<br>
+-- reference and is ignored by the parser.<br>
+<br>
+-- Color Pallet:<br>
+&lt; Z B D L W R P Y H G T C A N S M F I<br>
+--e l a i h e i e o r e y q a k a u n<br>
+--r a r g i d n l n e a a u v y g s v<br>
+--o c k h t &nbsp; k l e e &nbsp; n a y &nbsp; e c i<br>
+-- &nbsp;k &nbsp; g e &nbsp; &nbsp; o y n &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; n h s<br>
+-- &nbsp; &nbsp; &nbsp;t &nbsp; &nbsp; &nbsp; w &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; t i i<br>
+-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;a a b<br>
+-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;l<br>
+-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;e<br>
+<br>
+-- An example 3x3 sprite named "man"<br>
+# 3x3 man<br>
+' &nbsp;O<br>
+' /|\<br>
+' / \<br>
+-- The foreground colors: yellow skin, blue clothes.<br>
+&gt; &nbsp;y<br>
+&gt; yny<br>
+&gt; n n<br>
+-- No background is specified for "man", which means<br>
+-- he adopts the backround he is on.<br>
+<br>
+<br>
+-- An example 3x3 sprite named "woman" wearing a dress.<br>
+# 3x3 woman<br>
+' &nbsp;O=<br>
+' /|\<br>
+' /~\<br>
+-- The foreground colors: pink skin, patterned red clothes, brown hair<br>
+&gt; &nbsp;pb<br>
+&gt; plp<br>
+&gt; rlr<br>
+-- The background colors: fills in the inside of the dress.<br>
+&lt;<br>
+&lt; &nbsp;r<br>
+&lt; &nbsp;r
+</div>
+
+<p>Renders as <a href="../img/asciigame.png">this image</a>
+
+<p>The sprite text "consumes" the next foreground/background line below it,
+allowing for user-control of how they lay out the colors.  For instance, you
+could draw the man like this, with the foreground colors directly below to the
+text.
+
+<p><div class=code-block># 3x3 man<br>
+' &nbsp;O<br>
+&gt; &nbsp;y<br>
+<br>
+' /|\<br>
+&gt; yny<br>
+<br>
+' / \<br>
+&gt; n n
+</div>
+
+<p>Each line starts with one of <span class=code>' &lt; &gt;</span> indicating text, background or
+foreground. The character following it sets the "default style" for that line,
+which replaces any spaces or missing characters.
+<h3><a id="asciigame" href="#asciigame" class=anchor>Mod asciigame</h3></a>
+Library of game-related types and utilities.
+
+<p>
+<p><b>Types: </b><a href="#asciigame.Sprite">Sprite</a> <a href="#asciigame.Rand">Rand</a> 
+
+<p>
+<p><h4><a id="asciigame.Sprite" href="#asciigame.Sprite" class=anchor>Record Sprite</h4></a>
+A sprite with a location. Used by games to more easily write
+to the Game grid by simply appending the txt/fg/bg.
+
+<p><b>Fields:</b><ul>
+  <li><a id="asciigame.Sprite.l" href="#asciigame.Sprite.l" class=anchor><b>l</b></a>
+  line number</li>
+  <li><a id="asciigame.Sprite.c" href="#asciigame.Sprite.c" class=anchor><b>c</b></a>
+  column number</li>
+  <li><a id="asciigame.Sprite.txt" href="#asciigame.Sprite.txt" class=anchor><b>txt</b></a></li>
+  <li><a id="asciigame.Sprite.fg" href="#asciigame.Sprite.fg" class=anchor><b>fg</b></a></li>
+  <li><a id="asciigame.Sprite.bg" href="#asciigame.Sprite.bg" class=anchor><b>bg</b></a></li>
+</ul>
+
+<p><h4><a id="asciigame.Rand" href="#asciigame.Rand" class=anchor>Record Rand</h4></a>
+Random number generator using the Linear Congruential Generator
+forumla. This should not be used for security-critical applications.
+
+<p>Example: <div class=code-block>local ix = require'civix'<br>
+local r = Rand{state = ix.epoch():asMs()<br>
+r(1, 100) -- get a number from [1-100]
+</div>
+
+<p><b>Fields:</b><ul>
+  <li><a id="asciigame.Rand.state" href="#asciigame.Rand.state" class=anchor><b>state</b></a> <span class=code>=0</span>
+  current state, override to set seed.</li>
+  <li><a id="asciigame.Rand.m" href="#asciigame.Rand.m" class=anchor><b>m</b></a> <span class=code>=4026531840</span></li>
+  <li><a id="asciigame.Rand.a" href="#asciigame.Rand.a" class=anchor><b>a</b></a> <span class=code>=1103515245</span></li>
+  <li><a id="asciigame.Rand.c" href="#asciigame.Rand.c" class=anchor><b>c</b></a> <span class=code>=12345</span></li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="Rand.next" href="#Rand.next" class=anchor><b>fn:next</b></a><span class=code>() -&gt; int</span><br>
+  
+  Advance to the next state and get the new state.</li>
+</ul>
+
+<p><h3><a id="asciigame.acs" href="#asciigame.acs" class=anchor>Mod asciigame.acs</h3></a>
+acs: library for asciicolor sprites loading and coloring.
+
+<p>
+<p><b>Types: </b><a href="#asciigame.acs.AcsLine">AcsLine</a> <a href="#asciigame.acs.AcsSprite">AcsSprite</a> 
+
+<p><b>Functions</b> <ul>
+  <li><a id="asciigame.acs.load" href="#asciigame.acs.load" class=anchor><b>fn load</b></a><span class=code>(path)</span></li>
+  <li><a id="asciigame.acs.highlight" href="#asciigame.acs.highlight" class=anchor><b>fn highlight</b></a><span class=code>(path, lf, fgFile, bgFile)</span></li>
+  <li><a id="asciigame.acs.matchHeader" href="#asciigame.acs.matchHeader" class=anchor><b>fn matchHeader</b></a><span class=code>(line)</span></li>
+  <li><a id="asciigame.acs.matchContent" href="#asciigame.acs.matchContent" class=anchor><b>fn matchContent</b></a><span class=code>(line) -&gt; ty, default, cnt</span><br>
+  
+  Match the line for a content line.</li>
+  <li><a id="asciigame.acs.parse" href="#asciigame.acs.parse" class=anchor><b>fn parse</b></a><span class=code>(path, iter, send)</span><br>
+  
+  Read line and line-num from iter(), sending completed lines via send.
+  
+  <p><span class=code>send()</span> receieves <span class=code>AcsLine</span> objects.</li>
+</ul>
+
+<p><h4><a id="asciigame.acs.AcsLine" href="#asciigame.acs.AcsLine" class=anchor>Record AcsLine</h4></a>
+A parsed line of AcsSprite with the information about where it is from.
+
+<p><b>Fields:</b><ul>
+  <li><a id="asciigame.acs.AcsLine.txt" href="#asciigame.acs.AcsLine.txt" class=anchor><b>txt</b></a>
+  the text</li>
+  <li><a id="asciigame.acs.AcsLine.fg" href="#asciigame.acs.AcsLine.fg" class=anchor><b>fg</b></a>
+  the foreground</li>
+  <li><a id="asciigame.acs.AcsLine.bg" href="#asciigame.acs.AcsLine.bg" class=anchor><b>bg</b></a>
+  the background</li>
+  <li><a id="asciigame.acs.AcsLine.fgDefault" href="#asciigame.acs.AcsLine.fgDefault" class=anchor><b>fgDefault</b></a>
+  the default fg</li>
+  <li><a id="asciigame.acs.AcsLine.bgDefault" href="#asciigame.acs.AcsLine.bgDefault" class=anchor><b>bgDefault</b></a>
+  the default bg</li>
+  <li><a id="asciigame.acs.AcsLine.tl" href="#asciigame.acs.AcsLine.tl" class=anchor><b>tl</b></a>
+  the text line number</li>
+  <li><a id="asciigame.acs.AcsLine.bl" href="#asciigame.acs.AcsLine.bl" class=anchor><b>bl</b></a>
+  the bg line number</li>
+  <li><a id="asciigame.acs.AcsLine.fl" href="#asciigame.acs.AcsLine.fl" class=anchor><b>fl</b></a>
+  the fg line number</li>
+</ul>
+
+<p><h4><a id="asciigame.acs.AcsSprite" href="#asciigame.acs.AcsSprite" class=anchor>Record AcsSprite</h4></a>
+A fully parsed sprite, which is a list of lines.
+
+<p><b>Fields:</b><ul>
+  <li><a id="asciigame.acs.AcsSprite.name" href="#asciigame.acs.AcsSprite.name" class=anchor><b>name</b></a>
+  the name of the sprite</li>
+  <li><a id="asciigame.acs.AcsSprite.h" href="#asciigame.acs.AcsSprite.h" class=anchor><b>h</b></a>
+  height</li>
+  <li><a id="asciigame.acs.AcsSprite.w" href="#asciigame.acs.AcsSprite.w" class=anchor><b>w</b></a>
+  width</li>
+  <li><a id="asciigame.acs.AcsSprite.l" href="#asciigame.acs.AcsSprite.l" class=anchor><b>l</b></a>
+  line number of header</li>
+  <li><a id="asciigame.acs.AcsSprite.le" href="#asciigame.acs.AcsSprite.le" class=anchor><b>le</b></a>
+  end line before next sprite (or EoF)</li>
+</ul>
+<b>Methods</b> <ul>
+  <li><a id="AcsSprite.sprite" href="#AcsSprite.sprite" class=anchor><b>fn:sprite</b></a><span class=code>()</span></li>
+</ul>
+
+<p>
+</div></body>
+</html>
