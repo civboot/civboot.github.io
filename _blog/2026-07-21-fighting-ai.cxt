@@ -2,9 +2,9 @@
 
 I believe that if you want to fight the effects of AI,
 the most effective steps you can take are (1) disconnect from the internet
-and (2) distill [,useful] human knowledge, tools and processes to something
-that a small group of humans can understand and modify. Don't let the greatest
-tools suffer complexity rot into oblivion.
+as much as possible and (2) distill [,useful] human knowledge, tools and processes
+to something that a small group of humans can understand and modify. Don't let
+the greatest tools suffer complexity rot into oblivion.
 
 I've been living this moto for three years now. I am writing this text using
 my own [<../lua/ele.html>vim-like editor], which was built by my own
@@ -20,15 +20,17 @@ carpenters felt when they were forced to work the line of a factory -
 the pure joy of creation for it's own sake becomes stale when applied to
 updating boilerplate configurations across monolithic server config files,
 but reviewing (and re-reviewing, and re-reviewing) an AI performing those
-same tasks is even worse.
+same tasks is even worse. Having a project where I can directly use my
+skill on distinctly human level tools is a breath of fresh air that has kept
+me sane and happy.
 
 If you feel like me, I highly recommend thinking about how your tools
 and craft can be distilled so that other people can pick them up,
 use them and eventually modify them. Keep them distinctly human.
 Even before AI, us software developers loved to add complexity to
 solve problem like scale, "performance", and things the "user" would need.
-Build like you and those like you are the only user and the complexity
-will melt away.  Write your tools to be fast for O(H), where H is human use
+Build like you are the only user and most complexity
+will melt away. Write your tools to be fast for O(H), where H is human use
 only. The editor I write in is pure-lua and yet has zero latency despite
 asynchronously syntax highlighting the file. I've designed it to be able to
 [<../lua/lines.html>load and edit million line files] using only KiB of added
@@ -42,3 +44,5 @@ course you are welcome to contribute or report bugs to
 
 This is the end of the pre-alpha era for Civstack, onwards to a full-featured
 and actually useful tech stack for Civilization.
+
+- Rett
